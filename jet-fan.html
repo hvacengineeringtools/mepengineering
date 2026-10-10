@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#cfc3a8" />
+<meta name="description" content="Jet fan layout for car parks, open spaces and obstructed halls: throw and coverage method compared with the pressure-loss method. Preliminary design; verify with CFD." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Jet fans estimation</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:1020px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 40px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header.top { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:26px 0 10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--ink); padding-bottom:5px; display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+h2 .more { text-transform:none; letter-spacing:0; font-weight:400; font-size:13px; }
+h3 { font-size:15px; margin:0 0 8px; font-weight:700; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; max-width:72ch; }
+fieldset { border:1px solid var(--rule); background:var(--panel); margin:0 0 12px; padding:10px 14px 14px; }
+legend { font-size:13px; font-weight:700; padding:0 6px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+.fields.three { grid-template-columns:repeat(3,1fr); }
+.fields.four { grid-template-columns:repeat(4,1fr); }
+.fields > div, .sec-in > div { display:flex; flex-direction:column; justify-content:flex-end; }
+label { display:block; font-size:12.5px; font-weight:700; margin-bottom:4px; }
+.hint { display:block; margin-top:2px; font-size:12px; font-weight:400; color:var(--muted); }
+.pair { display:grid; grid-template-columns:1fr 64px; }
+input, select { width:100%; border:1px solid var(--rule); background:#fff; color:var(--ink); font:15px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:7px 8px; min-height:38px; border-radius:0; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid var(--rule); border-left:0; background:var(--tint); font-size:12px; color:var(--muted); }
+details.adv { margin-top:12px; border-top:1px dashed var(--rule); padding-top:8px; }
+details.adv summary { cursor:pointer; font-size:13px; font-weight:700; }
+details.adv .fields { margin-top:10px; }
+button.link { background:none; border:0; padding:0; font:inherit; color:var(--ink); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.answer { border:2px solid var(--ink); background:var(--panel); padding:12px 16px; }
+.answer .k { font-size:13px; color:var(--muted); }
+.answer .v { font-size:30px; font-weight:600; line-height:1.15; font-variant-numeric:tabular-nums; }
+.answer .u { font-size:13px; color:var(--muted); }
+.answer.good { background:var(--ok); }
+.answer.bad { background:var(--warn); }
+.pairs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.pairs .answer { border-width:1px; padding:9px 12px; }
+.pairs .answer .v { font-size:22px; }
+dl.facts { display:grid; grid-template-columns:auto auto; gap:0; margin:10px 0 0; border-top:1px solid var(--faint); }
+dl.facts dt, dl.facts dd { margin:0; padding:6px 0; border-bottom:1px solid var(--faint); font-size:14px; }
+dl.facts dd { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+ul.checks { list-style:none; margin:10px 0 0; padding:0; }
+ul.checks li { font-size:13.5px; padding:6px 10px; border-left:3px solid var(--ink); background:var(--panel); margin-bottom:4px; }
+ul.checks li.warn { background:var(--warn); }
+.scroll { overflow-x:auto; margin-top:8px; }
+table.cd { width:100%; border-collapse:collapse; background:var(--panel); margin-top:8px; font-size:14px; }
+table.cd th, table.cd td { border:1px solid var(--ink); padding:6px 9px; text-align:left; vertical-align:top; }
+table.cd th { background:var(--tint); font-size:12.5px; }
+table.cd tr.on td { background:var(--ink); color:var(--paper); }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12.5px; color:var(--muted); }
+
+/* Pull-out bar */
+.pull { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:30; background:var(--ink); color:var(--paper); border:1px solid var(--ink); border-right:0; padding:16px 9px; font:600 13px/1 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; letter-spacing:.06em; cursor:pointer; box-shadow:-4px 4px 0 rgba(42,36,28,.18); }
+.pull span { display:block; writing-mode:vertical-rl; -webkit-writing-mode:vertical-rl; }
+@media (hover:hover) { .pull:hover { background:#3a332b; } }
+.scrim { position:fixed; inset:0; background:rgba(26,23,20,.3); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:35; }
+.scrim.on { opacity:1; pointer-events:auto; }
+.drawer { position:fixed; top:0; right:0; height:100%; width:min(600px, 94vw); background:var(--paper); border-left:1px solid var(--ink); box-shadow:-8px 0 0 rgba(42,36,28,.14); transform:translateX(102%); visibility:hidden; transition:transform .25s ease, visibility 0s linear .25s; z-index:40; display:flex; flex-direction:column; }
+.drawer.open { transform:none; visibility:visible; transition:transform .25s ease; }
+.drawer .bar { display:flex; justify-content:space-between; align-items:center; padding:14px 20px 10px; border-bottom:1px solid var(--ink); }
+.drawer .bar h2 { margin:0; border:0; padding:0; }
+.drawer .close { background:var(--panel); border:1px solid var(--ink); font:600 13px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:6px 12px; cursor:pointer; color:var(--ink); }
+.tabs { display:flex; gap:0; padding:0 20px; border-bottom:1px solid var(--faint); overflow-x:auto; }
+.tabs button { background:none; border:0; border-bottom:3px solid transparent; padding:10px 12px 8px; font:14px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; color:var(--muted); cursor:pointer; white-space:nowrap; }
+.tabs button[aria-selected="true"] { color:var(--ink); font-weight:700; border-bottom-color:var(--ink); }
+.drawer .body { overflow:auto; padding:16px 20px 40px; flex:1; }
+.drawer .body p { font-size:14.5px; }
+.drawer .eq { font-size:14.5px; padding:8px 12px; background:var(--panel); border-left:3px solid var(--ink); margin:0 0 8px; font-variant-numeric:tabular-nums; }
+.drawer .eq b { font-weight:600; }
+.drawer h3 { margin:18px 0 6px; }
+.drawer h3:first-child { margin-top:0; }
+[role="tabpanel"][hidden] { display:none; }
+
+@media (max-width:760px) {
+  .book { margin:0; padding:16px 14px 72px; box-shadow:none; }
+  .fields, .fields.three, .fields.four, .pairs { grid-template-columns:1fr; }
+  h1 { font-size:24px; }
+  input, select { font-size:16px; min-height:44px; }
+  nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:8px; text-align:left; font-size:13px; }
+  .pull { top:auto; bottom:0; left:0; right:0; transform:none; border:0; border-top:1px solid var(--ink); padding:15px 15px calc(15px + env(safe-area-inset-bottom, 0px)); font-size:15px; box-shadow:none; }
+  .pull span { writing-mode:horizontal-tb; -webkit-writing-mode:horizontal-tb; }
+  .drawer { width:100%; border-left:0; }
+}
+@media (prefers-reduced-motion:reduce) { .drawer, .scrim { transition:none; } }
+@media print {
+  nav.pages, .pull, .scrim, .drawer .close, .tabs { display:none !important; }
+  .drawer { position:static; transform:none; visibility:visible; width:auto; height:auto; box-shadow:none; border:0; border-top:1px solid var(--ink); margin-top:20px; }
+  .drawer .body { overflow:visible; }
+  [role="tabpanel"][hidden] { display:block; }
+}
+
+.summary { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.summary .answer .v { font-size:24px; }
+.summary .answer .k { font-weight:700; color:var(--ink); }
+.summary a { color:inherit; }
+.sec-in { display:grid; grid-template-columns:repeat(3,1fr); gap:12px 16px; margin:0 0 6px; }
+.sheet { border-top:1px solid var(--ink); }
+.sheet .row { display:grid; grid-template-columns:minmax(150px,1.1fr) 150px minmax(180px,1.6fr); gap:10px 18px; align-items:center; padding:9px 0; border-bottom:1px solid var(--faint); }
+.sheet .lab { font-size:14.5px; }
+.sheet .nums div { display:grid; grid-template-columns:1fr 46px; border:1px solid var(--ink); background:var(--panel); }
+.sheet .nums div + div { border-top:0; }
+.sheet .nums b { padding:4px 8px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+.sheet .nums span { display:flex; align-items:center; justify-content:center; border-left:1px solid var(--ink); background:var(--tint); font-size:12px; color:var(--muted); }
+.sheet .note { font-size:13px; color:var(--muted); }
+.sheet .row.final { background:var(--ok); margin:0 -8px; padding:10px 8px; border-bottom:1px solid var(--ink); }
+.sheet .row.final .lab { font-weight:700; }
+.boxes { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.boxes .answer { border-width:1px; padding:9px 12px; }
+.boxes .answer .v { font-size:20px; }
+.refnote { font-size:13.5px; color:var(--muted); margin:6px 0 10px; }
+table.ref { border-collapse:collapse; width:max-content; min-width:100%; font-size:12px; background:var(--panel); }
+table.ref th, table.ref td { border:1px solid var(--ink); padding:4px 6px; text-align:left; white-space:nowrap; vertical-align:bottom; }
+table.ref th { background:var(--tint); font-weight:700; }
+table.ref .num { text-align:right; font-variant-numeric:tabular-nums; }
+table.ref tr.on td { background:var(--ink); color:var(--paper); }
+.drawer { width:min(760px, 96vw); }
+
+/* Refrigerant warnings */
+.alert { position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); gap:4px 16px; align-items:start; margin:14px 0 4px; padding:20px 18px 16px; border:2px solid var(--ink); box-shadow:5px 5px 0 rgba(26,23,20,.16); }
+.alert::before { content:""; position:absolute; left:0; right:0; top:0; height:9px; background:repeating-linear-gradient(-45deg, var(--a-stripe) 0 12px, var(--ink) 12px 24px); }
+.alert[hidden] { display:none; }
+.alert.caution { --a-stripe:#e3a61b; --a-bg:#fcf0cf; --a-tag:#7a5300; background:var(--a-bg); }
+.alert.danger { --a-stripe:#b3261e; --a-bg:#f7dcd6; --a-tag:#8f1d15; background:var(--a-bg); }
+.alert .ico { width:56px; height:56px; margin-top:4px; }
+.alert .tag { display:inline-block; font:700 11px/1 "Palatino Linotype", Palatino, Georgia, serif; letter-spacing:.14em; text-transform:uppercase; color:#fff; background:var(--a-tag); padding:5px 8px 4px; margin-bottom:6px; }
+.alert .ttl { font-size:21px; line-height:1.25; font-weight:700; margin:0 0 6px; }
+.alert p { margin:0 0 6px; font-size:14.5px; }
+.alert ul { margin:4px 0 0; padding-left:18px; font-size:14px; }
+.alert ul li { margin-bottom:2px; }
+.flag { display:block; margin:0 0 6px; padding:4px 7px; font:700 12px/1.3 "Palatino Linotype", Palatino, Georgia, serif; color:#fff; background:var(--f-bg); }
+.flag.caution { --f-bg:#7a5300; }
+.flag.danger { --f-bg:#8f1d15; }
+select.flagged-caution { border:2px solid #e3a61b; background-color:#fcf0cf; }
+select.flagged-danger { border:2px solid #b3261e; background-color:#f7dcd6; }
+
+/* Why A2L is larger */
+details.why { margin:14px 0 4px; border:2px solid var(--ink); background:var(--panel); }
+details.why > summary { list-style:none; display:flex; gap:12px; align-items:center; padding:12px 16px; background:var(--tint); font-weight:700; font-size:16px; }
+details.why > summary::-webkit-details-marker { display:none; }
+details.why > summary .badge { flex:none; display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 17px/1 Georgia, serif; }
+details.why > summary .chev { margin-left:auto; font-weight:400; font-size:13px; color:var(--muted); }
+details.why[open] > summary .chev::after { content:"Hide"; }
+details.why:not([open]) > summary .chev::after { content:"Show"; }
+details.why .in { padding:14px 16px 16px; }
+.cmp { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 0 14px; }
+.cmp > div { border:1px solid var(--ink); padding:8px 10px; background:var(--paper); }
+.cmp > div.big { background:var(--ink); color:var(--paper); }
+.cmp .k { font-size:12.5px; opacity:.85; }
+.cmp .v { font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; }
+.cmp .x { font-size:12.5px; }
+ol.whylist { margin:0; padding-left:22px; }
+ol.whylist li { margin-bottom:8px; font-size:14.5px; }
+ol.whylist li b { display:block; }
+@media (max-width:760px) {
+  .alert { grid-template-columns:1fr; }
+  .alert .ico { width:44px; height:44px; }
+  .cmp { grid-template-columns:1fr; }
+}
+@media print { details.why .in { display:block; } .alert { box-shadow:none; } }
+@media (max-width:760px) {
+  .summary, .sec-in, .boxes { grid-template-columns:1fr; }
+  .sheet .row { grid-template-columns:1fr; gap:4px; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+
+/* Sheet XIII jet fans */
+[hidden] { display:none !important; }
+.jl .fields.four { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.jl .fields.af { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.jl .fields.af > div:first-child { grid-column:1 / -1; }
+.jl .fields.fan { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.jl { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:22px; align-items:start; }
+.jl > section > h2:first-child { margin-top:4px; }
+.result-col { position:sticky; top:12px; }
+.fields .span2 { grid-column:1 / -1; }
+.pair.u3 { grid-template-columns:1fr 84px; }
+.pair.u3 select { border-left:0; background-color:var(--tint); font-size:13px; padding-left:8px; }
+.sub2 { margin:14px 0 6px; font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-top:1px dashed var(--rule); padding-top:10px; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+.answer.big { border-width:2px; padding:14px 16px; }
+.rc { display:flex; align-items:center; gap:10px; flex-wrap:nowrap; margin:6px 0 8px; }
+.rc > div { display:flex; align-items:center; gap:8px; }
+.rc .n { font-size:40px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+.rc .t { font-size:12.5px; line-height:1.2; color:var(--muted); }
+.rc .x { font-size:22px; color:var(--muted); }
+.rc > div:last-child .n { padding:2px 8px; background:var(--ink); color:var(--paper); }
+.planwrap { border:1px solid var(--ink); background:#fbf8f1; }
+svg.plan { width:100%; height:auto; display:block; font-family:"Palatino Linotype", Palatino, Georgia, serif; }
+svg.plan text { fill:var(--ink); }
+h2 .more { text-transform:none; letter-spacing:0; font-weight:400; font-size:12.5px; color:var(--muted); }
+#fantable tr.on td { background:var(--ink); color:var(--paper); }
+svg.howjet { width:100%; height:auto; display:block; margin:8px 0 6px; font-family:"Palatino Linotype", Palatino, Georgia, serif; }
+ol.steps { margin:0; padding-left:20px; } ol.steps li { margin-bottom:6px; font-size:14.5px; }
+ul.tight { margin:4px 0 8px; padding-left:18px; } ul.tight li { font-size:14px; margin-bottom:3px; }
+table.ref.acc { width:100%; min-width:0; }
+table.acc th, table.acc td { white-space:normal; vertical-align:top; font-size:12.5px; }
+table.acc td:nth-child(2) { white-space:nowrap; }
+table.acc td:first-child { font-weight:700; }
+.cf { display:inline-block; padding:2px 6px; font-size:11.5px; font-weight:700; color:#fff; white-space:nowrap; }
+.cf.hi { background:#2f6b3a; } .cf.mid { background:#7a5300; } .cf.lo { background:#8f1d15; }
+@media (max-width:760px) {
+  .jl { grid-template-columns:1fr; }
+  .result-col { position:static; }
+  .fields .span2 { grid-column:auto; }
+  .rc { flex-wrap:wrap; }
+  .rc .n { font-size:34px; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+
+/* Sheet XIV jet fans in an obstructed hall */
+.prelim { margin:4px 0 20px; }
+.prelim .ttl { font-size:19px; }
+.seg2 { display:flex; gap:0; margin:0 0 12px; border:1px solid var(--ink); }
+.seg2 button { flex:1; background:var(--panel); color:var(--ink); border:0; border-right:1px solid var(--ink); padding:8px 10px; font-family:inherit; font-weight:600; font-size:13.5px; line-height:1.25; cursor:pointer; min-height:40px; }
+.seg2 button:last-child { border-right:0; }
+.seg2 button[aria-pressed="true"] { background:var(--ink); color:var(--paper); }
+.sched { border-top:1px solid var(--ink); margin-top:4px; }
+.sched .sr { display:grid; grid-template-columns:minmax(0,1fr) 62px 54px 50px 32px; gap:6px; align-items:center; padding:6px 0; border-bottom:1px solid var(--faint); }
+.sched .sr.hd { font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding:6px 0 4px; }
+.sched .sr input { min-height:36px !important; padding:6px 8px !important; font-size:14px; }
+.sched .sr .sub { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; font-size:14px; }
+.sched .sr.auto { color:var(--muted); font-size:14px; }
+.sched .sr.tot { border-bottom:1px solid var(--ink); font-weight:700; }
+.sched button.rm { background:var(--panel); color:var(--ink); border:1px solid var(--rule); min-height:32px; padding:0; font:16px/1 Georgia, serif; cursor:pointer; }
+.cat { display:inline-block; min-width:1.6em; text-align:center; font-size:11px; font-weight:700; color:var(--paper); background:var(--ink); padding:1px 4px; margin-right:6px; }
+.adds { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0; }
+.adds button { width:auto; flex:0 0 auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); padding:6px 10px; font-family:inherit; font-size:13px; line-height:1.2; cursor:pointer; min-height:34px; }
+@media (hover:hover) { .adds button:hover, .sched button.rm:hover { background:var(--tint); } }
+.gov { display:inline-block; margin-top:6px; padding:3px 8px; font-size:12px; font-weight:700; letter-spacing:.04em; background:var(--ink); color:var(--paper); }
+table.sens { width:100%; border-collapse:collapse; font-size:13.5px; background:var(--panel); margin-top:8px; }
+table.sens th, table.sens td { border:1px solid var(--faint); padding:5px 8px; text-align:left; }
+table.sens th { background:var(--tint); font-size:12px; }
+table.sens td.n { text-align:right; font-variant-numeric:tabular-nums; }
+table.sens tr.base td { font-weight:700; background:var(--ok); }
+.cfdnote { margin-top:12px; padding:10px 12px; border:2px solid var(--ink); background:#fcf0cf; font-size:13.5px; }
+.cfdnote b { display:block; font-size:14.5px; margin-bottom:2px; }
+.kcalc { border:1px solid var(--ink); background:var(--panel); padding:12px 14px; margin:10px 0 14px; }
+.kcalc .row2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:10px; align-items:end; }
+.kcalc .row2 button { width:auto; padding:8px 12px; background:var(--ink); color:var(--paper); border:1px solid var(--ink); font-weight:700; cursor:pointer; min-height:40px; font-family:inherit; }
+.kout { font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; }
+table.wb td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+table.wb td.ok { color:#2f6b3a; font-weight:700; }
+table.wb td.no { color:#8f1d15; font-weight:700; }
+@media (max-width:760px) {
+  .sched .sr { grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 40px; }
+  .sched .sr > :first-child { grid-column:1 / -1; }
+  .sched .sr.hd { display:none; }
+  .sched .sr .lab-m { display:block; font-size:11px; color:var(--muted); }
+  .kcalc .row2 { grid-template-columns:1fr; }
+  .seg2 { flex-direction:column; }
+  .seg2 button { border-right:0; border-bottom:1px solid var(--ink); }
+  .seg2 button:last-child { border-bottom:0; }
+}
+.lab-m { display:none; }
+@media print { .adds, .sched button.rm, .seg2 button[aria-pressed="false"], .kcalc button { display:none !important; } .prelim { box-shadow:none; } }
+
+table.sens tr.on td { background:var(--ok); font-weight:700; }
+table.cmp2 td:last-child { font-size:12px; color:var(--muted); white-space:nowrap; }
+table.cmp2 tr.on td:last-child { color:var(--ink); text-transform:uppercase; letter-spacing:.06em; }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+.jl > section { min-width:0; }
+.prenote { margin:0 0 12px; font-size:13.5px; font-style:italic; color:var(--muted); }
+</style>
+</head>
+<body>
+<article class="book">
+<header class="top">
+  <div class="kicker">Sheet XIII · Jet fans estimation</div>
+  <h1>Jet fans estimation</h1>
+  <div class="sub">Jet fan layout for car parks, open spaces and halls full of equipment · two methods compared</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a class="on" href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<p class="lead">Enter the space, the airflow, how obstructed the space is, and the fan. The sheet sizes the layout two ways, <b>Method 1</b> by throw and coverage, <b>Method 2</b> by the pressure loss of the obstructions and the airflow the jets carry, and uses whichever needs more fans.</p>
+
+<p class="prenote">Preliminary design. CFD simulation shall be done to verify the end result.</p>
+
+<p class="hint" style="margin:0 0 16px">Example: <button class="link" type="button" id="loadT3">load the obstructed hall example</button> · <button class="link" type="button" id="loadCP">back to the car park example</button></p>
+
+<div class="jl">
+<section aria-labelledby="h-in">
+<h2 id="h-in">Inputs</h2>
+
+<fieldset>
+  <legend>1. The space</legend>
+  <div class="fields three">
+    <div><label for="L">Length along the airflow<span class="hint">From the make-up air inlet to the extract.</span></label><div class="pair"><input id="L" type="number" inputmode="decimal" min="0" step="0.5" value="80" /><span>m</span></div></div>
+    <div><label for="W">Width across the airflow</label><div class="pair"><input id="W" type="number" inputmode="decimal" min="0" step="0.5" value="45" /><span>m</span></div></div>
+    <div><label for="H">Clear height<span class="hint">Floor to soffit; sets the cross-section.</span></label><div class="pair"><input id="H" type="number" inputmode="decimal" min="0" step="0.05" value="3.0" /><span>m</span></div></div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>2. Airflow needed</legend>
+  <div class="fields af">
+    <div><label for="basis">Set the airflow by</label>
+      <select id="basis">
+        <option value="ach10">10 air changes an hour, smoke clearance</option>
+        <option value="ach6">6 air changes an hour, normal ventilation</option>
+        <option value="ach">Other air change rate</option>
+        <option value="flow">Flow rate</option>
+      </select></div>
+    <div id="achwrap"><label for="ach">Air changes an hour</label><div class="pair"><input id="ach" type="number" inputmode="decimal" min="0" step="0.5" value="10" /><span>/h</span></div></div>
+    <div id="flowwrap" hidden><label for="flow">Flow rate</label><div class="pair u3"><input id="flow" type="number" inputmode="decimal" min="0" step="any" value="30" /><select id="flowu" aria-label="Flow unit"><option value="m3s">m³/s</option><option value="ls">l/s</option><option value="m3h">m³/h</option></select></div></div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="span2"><label for="drive">What moves the airflow through the space<span class="hint">With extract fans, they set the airflow and the jet fans spread it. Without them, the jet fans alone must push the airflow out.</span></label>
+      <select id="drive"><option value="ext" selected>Extract fans · jet fans spread the air</option><option value="jet">Jet fans alone · no extract fan</option></select></div>
+  </div>
+  <p class="hint" style="margin:8px 0 0">For car parks in England, Approved Document F asks for 6 air changes an hour for normal ventilation, and Approved Document B for 10 an hour for smoke clearance. For other spaces, enter the flow rate from your ventilation design.</p>
+</fieldset>
+
+<fieldset>
+  <legend>3. Obstruction and openings</legend>
+  <div class="fields">
+    <div class="span2"><label for="obs">How obstructed is the space<span class="hint">One level for the whole space, inlet to extract. <button class="link" type="button" data-open="kguide">Which level?</button></span></label>
+      <select id="obs">
+        <option value="0">Open · no obstruction</option>
+        <option value="A" selected>A · Light · columns, beams, light structure</option>
+        <option value="B">B · Moderate · repeated obstructions that deflect the flow</option>
+        <option value="C">C · Dense · partial blockage, like a grille</option>
+        <option value="D">D · Very congested · packed plant, like a louvre</option>
+        <option value="custom">Custom K</option>
+      </select></div>
+    <div><label for="Kobs">Loss coefficient K<span class="hint" id="kHint">Typical for this level; you may change it.</span></label><div class="pair"><input id="Kobs" type="number" inputmode="decimal" min="0" step="0.5" value="1.5" /><span>—</span></div></div>
+  </div>
+  <div id="openWrap" hidden>
+    <p class="sub2">Openings and outside pressure · jet fans alone</p>
+    <div class="fields">
+      <div><label for="Ain">Inlet free area<span class="hint">Blank: open across the full section.</span></label><div class="pair"><input id="Ain" type="number" inputmode="decimal" min="0" step="0.5" placeholder="full section" /><span>m²</span></div></div>
+      <div><label for="Kin">Inlet loss coefficient<span class="hint">On the speed through the opening. Plain 0.5; with a louvre, add the maker’s figure.</span></label><div class="pair"><input id="Kin" type="number" inputmode="decimal" min="0" step="0.1" value="0.5" /><span>—</span></div></div>
+      <div><label for="Aout">Exit free area<span class="hint">Blank: open across the full section.</span></label><div class="pair"><input id="Aout" type="number" inputmode="decimal" min="0" step="0.5" placeholder="full section" /><span>m²</span></div></div>
+      <div><label for="Kout">Exit loss coefficient<span class="hint">On the speed through the opening. Discharge 1.0; with a louvre, add the maker’s figure.</span></label><div class="pair"><input id="Kout" type="number" inputmode="decimal" min="0" step="0.1" value="1.0" /><span>—</span></div></div>
+      <div class="span2"><label for="pext">Wind and stack pressure against the flow<span class="hint">Allowance for the worst wind direction and for stack effect. 0 if not known; a 3 m/s wind on the exit can give 3–4 Pa.</span></label><div class="pair"><input id="pext" type="number" inputmode="decimal" min="0" step="0.5" value="0" /><span>Pa</span></div></div>
+    </div>
+  </div>
+  <p class="hint" style="margin:8px 0 0" id="kNote"></p>
+</fieldset>
+
+<fieldset>
+  <legend>4. Your jet fan</legend>
+  <div class="fields fan">
+    <div class="span2"><label for="preset">Fan<span class="hint">Pick from the supplied table, or choose Custom and type your own fan.</span></label>
+      <select id="preset">
+        <option value="315">Ø315 from the supplied table</option>
+        <option value="355" selected>Ø355 from the supplied table</option>
+        <option value="400">Ø400 from the supplied table</option>
+        <option value="custom">Custom: type your fan’s data</option>
+      </select></div>
+    <div><label for="speed">Speed for this check</label>
+      <select id="speed"><option value="hi">High speed</option><option value="lo">Low speed</option></select></div>
+    <div class="span2"><label for="cfg">Configuration</label>
+      <select id="cfg">
+        <option value="0">Uni-directional · inlet bellmouth and guard, outlet deflector</option>
+        <option value="1">Truly reversible · deflector both ends</option>
+        <option value="2">Truly reversible · bellmouth and guard both ends</option>
+      </select></div>
+    <div><label for="name">Name or model<span class="hint">For your record.</span></label><input id="name" type="text" value="" placeholder="e.g. JF-355" /></div>
+  </div>
+  <p class="sub2">Required</p>
+  <div class="fields four">
+    <div><label for="T">Thrust</label><div class="pair"><input id="T" type="number" inputmode="decimal" min="0" step="0.1" /><span>N</span></div></div>
+    <div><label for="Qj">Fan airflow</label><div class="pair"><input id="Qj" type="number" inputmode="decimal" min="0" step="0.01" /><span>m³/s</span></div></div>
+    <div><label for="D">Fan diameter</label><div class="pair"><input id="D" type="number" inputmode="decimal" min="0" step="1" /><span>mm</span></div></div>
+    <div><label for="ut">Terminal velocity<span class="hint">Air speed at the end of the throw. Default 1.0.</span></label><div class="pair"><input id="ut" type="number" inputmode="decimal" min="0.05" step="0.05" value="1.0" /><span>m/s</span></div></div>
+  </div>
+  <p class="sub2">Optional</p>
+  <div class="fields four">
+    <div><label for="throw">Maker’s throw<span class="hint">To the terminal velocity. Blank to estimate.</span></label><div class="pair"><input id="throw" type="number" inputmode="decimal" min="0" step="0.5" placeholder="estimate" /><span>m</span></div></div>
+    <div><label for="Tlo">Low-speed thrust<span class="hint">For the two-speed check.</span></label><div class="pair"><input id="Tlo" type="number" inputmode="decimal" min="0" step="0.1" /><span>N</span></div></div>
+    <div><label for="kw">Motor power</label><div class="pair"><input id="kw" type="number" inputmode="decimal" min="0" step="0.01" /><span>kW</span></div></div>
+    <div><label for="lp">Sound at 3 m</label><div class="pair"><input id="lp" type="number" inputmode="decimal" min="0" step="1" /><span>dB(A)</span></div></div>
+    <div><label for="len">Overall length</label><div class="pair"><input id="len" type="number" inputmode="decimal" min="0" step="1" /><span>mm</span></div></div>
+    <div><label for="kg">Weight</label><div class="pair"><input id="kg" type="number" inputmode="decimal" min="0" step="1" /><span>kg</span></div></div>
+  </div>
+</fieldset>
+
+<details class="adv" id="adv">
+  <summary>Design assumptions · see Notes for where each comes from</summary>
+  <div class="fields three">
+    <div><label for="kv">Jet decay constant K<sub>v</sub><span class="hint">Free round jet ≈ 6. Congested hall: lower.</span></label><div class="pair"><input id="kv" type="number" inputmode="decimal" min="0.2" step="0.1" value="6" /><span>—</span></div></div>
+    <div><label for="ov">Overlap between rows<span class="hint">Next fan picks the jet up early.</span></label><div class="pair"><input id="ov" type="number" inputmode="decimal" min="0" max="90" step="5" value="20" /><span>%</span></div></div>
+    <div><label for="sw">Largest lateral spacing<span class="hint">Use your aisle pitch; guides give 8–20 m.</span></label><div class="pair"><input id="sw" type="number" inputmode="decimal" min="1" step="0.5" value="12" /><span>m</span></div></div>
+    <div><label for="K">Thrust efficiency η<span class="hint">PIARC: 0.7 touching soffit, 0.8 at ½D gap, 0.9 at 1D. Conservative: 0.5.</span></label><div class="pair"><input id="K" type="number" inputmode="decimal" min="0.1" max="1" step="0.05" value="0.8" /><span>—</span></div></div>
+    <div><label for="cfree">Entrainment constant C<span class="hint">Free jet 0.32 (Ricou and Spalding). Confined hall: lower.</span></label><div class="pair"><input id="cfree" type="number" inputmode="decimal" min="0.01" max="0.5" step="0.01" value="0.32" /><span>—</span></div></div>
+    <div><label for="rho">Air density</label><div class="pair"><input id="rho" type="number" inputmode="decimal" min="0.5" step="0.01" value="1.20" /><span>kg/m³</span></div></div>
+    <div><label for="tpa">Thrust per floor area<span class="hint">Maker rule of thumb: 5 N per 100 m².</span></label><div class="pair"><input id="tpa" type="number" inputmode="decimal" min="0" step="0.5" value="5" /><span>N/100m²</span></div></div>
+    <div><label for="sb">Standby fans</label><select id="sb"><option value="0" selected>None</option><option value="1">One (N + 1)</option><option value="row">One per fan line</option></select></div>
+  </div>
+</details>
+</section>
+
+<section class="result-col" aria-labelledby="h-out">
+<h2 id="h-out">Result <button class="link more" type="button" data-open="formulae">How it is worked out</button></h2>
+<div id="out" aria-live="polite"></div>
+</section>
+</div>
+
+<h2>Plan of the layout <span class="more" id="planlegend"></span></h2>
+<div class="planwrap"><svg id="plan" class="plan" viewBox="0 0 760 360" role="img" aria-label="Plan of the jet fan layout"></svg></div>
+
+
+<footer>This is a preliminary design. CFD simulation shall be done to verify the end result. A smoke control system needs CFD analysis to BS 7346-7. Notes, formulae, the obstruction levels, the sensitivity table, the worked example and the fan data are in the Notes and formulae bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers and are not reproduced here. These calculations are provided for preliminary design only, without warranty of any kind.</div>
+</article>
+
+<button class="pull" id="pull" type="button" aria-controls="drawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Notes and formulae">
+  <div class="bar"><h2>Notes and formulae</h2><button class="close" type="button">Close</button></div>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="t-formulae" data-tab="formulae" aria-controls="tab-formulae">Formulae</button>
+    <button role="tab" type="button" id="t-kguide" data-tab="kguide" aria-controls="tab-kguide">Obstruction K</button>
+    <button role="tab" type="button" id="t-coef" data-tab="coef" aria-controls="tab-coef">K, K<sub>v</sub>, η and C</button>
+    <button role="tab" type="button" id="t-sens" data-tab="sens" aria-controls="tab-sens">What moves the count</button>
+    <button role="tab" type="button" id="t-wb" data-tab="wb" aria-controls="tab-wb">Worked example</button>
+    <button role="tab" type="button" id="t-data" data-tab="data" aria-controls="tab-data">Fan data</button>
+    <button role="tab" type="button" id="t-notes" data-tab="notes" aria-controls="tab-notes">Notes</button>
+  </div>
+  <div class="body">
+    <div role="tabpanel" id="tab-formulae" aria-labelledby="t-formulae">
+      <p class="lead">Worked with the values on the sheet. The figures update as you type.</p>
+      <div id="worked"></div>
+    </div>
+
+    <div role="tabpanel" id="tab-kguide" aria-labelledby="t-kguide" hidden>
+      <h3>Obstruction levels</h3>
+      <p>Pick the one level that best describes the space as a whole, from the inlet to the extract. K is the pressure loss of the obstructions as a multiple of the dynamic pressure ½ρv², at the mean air speed in the full cross-section. The sheet adds 0.5 for the inlet and 1.0 for the discharge.</p>
+      <div class="scroll"><table class="ref acc" id="ktable">
+        <thead><tr><th>Level</th><th>K range (top used)</th><th>What it looks like</th><th>About this share of the cross-section blocked</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="refnote">The levels and K ranges are a design allowance; no published table of them was found. The last column checks them against the loss of a thin grid of sharp-edged openings (Fried and Idelchik, Diagram 8-1), K = (1 + 0.707 √(1 − f) − f)² / f², where f is the open share. Use it as a guide: look along the space and judge roughly how much of the cross-section the obstructions block.</p>
+      <h3>Choosing the level</h3>
+      <ul class="tight">
+        <li>Where the space is not the same throughout, choose the level of the most obstructed part, or use Custom K.</li>
+        <li>In a very long space, a higher K within the range is more appropriate than in a short one.</li>
+        <li>The sheet uses the top of each range, to be on the safe side. Where air can flow freely over the top of the obstructions, the real loss is lower and you may type a smaller K.</li>
+        <li>Inlet: K 0.5 sharp-edged, 0.1 bellmouthed. Discharge with no recovery: K 1.0 (PIARC). Louvres or screens in the path: add the maker’s coefficient, or use sheet XI.</li>
+      </ul>
+    </div>
+
+    <div role="tabpanel" id="tab-coef" aria-labelledby="t-coef" hidden>
+      <h3>How accurate the coefficients are</h3>
+      <p>None of the four coefficients is a property of the fan alone. Each depends on the space, so each is a judgement with a range. The table gives the range found in the literature and what to do about it. The count moves most with K<sub>v</sub>, the jet decay constant, because the throw is proportional to it.</p>
+      <div class="scroll"><table class="ref acc">
+        <thead><tr><th>Coefficient</th><th>Default</th><th>What it is and the published range</th><th>How far to trust it</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td>K<sub>v</sub> · jet decay</td><td>6</td><td>Centre-line speed of a round jet, u = K<sub>v</sub> v<sub>j</sub> D / x. Measured for a free round jet in still air: 5.8 (Hussein, Capp and George, 1994) to 6.1 (Panchapakesan and Lumley, 1993). A jet fan just under the soffit clings to it and decays more slowly: ASHRAE Fundamentals (space air diffusion) treats an attached jet as half of a free jet from twice the outlet area, about √2 longer throw. Beams, ducts, racking and a cross-draught shorten it; values of 1 to 4 are used as allowances.</td><td>Good for a free jet. In a real hall it is uncertain by a factor of 2 or more, and the throw and row count change in proportion.</td><td>Use the maker’s measured throw to your terminal velocity where it is published, and enter it as the throw. Otherwise run the sensitivity tab at K<sub>v</sub> = 2, 4 and 6 and keep the count that is safe. Confirm with CFD.</td></tr>
+          <tr><td>K · obstruction loss</td><td>by level</td><td>Pressure loss of everything in the airway as a multiple of ½ρv² at the bulk speed. No published values exist for halls; the levels are design allowances checked against the loss of a grid of sharp-edged openings (Idelchik and Fried, Diagram 8-1).</td><td>Order of magnitude only, ±50 % or more.</td><td>Matters only when the pressure check sets the count. Estimate the blocked share of the cross-section, read K from the Obstruction K tab, and test the next level up.</td></tr>
+          <tr><td>η · thrust efficiency</td><td>0.8</td><td>Thrust lost because the jet rubs on the soffit and walls. PIARC: 0.7 touching the soffit, 0.8 at ½D gap, 0.9 at 1D gap.</td><td>About ±10 % for a clear soffit. Lower where the jet strikes a beam within 10–20 m of the fan.</td><td>Use 0.5 for a cautious hand check, or the maker’s installation factor.</td></tr>
+          <tr><td>C · entrainment</td><td>0.32</td><td>A free jet carries C × x / D times its own flow at distance x. 0.32 is the measured value for a round jet in unbounded surroundings (Ricou and Spalding, 1961) and holds beyond about 20 diameters.</td><td>Good for a free jet, too high in a hall: the jet cannot draw more air than the room supplies (confined jet). The sheet caps the carried flow at the cross-section moving at the terminal velocity, which usually governs.</td><td>Keep 0.32 with the cap, or enter a lower value. The hand calculation in the worked example used 0.05, a heavy allowance that makes this check govern more often.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="hint" style="margin-top:8px">Thrust itself is measured to ISO 13350. The throw is not part of that test; ask the maker how their published throw was found and to what end velocity.</p>
+    </div>
+    <div role="tabpanel" id="tab-sens" aria-labelledby="t-sens" hidden>
+      <p>Each line changes one assumption and keeps the rest. The highlighted line is your design.</p>
+      <div class="scroll"><table class="sens" id="sens"></table></div>
+    </div>
+
+    <div role="tabpanel" id="tab-wb" aria-labelledby="t-wb" hidden>
+      <h3>Worked example: an obstructed hall</h3>
+      <p>A hand calculation for a hall 100 × 24 × 6 m, checked with this sheet. Inputs: Q = 23.0588 m³/s, ρ = 1.225 kg/m³, K = 20 in total (18.5 obstruction + 1.5 inlet and discharge), 91 N at η = 0.5, 3.08 m³/s, Ø400, terminal velocity 0.3 m/s, K<sub>v</sub> = 1, no overlap, 12 m between fan lines, no extract fan and no louvres. The link above the inputs loads the same case.</p>
+      <div class="scroll"><table class="ref acc wb" id="wbt"></table></div>
+      <h3>What the check shows</h3>
+      <ol class="steps">
+        <li><b>The flow per fan is Q<sub>j</sub> × ER, not Q<sub>j</sub> × (1 + ER).</b> 3.08 × 4.104 = 12.64 m³/s. The entrainment law gives the total flow in the jet at distance x as a multiple of the fan’s own flow, so ER is not added to 1.</li>
+        <li><b>The reach uses K<sub>v</sub> = 1.</b> 24.62 × 0.4 ÷ 0.3 = 32.83 m. A free round jet decays with K<sub>v</sub> ≈ 6, so the hand calculation allows for a jet that dies away six times faster, a heavy allowance for congestion. Record the reason for the value chosen.</li>
+        <li><b>Why a maker’s program may give 6.</b> 100 m ÷ 32.83 m = 3.05 rows along the hall, rounded up to 4. A reach of 33.4 m, only 2 % longer, gives 3 × 2 = 6. The two answers sit either side of a step; the maker’s measured throw is very likely longer than the K<sub>v</sub> = 1 estimate. Ask the maker for the throw to 0.3 m/s and enter it as Maker’s throw.</li>
+        <li><b>Momentum alone needs only 1 or 2 fans.</b> 0.31 Pa × 144 m² ≈ 45 N, met by one fan at 45.5 N effective. The count is set by throw and lateral spacing (Method 1), not by the obstruction loss; K matters less than it seems unless the hall is very congested.</li>
+      </ol>
+    </div>
+
+    <div role="tabpanel" id="tab-data" aria-labelledby="t-data" hidden>
+      <p>The presets come from the table you supplied. The fan you choose is marked. Two figures are high speed / low speed.</p>
+      <div class="scroll"><table class="ref" id="fantable">
+        <thead><tr><th>Ø</th><th>Thrust<br>N</th><th>Volume<br>m³/s</th><th>Lw<sub>A</sub><br>dB</th><th>Lp<sub>A</sub> at 3 m<br>dB</th><th>Speed<br>rpm</th><th>Power<br>kW</th><th>Full load<br>A</th><th>Starting<br>A</th><th>C′<br>mm</th><th>Length, uni / rev / rev BM<br>mm</th><th>Weight<br>kg</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="hint" style="margin-top:8px">Temperature rating 200 °C for 2 hours, 300 °C for 2 hours or 400 °C for 2 hours.</p>
+    </div>
+
+    <div role="tabpanel" id="tab-notes" aria-labelledby="t-notes" hidden>
+      <h3>How jet fans ventilate a space</h3>
+      <p>The extract fans at one end take out the airflow the space needs; make-up air comes in at the other end. On its own, that air would take the easiest path and leave corners and bays stagnant. Jet fans fix this. Each one blows a fast jet of air, about 20 m/s at the fan, along the ceiling. The jet slows and widens as it drags the surrounding air with it, and hands that air on to the next fan downstream.</p>
+      <svg class="howjet" viewBox="0 0 640 170" role="img" aria-label="Two jet fans in a row: each jet widens and slows; the next fan sits before the first jet dies away">
+        <rect x="8" y="20" width="624" height="132" fill="#fbf8f1" stroke="#1a1714"/>
+        <path d="M78,46 L330,30 L330,94 L78,58 Z" fill="#5b8fb0" fill-opacity=".28"/>
+        <path d="M330,46 L600,30 L600,94 L330,58 Z" fill="#5b8fb0" fill-opacity=".28"/>
+        <rect x="40" y="46" width="38" height="12" fill="#1a1714"/><rect x="292" y="46" width="38" height="12" fill="#1a1714"/>
+        <text x="59" y="40" text-anchor="middle" font-size="11">Fan 1</text><text x="311" y="40" text-anchor="middle" font-size="11">Fan 2</text>
+        <text x="190" y="80" text-anchor="middle" font-size="11">jet slows from ~20 m/s</text>
+        <line x1="78" y1="118" x2="378" y2="118" stroke="#1a1714" marker-end="url(#ha)" marker-start="url(#ha)"/>
+        <text x="228" y="112" text-anchor="middle" font-size="11.5">throw: jet slows to the terminal velocity</text>
+        <line x1="59" y1="140" x2="311" y2="140" stroke="#8a2a16" marker-end="url(#ha)" marker-start="url(#ha)"/>
+        <text x="185" y="134" text-anchor="middle" font-size="11.5" fill="#8a2a16">row spacing = throw less overlap</text>
+        <defs><marker id="ha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a1714"/></marker></defs>
+      </svg>
+      <h3>The two methods</h3>
+      <p><b>Method 1 · throw and coverage.</b> Rows sit one throw apart along the airflow, less an overlap; fan lines sit no more than the largest lateral spacing apart across it. This sets where the fans must be so that every part of the space is swept. A maker’s rule of thumb of thrust per floor area is shown alongside as a check.</p>
+      <p><b>Method 2 · pressure loss and induced airflow.</b> Two further tests for a space that is full of equipment:</p>
+      <ol class="steps">
+        <li><b>Momentum.</b> The obstructions resist the airflow with Δp = K<sub>total</sub> × ½ρv². The fans together must push at least Δp × A, each giving η × T × (1 − v / v<sub>j</sub>).</li>
+        <li><b>Airflow carried.</b> A free jet carries 0.32 × x / D times its own flow at distance x (Ricou and Spalding). In a room it cannot carry more than its share of the cross-section moving at the terminal velocity. The fan lines together must carry at least Q.</li>
+        <li><b>Jet fans alone.</b> With no extract fan, the fans must push Q through the obstructions and the openings and against wind and stack pressure. The sheet also solves for the airflow the installed fans actually drive. Opening losses are converted to the hall speed: K (A / A<sub>opening</sub>)², so small openings dominate.</li>
+      </ol>
+      <p><b>The layout</b> takes the rows from Method 1 and adds fan lines until every test is met. The check that needs most fans is marked “sets the count”.</p>
+      <h3>How reliable each assumption is</h3>
+      <p>Checked on 8 October 2026 against the sources listed below. The two that most affect the count are the throw and the lateral spacing.</p>
+      <div class="scroll"><table class="ref acc">
+        <thead><tr><th>Value</th><th>Default</th><th>Source</th><th>Confidence</th><th>Effect on the count</th></tr></thead>
+        <tbody>
+          <tr><td>Air change rates</td><td>6 and 10 /h</td><td>Approved Documents F and B, as reported by CIBSE Journal</td><td><span class="cf hi">Confirmed</span></td><td>Sets the extract airflow</td></tr>
+          <tr><td>Jet decay constant K<sub>v</sub></td><td>6</td><td>Measured for free round jets, 5.8–6.1 (Pope, <i>Turbulent Flows</i>). An attached jet under the soffit throws further; about 1 allows for a heavily obstructed space. See the K, K<sub>v</sub>, η and C tab</td><td><span class="cf hi">Confirmed</span> for a free jet; <span class="cf lo">not sourced</span> for halls</td><td>High: sets the throw and so the rows</td></tr>
+          <tr><td>Terminal velocity</td><td>1.0 m/s</td><td>Assumed for car parks. Sanitary ventilation aims at 0.2–0.3 m/s mean (Fire Science Show, ep. 192); 0.3 for an obstructed hall</td><td><span class="cf mid">Checked against one maker</span></td><td>High: halving it doubles the estimated throw</td></tr>
+          <tr><td>Overlap</td><td>20%</td><td>Assumed</td><td><span class="cf mid">Checked against one maker</span></td><td>High: changes row spacing directly</td></tr>
+          <tr><td>Largest lateral spacing</td><td>12 m</td><td>One fan line per aisle (maker guide); 8–12 m (Fire Science Show); 10 vs 15 m example (CIBSE Journal)</td><td><span class="cf mid">Range 8–20 m</span></td><td>High: sets the fan lines</td></tr>
+          <tr><td>Thrust per floor area</td><td>5 N / 100 m²</td><td>One maker’s sizing guide (rule of thumb)</td><td><span class="cf mid">Single source</span></td><td>Check only</td></tr>
+          <tr><td>Thrust efficiency η</td><td>0.8</td><td>PIARC: 0.7 jet touching wall and ceiling, 0.8 at ½D gap, 0.9 at 1D gap. 0.5 for a conservative hand check</td><td><span class="cf hi">Confirmed</span> for tunnels</td><td>Method 2 momentum only</td></tr>
+          <tr><td>Obstruction K by category</td><td>A 0.5–1.5 … D 8–15</td><td>Design allowance; cross-checked with Fried and Idelchik grid loss</td><td><span class="cf mid">Consistent, not published</span></td><td>Low unless very congested</td></tr>
+          <tr><td>Inlet and discharge K</td><td>0.5 and 1.0</td><td>PIARC Road Tunnels Manual, report IV.2</td><td><span class="cf hi">Confirmed</span></td><td>Very low</td></tr>
+          <tr><td>Airflow carried</td><td>C x / D with C = 0.32, capped at A u<sub>t</sub></td><td>Free-jet entrainment 0.32 (Ricou and Spalding, 1961); cap from continuity</td><td><span class="cf mid">Free jet confirmed; cap is a simple bound</span></td><td>Low to medium: supporting check</td></tr>
+          <tr><td>Wind and stack allowance</td><td>0 Pa</td><td>User input; a 3 m/s wind gives about 3–4 Pa on the exit</td><td><span class="cf lo">Site specific</span></td><td>High when jet fans alone move the air</td></tr>
+        </tbody>
+      </table></div>
+      <p style="margin-top:10px"><b>How close is the throw estimate?</b> Compared with one maker’s published guidance, with a 1.0 m/s terminal velocity and 20% overlap: a 98 N fan gives about 49 m row spacing against the maker’s 50 m; a 28 N fan about 26 m against 30 m. Downstand beams, ramps, parked cars and equipment shorten real throws considerably.</p>
+      <h3>Limits</h3>
+      <p>This is a preliminary design. CFD simulation shall be done to verify the end result. In particular:</p>
+      <ul class="tight">
+        <li>Jets will not follow a straight line through dense equipment. Dead zones behind obstructions and air short-circuiting over the top of them are only found by CFD.</li>
+        <li>Keep the jet clear of obstructions for the first 10 to 20 m: a jet that hits a beam or duct close to the fan loses much of its thrust.</li>
+        <li>A smoke control system, one that keeps a clear path for firefighters, needs CFD analysis to BS 7346-7. Truly reversible fans can have less thrust in reverse; use the maker’s figure. Check the fan’s temperature rating against the fire strategy.</li>
+        <li>Also check noise, electrical load, controls, structural support, maintenance access and safe isolation.</li>
+      </ul>
+      <h3>Sources</h3>
+      <ul class="tight src">
+        <li>Approved Documents B and F rates: CIBSE Journal, “Driving home fire safety”.</li>
+        <li>PIARC Road Tunnels Manual, 1996 report, section IV.2: installation factor, jet fan efficiencies, entry and exit losses.</li>
+        <li>I. E. Idelchik and E. Fried, <i>Flow Resistance: a Design Guide for Engineers</i>, 1989, Diagram 8-1, as tabulated by design1st, “Air flow resistance of perforated plates”.</li>
+        <li>F. P. Ricou and D. B. Spalding, “Measurements of entrainment by axisymmetrical turbulent jets”, <i>Journal of Fluid Mechanics</i>, 1961.</li>
+        <li>Jet decay constant: University of Iowa, Free Shear Flows lecture notes, after Pope, <i>Turbulent Flows</i>.</li>
+        <li>H. J. Hussein, S. P. Capp and W. K. George, “Velocity measurements in a high-Reynolds-number, momentum-conserving, axisymmetric, turbulent jet”, <i>Journal of Fluid Mechanics</i>, 1994; N. R. Panchapakesan and J. L. Lumley, <i>Journal of Fluid Mechanics</i>, 1993.</li>
+        <li>ASHRAE Handbook, Fundamentals, chapter on space air diffusion: attached and free jets.</li>
+        <li>Fire Science Show, episode 192, “Jet fan systems for car parks”, 2025.</li>
+        <li>Thrust per area, laneway placement and spacing: Fantech, “Fan sizing and placement”, and JetVent HP catalogue.</li>
+      </ul>
+    </div>
+  </div>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+function num(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : null; }
+function numOr(id, d) { const v = num(id); return v == null ? d : v; }
+const f = (x, d) => Number.isFinite(x) ? Number(x).toFixed(d) : "—";
+const fmt = x => Math.round(x).toLocaleString("en-GB");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+function answer(title, value, note, cls) {
+  return `<div class="answer${cls ? " " + cls : ""}"><div class="k">${title}</div><div class="v">${value}</div><div class="u">${note}</div></div>`;
+}
+
+/* Supplied fan table: [high, low] pairs */
+const FANS = {
+  "315": { T:[22,5.7], Q:[1.2,0.61], Lw:[80,62], Lp:[62,44], rpm:[2900,1470], kW:[0.7,0.09], A:[1.85,0.58], S:[13,2.94], C:365, len:[2195,2299,2091], kg:[86,87,84] },
+  "355": { T:[38,9.8], Q:[1.9,0.97], Lw:[84,66], Lp:[66,48], rpm:[2850,1450], kW:[1.05,0.14], A:[2.4,0.8], S:[13,2.94], C:405, len:[2193,2295,2091], kg:[90,91,88] },
+  "400": { T:[57,14.4], Q:[2.43,1.22], Lw:[87,68], Lp:[69,50], rpm:[2920,1470], kW:[1.35,0.17], A:[3.5,1.12], S:[19.2,4.59], C:450, len:[2292,2393,2191], kg:[111,112,109] }
+};
+$("fantable").querySelector("tbody").innerHTML = Object.entries(FANS).map(([d, r]) =>
+  `<tr data-d="${d}"><td>${d}</td><td class="num">${r.T.join(" / ")}</td><td class="num">${r.Q.join(" / ")}</td><td class="num">${r.Lw.join(" / ")}</td><td class="num">${r.Lp.join(" / ")}</td><td class="num">${r.rpm.join(" / ")}</td><td class="num">${r.kW.join(" / ")}</td><td class="num">${r.A.join(" / ")}</td><td class="num">${r.S.join(" / ")}</td><td class="num">${r.C}</td><td class="num">${r.len.join(" / ")}</td><td class="num">${r.kg.join(" / ")}</td></tr>`).join("");
+
+function fillPreset() {
+  const p = $("preset").value, custom = p === "custom";
+  $("speed").disabled = custom; $("cfg").disabled = custom;
+  document.querySelectorAll("#fantable tbody tr").forEach(tr => tr.classList.toggle("on", tr.dataset.d === p));
+  if (custom) { if (/^Ø\d+ (high|low)/.test($("name").value)) $("name").value = ""; return; }
+  const r = FANS[p], i = $("speed").value === "hi" ? 0 : 1, c = Number($("cfg").value);
+  $("T").value = r.T[i]; $("Qj").value = r.Q[i]; $("D").value = p;
+  $("Tlo").value = i === 0 ? r.T[1] : ""; $("kw").value = r.kW[i]; $("lp").value = r.Lp[i];
+  $("len").value = r.len[c]; $("kg").value = r.kg[c];
+  if (!$("name").value || /^Ø\d+ /.test($("name").value)) $("name").value = "Ø" + p + " " + (i === 0 ? "high" : "low") + " speed";
+}
+["T","Qj","D","len","kg","kw","lp","Tlo"].forEach(id => $(id).addEventListener("input", () => {
+  if ($("preset").value !== "custom") { $("preset").value = "custom"; fillPreset(); }
+}));
+$("preset").addEventListener("change", () => { fillPreset(); calc(); });
+$("speed").addEventListener("change", () => { fillPreset(); calc(); });
+$("cfg").addEventListener("change", () => { fillPreset(); calc(); });
+function setBasis(b) {
+  $("basis").value = b;
+  if (b === "ach10") $("ach").value = 10; if (b === "ach6") $("ach").value = 6;
+  $("achwrap").hidden = b === "flow"; $("flowwrap").hidden = b !== "flow";
+  $("ach").readOnly = b === "ach10" || b === "ach6";
+}
+$("basis").addEventListener("change", () => { setBasis($("basis").value); calc(); });
+$("ach").addEventListener("input", () => { if ($("basis").value !== "ach" && $("basis").value !== "flow") $("basis").value = "ach"; });
+
+/* Obstruction level */
+const K_IN = 0.5, K_OUT = 1.0, C_FREE = 0.32;
+const CATS = {
+  A: { name:"Light", desc:"Columns, beams, light structure", lo:0.5, hi:1.5, k:1.5 },
+  B: { name:"Moderate", desc:"Repeated obstructions that deflect the flow", lo:1, hi:3, k:3.0 },
+  C: { name:"Dense", desc:"Partial blockage; behaves like a grille", lo:3, hi:8, k:8.0 },
+  D: { name:"Very congested", desc:"Packed plant or machinery; behaves like a louvre", lo:8, hi:15, k:15.0 }
+};
+const kGrid = fOpen => fOpen <= 0 ? Infinity : Math.pow(1 + 0.707 * Math.sqrt(1 - fOpen) - fOpen, 2) / (fOpen * fOpen);
+function blockedFor(K) { let lo = 0.01, hi = 1; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (kGrid(m) > K) lo = m; else hi = m; } return 1 - (lo + hi) / 2; }
+$("ktable").querySelector("tbody").innerHTML = Object.entries(CATS).map(([c, r]) =>
+  `<tr><td>${c} · ${r.name}</td><td>${r.lo} – ${r.hi}${c === "D" ? "+" : ""}</td><td>${r.desc}</td><td>${Math.round(100 * blockedFor(r.lo))} – ${Math.round(100 * blockedFor(r.hi))} %</td></tr>`).join("");
+function setObs(v, k) {
+  $("obs").value = v;
+  if (v === "0") $("Kobs").value = 0; else if (CATS[v]) $("Kobs").value = k != null ? k : CATS[v].k; else if (k != null) $("Kobs").value = k;
+  $("Kobs").readOnly = v === "0";
+  $("kHint").textContent = CATS[v] ? `Range ${CATS[v].lo}–${CATS[v].hi}${v === "D" ? "+" : ""}; the top of the range is used. You may change it.` : v === "0" ? "No obstruction loss." : "Type your own value.";
+}
+$("obs").addEventListener("change", () => { setObs($("obs").value); calc(); });
+$("Kobs").addEventListener("input", () => {
+  const v = $("obs").value, k = num("Kobs");
+  if (CATS[v] && k != null && (k < CATS[v].lo || k > CATS[v].hi * (v === "D" ? 2 : 1))) { $("obs").value = "custom"; setObs("custom"); }
+});
+
+/* ---------- core calculation (pure) ---------- */
+function compute(p) {
+  const r = { ok:false };
+  const { L, W, H } = p;
+  if (!(L > 0 && W > 0 && H > 0)) { r.msg = "Enter the length, width and clear height of the space."; return r; }
+  if (!(p.T > 0 && p.Qj > 0 && p.D > 0)) { r.msg = "Enter the fan’s thrust, airflow and diameter, or pick a fan from the table."; return r; }
+  if (!(p.Q > 0)) { r.msg = "Enter the airflow the space needs."; return r; }
+  const A = W * H, V = A * L, Q = p.Q, v = Q / A, ach = Q * 3600 / V, rho = p.rho;
+  const Dm = p.D / 1000, Aj = Math.PI * Dm * Dm / 4, vj = p.Qj / Aj;
+  // Method 1: throw and coverage
+  const tEst = (2 * p.kv / Math.sqrt(Math.PI)) * Math.sqrt(p.T / rho) / p.ut;
+  const thr = p.throwM > 0 ? p.throwM : tEst;
+  const ov = Math.min(Math.max(p.ov, 0), 90) / 100, sL = thr * (1 - ov), rowsRaw = L / sL;
+  const rows = Math.max(1, Math.ceil(rowsRaw - 1e-9));
+  const colsSp = Math.max(1, Math.ceil(W / p.sw - 1e-9));
+  const N1 = rows * colsSp;
+  const floorA = L * W, Ntpa = Math.max(1, Math.ceil(p.tpa * floorA / 100 / p.T - 1e-9));
+  // Method 2: pressure balance and airflow carried
+  const qd = 0.5 * rho * v * v, jetOnly = p.drive === "jet";
+  const Kobs = Math.max(p.Kobs || 0, 0);
+  const Ain = jetOnly && p.Ain > 0 ? Math.min(p.Ain, A) : A, Aout = jetOnly && p.Aout > 0 ? Math.min(p.Aout, A) : A;
+  const KinH = (p.Kin != null ? p.Kin : K_IN) * Math.pow(A / Ain, 2), KoutH = (p.Kout != null ? p.Kout : K_OUT) * Math.pow(A / Aout, 2);
+  const pext = jetOnly ? Math.max(p.pext || 0, 0) : 0;
+  const K = jetOnly ? Kobs + KinH + KoutH : Kobs;
+  const dpObs = Kobs * qd, dpIn = jetOnly ? KinH * qd : 0, dpOut = jetOnly ? KoutH * qd : 0;
+  const dp = K * qd + pext, Freq = dp * A;
+  const dpOpenExt = (K_IN * Math.pow(A / Ain, 2) + K_OUT * Math.pow(A / Aout, 2)) * qd;
+  const Fper = p.eta * p.T * Math.max(1 - v / vj, 0);
+  const Nmom = Freq <= 0 ? 1 : (Fper > 0 ? Math.max(1, Math.ceil(Freq / Fper - 1e-6)) : Infinity);
+  // airflow carried: free jet, capped by the share of the section at the terminal velocity
+  const Cf = p.cfree > 0 ? p.cfree : C_FREE, Qfree = Cf * thr / Dm * p.Qj, Qcap = A * p.ut;
+  const carried = c => c * Math.min(Qfree, (W / c) * H * p.ut);
+  const flowFail = Qcap < Q - 1e-9;
+  let colsFlow = 1;
+  if (!flowFail) { while (carried(colsFlow) < Q - 1e-9 && colsFlow < 500) colsFlow++; }
+  const Nflow = rows * colsFlow;
+  // Layout
+  let cols = colsSp, gov = "cover";
+  if (!flowFail && colsFlow > cols) { cols = colsFlow; gov = "flow"; }
+  if (Number.isFinite(Nmom) && Nmom > rows * cols) { cols = Math.ceil(Nmom / rows); gov = "momentum"; }
+  const N = rows * cols, Nsb = p.sb === "1" ? 1 : p.sb === "row" ? cols : 0;
+  const N2 = Math.max(Number.isFinite(Nmom) ? Nmom : 0, Nflow);
+  const tpaGiven = N * p.T / floorA * 100;
+  // airflow the installed fans drive, jet fans alone
+  let Qdrive = null;
+  if (jetOnly) {
+    const push = vv => N * p.eta * p.T * Math.max(1 - vv / vj, 0) / A - (K * 0.5 * rho * vv * vv + pext);
+    if (push(0) <= 0) Qdrive = 0;
+    else { let lo = 0, hi = vj; for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2; if (push(m) > 0) lo = m; else hi = m; } Qdrive = lo * A; }
+  }
+  return Object.assign(r, { ok:true, A, V, Q, v, ach, rho, Aj, vj, tEst, thr, ov, sL, rowsRaw, rows, colsSp, N1, floorA, Ntpa,
+    Kobs, K, KinH, KoutH, Ain, Aout, pext, qd, dpObs, dpIn, dpOut, dpOpenExt, jetOnly, dp, Freq, Fper, Nmom, Qfree, Qcap, flowFail, colsFlow, Nflow, N2, Qdrive, Cf, Qcarried:carried(cols), cols, gov, N, Nsb, sx:L / rows, sy:W / cols, tpaGiven, tpaOK:tpaGiven >= p.tpa - 1e-9 });
+}
+
+function readInputs() {
+  const V = (num("L") || 0) * (num("W") || 0) * (num("H") || 0);
+  let Q;
+  if ($("basis").value === "flow") { const raw = num("flow") || 0, u = $("flowu").value; Q = u === "m3s" ? raw : u === "ls" ? raw / 1000 : raw / 3600; }
+  else Q = (num("ach") || 0) * V / 3600;
+  return { L:num("L"), W:num("W"), H:num("H"), Q, T:num("T"), Qj:num("Qj"), D:num("D"), throwM:num("throw"),
+    rho:num("rho") || 1.2, ut:num("ut") || 1, kv:num("kv") || 6, ov:numOr("ov", 20), sw:num("sw") || 12, eta:num("K") || 0.8, cfree:num("cfree") || C_FREE,
+    Kobs:numOr("Kobs", 0), tpa:numOr("tpa", 5), sb:$("sb").value,
+    drive:$("drive").value, Ain:num("Ain"), Kin:numOr("Kin", K_IN), Aout:num("Aout"), Kout:numOr("Kout", K_OUT), pext:numOr("pext", 0) };
+}
+
+function calc() {
+  const p = readInputs(), r = compute(p), out = $("out");
+  if (!r.ok) { out.innerHTML = answer("Layout", "—", r.msg, ""); $("plan").innerHTML = ""; $("worked").innerHTML = "<p>Waiting for the inputs.</p>"; $("sens").innerHTML = ""; return; }
+  $("openWrap").hidden = !r.jetOnly;
+  $("kNote").textContent = r.jetOnly
+    ? `At ${f(r.v, 3)} m/s: obstruction ${f(r.dpObs, 3)} Pa + inlet ${f(r.dpIn, 3)} Pa + exit ${f(r.dpOut, 3)} Pa + wind and stack ${f(r.pext, 2)} Pa = ${f(r.dp, 3)} Pa for the jet fans to overcome.`
+    : `At ${f(r.v, 3)} m/s the obstruction loss is ${f(r.dpObs, 3)} Pa; the jet fans push through it. The extract fans overcome the inlet and exit losses.`;
+  const name = $("name").value.trim() || "Jet fan";
+  const Tlo = num("Tlo"), thrLo = Tlo > 0 ? (p.throwM > 0 ? p.throwM * Math.sqrt(Tlo / p.T) : r.tEst * Math.sqrt(Tlo / p.T)) : null;
+  const kw = num("kw"), lp = num("lp"), kg = num("kg");
+  const govTxt = { cover:"Set by check 1, throw and coverage", flow:"Set by check 2, airflow carried", momentum:r.jetOnly ? "Set by check 2, pressure balance" : "Set by check 2, pressure loss" }[r.gov];
+
+  const checks = [];
+  if (r.gov === "momentum") checks.push(["warn", `Pressure ${r.jetOnly ? "balance" : "loss"} sets the count: ${r.Nmom} fans are needed to push ${f(r.Q, 1)} m³/s ${r.jetOnly ? "through the space, its openings and against the outside pressure" : "through the obstructions"}, more than throw and spacing need. Fan lines were added.`]);
+  if (r.gov === "flow") checks.push(["warn", `Airflow carried sets the count: ${r.colsFlow} fan lines are needed for the jets to carry ${f(r.Q, 2)} m³/s at the end of their throw.`]);
+  if (r.rows > 1) {
+    const need = p.L / ((r.rows - 1) * (1 - r.ov)), pct = need / r.thr - 1;
+    if (pct < 0.15) checks.push(["warn", `The count sits on a step: a throw of ${f(need, 1)} m, ${f(pct * 100, 0)} % longer, needs one row fewer (${(r.rows - 1) * r.cols} fans). Get the maker’s throw to a terminal velocity of ${p.ut} m/s.`]);
+  }
+  if (!r.tpaOK) checks.push(["warn", `Installed thrust is ${f(r.tpaGiven, 1)} N per 100 m² of floor, below the ${p.tpa} N rule of thumb (${r.Ntpa} fans). Consider a larger fan or more fans.`]);
+  if (r.sy > 15) checks.push(["warn", `Lateral spacing ${f(r.sy, 1)} m is wider than 15 m. Expect slow strips between lines; consider more columns.`]);
+  if (thrLo != null && thrLo < r.sx) checks.push(["warn", `At low speed the jets throw about ${f(thrLo, 0)} m, less than the ${f(r.sx, 1)} m row spacing. Normal ventilation at low speed may leave dead zones.`]);
+  if (!(p.throwM > 0)) checks.push(["", `Throw is estimated with K<sub>v</sub> = ${p.kv} (${f(r.tEst, 1)} m to a terminal velocity of ${p.ut} m/s). Use the maker’s throw if published.`]);
+  if (r.flowFail) checks.push(["warn", `The jets cannot carry ${f(r.Q, 1)} m³/s once they slow to ${p.ut} m/s: the whole section at that speed is only ${f(r.Qcap, 1)} m³/s. The terminal velocity must be above the bulk speed of ${f(r.v, 2)} m/s.`]);
+  if (!(p.throwM > 0) && p.ut < 0.99 && r.tEst > 5 * p.H) checks.push(["warn", `The estimated throw, ${f(r.tEst, 0)} m, is more than 5 times the clear height. The jet fills the height long before that and is no longer a free jet, and the estimate has only been checked against maker data at 1.0 m/s. Use the maker’s throw to ${p.ut} m/s.`]);
+  if (r.jetOnly && r.Qdrive != null && r.Qdrive < r.Q - 1e-6) checks.push(["warn", `The ${r.N} fans drive only ${f(r.Qdrive, 1)} m³/s against the losses entered.`]);
+  if (r.jetOnly && r.dpOut + r.dpIn > 2 * r.dpObs && r.dpIn + r.dpOut > 0.05) checks.push(["", `The openings take ${f(100 * (r.dpIn + r.dpOut) / r.dp, 0)} % of the pressure; larger free areas cut the fan count most.`]);
+  if (r.v / r.vj > 0.2) checks.push(["warn", `Bulk velocity is ${f(100 * r.v / r.vj, 0)}% of the jet velocity; jets lose effect at high bulk velocity.`]);
+
+  const cmpRow = (lab, what, n, on, chk) => `<tr${on ? ' class="on"' : ""}><td>${lab}</td><td>${what}</td><td class="n">${n}</td><td>${on ? "sets the count" : chk}</td></tr>`;
+  out.innerHTML =
+    `<div class="answer good big"><div class="k">Jet fans needed · ${esc(name)}</div>` +
+    `<div class="rc"><div><span class="n">${r.rows}</span><span class="t">rows<br>along the length</span></div><span class="x">×</span><div><span class="n">${r.cols}</span><span class="t">columns<br>across the width</span></div><span class="x">=</span><div><span class="n">${r.N}</span><span class="t">jet fans<br>duty</span></div></div>` +
+    `<div class="u">Rows at ${f(r.sx, 1)} m centres along the airflow; columns at ${f(r.sy, 1)} m centres across it.${r.Nsb ? ` Add ${r.Nsb} standby: <b>${r.N + r.Nsb} fans installed</b>.` : ""}</div><span class="gov">${govTxt}</span></div>` +
+    `<h3 style="margin:16px 0 4px">Checks on the number of fans</h3><p class="hint" style="margin:0 0 6px">The layout must pass every check. The one needing most fans sets the count.</p>` +
+    `<div class="scroll"><table class="sens cmp2"><thead><tr><th>Check</th><th>What it asks</th><th>Fans needed</th><th>Result</th></tr></thead><tbody>` +
+      cmpRow("1 · Throw and coverage", `Enough fans to sweep the whole floor? ${r.rows} rows × ${r.colsSp} lines at ≤ ${p.sw} m`, r.N1, r.gov === "cover", `OK with ${r.N}`) +
+      (r.jetOnly
+        ? cmpRow("2 · Pressure balance", `Can the fans drive ${f(r.Q, 1)} m³/s through the space and its openings? ${f(r.Freq, 1)} N needed, ${f(r.Fper, 1)} N per fan`, r.Nmom, r.gov === "momentum", `drives ${f(r.Qdrive, 1)} m³/s`)
+        : cmpRow("2 · Pressure loss", `Can the fans push the air past the obstructions? ${f(r.Freq, 1)} N needed, ${f(r.Fper, 1)} N per fan`, r.Nmom, r.gov === "momentum", `OK with ${r.N}`)) +
+      cmpRow("2 · Airflow carried", r.flowFail ? `Do the jets carry enough air? Not possible at ${p.ut} m/s` : `Do the jets carry enough air? ${f(r.Qcarried, 1)} m³/s carried against ${f(r.Q, 1)} m³/s`, r.flowFail ? "—" : r.Nflow, r.gov === "flow", r.flowFail ? "fails" : `OK with ${r.N}`) +
+      `<tr><td>Rule of thumb</td><td>Enough thrust for the floor area? ${p.tpa} N per 100 m²</td><td class="n">${r.Ntpa}</td><td>${r.tpaOK ? `OK with ${r.N}` : "below; check"}</td></tr>` +
+    `</tbody></table></div>` +
+    `<dl class="facts">` +
+      `<dt>${r.jetOnly ? "Airflow needed" : "Extract airflow"}</dt><dd>${f(r.Q, 2)} m³/s · ${f(r.ach, 1)} /h</dd>` +
+      (r.jetOnly ? `<dt><b>Airflow the ${r.N} fans drive</b></dt><dd><b>${f(r.Qdrive, 1)} m³/s ${r.Qdrive >= r.Q - 1e-6 ? "≥" : "<"} ${f(r.Q, 1)}</b></dd>` : "") +
+      `<dt>Bulk air speed</dt><dd>${f(r.v, 3)} m/s</dd>` +
+      `<dt>Throw per fan${p.throwM > 0 ? ", maker’s" : `, to terminal velocity ${p.ut} m/s`}</dt><dd>${f(r.thr, 1)} m</dd>` +
+      `<dt>${r.jetOnly ? "Pressure to overcome" : "Obstruction loss"}, K ${f(r.K, 2)}${r.pext > 0 ? ` + ${f(r.pext, 1)} Pa` : ""}</dt><dd>${f(r.dp, 3)} Pa · ${f(r.Freq, 1)} N to push</dd>` +
+      (!r.jetOnly ? `<dt>Extract fans also overcome</dt><dd>${f(r.dpOpenExt, 3)} Pa at the openings</dd>` : "") +
+      `<dt>Push from one fan, η ${p.eta}</dt><dd>${f(r.Fper, 1)} N</dd>` +
+      `<dt>Airflow carried by the jets</dt><dd>${f(r.Qcarried, 1)} m³/s</dd>` +
+      `<dt>Jet velocity at the fan</dt><dd>${f(r.vj, 1)} m/s</dd>` +
+      `<dt>Total thrust installed</dt><dd>${fmt(r.N * p.T)} N · ${f(r.tpaGiven, 1)} N per 100 m²</dd>` +
+      `<dt>Floor area per fan</dt><dd>${fmt(r.floorA / r.N)} m²</dd>` +
+      (kw > 0 ? `<dt>Total motor power</dt><dd>${f(r.N * kw, 2)} kW</dd>` : "") +
+      (kg > 0 ? `<dt>Total weight</dt><dd>${fmt(r.N * kg)} kg</dd>` : "") +
+      (lp > 0 ? `<dt>Sound pressure at 3 m, one fan</dt><dd>${lp} dB(A)</dd>` : "") +
+      (thrLo != null ? `<dt>Throw at low speed</dt><dd>${f(thrLo, 0)} m</dd>` : "") +
+    `</dl>` +
+    `<ul class="checks">${checks.map(([c, t]) => `<li${c ? ` class="${c}"` : ""}>${t}</li>`).join("")}</ul>` +
+    `<p class="prenote" style="margin-top:12px">Preliminary design. CFD simulation shall be done to verify the end result.</p>`;
+
+  drawPlan(p, r, num("len"));
+  sensitivity(p, r);
+  worked(p, r);
+}
+
+function sensitivity(p, base) {
+  const cases = [["Your design", {}]];
+  if (p.throwM > 0) cases.push(["Maker’s throw −20 %", { throwM:p.throwM * 0.8 }], ["Maker’s throw +20 %", { throwM:p.throwM * 1.2 }]);
+  else [1, 2, 4, 6].filter(k => Math.abs(k - p.kv) > 1e-9).forEach(k => cases.push([`K<sub>v</sub> = ${k}${k === 1 ? " (heavily obstructed)" : k === 6 ? " (free jet)" : ""}`, { kv:k }]));
+  cases.push([`Terminal velocity ${f(p.ut / 2, 2)} m/s`, { ut:p.ut / 2 }], [`Terminal velocity ${f(p.ut * 2, 2)} m/s`, { ut:p.ut * 2 }]);
+  cases.push([`Lateral spacing ${Math.max(p.sw - 4, 4)} m`, { sw:Math.max(p.sw - 4, 4) }]);
+  ["A", "B", "C", "D"].filter(c => Math.abs(CATS[c].k - p.Kobs) > 1e-9).forEach(c => cases.push([`Obstruction ${c} · ${CATS[c].name}, K ${CATS[c].k}`, { Kobs:CATS[c].k }]));
+  if (Math.abs((p.cfree || C_FREE) - 0.05) > 1e-9) cases.push([`Entrainment C = 0.05 (hand check)`, { cfree:0.05 }]);
+  cases.push([`Thrust efficiency ${p.eta >= 0.7 ? 0.5 : 0.8}`, { eta:p.eta >= 0.7 ? 0.5 : 0.8 }]);
+  if (p.drive === "jet") cases.push([`Wind and stack ${f((p.pext || 0) + 2, 1)} Pa`, { pext:(p.pext || 0) + 2 }]);
+  const rows = cases.map(([lab, o], i) => {
+    const r = i === 0 ? base : compute(Object.assign({}, p, o));
+    if (!r.ok) return "";
+    return `<tr${i === 0 ? ' class="base"' : ""}><td>${lab}</td><td class="n">${f(r.thr, 1)} m</td><td class="n">${r.N1}</td><td class="n">${r.N2}</td><td class="n">${r.rows} × ${r.cols}</td><td class="n">${r.N}</td></tr>`;
+  }).join("");
+  $("sens").innerHTML = `<thead><tr><th>Case</th><th>Throw</th><th>Method 1</th><th>Method 2</th><th>Rows × columns</th><th>Fans</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+function worked(p, r) {
+  const thrW = p.throwM > 0
+    ? `<div class="eq">Throw = maker’s figure = <b>${f(r.thr, 1)} m</b></div>`
+    : `<div class="eq">Throw x = (2 K<sub>v</sub> / √π) × √(T / ρ) / u<sub>t</sub> = (2 × ${p.kv} / 1.772) × √(${p.T} / ${p.rho}) / ${p.ut} = <b>${f(r.tEst, 2)} m</b></div>` +
+      `<p class="hint">The same as x = K<sub>v</sub> v<sub>j</sub> D / u<sub>t</sub> = ${p.kv} × ${f(r.vj, 2)} × ${p.D / 1000} / ${p.ut} = ${f(p.kv * r.vj * p.D / 1000 / p.ut, 2)} m, since T = ρ Q<sub>j</sub> v<sub>j</sub>.</p>`;
+  const kLine = r.jetOnly
+    ? `<div class="eq">Openings on the hall speed: K<sub>in</sub> (A / A<sub>in</sub>)² = ${p.Kin} × (${f(r.A, 1)} / ${f(r.Ain, 1)})² = ${f(r.KinH, 2)}; K<sub>out</sub> (A / A<sub>out</sub>)² = ${p.Kout} × (${f(r.A, 1)} / ${f(r.Aout, 1)})² = ${f(r.KoutH, 2)}</div>` +
+      `<div class="eq">K<sub>total</sub> = ${f(r.Kobs, 2)} + ${f(r.KinH, 2)} + ${f(r.KoutH, 2)} = <b>${f(r.K, 2)}</b></div>`
+    : `<div class="eq">K = K<sub>obstruction</sub> = <b>${f(r.K, 2)}</b> (the extract fans overcome the inlet and exit)</div>`;
+  $("worked").innerHTML =
+    `<h3>Main airflow</h3>` +
+    `<div class="eq">V = L × W × H = ${p.L} × ${p.W} × ${p.H} = ${fmt(r.V)} m³; Q = <b>${f(r.Q, 3)} m³/s</b> (${f(r.ach, 2)} air changes an hour)</div>` +
+    `<div class="eq">A = W × H = ${f(r.A, 1)} m²; v = Q / A = ${f(r.v, 4)} m/s; v<sub>j</sub> = Q<sub>j</sub> / (π D² / 4) = ${p.Qj} / ${f(r.Aj, 4)} = ${f(r.vj, 2)} m/s</div>` +
+    `<h3>Method 1 · throw and coverage</h3>` + thrW +
+    `<div class="eq">Row spacing = throw × (1 − overlap) = ${f(r.thr, 2)} × ${f(1 - r.ov, 2)} = ${f(r.sL, 2)} m</div>` +
+    `<div class="eq">Rows = ⌈L / spacing⌉ = ⌈${p.L} / ${f(r.sL, 2)}⌉ = ⌈${f(r.rowsRaw, 3)}⌉ = <b>${r.rows}</b></div>` +
+    `<div class="eq">Columns = ⌈W / largest lateral spacing⌉ = ⌈${p.W} / ${p.sw}⌉ = <b>${r.colsSp}</b>; fans = ${r.rows} × ${r.colsSp} = <b>${r.N1}</b></div>` +
+    `<div class="eq">Rule of thumb: ⌈${p.tpa} × ${fmt(r.floorA)} / 100 / ${p.T}⌉ = ${r.Ntpa} fans</div>` +
+    `<h3>Method 2 · ${r.jetOnly ? "pressure balance" : "pressure loss"}</h3>` + kLine +
+    `<div class="eq">Δp = K × ½ρv²${r.jetOnly ? " + p<sub>wind, stack</sub>" : ""} = ${f(r.K, 2)} × 0.5 × ${p.rho} × ${f(r.v, 4)}²${r.jetOnly ? ` + ${f(r.pext, 2)}` : ""} = <b>${f(r.dp, 4)} Pa</b></div>` +
+    `<div class="eq">Push needed F = Δp × A = ${f(r.dp, 4)} × ${f(r.A, 1)} = ${f(r.Freq, 2)} N</div>` +
+    `<div class="eq">Per fan = η T (1 − v / v<sub>j</sub>) = ${p.eta} × ${p.T} × ${f(1 - r.v / r.vj, 4)} = ${f(r.Fper, 2)} N</div>` +
+    `<div class="eq">Fans by pressure = ⌈${f(r.Freq, 2)} / ${f(r.Fper, 2)}⌉ = <b>${r.Nmom}</b></div>` +
+    (r.jetOnly ? `<div class="eq">Airflow the ${r.N} fans drive: solve N η T (1 − v / v<sub>j</sub>) / A = K ½ρv² + p<sub>wind, stack</sub> → v = ${f(r.Qdrive / r.A, 4)} m/s, Q = <b>${f(r.Qdrive, 2)} m³/s</b></div>` : "") +
+    `<h3>Method 2 · airflow carried</h3>` +
+    `<div class="eq">Free jet: Q<sub>free</sub> = C × x / D × Q<sub>j</sub> = ${r.Cf} × ${f(r.thr, 2)} / ${p.D / 1000} × ${p.Qj} = ${f(r.Qfree, 2)} m³/s per fan line</div>` +
+    `<div class="eq">Cap: a fan line cannot carry more than its share of the section at the terminal velocity, (W / n) × H × u<sub>t</sub>; all lines together ≤ A × u<sub>t</sub> = ${f(r.A, 1)} × ${p.ut} = ${f(r.Qcap, 2)} m³/s</div>` +
+    (r.flowFail ? `<div class="eq"><b>Not possible:</b> Q = ${f(r.Q, 2)} m³/s is more than A × u<sub>t</sub>.</div>`
+      : `<div class="eq">Fan lines n so that n × min(Q<sub>free</sub>, (W / n) H u<sub>t</sub>) ≥ Q: n = ${r.colsFlow}; fans = ${r.rows} × ${r.colsFlow} = <b>${r.Nflow}</b></div>`) +
+    `<h3>Layout</h3>` +
+    `<div class="eq">Columns = max(${r.colsSp}, ${r.colsFlow}${r.gov === "momentum" ? `, ⌈${r.Nmom} / ${r.rows}⌉` : ""}) = ${r.cols}; N = ${r.rows} × ${r.cols} = <b>${r.N}</b>${r.Nsb ? ` + ${r.Nsb} standby` : ""}</div>` +
+    `<h3>Symbols</h3><p>T thrust, N. Q<sub>j</sub> fan airflow. D fan diameter. v<sub>j</sub> jet speed. v bulk speed. ρ air density. u<sub>t</sub> terminal velocity, the jet speed at the end of the throw. K<sub>v</sub> jet decay constant. η thrust efficiency. K<sub>total</sub> loss coefficient of the obstructions. C the jet entrainment constant, 0.32 for a free jet (Ricou and Spalding). A<sub>in</sub>, A<sub>out</sub> free areas of the openings.</p>` +
+    `<p><b>This is a preliminary design. CFD simulation shall be done to verify the end result.</b></p>`;
+}
+
+function drawPlan(p, r, lenmm) {
+  const L = p.L, W = p.W, VW = 760, pad = { l:70, r:70, t:46, b:52 };
+  const s = Math.min((VW - pad.l - pad.r) / L, 260 / W);
+  const w = L * s, h = W * s, x0 = pad.l + (VW - pad.l - pad.r - w) / 2, y0 = pad.t, VH = y0 + h + pad.b;
+  const svg = $("plan"); svg.setAttribute("viewBox", `0 0 ${VW} ${VH}`);
+  const ink = "#1a1714";
+  let g = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${ink}"/></marker>` +
+    `<linearGradient id="jet" x1="0" x2="1"><stop offset="0" stop-color="#5b8fb0" stop-opacity=".55"/><stop offset="1" stop-color="#5b8fb0" stop-opacity="0"/></linearGradient>` +
+    `<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#8a7f6c" stroke-width="1.4"/></pattern></defs>`;
+  g += `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#fffdf7" stroke="${ink}" stroke-width="2"/>`;
+  if (r.Kobs > 0) g += `<rect x="${x0 + 2}" y="${y0 + 2}" width="${w - 4}" height="${h - 4}" fill="url(#hatch)" opacity="${Math.min(0.15 + r.Kobs / 20, 0.7)}"/>`;
+  g += `<rect x="${x0 - 10}" y="${y0 + h * 0.15}" width="10" height="${h * 0.7}" fill="#efe6d4" stroke="${ink}"/>`;
+  g += `<rect x="${x0 + w}" y="${y0 + h * 0.15}" width="10" height="${h * 0.7}" fill="${ink}"/>`;
+  g += `<text x="${x0 - 16}" y="${y0 + h / 2}" text-anchor="middle" font-size="12" transform="rotate(-90 ${x0 - 16} ${y0 + h / 2})" dy="-4">Make-up air in</text>`;
+  g += `<text x="${x0 + w + 24}" y="${y0 + h / 2}" text-anchor="middle" font-size="12" transform="rotate(90 ${x0 + w + 24} ${y0 + h / 2})" dy="-2">Extract</text>`;
+  const fl = Math.max((lenmm > 0 ? lenmm / 1000 : 2.2) * s, 9), fw = Math.max(0.94 * s, 6), reach = Math.min(r.thr, L) * s;
+  for (let i = 0; i < r.rows; i++) {
+    const fx = x0 + i * r.sx * s + Math.min(r.sx * s * 0.08, 14);
+    for (let c = 0; c < r.cols; c++) {
+      const cy = y0 + (c + 0.5) * r.sy * s;
+      const ex = Math.min(fx + fl + reach, x0 + w), half = Math.min(r.sy * s * 0.48, 0.11 * reach + fw / 2);
+      g += `<path d="M${fx + fl},${cy - fw / 2} L${ex},${cy - half} L${ex},${cy + half} L${fx + fl},${cy + fw / 2} Z" fill="url(#jet)"/>`;
+      g += `<rect x="${fx}" y="${cy - fw / 2}" width="${fl}" height="${fw}" fill="${ink}"/>`;
+    }
+  }
+  g += `<line x1="${x0 + w * 0.3}" y1="${y0 - 16}" x2="${x0 + w * 0.7}" y2="${y0 - 16}" stroke="${ink}" stroke-width="1.6" marker-end="url(#ah)"/>`;
+  g += `<text x="${x0 + w * 0.5}" y="${y0 - 24}" text-anchor="middle" font-size="12">Airflow ${f(r.Q, 1)} m³/s · ${f(r.v, 2)} m/s</text>`;
+  const yd = y0 + h + 22;
+  g += `<line x1="${x0}" y1="${yd}" x2="${x0 + w}" y2="${yd}" stroke="${ink}" marker-start="url(#ah)" marker-end="url(#ah)"/>`;
+  g += `<text x="${x0 + w / 2}" y="${yd + 16}" text-anchor="middle" font-size="12.5">L = ${L} m · ${r.rows} row${r.rows > 1 ? "s" : ""} at ${f(r.sx, 1)} m</text>`;
+  const xd = x0 + w + 46;
+  g += `<line x1="${xd}" y1="${y0}" x2="${xd}" y2="${y0 + h}" stroke="${ink}" marker-start="url(#ah)" marker-end="url(#ah)"/>`;
+  g += `<text x="${xd + 14}" y="${y0 + h / 2}" text-anchor="middle" font-size="12.5" transform="rotate(90 ${xd + 14} ${y0 + h / 2})">W = ${W} m · ${r.cols} column${r.cols > 1 ? "s" : ""} at ${f(r.sy, 1)} m</text>`;
+  svg.innerHTML = g;
+  $("planlegend").textContent = "Fans to scale; shading shows each jet to its throw" + (r.Kobs > 0 ? "; hatching shows the obstruction level" : "");
+}
+
+/* Examples */
+function setVals(o) { Object.entries(o).forEach(([k, v]) => { $(k).value = v; }); }
+$("loadT3").addEventListener("click", () => {
+  setVals({ L:100, W:24, H:6, flow:23.0588, flowu:"m3s", preset:"custom", T:91, Qj:3.08, D:400, throw:"", Tlo:"", kw:"", lp:"", len:"", kg:"", name:"Ø400 91 N · example",
+    ut:0.3, kv:1, ov:0, sw:12, K:0.5, rho:1.225, drive:"jet", Ain:"", Kin:0.5, Aout:"", Kout:1.0, pext:0 });
+  setBasis("flow"); fillPreset(); setObs("custom", 18.5); $("adv").open = true; calc();
+});
+$("loadCP").addEventListener("click", () => {
+  setVals({ L:80, W:45, H:3, preset:"355", speed:"hi", cfg:"0", name:"", throw:"", ut:1, kv:6, ov:20, sw:12, K:0.8, rho:1.2, tpa:5, drive:"ext" });
+  setBasis("ach10"); setObs("A"); fillPreset(); calc();
+});
+
+/* Worked example */
+(function () {
+  const r = compute({ L:100, W:24, H:6, Q:23.0588, T:91, Qj:3.08, D:400, throwM:null, rho:1.225, ut:0.3, kv:1, ov:0, sw:12, eta:0.5,
+    Kobs:18.5, tpa:5, sb:"0", drive:"jet", Ain:null, Kin:0.5, Aout:null, Kout:1.0, pext:0 });
+  const rows = [
+    ["Cross-section A", "144 m²", f(r.A, 0) + " m²"],
+    ["Bulk speed v", "0.160 m/s", f(r.v, 4) + " m/s"],
+    ["Pressure loss Δp", "0.308 Pa", f(r.dp, 3) + " Pa"],
+    ["Push needed Δp × A", "44.3 N", f(r.Freq, 1) + " N"],
+    ["Effective thrust per fan", "45.5 N", f(r.Fper, 1) + " N (includes 1 − v/v<sub>j</sub>)"],
+    ["Fans by pressure loss", "1 (45.5 ≥ 44.3)", r.Nmom + " (" + f(r.Freq, 2) + " N needed, " + f(r.Fper, 2) + " N per fan: on the line)"],
+    ["Jet speed v<sub>j</sub>", "24.62 m/s", f(r.vj, 2) + " m/s from 3.08 / 0.1257"],
+    ["Reach to 0.3 m/s", "32.83 m", f(r.thr, 2) + " m"],
+    ["Rows along 100 m", "4", r.rows + " (100 / " + f(r.thr, 2) + " = " + f(r.rowsRaw, 2) + ")"],
+    ["Airflow carried by the jets", "2 × 12.639 = 25.278 m³/s (C = 0.05)", f(r.Qcarried, 2) + " m³/s, capped at A × u<sub>t</sub> = 144 × 0.3"],
+    ["Airflow 8 fans drive, jet fans alone", "—", f(r.Qdrive, 1) + " m³/s ≥ 23.06"],
+    ["Total fans", "8 by hand · 6 by a maker’s program", r.N + " (" + r.rows + " × " + r.cols + ")"]
+  ];
+  $("wbt").innerHTML = `<thead><tr><th>Item</th><th>Hand calculation</th><th>This sheet</th></tr></thead><tbody>` +
+    rows.map(x => `<tr><td>${x[0]}</td><td class="n">${x[1]}</td><td class="n">${x[2]}</td></tr>`).join("") + `</tbody>`;
+})();
+
+["L","W","H","ach","flow","T","Qj","D","throw","Tlo","kw","lp","len","kg","name","ut","kv","ov","sw","K","rho","cfree","tpa","Kobs","Ain","Kin","Aout","Kout","pext"].forEach(id => $(id).addEventListener("input", calc));
+$("drive").addEventListener("change", calc);
+["flowu","sb"].forEach(id => $(id).addEventListener("change", calc));
+setObs("A");
+fillPreset();
+calc();
+</script>
+<script>
+(function () {
+  const drawer = document.getElementById("drawer");
+  const pull = document.getElementById("pull");
+  const scrim = document.getElementById("scrim");
+  const tabs = [...drawer.querySelectorAll('[role="tab"]')];
+  drawer.inert = true;
+  function showTab(name) {
+    tabs.forEach(t => {
+      const on = t.dataset.tab === name;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById("tab-" + t.dataset.tab).hidden = !on;
+    });
+  }
+  function open(name) {
+    if (name) showTab(name);
+    drawer.inert = false;
+    drawer.classList.add("open");
+    scrim.classList.add("on");
+    pull.setAttribute("aria-expanded", "true");
+    drawer.querySelector(".close").focus();
+  }
+  function close() {
+    drawer.classList.remove("open");
+    scrim.classList.remove("on");
+    pull.setAttribute("aria-expanded", "false");
+    drawer.inert = true;
+    pull.focus();
+  }
+  pull.addEventListener("click", () => drawer.classList.contains("open") ? close() : open());
+  scrim.addEventListener("click", close);
+  drawer.querySelector(".close").addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && drawer.classList.contains("open")) close(); });
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => showTab(t.dataset.tab));
+    t.addEventListener("keydown", e => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      showTab(n.dataset.tab); n.focus();
+    });
+  });
+  document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => open(b.dataset.open)));
+  showTab(tabs[0].dataset.tab);
+  window.addEventListener("beforeprint", () => { drawer.inert = false; });
+})();
+</script>
+</body>
+</html>

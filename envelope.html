@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="ASHRAE 90.1-2025 Section 5 building envelope U- and R-values by climate zone. Search cities from ASHRAE 169 data." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XIV — Envelope by climate zone</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:1080px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:6px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Georgia, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:22px 0 8px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; }
+.lead { color:var(--muted); font-size:15px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
+input, select, button { font:15px/1.2 Georgia, serif; padding:8px 10px; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); min-height:40px; }
+input { width:100%; }
+button { background:var(--ink); color:var(--paper); border-color:var(--ink); font-weight:700; cursor:pointer; }
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.controls.secondary { grid-template-columns:1fr; margin-top:8px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; }
+.hits button:hover { background:#efe6d2; }
+.meta { font-size:14px; color:var(--muted); margin:10px 0; padding:10px 12px; background:var(--panel); border:1px solid var(--faint); }
+.tabs { display:flex; gap:6px; margin:12px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font-size:13px; padding:6px 10px; min-height:36px; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:6px 0 14px; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); min-width:520px; }
+th, td { border:1px solid var(--faint); padding:6px 8px; text-align:left; vertical-align:top; }
+th { background:#efe6d2; font-weight:700; font-size:11.5px; }
+.note { font-size:12px; color:var(--muted); margin:4px 0 12px; }
+footer { margin-top:24px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); line-height:1.45; }
+@media (max-width:700px) {
+  .book { margin:0; padding:16px 12px 32px; box-shadow:none; border-left:0; border-right:0; }
+  h1 { font-size:20px; }
+  .controls { grid-template-columns:1fr; }
+  nav.pages { grid-template-columns:1fr 1fr; }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  table { font-size:12px; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+  <header>
+    <div class="kicker">ANSI/ASHRAE/IES Standard 90.1-2025 (SI)</div>
+    <h1>Building Envelope Requirements</h1>
+    <div class="sub">Section 5 — Tables 5.5-0 to 5.5-8 by climate zone</div>
+  </header>
+
+  <nav class="pages">
+    <a href="index.html"><span>—</span>Contents</a>
+    <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+    <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+    <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+    <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+    <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+    <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+    <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+    <a class="on" href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+  </nav>
+
+  <h2>1. Find climate zone</h2>
+  <p class="lead">Search a city. Zones follow ASHRAE 90.1 §5.1.5, which references ASHRAE Standard 169. The list is a practical selection of major locations drawn from the 169 station tables (not the complete 12,000+ station database).</p>
+
+  <div class="controls">
+    <div>
+      <label for="q">City or location</label>
+      <input id="q" type="search" placeholder="e.g. London, Singapore, Chicago, Tokyo, Dubai…" autocomplete="off" />
+    </div>
+    <button id="go" type="button">Search</button>
+  </div>
+  <ul class="hits" id="hits"></ul>
+
+  <div class="controls secondary">
+    <div>
+      <label for="manual">Or select zone directly</label>
+      <select id="manual">
+        <option value="">— choose zone —</option>
+        <option value="0">Zone 0 (Extremely hot)</option>
+        <option value="1">Zone 1 (Very hot)</option>
+        <option value="2">Zone 2 (Hot)</option>
+        <option value="3">Zone 3 (Warm)</option>
+        <option value="4">Zone 4 (Mixed)</option>
+        <option value="5">Zone 5 (Cool)</option>
+        <option value="6">Zone 6 (Cold)</option>
+        <option value="7">Zone 7 (Very cold)</option>
+        <option value="8">Zone 8 (Subarctic/Arctic)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="meta" id="meta">Enter a city or choose a zone.</div>
+
+  <div id="results" style="display:none;">
+    <h2>2. Envelope requirements for the zone</h2>
+    <p class="note">Assembly maximum U / C / F-factor and insulation minimum R-value from Tables 5.5-0 to 5.5-8. c.i. = continuous insulation; NR = no requirement; FC = filled cavity; Ls = liner system. Columns: Nonresidential | Residential | Semiheated. Fenestration assumes 0–40 % vertical and 0–3 % skylight area.</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="table-scroll" id="table-wrap"></div>
+  </div>
+
+  <footer>
+    Reference aid. Climate zones from ASHRAE Standard 169-2025 procedure (degree-days and moisture criteria). Envelope values from ASHRAE/IES 90.1-2025 (SI) Section 5 Tables 5.5-0 to 5.5-8.<br>
+    City list is a practical selection of major locations — not the complete official station database of Standard 169.<br>
+    Always verify against the current published standard and local authority requirements.
+  </footer>
+</div>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button" id="mxClose">Close</button></div>
+  <div class="mx-body" style="padding:14px 20px 28px; overflow-y:auto;">
+    <h3 style="font-size:15px; margin:0 0 8px; letter-spacing:.08em; text-transform:uppercase;">Abbreviations & units</h3>
+    <p style="font-size:13.5px; color:var(--muted); margin:0 0 12px;">Values in the tables are the assembly maximum (U, C or F) and the insulation minimum (R). Lower U / C / F is better; higher R is better.</p>
+
+    <dl style="margin:0;">
+      <dt style="font-weight:700; margin-top:14px;">U-factor (U-value)</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">
+        How easily heat passes through a whole assembly (wall, roof, window, etc.).<br>
+        It is the rate of heat flow through 1 m² of the assembly when the temperature difference across it is 1 K.<br>
+        A lower U-factor means less heat is lost (or gained).<br>
+        <span style="font-family:'Courier New',monospace; color:var(--ink);">Unit: W/(m²·K)</span>
+      </dd>
+
+      <dt style="font-weight:700; margin-top:14px;">R-value</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">
+        How well a material or layer resists the flow of heat. It is the opposite of U-factor (R = 1/U for a simple layer).<br>
+        Think of it as the temperature difference (in K) needed to drive 1 W of heat through 1 m² of the insulation.<br>
+        A higher R-value means better insulation.<br>
+        <span style="font-family:'Courier New',monospace; color:var(--ink);">Unit: m²·K/W</span>
+      </dd>
+
+      <dt style="font-weight:700; margin-top:14px;">C-factor (C-value)</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">
+        Used for below-grade walls. It plays the same role as U-factor but for the conductance of the underground wall assembly.<br>
+        It is the rate of heat flow through 1 m² of the below-grade wall when the temperature difference is 1 K.<br>
+        <span style="font-family:'Courier New',monospace; color:var(--ink);">Unit: W/(m²·K)</span>
+      </dd>
+
+      <dt style="font-weight:700; margin-top:14px;">F-factor (F-value)</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">
+        Used for slab-on-grade floors. It describes heat loss at the edge of the slab (where it meets the outdoor air or ground).<br>
+        It is the rate of heat flow per metre of slab perimeter when the temperature difference is 1 K.<br>
+        <span style="font-family:'Courier New',monospace; color:var(--ink);">Unit: W/(m·K)</span>
+      </dd>
+
+      <dt style="font-weight:700; margin-top:14px;">SHGC</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">
+        Solar Heat Gain Coefficient of a window or skylight.<br>
+        The fraction of solar radiation that passes through the glazing and becomes heat inside the building (0 = none, 1 = all).<br>
+        <span style="font-family:'Courier New',monospace; color:var(--ink);">Dimensionless (0–1)</span>
+      </dd>
+
+      <dt style="font-weight:700; margin-top:14px;">NR</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">No requirement. The standard does not set a maximum U/C/F or a minimum R for that element in that space type and climate zone.</dd>
+
+      <dt style="font-weight:700; margin-top:14px;">c.i.</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">Continuous insulation. Insulation that runs continuously across structural members so there are no thermal bridges (except fasteners and service openings).</dd>
+
+      <dt style="font-weight:700; margin-top:14px;">FC</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">Filled cavity. Insulation that completely fills the cavity of a metal-building roof or wall.</dd>
+
+      <dt style="font-weight:700; margin-top:14px;">Ls</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">Liner system. A layer of insulation installed as a liner (commonly in metal buildings), often used together with other insulation.</dd>
+
+      <dt style="font-weight:700; margin-top:14px;">Nonresidential / Residential / Semiheated</dt>
+      <dd style="margin:2px 0 0; font-size:13.5px; color:var(--muted); line-height:1.45;">Space categories used in the 90.1 envelope tables. The same climate zone can have different U/R limits depending on which category the space falls into.</dd>
+    </dl>
+  </div>
+</aside>
+
+<script>
+const cities = [
+  {name:"Miami", country:"US", zone:"1A"}, {name:"Honolulu", country:"US", zone:"1A"},
+  {name:"Houston", country:"US", zone:"2A"}, {name:"New Orleans", country:"US", zone:"2A"},
+  {name:"Phoenix", country:"US", zone:"1B"}, {name:"Las Vegas", country:"US", zone:"1B"},
+  {name:"Atlanta", country:"US", zone:"3A"}, {name:"Dallas", country:"US", zone:"3A"},
+  {name:"Los Angeles", country:"US", zone:"3B"}, {name:"San Francisco", country:"US", zone:"3C"},
+  {name:"San Diego", country:"US", zone:"3C"}, {name:"New York", country:"US", zone:"4A"},
+  {name:"Washington", country:"US", zone:"4A"}, {name:"Philadelphia", country:"US", zone:"4A"},
+  {name:"Chicago", country:"US", zone:"5A"}, {name:"Boston", country:"US", zone:"5A"},
+  {name:"Detroit", country:"US", zone:"5A"}, {name:"Minneapolis", country:"US", zone:"6A"},
+  {name:"Denver", country:"US", zone:"5B"}, {name:"Seattle", country:"US", zone:"4C"},
+  {name:"Portland", country:"US", zone:"4C"}, {name:"Anchorage", country:"US", zone:"7"},
+  {name:"Fairbanks", country:"US", zone:"8"}, {name:"Juneau", country:"US", zone:"6A"},
+  {name:"Toronto", country:"Canada", zone:"6A"}, {name:"Vancouver", country:"Canada", zone:"5C"},
+  {name:"Montreal", country:"Canada", zone:"6A"}, {name:"Calgary", country:"Canada", zone:"7"},
+  {name:"Edmonton", country:"Canada", zone:"7"}, {name:"Ottawa", country:"Canada", zone:"6A"},
+  {name:"Mexico City", country:"Mexico", zone:"3B"}, {name:"Monterrey", country:"Mexico", zone:"2B"},
+  {name:"London", country:"UK", zone:"4A"}, {name:"Manchester", country:"UK", zone:"5A"},
+  {name:"Edinburgh", country:"UK", zone:"5A"}, {name:"Birmingham", country:"UK", zone:"5A"},
+  {name:"Glasgow", country:"UK", zone:"5A"}, {name:"Paris", country:"France", zone:"4A"},
+  {name:"Lyon", country:"France", zone:"4A"}, {name:"Marseille", country:"France", zone:"3A"},
+  {name:"Berlin", country:"Germany", zone:"5A"}, {name:"Munich", country:"Germany", zone:"5A"},
+  {name:"Frankfurt", country:"Germany", zone:"5A"}, {name:"Hamburg", country:"Germany", zone:"5A"},
+  {name:"Amsterdam", country:"Netherlands", zone:"5A"}, {name:"Rotterdam", country:"Netherlands", zone:"5A"},
+  {name:"Brussels", country:"Belgium", zone:"5A"}, {name:"Madrid", country:"Spain", zone:"3A"},
+  {name:"Barcelona", country:"Spain", zone:"3A"}, {name:"Seville", country:"Spain", zone:"3A"},
+  {name:"Lisbon", country:"Portugal", zone:"3A"}, {name:"Rome", country:"Italy", zone:"3A"},
+  {name:"Milan", country:"Italy", zone:"4A"}, {name:"Naples", country:"Italy", zone:"3A"},
+  {name:"Zurich", country:"Switzerland", zone:"5A"}, {name:"Geneva", country:"Switzerland", zone:"5A"},
+  {name:"Vienna", country:"Austria", zone:"5A"}, {name:"Prague", country:"Czechia", zone:"5A"},
+  {name:"Warsaw", country:"Poland", zone:"6A"}, {name:"Budapest", country:"Hungary", zone:"5A"},
+  {name:"Stockholm", country:"Sweden", zone:"6A"}, {name:"Oslo", country:"Norway", zone:"6A"},
+  {name:"Helsinki", country:"Finland", zone:"6A"}, {name:"Copenhagen", country:"Denmark", zone:"5A"},
+  {name:"Dublin", country:"Ireland", zone:"5A"}, {name:"Reykjavik", country:"Iceland", zone:"7"},
+  {name:"Moscow", country:"Russia", zone:"6A"}, {name:"Athens", country:"Greece", zone:"3A"},
+  {name:"Istanbul", country:"Turkey", zone:"3A"}, {name:"Singapore", country:"Singapore", zone:"0A"},
+  {name:"Hong Kong", country:"Hong Kong", zone:"2A"}, {name:"Tokyo", country:"Japan", zone:"3A"},
+  {name:"Osaka", country:"Japan", zone:"3A"}, {name:"Sapporo", country:"Japan", zone:"5A"},
+  {name:"Seoul", country:"South Korea", zone:"4A"}, {name:"Beijing", country:"China", zone:"4A"},
+  {name:"Shanghai", country:"China", zone:"3A"}, {name:"Guangzhou", country:"China", zone:"2A"},
+  {name:"Taipei", country:"Taiwan", zone:"2A"}, {name:"Bangkok", country:"Thailand", zone:"0A"},
+  {name:"Kuala Lumpur", country:"Malaysia", zone:"0A"}, {name:"Jakarta", country:"Indonesia", zone:"0A"},
+  {name:"Manila", country:"Philippines", zone:"0A"}, {name:"Mumbai", country:"India", zone:"0A"},
+  {name:"Delhi", country:"India", zone:"1B"}, {name:"Dubai", country:"UAE", zone:"0B"},
+  {name:"Abu Dhabi", country:"UAE", zone:"0B"}, {name:"Doha", country:"Qatar", zone:"0B"},
+  {name:"Riyadh", country:"Saudi Arabia", zone:"1B"}, {name:"Cairo", country:"Egypt", zone:"2B"},
+  {name:"Cape Town", country:"South Africa", zone:"3C"}, {name:"Johannesburg", country:"South Africa", zone:"3A"},
+  {name:"Sydney", country:"Australia", zone:"3A"}, {name:"Melbourne", country:"Australia", zone:"3C"},
+  {name:"Brisbane", country:"Australia", zone:"2A"}, {name:"Perth", country:"Australia", zone:"3B"},
+  {name:"Auckland", country:"New Zealand", zone:"3C"}, {name:"São Paulo", country:"Brazil", zone:"2A"},
+  {name:"Rio de Janeiro", country:"Brazil", zone:"1A"}, {name:"Buenos Aires", country:"Argentina", zone:"3A"},
+  {name:"Santiago", country:"Chile", zone:"3B"}, {name:"Lima", country:"Peru", zone:"1B"},
+  {name:"Bogotá", country:"Colombia", zone:"3A"}, {name:"Tel Aviv", country:"Israel", zone:"2A"},
+  {name:"Amman", country:"Jordan", zone:"2B"}, {name:"Kuwait City", country:"Kuwait", zone:"1B"},
+  {name:"Lagos", country:"Nigeria", zone:"1A"}, {name:"Nairobi", country:"Kenya", zone:"3A"},
+  {name:"Hanoi", country:"Vietnam", zone:"2A"}, {name:"Ho Chi Minh City", country:"Vietnam", zone:"0A"},
+  {name:"Wellington", country:"New Zealand", zone:"3C"}, {name:"Brasília", country:"Brazil", zone:"2A"}
+];
+
+const envelope = {
+  "0": {
+    roofs: [["Insulation entirely above deck","U-0.220 / R-4.4 c.i.","U-0.184 / R-5.3 c.i.","U-1.240 / R-0.7 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.653 / R-1.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.459 / R-2.3"]],
+    walls: [["Mass","U-3.293 / NR","U-0.857 / R-1.0 c.i.","U-3.293 / NR"],["Metal building","U-0.533 / R-0 + R-1.7 c.i.","U-0.533 / R-0 + R-1.7 c.i.","U-6.69 / NR"],["Steel-framed","U-0.670 / R-2.6","U-0.670 / R-2.6","U-1.998 / NR"],["Wood-framed and other","U-0.504 / R-2.3","U-0.504 / R-2.3","U-1.660 / NR"]],
+    below: [["Below-grade wall","C-6.473 / NR","C-6.473 / NR","C-6.473 / NR"]],
+    floors: [["Mass","U-1.825 / NR","U-1.825 / NR","U-1.825 / NR"],["Steel joist","U-0.390 / R-2.3","U-0.390 / R-2.3","U-1.986 / NR"],["Wood-framed and other","U-0.380 / R-2.3","U-0.380 / R-2.3","U-1.599 / NR"]],
+    slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
+    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.21","U-2.72 / SHGC 0.21","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.19","U-3.52 / SHGC 0.19","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.19","U-4.71 / SHGC 0.19","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"]]
+  },
+  "1": {
+    roofs: [["Insulation entirely above deck","U-0.273 / R-3.5 c.i.","U-0.220 / R-4.4 c.i.","U-1.240 / R-0.7 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.653 / R-1.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.459 / R-2.3"]],
+    walls: [["Mass","U-3.293 / NR","U-0.857 / R-1.0 c.i.","U-3.293 / NR"],["Metal building","U-0.533 / R-0 + R-1.7 c.i.","U-0.533 / R-0 + R-1.7 c.i.","U-6.69 / NR"],["Steel-framed","U-0.670 / R-2.6","U-0.670 / R-2.6","U-1.998 / NR"],["Wood-framed and other","U-0.504 / R-2.3","U-0.504 / R-2.3","U-1.660 / NR"]],
+    below: [["Below-grade wall","C-6.473 / NR","C-6.473 / NR","C-6.473 / NR"]],
+    floors: [["Mass","U-1.825 / NR","U-1.825 / NR","U-1.825 / NR"],["Steel joist","U-0.390 / R-2.3","U-0.390 / R-2.3","U-1.986 / NR"],["Wood-framed and other","U-0.380 / R-2.3","U-0.380 / R-2.3","U-1.599 / NR"]],
+    slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
+    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.23","U-2.72 / SHGC 0.23","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.21","U-3.52 / SHGC 0.21","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.21","U-4.71 / SHGC 0.21","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"]]
+  },
+  "2": {
+    roofs: [["Insulation entirely above deck","U-0.220 / R-4.4 c.i.","U-0.220 / R-4.4 c.i.","U-0.982 / R-0.9 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.300 / R-3.3"]],
+    walls: [["Mass","U-0.857 / R-1.0 c.i.","U-0.591 / R-1.7 c.i.","U-3.293 / NR"],["Metal building","U-0.480 / R-1.9 + R-1.1 c.i. or R-2.0 c.i.","U-0.480 / R-1.9 + R-1.1 c.i. or R-2.0 c.i.","U-0.920 / R-2.3"],["Steel-framed","U-0.460 / R-2.6 + R-0.7 c.i. or R-0 + R-1.6 c.i.","U-0.350 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.470 / R-2.6","U-0.470 / R-2.6","U-0.504 / R-2.3"]],
+    below: [["Below-grade wall","C-6.473 / NR","C-6.473 / NR","C-6.473 / NR"]],
+    floors: [["Mass","U-0.606 / R-1.9 c.i.","U-0.496 / R-1.5 c.i.","U-1.825 / NR"],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.390 / R-2.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.376 / R-2.3"]],
+    slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.558 / R-1.8 for 600 mm","F-1.489 / R-2.6 for 600 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
+    fen: [["Fixed (0–40% wall)","U-2.56 / SHGC 0.23","U-2.56 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.41 / SHGC 0.21","U-3.41 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-4.37 / SHGC 0.21","U-4.37 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.69 / SHGC 0.30","U-3.69 / SHGC 0.30","U-4.26 / NR"]]
+  },
+  "3": {
+    roofs: [["Insulation entirely above deck","U-0.180 / R-5.3 c.i.","U-0.180 / R-5.3 c.i.","U-0.677 / R-1.3 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.300 / R-3.3"]],
+    walls: [["Mass","U-0.592 / R-1.7 c.i.","U-0.592 / R-1.7 c.i.","U-3.293 / NR"],["Metal building","U-0.449 / R-2.3 + R-1.2 c.i. or R-2.2 c.i.","U-0.410 / R-0 + R-2.3 c.i.","U-0.920 / R-2.3"],["Steel-framed","U-0.426 / R-2.6 + R-0.8 c.i. or R-3.8 + R-0.7 c.i.","U-0.358 / R-2.6 + R-1.3 c.i. or R-0 + R-2.6 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.470 / R-2.6","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.504 / R-2.3"]],
+    below: [["Below-grade wall","C-6.473 / NR","C-6.473 / NR","C-6.473 / NR"]],
+    floors: [["Mass","U-0.420 / R-1.8 c.i.","U-0.420 / R-1.8 c.i.","U-0.780 / R-0.7 c.i."],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.296 / R-3.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-1.264 / NR","F-0.935 / R-1.8 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.489 / R-2.6 for 600 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
+    fen: [["Fixed (0–40% wall)","U-2.16 / SHGC 0.25","U-2.16 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.07 / SHGC 0.23","U-3.07 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-3.86 / SHGC 0.23","U-3.86 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.12 / SHGC 0.30","U-3.12 / SHGC 0.30","U-4.26 / NR"]]
+  },
+  "4": {
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.677 / R-1.3 c.i."],["Metal building","U-0.190 / R-1.8 + R-3.3 FC","U-0.190 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.120 / R-8.6","U-0.120 / R-8.6","U-0.300 / R-3.3"]],
+    walls: [["Mass","U-0.513 / R-2.0 c.i.","U-0.513 / R-2.0 c.i.","U-0.857 / R-1.0 c.i."],["Metal building","U-0.352 / R-0 + R-2.8 c.i.","U-0.341 / R-0 + R-2.8 c.i.","U-0.705 / R-1.9"],["Steel-framed","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.504 / R-2.3"]],
+    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.678 / R-1.3 c.i.","C-6.473 / NR"]],
+    floors: [["Mass","U-0.363 / R-2.2 c.i.","U-0.363 / R-2.2 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.935 / R-1.8 for 600 mm","F-0.935 / R-1.8 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.162 / R-4.4 for 1200 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
+    fen: [["Fixed (0–40% wall)","U-1.82 / SHGC 0.36","U-1.82 / SHGC 0.36","U-2.72 / NR"],["Operable","U-2.56 / SHGC 0.33","U-2.56 / SHGC 0.33","U-3.52 / NR"],["Entrance door","U-3.58 / SHGC 0.33","U-3.58 / SHGC 0.33","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.12 / SHGC 0.40","U-3.12 / SHGC 0.40","U-4.26 / NR"]]
+  },
+  "5": {
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.527 / R-1.8 c.i."],["Metal building","U-0.190 / R-1.8 + R-3.3 FC","U-0.190 / R-1.8 + R-3.3 FC","U-0.409 / R-3.3"],["Attic and other","U-0.120 / R-8.6","U-0.120 / R-8.6","U-0.230 / R-4.4"]],
+    walls: [["Mass","U-0.453 / R-2.3 c.i.","U-0.453 / R-2.3 c.i.","U-0.857 / R-1.0 c.i."],["Metal building","U-0.341 / R-0 + R-2.8 c.i.","U-0.341 / R-0 + R-2.8 c.i.","U-0.705 / R-1.9"],["Steel-framed","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.504 / R-2.3"]],
+    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.678 / R-1.3 c.i.","C-6.473 / NR"]],
+    floors: [["Mass","U-0.363 / R-2.2 c.i.","U-0.363 / R-2.2 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.935 / R-1.8 for 600 mm","F-0.882 / R-3.5 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.162 / R-4.4 for 1200 mm","F-1.766 / R-1.3 for 300 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
+    fen: [["Fixed (0–40% wall)","U-1.82 / SHGC 0.38","U-1.82 / SHGC 0.38","U-2.16 / NR"],["Operable","U-2.56 / SHGC 0.36","U-2.56 / SHGC 0.36","U-2.72 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.86 / NR"],["Skylight (0–3% roof)","U-3.12 / NR","U-3.12 / NR","U-3.69 / NR"]]
+  },
+  "6": {
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.420 / R-2.2 c.i."],["Metal building","U-0.162 / R-3.3 + R-1.9 Ls","U-0.162 / R-3.3 + R-1.9 Ls","U-0.409 / R-3.3"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.230 / R-4.4"]],
+    walls: [["Mass","U-0.379 / R-3.0 c.i.","U-0.379 / R-3.0 c.i.","U-0.592 / R-1.7 c.i."],["Metal building","U-0.273 / R-0 + R-3.5 c.i.","U-0.273 / R-0 + R-3.5 c.i.","U-0.533 / R-1.7"],["Steel-framed","U-0.273 / R-2.6 + R-2.2 c.i. or R-3.7 + R-1.3 c.i.","U-0.273 / R-2.6 + R-2.2 c.i. or R-3.7 + R-1.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.273 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.273 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.504 / R-2.3"]],
+    below: [["Below-grade wall","C-0.522 / R-1.8 c.i.","C-0.522 / R-1.8 c.i.","C-6.473 / NR"]],
+    floors: [["Mass","U-0.288 / R-2.9 c.i.","U-0.288 / R-2.9 c.i.","U-0.496 / R-1.5 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.882 / R-3.5 for 600 mm","F-0.882 / R-3.5 for 600 mm","F-1.264 / NR"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-1.162 / R-4.4 for 1200 mm","F-1.489 / R-2.6 for 600 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
+    fen: [["Fixed (0–40% wall)","U-1.59 / SHGC 0.40","U-1.59 / SHGC 0.40","U-1.82 / NR"],["Operable","U-1.99 / SHGC 0.36","U-1.99 / SHGC 0.36","U-2.21 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.50 / NR","U-2.50 / NR","U-3.12 / NR"]]
+  },
+  "7": {
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.360 / R-2.6 c.i."],["Metal building","U-0.162 / R-3.3 + R-1.9 Ls","U-0.162 / R-3.3 + R-1.9 Ls","U-0.409 / R-3.3"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.189 / R-5.3"]],
+    walls: [["Mass","U-0.330 / R-3.5 c.i.","U-0.330 / R-3.5 c.i.","U-0.513 / R-2.0 c.i."],["Metal building","U-0.220 / R-0 + R-4.4 c.i.","U-0.220 / R-0 + R-4.4 c.i.","U-0.449 / R-2.3"],["Steel-framed","U-0.236 / R-2.6 + R-2.8 c.i. or R-3.7 + R-2.0 c.i.","U-0.236 / R-2.6 + R-2.8 c.i. or R-3.7 + R-2.0 c.i.","U-0.470 / R-2.6"],["Wood-framed and other","U-0.236 / R-2.6 + R-1.9 c.i. or R-3.7 + R-1.3 c.i.","U-0.236 / R-2.6 + R-1.9 c.i. or R-3.7 + R-1.3 c.i.","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7"]],
+    below: [["Below-grade wall","C-0.358 / R-2.6 c.i.","C-0.358 / R-2.6 c.i.","C-0.678 / R-1.3 c.i."]],
+    floors: [["Mass","U-0.236 / R-3.7 c.i.","U-0.236 / R-3.7 c.i.","U-0.420 / R-1.8 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.882 / R-3.5 for 600 mm","F-0.750 / R-3.5 for 1200 mm","F-1.264 / NR"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-1.162 / R-4.4 for 1200 mm","F-1.489 / R-2.6 for 600 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
+    fen: [["Fixed (0–40% wall)","U-1.59 / SHGC 0.40","U-1.59 / SHGC 0.40","U-1.82 / NR"],["Operable","U-1.99 / SHGC 0.36","U-1.99 / SHGC 0.36","U-2.21 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.50 / NR","U-2.50 / NR","U-3.12 / NR"]]
+  },
+  "8": {
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.220 / R-4.4 c.i."],["Metal building","U-0.147 / R-4.4 + R-1.9 + R-1.9 Ls","U-0.147 / R-4.4 + R-1.9 + R-1.9 Ls","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R-1.4 Ls"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.153 / R-6.7 c.i."]],
+    walls: [["Mass","U-0.261 / R-5.3 c.i.","U-0.261 / R-3.5 c.i.","U-0.513 / R-2.0 c.i."],["Metal building","U-0.220 / R-0 + R-4.4 c.i.","U-0.220 / R-0 + R-4.4 c.i.","U-0.341 / R-0 + R-2.8 c.i."],["Steel-framed","U-0.199 / R-2.6 + R-3.5 c.i. or R-3.7 + R-3.4 c.i.","U-0.199 / R-2.6 + R-3.5 c.i. or R-3.7 + R-3.4 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i."],["Wood-framed and other","U-0.165 / R-2.3 + R-3.9 c.i.","U-0.165 / R-2.3 + R-3.9 c.i.","U-0.273 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i."]],
+    below: [["Below-grade wall","C-0.358 / R-2.6 c.i.","C-0.358 / R-2.6 c.i.","C-0.678 / R-1.3 c.i."]],
+    floors: [["Mass","U-0.217 / R-4.1 c.i.","U-0.217 / R-4.1 c.i.","U-0.363 / R-2.2 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.188 / R-5.3"]],
+    slab: [["Unheated","F-0.750 / R-3.5 for 1200 mm","F-0.734 / R-4.4 for 1200 mm","F-0.935 / R-1.8 for 600 mm"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-0.646 / R-3.5 full slab","F-1.489 / R-2.6 for 600 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
+    fen: [["Fixed (0–40% wall)","U-1.36 / NR","U-1.36 / NR","U-1.59 / NR"],["Operable","U-1.82 / NR","U-1.82 / NR","U-1.99 / NR"],["Entrance door","U-3.58 / NR","U-3.58 / NR","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.27 / NR","U-2.27 / NR","U-2.50 / NR"]]
+  }
+};
+
+const sections = [
+  ["roofs","Roofs"], ["walls","Walls, above grade"], ["below","Walls, below grade"],
+  ["floors","Envelope floors"], ["slab","Slab-on-grade floors"], ["doors","Opaque doors"], ["fen","Fenestration"]
+];
+
+const q = document.getElementById("q");
+const hits = document.getElementById("hits");
+const meta = document.getElementById("meta");
+const results = document.getElementById("results");
+const tabs = document.getElementById("tabs");
+const tableWrap = document.getElementById("table-wrap");
+const manual = document.getElementById("manual");
+
+let currentZone = null;
+let currentSection = "roofs";
+
+function normalize(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+
+function search() {
+  const term = normalize(q.value.trim());
+  hits.innerHTML = "";
+  if (term.length < 2) { hits.classList.remove("show"); return; }
+  const matches = cities.filter(c => normalize(c.name).includes(term) || normalize(c.country).includes(term)).slice(0, 12);
+  if (!matches.length) {
+    hits.innerHTML = "<li><button type='button' disabled>No match — use manual zone selector</button></li>";
+    hits.classList.add("show");
+    return;
+  }
+  matches.forEach(c => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = `${c.name}, ${c.country} — Zone ${c.zone}`;
+    btn.onclick = () => selectCity(c);
+    li.appendChild(btn);
+    hits.appendChild(li);
+  });
+  hits.classList.add("show");
+}
+
+function selectCity(c) {
+  q.value = c.name;
+  hits.classList.remove("show");
+  hits.innerHTML = "";
+  manual.value = "";
+  const zNum = c.zone.replace(/[ABC]$/, "");
+  currentZone = zNum;
+  meta.innerHTML = `<strong>${c.name}, ${c.country}</strong> → Climate Zone <strong>${c.zone}</strong><br>Showing envelope tables for thermal zone ${zNum}.`;
+  showResults();
+}
+
+function selectManual() {
+  const z = manual.value;
+  if (!z) return;
+  currentZone = z;
+  q.value = "";
+  hits.classList.remove("show");
+  meta.innerHTML = `Manual selection → Thermal Zone <strong>${z}</strong>`;
+  showResults();
+}
+
+function showResults() {
+  results.style.display = "block";
+  renderTabs();
+  renderTable();
+  results.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderTabs() {
+  tabs.innerHTML = "";
+  sections.forEach(([key, label]) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = label;
+    b.className = key === currentSection ? "on" : "";
+    b.onclick = () => { currentSection = key; renderTabs(); renderTable(); };
+    tabs.appendChild(b);
+  });
+}
+
+function renderTable() {
+  if (!currentZone || !envelope[currentZone]) return;
+  const rows = envelope[currentZone][currentSection] || [];
+  let html = `<table><thead><tr><th>Element</th><th>Nonresidential</th><th>Residential</th><th>Semiheated</th></tr></thead><tbody>`;
+  rows.forEach(r => { html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`; });
+  html += "</tbody></table>";
+  tableWrap.innerHTML = html;
+}
+
+document.getElementById("go").onclick = search;
+q.addEventListener("input", search);
+q.addEventListener("keydown", e => { if (e.key === "Enter") search(); });
+manual.addEventListener("change", selectManual);
+document.addEventListener("click", e => { if (!hits.contains(e.target) && e.target !== q) hits.classList.remove("show"); });
+
+// Notes and formulae pull-out (same pattern as other sheets)
+const mxPull = document.getElementById("mxPull");
+const mxDrawer = document.getElementById("mxDrawer");
+const mxScrim = document.getElementById("mxScrim");
+const mxClose = document.getElementById("mxClose");
+
+function openDrawer() {
+  mxDrawer.classList.add("open");
+  mxScrim.classList.add("on");
+  mxPull.setAttribute("aria-expanded", "true");
+}
+function closeDrawer() {
+  mxDrawer.classList.remove("open");
+  mxScrim.classList.remove("on");
+  mxPull.setAttribute("aria-expanded", "false");
+}
+mxPull.addEventListener("click", openDrawer);
+mxClose.addEventListener("click", closeDrawer);
+mxScrim.addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+</script>
+</body>
+</html>

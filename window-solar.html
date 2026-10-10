@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Clear-sky solar gain through glazing, with yearly and coincident peaks." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VII — Window radiation gain</title>
+<style>
+
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink);
+  font:16px/1.45 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:980px; margin:24px auto 40px; background:var(--paper); padding:26px 28px 36px;
+  border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:6px; margin:0 0 18px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink);
+  border:1px solid var(--ink); padding:6px 2px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:22px 0 8px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:4px; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; }
+.city-row { display:grid; grid-template-columns:1fr auto; gap:8px; }
+button { border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+  font:13px/1 Georgia, serif; font-weight:700; padding:8px 14px; cursor:pointer; }
+.hits { list-style:none; margin:6px 0 0; padding:0; border:1px solid var(--ink); background:var(--panel); }
+.hits[hidden] { display:none; }
+.hits button { display:block; width:100%; text-align:left; background:var(--panel); color:var(--ink); border:0; border-bottom:1px solid var(--faint); font-weight:400; }
+.fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px 16px; }
+.field label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
+.pair { display:grid; grid-template-columns:1fr 72px; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid #8a7f6c; border-left:0; background:#efe6d4;
+  font:12px/1 "Courier New", Courier, monospace; color:var(--muted); }
+input, select { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink);
+  font:15px/1.2 "Courier New", Courier, monospace; padding:7px 8px; min-height:36px; border-radius:0; }
+.meta { font:13px/1.4 "Courier New", Courier, monospace; color:var(--muted); margin-top:8px; }
+.faces { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; min-height:86px; }
+.box .k { font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+.box .v { font:600 26px/1.1 "Courier New", Courier, monospace; margin-top:4px; }
+.box .u { font-size:11px; color:var(--muted); margin-top:2px; }
+table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+th, td { border-bottom:1px solid var(--faint); padding:4px 6px; text-align:right; font-family:"Courier New", Courier, monospace; }
+th:first-child, td:first-child { text-align:left; }
+th { font-size:10px; letter-spacing:.06em; text-transform:uppercase; }
+.warn { display:none; border:1px solid var(--ink); padding:7px 10px; margin:10px 0; font-size:13px; }
+.gain { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
+textarea { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:14px/1.3 "Courier New", Courier, monospace; padding:7px 8px; min-height:58px; border-radius:0; resize:vertical; }
+.count { font:12px/1.3 "Courier New", Courier, monospace; margin-top:4px; color:var(--muted); }
+.count.ok { color:#1e6b34; } .count.bad { color:#a23b1d; }
+table.est { font-size:11.5px; } table.est th, table.est td { text-align:right; padding:3px 4px; }
+table.sched { font-size:12px; min-width:900px; }
+table.sched th, table.sched td { text-align:left; padding:3px 4px; vertical-align:middle; font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+table.sched th { font-size:10px; }
+table.sched input, table.sched select { font-size:12.5px; padding:4px 5px; min-height:30px; }
+table.sched button.rm { background:transparent; color:var(--ink); border:1px solid #8a7f6c; padding:4px 8px; }
+.btnrow { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; } .btnrow button { width:auto; }
+details.guide { border:1px solid var(--ink); background:var(--panel); padding:8px 12px; margin:0 0 14px; }
+details.guide summary { cursor:pointer; font-weight:700; font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+table.checklist { font-size:12.5px; margin-top:10px; }
+table.checklist th, table.checklist td { text-align:left; vertical-align:top; font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:6px 8px; }
+table.checklist th { font-size:11px; }
+table.checklist td:first-child { white-space:nowrap; font-weight:700; }
+.hint { font-size:12px; color:var(--muted); margin:4px 0 0; }
+footer { margin-top:22px; border-top:1px solid var(--faint); padding-top:8px; font-size:11px; color:var(--muted); }
+@media (max-width:800px) {
+  .book { margin:0; padding:16px 12px 28px; }
+  nav.pages { grid-template-columns:repeat(4,1fr); }
+  .fields, .faces, .gain { grid-template-columns:1fr 1fr; }
+}
+@media print { body { background:#fff; } .book { box-shadow:none; margin:0; border:0; } }
+
+.seg { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; }
+.seg button { width:auto; min-width:44px; padding:6px 10px; font-size:13px; background:var(--panel); color:var(--ink); border:1px solid #8a7f6c; cursor:pointer; }
+.seg button.on { background:var(--ink); color:var(--paper); }
+table.dash { width:100%; border-collapse:collapse; font-size:14px; }
+table.dash th, table.dash td { padding:8px 10px; border-bottom:1px solid #d9ccb0; text-align:right; }
+table.dash th:first-child, table.dash td:first-child { text-align:left; }
+table.dash thead th { font-size:11px; letter-spacing:.1em; text-transform:uppercase; border-bottom:2px solid var(--ink); }
+table.dash td.u { color:var(--muted); font-size:12px; text-align:left; width:90px; }
+.tablewrap { overflow-x:auto; }
+table.dash th, table.dash td, table.dash td.n, table.dash td.u {
+  font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;
+  font-size:14px; font-variant-numeric:tabular-nums;
+}
+table.dash th { font-size:14px; letter-spacing:.04em; text-transform:none; font-weight:700; }
+table.dash sub { font-size:.75em; font-family:inherit; }
+table.dash tr.key td { font-weight:700; font-size:14px; }
+table.dash tr.top td { background:rgba(26,23,20,.07); font-weight:700; }
+table.dash tr.mine td { border-top:2px solid var(--ink); }
+table.dash td.u { font-family:Georgia,"Times New Roman",serif; }
+.tablewrap { overflow-x:auto; }
+.chartwrap { position:relative; }
+.tip { position:absolute; pointer-events:none; background:var(--panel); border:1px solid var(--ink); padding:7px 9px; font:12px/1.4 "Courier New",monospace; display:none; min-width:210px; z-index:3; }
+.legend { display:flex; gap:16px; flex-wrap:wrap; font-size:12px; margin:6px 0; }
+.legend i { display:inline-block; width:14px; height:10px; margin-right:5px; vertical-align:-1px; }
+.formula { font:14px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; color:var(--ink); margin-top:8px; }
+
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink,#1a1714); border:1px solid var(--ink,#1a1714); background:var(--panel,#fffdf6); font-size:12px; line-height:1.2; }
+nav.pages a span { font-size:10px; letter-spacing:.18em; font-weight:700; line-height:1; }
+nav.pages a.on { background:var(--ink,#1a1714); color:var(--paper,#f7f1e4); }
+@media (max-width:900px) { nav.pages { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media (max-width:560px) { nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); } nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:10px; padding:8px 12px; text-align:left; font-size:14px; } }
+
+/* ---------- phone layout ---------- */
+@media (max-width:600px) {
+  .book { padding:16px 14px 28px; }
+  h1 { font-size:26px; }
+  .fields, .faces, .gain, .results { grid-template-columns:1fr !important; }
+  .field[style*="grid-column"] { grid-column:auto !important; }
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .seg button { min-height:44px; min-width:48px; }
+  .pair { grid-template-columns:1fr 64px; }
+  .btnrow button { flex:1 1 100%; }
+  table.dash { font-size:13px; }
+  table.dash th, table.dash td { padding:7px 5px; }
+  table.dash td.u { width:auto; font-size:14px; }
+  table.checklist { font-size:12.5px; }
+  table.checklist th, table.checklist td { padding:6px 5px; }
+  /* window schedule: one card per window */
+  table.sched { min-width:0; }
+  table.sched, table.sched tbody, table.sched tr, table.sched td { display:block; width:100%; }
+  table.sched thead { display:none; }
+  table.sched tr { border:1px solid var(--ink); background:var(--panel); padding:8px 10px 4px; margin:0 0 10px; display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; }
+  table.sched td { padding:0; }
+  table.sched td::before { content:attr(data-l); display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; margin:0 0 2px; }
+  table.sched td[data-l="Glass type"], table.sched td[data-l="Interior shade"], table.sched td[data-l="Name"] { grid-column:1 / -1; }
+  table.sched input, table.sched select { min-width:0 !important; width:100%; }
+  table.sched td:last-child { grid-column:1 / -1; }
+  table.sched td:last-child::before { content:none; }
+  table.sched button.rm { width:100%; font-size:0 !important; }
+  table.sched button.rm::after { content:"Remove this window"; font-size:16px; }
+  .tip { min-width:170px; font-size:11px; }
+}
+
+@media (max-width:600px) {
+  .fields + .fields, .seg + .pair { margin-top:12px; }
+  #orient { font-size:12px; min-width:0; }
+  #orient th, #orient td { padding:6px 4px; font-size:12px; }
+  #orient td.n { white-space:nowrap; }
+  #orient .yr { display:none; }
+  #orient th:nth-child(3), #orient td:nth-child(3), #orient th:nth-child(7), #orient td:nth-child(7) { display:none; }
+  table.dash th:last-child:not(#orient th), table.dash td.u { display:none; }
+  table.dash td:first-child { width:34%; }
+  table.dash td:first-child::after { content:attr(data-u); display:block; font-weight:400; font-size:11px; color:var(--muted); margin-top:2px; }
+  table.dash td:first-child[data-u=""]::after { content:none; }
+  .field { margin-bottom:6px; }
+}
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+  table.sched input, table.sched select, .seg button { min-height:44px; }
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+a[href^="https://ashrae-meteo"] { color:var(--ink); text-decoration:underline; text-underline-offset:3px; }
+/* a.ext */
+</style>
+<style id="fit">
+html { color-scheme: light; }
+body { overflow-x: hidden; }
+.when { display:grid; grid-template-columns: 1.35fr .55fr .75fr; gap:6px; }
+input, select, textarea { font-size: 16px; max-width: 100%; }
+.meta, .hint, .lead, footer { overflow-wrap: break-word; }
+th, td, label, h1, h2, p, li, .box .k { overflow-wrap:normal; word-break:normal; }
+.box .v { font-size: clamp(20px, 4.2vw, 26px); }
+.when.clock { grid-template-columns: 1fr 1fr; }
+.warn.show { display:block; }
+h3 { font-size:13px; letter-spacing:.1em; text-transform:uppercase; margin:18px 0 6px; }
+details.guide details.guide { margin:10px 0 0; }
+table.checklist td:first-child { white-space: normal; }
+@media (max-width: 720px) {
+  .book { margin: 0; padding: 14px 12px 32px; }
+  h1 { font-size: 22px; }
+  .fields { grid-template-columns: 1fr !important; }
+  .faces, .gain { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VII · ASHRAE Handbook—Fundamentals, Chapters 14 and 15</div>
+  <h1>Window radiation gain</h1>
+  <div class="sub">One window, walls and the horizontal, and all the windows of a room, clear sky</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a class="on" href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<details class="guide">
+<summary>What to enter, and where to get it</summary>
+<p class="lead" style="margin-top:8px">Latitude, longitude, elevation and time zone come from the city search. The items below are the ones to check or supply yourself. Items marked <b>station data</b> are the ones the city search cannot supply.</p>
+<table class="checklist">
+<tr><th>Input</th><th>What to enter</th><th>Where to get it</th></tr>
+<tr><td>Time zone</td><td>IANA time-zone name in Region/City form</td><td>City search fills it; type it by hand under the location values if you typed latitude and longitude yourself</td></tr>
+<tr><td>τ<sub>b</sub> and τ<sub>d</sub> by month<br>(<i>station data</i>)</td><td>12 values each, January to December</td><td>ASHRAE station summary. Full instructions under the location values in section 1.</td></tr>
+<tr><td>Ground albedo</td><td>Reflectance of the ground in front of the wall</td><td>Choose the nearest surface in the list under the location values</td></tr>
+<tr><td>Date and time</td><td>Calendar date and local clock time (not solar time)</td><td>The design day and time to be checked</td></tr>
+<tr><td>Azimuth and tilt</td><td>Compass bearing the glass looks toward (N = 0°, E = 90°, S = 180°, W = 270°); tilt 90° vertical, 0° flat, up to 180°</td><td>Site plan or elevation drawing</td></tr>
+<tr><td>Glass area</td><td>Clear glazed area, width × height × number, in m²</td><td>Window schedule; use the glazed area, not the frame size</td></tr>
+<tr><td>SHGC</td><td>Solar heat gain coefficient of the whole glazing unit, 0 to 1</td><td>Manufacturer or NFRC / EN 410 data (a g-value is the same thing). With no data, choose the glass type in the list and the sheet fills a typical value</td></tr>
+<tr><td>I<sub>ac</sub></td><td>Interior shading factor, 1 for no blind</td><td>Blind or shade manufacturer data, or the Handbook fenestration chapter. With no data, choose the shade type in the list and the sheet fills a typical value</td></tr>
+<tr><td>Windows of the room or zone<br>(<i>section 6</i>)</td><td>One row per window: name, clear glass width × height, number, facing, tilt, SHGC and I<sub>ac</sub></td><td>Window schedule and elevations. Rows with the same size, facing, glass and shade can share one row with a number above 1. Use <b>Add the window from section 1</b> to copy the window above</td></tr>
+<tr><td>Floor area<br>(<i>section 6, optional</i>)</td><td>Floor area of the same room or zone, in m²</td><td>Floor plan. Only used to show the gain per m² of floor; leave blank if not needed</td></tr>
+</table>
+<p class="hint">Results are clear-sky values, not weather-file values: they are the upper bound on a cloudless day, which suits peak-load design.</p>
+</details>
+
+<h2>1. Inputs</h2>
+<div class="fields">
+  <div class="field" style="grid-column:1/-1"><label for="city">Location</label>
+    <div class="pair"><input id="city" type="text" placeholder="City name, then Find" autocomplete="off" aria-label="City name" /><button type="button" id="findBtn" style="width:auto">Find</button></div>
+    <ul class="hits" id="hits" hidden></ul>
+    <div class="meta" id="placeMeta"></div></div>
+  <div class="field"><label>Calendar date</label>
+    <div class="when">
+      <select id="dm" aria-label="Month"></select>
+      <select id="dd" aria-label="Day"></select>
+      <select id="dy" aria-label="Year"></select>
+    </div>
+  </div>
+  <div class="field"><label>Local time, 24-hour</label>
+    <div class="when clock">
+      <select id="th" aria-label="Hour"></select>
+      <select id="tm" aria-label="Minute"></select>
+    </div>
+  </div>
+  <div class="field"><label for="area">Window glass area</label><div class="pair"><input id="area" type="number" inputmode="decimal" step="any" min="0" value="2.25" /><span>m²</span></div></div>
+</div>
+
+<div class="fields">
+  <div class="field"><label>Orientation, compass azimuth ψ (N = 0°, E = 90°, S = 180°, W = 270°)</label>
+    <div class="seg" id="azBtns"></div>
+    <div class="pair"><input id="az" type="number" inputmode="decimal" step="any" min="0" max="360" value="180" aria-label="Azimuth in degrees" /><span>°</span></div></div>
+  <div class="field"><label>Tilt Σ from horizontal</label>
+    <div class="seg" id="tiltBtns"></div>
+    <div class="pair"><input id="tilt" type="number" inputmode="decimal" step="any" min="0" max="180" value="90" aria-label="Tilt in degrees" /><span>°</span></div>
+    <p class="hint" id="tiltHint"></p></div>
+  <div class="field"><label for="glassType">Glass type (fills SHGC)</label><select id="glassType"></select><p class="hint" id="glassHint"></p></div>
+  <div class="field"><label for="shgc">SHGC</label><div class="pair"><input id="shgc" type="number" inputmode="decimal" step="any" min="0" max="1" value="0.35" /><span>—</span></div></div>
+  <div class="field"><label for="shadeType">Interior shade (fills I<sub>ac</sub>)</label><select id="shadeType"></select><p class="hint" id="shadeHint"></p></div>
+  <div class="field"><label for="iac">I<sub>ac</sub></label><div class="pair"><input id="iac" type="number" inputmode="decimal" step="any" min="0" max="1" value="1" /><span>—</span></div></div>
+</div>
+
+<details class="guide" style="margin-top:12px">
+<summary>How to fill in I<sub>ac</sub> (interior shade)</summary>
+<table class="checklist">
+<tr><td>What it is</td><td>The interior attenuation coefficient: the share of the solar gain that still gets through once an interior shading device (blind, roller shade, curtain) is fitted over the glass. Gain = area × SHGC × I<sub>ac</sub> × E<sub>t</sub>.</td></tr>
+<tr><td>No shade</td><td>Enter <b>1</b>. This is the default and must stay 1 when nothing is fitted, or when the glass is bare at the time you are checking.</td></tr>
+<tr><td>With a shade</td><td>Enter the value for that device on that glazing. Take it from the ASHRAE Handbook Fundamentals fenestration chapter (the IAC tables for drapes, roller shades and venetian blinds), or from the shade manufacturer's data sheet. The value depends on the shade type, its colour and openness, the slat angle for blinds, and the glass behind it. Lighter and more reflective shades give lower numbers.</td></tr>
+<tr><td>Range</td><td>Between 0 and 1. A value above 1 is not possible; the box stops at 1.</td></tr>
+<tr><td>Do not double count</td><td>If the SHGC you entered already includes a shade (a blind between the panes, or a manufacturer figure quoted "with shade"), keep I<sub>ac</sub> at 1.</td></tr>
+<tr><td>Not covered here</td><td>Outside shading — overhangs, fins, external louvres and neighbouring buildings. I<sub>ac</sub> is for interior devices only. Reduce E<sub>t</sub> separately for outside shade, or leave the result as an upper bound.</td></tr>
+<tr><td>Blind open or closed</td><td>One I<sub>ac</sub> applies to one condition. For a design check, use the shade position you expect at peak sun, and run the sheet again with 1 for the bare-glass worst case.</td></tr>
+</table>
+</details>
+<details class="guide">
+<summary>Typical SHGC and I<sub>ac</sub> values, and what they assume</summary>
+<p class="lead" style="margin-top:8px">Indicative values to start from when you have no product data. They are centre-of-glass figures for unshaded glazing, which is what the ASHRAE simplified method uses with the <b>glazed</b> area. A manufacturer's data sheet for the actual product always replaces them.</p>
+<table class="checklist" id="glassTable"></table>
+<table class="checklist" id="shadeTable" style="margin-top:10px"></table>
+<p class="hint">Whole-window SHGC (frame included) is lower than the centre-of-glass figure. If you enter a whole-window SHGC, use the whole opening area instead of the glazed area, never both.</p>
+</details>
+
+<details class="guide">
+<summary>Location values, ground albedo and clear-sky optical depths</summary>
+<div class="fields" style="margin-top:10px">
+  <div class="field"><label for="lat">Latitude, north positive</label><div class="pair"><input id="lat" type="number" step="any" value="22.32" /><span>°N</span></div></div>
+  <div class="field"><label for="lon">Longitude, east positive</label><div class="pair"><input id="lon" type="number" step="any" value="114.17" /><span>°E</span></div></div>
+  <div class="field"><label for="elev">Elevation</label><div class="pair"><input id="elev" type="number" step="any" value="24" min="-500" max="9000" /><span>m</span></div></div>
+  <div class="field"><label for="tzname">Time zone (IANA name)</label><input id="tzname" type="text" value="Asia/Hong_Kong" autocomplete="off" /></div>
+  <div class="field"><label for="rhoType">Ground surface (fills the albedo)</label><select id="rhoType"></select></div>
+  <div class="field"><label for="rho">Ground albedo</label><div class="pair"><input id="rho" type="number" inputmode="decimal" step="any" min="0" max="1" value="0.20" /><span>—</span></div></div>
+</div>
+<p class="lead">τ<sub>b</sub> and τ<sub>d</sub> cannot be found from a city name. Open <a href="https://ashrae-meteo.info/" target="_blank" rel="noopener">ASHRAE climatic design conditions (ashrae-meteo.info)</a>, find the nearest station on the map or by name, and copy the rows named <i>taub</i> and <i>taud</i> (ASHRAE's names for τ<sub>b</sub> and τ<sub>d</sub>), January to December, from the "Clear Sky Solar Irradiance" block of its monthly table into the boxes. Leave a box blank to use the sheet's estimate from month and elevation; put a dash for any single month you do not have.</p>
+<div class="fields">
+  <div class="field"><label for="taub">τ<sub>b</sub> by month</label><textarea id="taub" rows="2" spellcheck="false" placeholder="12 values, blank = estimate"></textarea><div class="count" id="cntB"></div></div>
+  <div class="field"><label for="taud">τ<sub>d</sub> by month</label><textarea id="taud" rows="2" spellcheck="false" placeholder="12 values, blank = estimate"></textarea><div class="count" id="cntD"></div></div>
+</div>
+<div class="meta" id="tauMeta"></div>
+<details class="guide">
+<summary>How to fill in τ<sub>b</sub> and τ<sub>d</sub></summary>
+<table class="checklist">
+<tr><td>Where to get it</td><td>Open <a href="https://ashrae-meteo.info/" target="_blank" rel="noopener">ASHRAE climatic design conditions (ashrae-meteo.info)</a> and choose the station nearest to the site (similar climate and elevation), by name or on the map. Pick the edition of the climatic data you are working to (2009, 2013, 2017, 2021 or later). In the "Monthly Design Conditions" table, under "Clear Sky Solar Irradiance", copy the rows named <i>taub</i> and <i>taud</i>. These are ASHRAE's names for τ<sub>b</sub> (beam) and τ<sub>d</sub> (diffuse); they also appear in Handbook Fundamentals Chapter 14. Table layout differs between editions, so match the row names, not the table number.</td></tr>
+<tr><td>How many, in what order</td><td>Exactly 12 entries in each box: January first, December last, in calendar order whatever the hemisphere (only the blank-box estimate is shifted by six months for the south). Put a dash (-) for any month you do not have: that month uses the sheet's estimate.</td></tr>
+<tr><td>How to paste</td><td>Copy the row (or the 12-cell column) and paste it as it is. Commas, spaces, tabs, semicolons and new lines are all accepted. Use a decimal point; no units, month names or header text.</td></tr>
+<tr><td>Which box</td><td>τ<sub>b</sub> values go in the first box and τ<sub>d</sub> in the second. τ<sub>d</sub> is several times larger than τ<sub>b</sub> at every station, so if the first box holds the bigger numbers the columns are swapped.</td></tr>
+<tr><td>Check</td><td>Each counter must read <b>12 values</b>, and the line under the boxes shows the τ<sub>b</sub> and τ<sub>d</sub> used for the chosen date. Compare your values with the estimate table below: the same order of size means a sensible entry; a value far outside means a wrong row or a typing slip.</td></tr>
+<tr><td>Blank or partial</td><td>Either box may stay empty and then uses the sheet's generic estimate from month and elevation, which is for a rough check only. When you do fill them, use both boxes from the same station: a station τ<sub>b</sub> with an estimated τ<sub>d</sub> is a pair the model was never fitted to.</td></tr>
+</table>
+<p class="hint" style="margin-top:8px">Sheet's generic estimate for this site's elevation and hemisphere, for comparison only (not station data):</p>
+<div style="overflow-x:auto"><table class="est" id="estTable"></table></div>
+</details>
+</details>
+<div id="warn" class="warn" role="alert"></div>
+
+<h2>2. Results</h2>
+<p class="lead" id="resLead"></p>
+<div class="tablewrap"><table class="dash" id="dash"></table></div>
+<div class="formula">q″ = E<sub>t</sub> × SHGC × I<sub>ac</sub> [W/m²] &nbsp; q = q″ × A [kW] &nbsp; Q<sub>daily</sub> = ∫ q dt over 00:00 to 24:00 [kWh/day], summed in 3-minute steps<br>
+E<sub>t</sub> = beam + sky diffuse + ground-reflected clear-sky irradiance on the glass (ASHRAE clear-sky method).</div>
+<div class="meta" id="resNote"></div>
+
+<h2>3. Annual maximum in every direction</h2>
+<p class="lead" id="orientLead"></p>
+<div class="tablewrap"><table class="dash" id="orient"></table></div>
+<div class="meta" id="orientNote"></div>
+
+<h2>4. 24-hour curve on the chosen date</h2>
+<div class="legend"><span><i style="background:#c9b98f"></i>Incident E<sub>t</sub> (W/m²)</span><span><i style="background:#c0392b"></i>Transmitted q″ (W/m² of glass)</span><span><i style="background:#1a1714;height:3px;vertical-align:2px"></i>Selected time</span></div>
+<div class="chartwrap" id="chartWrap"><svg id="chart" class="chart" viewBox="0 0 760 330" role="img" aria-label="24-hour incident and transmitted solar radiation"></svg><div class="tip" id="tip"></div></div>
+<p class="hint">Move over the chart (or touch it) to read the values for that hour.</p>
+
+<h2>5. Walls and the horizontal on the chosen date</h2>
+<p class="lead">Clear-sky irradiance E<sub>t</sub> on vertical walls facing each way, and on the horizontal, before any glass (no SHGC or I<sub>ac</sub>). Walls include beam, diffuse and ground reflection; the horizontal is beam on the flat plane plus diffuse. For the annual maximum on each wall, see section 3 with the tilt at 90°.</p>
+<p class="lead" id="dayLead"></p>
+<p class="hint" id="dayEbEd"></p>
+<div class="faces" id="dayFaces"></div>
+<div class="gain" id="dayHoriz"></div>
+<h3>Hour by hour</h3>
+<p class="lead">Local clock time, W/m². Only hours with the sun up are listed. A low value on a wall means it is in shade for the beam and receives only diffuse and ground reflection.</p>
+<div style="overflow-x:auto"><table id="hours"></table></div>
+
+<h2 id="schedule">6. Windows in the area: worst glass gain</h2>
+<p class="lead">List every window of the room or zone. The sheet adds them up at each moment of the year with the place, ground albedo and optical depths in section 1, and finds the highest total. That coincident total is the worst glass gain for the area. Each row has its own size, facing, tilt, glass and shade. Sections 2 to 4 stay as the single-window check.</p>
+<div class="fields" style="margin-bottom:8px">
+  <div class="field"><label for="floorA">Floor area of the room or zone (optional)</label><div class="pair"><input id="floorA" type="number" inputmode="decimal" step="any" min="0" value="" placeholder="m²" /><span>m²</span></div></div>
+</div>
+<div class="btnrow"><button type="button" id="btnAddWin">Add a window</button><button type="button" id="btnCopyWin">Add the window from section 1</button></div>
+<div style="overflow-x:auto"><table class="sched" id="sched"><thead><tr><th>Name</th><th>Width m</th><th>Height m</th><th>No.</th><th>Facing</th><th>Tilt °</th><th>Glass type</th><th>SHGC</th><th>Interior shade</th><th>I<sub>ac</sub></th><th></th></tr></thead><tbody id="schedBody"></tbody></table></div>
+<p class="hint">Width and height are the clear glass opening. Tilt: 90 = vertical, 0 = flat. Facing H = horizontal, for a rooflight. Choose a glass type and shade from the lists to fill typical values, or type your own. Section 1 holds only the glass area, so the window copied from it comes in as that area × 1 m; type the real width and height if you want them listed.</p>
+<div class="meta" id="schedMsg"></div>
+<div class="gain" id="schedCards"></div>
+<div class="formula" id="worstDef" style="border:1px solid var(--faint);background:var(--panel);padding:8px 12px;margin-top:10px">
+<b>Worst glass gain, definition.</b> The highest total solar heat gain through all the listed windows <i>at one single moment</i> of the year:<br>
+Q<sub>worst</sub> = max over time t of Σ<sub>i</sub> A<sub>i</sub> × SHGC<sub>i</sub> × I<sub>ac,i</sub> × E<sub>t,i</sub>(t) &nbsp;[kW]<br>
+where i is each window row, A<sub>i</sub> its glass area (width × height × number), and E<sub>t,i</sub>(t) the clear-sky irradiance (beam + diffuse + ground-reflected) on that window's own facing and tilt at time t. The sheet adds the windows together at each moment, checks every day of the year at 6-minute steps over the full 24 hours, refines the highest to 36 seconds, and reports that total with its date and time. It is a peak solar gain through the glass, not a cooling load.
+</div>
+<div class="meta" id="schedNote"></div>
+<h3>At the worst moment</h3>
+<div style="overflow-x:auto"><table id="schedWorst"></table></div>
+<h3>Worst gain in each month</h3>
+<div style="overflow-x:auto"><table id="schedMonths"></table></div>
+<h3>On the chosen date, hour by hour</h3>
+<div style="overflow-x:auto"><table id="schedHours"></table></div>
+
+<footer>
+  Clear-sky method of ASHRAE Handbook—Fundamentals 2025, Chapter 14, with the simplified fenestration relation q = A × E<sub>t</sub> × SHGC × I<sub>ac</sub> of Chapter 15.
+  Azimuth is entered as a compass bearing and converted to the Handbook's surface azimuth measured from south. Clock time is local, with daylight saving taken from the time zone. Every yearly scan runs over the full 24 hours of every day at 6-minute steps and then refines to 36 seconds. Section 6 sums A × SHGC × I<sub>ac</sub> × E<sub>t</sub> of every listed window at the same moment and reports the highest coincident total; each window is also scanned on its own for comparison. Horizontal windows take no ground reflection. Diffuse irradiance on the glass uses the Handbook relation: E<sub>d</sub>·Y on a vertical surface, with Y = max(0.45, 0.55 + 0.437 cos θ + 0.313 cos² θ), and E<sub>d</sub>(Y sin Σ + cos Σ) on a tilted surface (E<sub>d</sub> Y sin Σ when Σ exceeds 90°). The solar constant is taken as 1361.1 W/m².
+  Results are instantaneous clear-sky glass gain, an upper bound, not the cooling load: stored heat in the room delays and lowers the peak the cooling system sees. SHGC is a normal-incidence value, so gain at beam incidence angles above about 60° is overstated.
+  Typical SHGC and I<sub>ac</sub> values are indicative centre-of-glass figures; manufacturer data replaces them. No ASHRAE climatic data is built into this page: τ<sub>b</sub> and τ<sub>d</sub> are entered by the user from the station data on ashrae-meteo.info. City elevation from Open-Meteo.
+</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers and are not reproduced here. These calculations are provided for design checking only, without warranty of any kind; verify results against the cited standards and the project requirements before relying on them. City search uses the Open-Meteo Geocoding API; place data © GeoNames, licensed CC BY 4.0.</div>
+</article>
+<script>
+const ORI = [
+  ["N", 180], ["NE", -135], ["E", -90], ["SE", -45],
+  ["S", 0], ["SW", 45], ["W", 90], ["NW", 135]
+];
+const TB0 = [0.340,0.365,0.400,0.445,0.485,0.510,0.515,0.495,0.450,0.400,0.360,0.340];
+const TD0 = [2.42, 2.32, 2.22, 2.14, 2.10, 2.08, 2.07, 2.10, 2.18, 2.28, 2.36, 2.44];
+const $ = id => document.getElementById(id);
+const sind = d => Math.sin(d*Math.PI/180);
+const cosd = d => Math.cos(d*Math.PI/180);
+const clamp = x => Math.max(-1, Math.min(1, x));
+let zone = "Asia/Hong_Kong";
+function validZone(z){ try { new Intl.DateTimeFormat("en-US",{timeZone:z}); return !!z; } catch(e){ return false; } }
+
+function dayOfYear(y, m, d) {
+  return Math.floor((Date.UTC(y, m-1, d) - Date.UTC(y, 0, 1)) / 86400000) + 1;
+}
+function Eo(n) { return 1361.1 * (1 + 0.033 * cosd(360*(n-3)/365)); }
+function ET(n) {
+  const G = 360*(n-1)/365;
+  return 2.2918*(0.0075 + 0.1868*cosd(G) - 3.2077*sind(G) - 1.4615*cosd(2*G) - 4.089*sind(2*G));
+}
+function decl(n) { return 23.45 * sind(360*(n+284)/365); }
+function airMass(beta) {
+  if (!(beta > 0)) return Infinity;
+  return 1 / (sind(beta) + 0.50572 * Math.pow(6.07995 + beta, -1.6364));
+}
+function sunPos(L, n, AST) {
+  const delta = decl(n);
+  const H = 15*(AST-12);
+  const sinb = cosd(L)*cosd(delta)*cosd(H) + sind(L)*sind(delta);
+  const beta = Math.asin(clamp(sinb))*180/Math.PI;
+  if (!(beta > 0)) return {beta, phi:0, delta};
+  const sinp = sind(H)*cosd(delta)/cosd(beta);
+  const cosp = (cosd(H)*cosd(delta)*sind(L) - sind(delta)*cosd(L))/cosd(beta);
+  const phi = Math.atan2(sinp, cosp)*180/Math.PI;
+  return {beta, phi, delta};
+}
+function parseTau(id) {
+  const t = ($(id).value || "").trim(); if (!t) return null;
+  const a = t.split(/[\s,;]+/).filter(Boolean).map(x => /^[-?x]$/i.test(x) ? null : Number(x));
+  return (a.length === 12 && a.every(x => x === null || (Number.isFinite(x) && x > 0)) && a.some(x => x !== null)) ? a : null;
+}
+const MID = [15,46,74,105,135,166,196,227,258,288,319,349];
+function optical(n, elev, lat) {
+  const month = Math.min(11, Math.max(0, Math.floor((n-1)/30.4375)));
+  const i = lat < 0 ? (month+6)%12 : month;
+  const f = Math.exp(-Math.max(0, elev)/8000);
+  const ub = parseTau("taub"), ud = parseTau("taud");
+  return {tb: ub && ub[month] != null ? ub[month] : TB0[i]*f, td: ud && ud[month] != null ? ud[month] : TD0[i]*f, month, user: !!(ub || ud)};
+}
+function clearSky(eo, m, tb, td) {
+  const ab = 1.454 - 0.406*tb - 0.268*td + 0.021*tb*td;
+  const ad = 0.507 + 0.205*tb - 0.080*td - 0.190*tb*td;
+  return {
+    Eb: eo * Math.exp(-tb * Math.pow(m, ab)),
+    Ed: eo * Math.exp(-td * Math.pow(m, ad))
+  };
+}
+function onSurface(Eb, Ed, eo, beta, phi, psi, Sigma, rho) {
+  if (!(beta > 0)) return {Et:0, Etb:0, Etd:0, Etr:0, theta:90};
+  const gamma = phi - psi;
+  const cosT = cosd(beta)*cosd(gamma)*sind(Sigma) + sind(beta)*cosd(Sigma);
+  const theta = Math.acos(clamp(cosT))*180/Math.PI;
+  const Etb = cosT > 0 ? Eb*cosT : 0;
+  /* ASHRAE diffuse on a surface: Y factor for the vertical part, sky-view for the horizontal part */
+  const Y = Math.max(0.45, 0.55 + 0.437*cosT + 0.313*cosT*cosT);
+  const Etd = Sigma <= 90 ? Ed * (Y*sind(Sigma) + cosd(Sigma)) : Ed * Y * sind(Sigma);
+  const Etr = (Eb*sind(beta) + Ed) * rho * (1-cosd(Sigma))/2;
+  return {Et: Etb+Etd+Etr, Etb, Etd, Etr, theta};
+}
+function onWall(Eb, Ed, eo, beta, phi, psi, rho) {
+  return onSurface(Eb, Ed, eo, beta, phi, psi, 90, rho).Et;
+}
+function onHoriz(Eb, Ed, eo, beta) {
+  return onSurface(Eb, Ed, eo, beta, 0, 0, 0, 0).Et;
+}
+function offsetHours(timeZone, y, m, d) {
+  const utc = new Date(Date.UTC(y, m-1, d, 4, 0, 0));
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone, hourCycle:"h23", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"
+  });
+  const p = Object.fromEntries(fmt.formatToParts(utc).map(x => [x.type, x.value]));
+  const asUTC = Date.UTC(+p.year, +p.month-1, +p.day, +p.hour, +p.minute);
+  return (asUTC - utc.getTime()) / 3600000;
+}
+function standardOffset(timeZone) {
+  const y = 2026;
+  return Math.min(offsetHours(timeZone, y, 1, 15), offsetHours(timeZone, y, 7, 15));
+}
+function astParts(hour, n, lon, std, dstShift) {
+  const LST = hour - dstShift;
+  return LST + ET(n)/60 + (lon - 15*std)/15;
+}
+
+const GLASS = [
+  ["custom", "Custom (type the SHGC)", null, "Use the manufacturer value for the product."],
+  ["s_clear", "Single clear", 0.86, "Typical 0.82 to 0.86."],
+  ["s_tint", "Single tinted / heat-absorbing", 0.60, "Roughly 0.50 to 0.70, depending on tint and thickness."],
+  ["s_refl", "Single reflective", 0.44, "Roughly 0.30 to 0.50."],
+  ["d_clear", "Double clear", 0.76, "Typical 0.70 to 0.76."],
+  ["d_tint", "Double tinted (bronze, grey)", 0.62, "Roughly 0.45 to 0.62."],
+  ["d_lowe_hi", "Double low-E, high solar gain", 0.60, "Typical 0.55 to 0.65. Made for cold climates, so not for cooling design."],
+  ["d_lowe_sc", "Double low-E, solar control", 0.35, "Typical 0.25 to 0.41. The usual choice for cooling-dominated buildings."],
+  ["d_refl", "Double reflective", 0.33, "Roughly 0.25 to 0.40."],
+  ["t_lowe", "Triple low-E", 0.40, "Roughly 0.25 to 0.49."]
+];
+const SHADE = [
+  ["custom", "Custom (type the IAC)", null, "Use the shade manufacturer's value, or the Handbook table."],
+  ["none", "No interior shade", 1.00, "Bare glass. Also use 1 if the SHGC you entered already includes a shade."],
+  ["vb_light", "Light venetian blind (slats about 45°)", 0.70, "Indicative value; about 0.65 to 0.75 by slat angle and incidence. Use manufacturer or Handbook data."],
+  ["rs_white", "Roller shade, white opaque", 0.41, "Indicative value for double glazing. Use manufacturer or Handbook data."],
+  ["rs_trans", "Roller shade, translucent / medium", 0.60, "Indicative value; roughly 0.5 to 0.7 by fabric."],
+  ["drape", "Curtain or drape", 0.70, "Roughly 0.55 to 0.80; depends on fabric weave, colour and fullness."],
+  ["dark", "Dark blind or dark shade", 0.80, "Roughly 0.75 to 0.85. Dark fabric absorbs heat and releases it inside, so it helps little."]
+];
+
+const ALBEDO = [
+  ["custom", "Custom (type the albedo)", null],
+  ["dry", "Dry ground", 0.20],
+  ["grass", "Green grass", 0.26],
+  ["asphalt", "Weathered asphalt", 0.10],
+  ["sand", "Desert sand", 0.40],
+  ["snow", "Rural snow", 0.50]
+];
+function syncAlbedo() { const v = parseFloat($("rho").value), hit = ALBEDO.find(r => r[2] != null && Math.abs(r[2] - v) < 1e-9); $("rhoType").value = hit ? hit[0] : "custom"; }
+function paintPresetTables() {
+  const mk = (list, head) => "<tr><th>" + head + "</th><th>Typical value</th><th>Note</th></tr>" + list.filter(r => r[2] != null).map(r => `<tr><td>${r[1]}</td><td>${r[2].toFixed(2)}</td><td>${r[3]}</td></tr>`).join("");
+  $("glassTable").innerHTML = mk(GLASS, "Glass (SHGC)");
+  $("shadeTable").innerHTML = mk(SHADE, "Interior shade (I<sub>ac</sub>)");
+}
+function paintEstimate(L, elev) {
+  const f = Math.exp(-Math.max(0, elev)/8000), tb = [], td = [];
+  for (let m=0; m<12; m++) { const i = L < 0 ? (m+6)%12 : m; tb.push((TB0[i]*f).toFixed(3)); td.push((TD0[i]*f).toFixed(3)); }
+  $("estTable").innerHTML = "<tr><th></th>" + MONTHS.map(x => "<th>"+x+"</th>").join("") + "</tr>" +
+    "<tr><th>τb</th>" + tb.map(x => "<td>"+x+"</td>").join("") + "</tr>" +
+    "<tr><th>τd</th>" + td.map(x => "<td>"+x+"</td>").join("") + "</tr>";
+}
+function fillSelect(id, list) { $(id).innerHTML = list.map(r => `<option value="${r[0]}">${r[1]}${r[2] != null ? " (" + r[2].toFixed(2) + ")" : ""}</option>`).join(""); }
+const ymd = (y,m,d) => y + "-" + String(m).padStart(2,"0") + "-" + String(d).padStart(2,"0");
+function fmtClock(h) { const t = Math.round(h*60), hh = Math.floor(t/60) % 24, mm = t % 60; return String(hh).padStart(2,"0") + ":" + String(mm).padStart(2,"0"); }
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let placeName = "", searchSeq = 0, prof = null, annKey = "", ann = null;
+
+/* ---- inputs ---- */
+function readInputs() {
+  const f = id => parseFloat($(id).value);
+  const p = [], tz = $("tzname").value.trim();
+  const L = f("lat"), lon = f("lon"), elev = f("elev"), az = f("az"), tiltRaw = f("tilt"), A = f("area"), shgc = f("shgc"), iac = f("iac"), rho = f("rho");
+  if (![L, lon].every(Number.isFinite)) p.push("Enter a latitude and a longitude.");
+  else { if (Math.abs(L) > 90) p.push("Latitude must be between −90 and 90."); if (Math.abs(lon) > 180) p.push("Longitude must be between −180 and 180."); }
+  if (!validZone(tz)) p.push("Time zone not recognised. Use an IANA time-zone name in Region/City form.");
+  if (!Number.isFinite(elev) || elev < -500 || elev > 9000) p.push("Elevation should be between −500 and 9000 m.");
+  if (!Number.isFinite(az) || az < 0 || az > 360) p.push("Azimuth must be between 0 and 360°.");
+  if (!Number.isFinite(tiltRaw) || tiltRaw < 0 || tiltRaw > 180) p.push("Tilt must be between 0 and 180°.");
+  if (!(A > 0)) p.push("Enter a window area above 0 m².");
+  if (!(shgc > 0 && shgc <= 1)) p.push("SHGC must be above 0 and at most 1.");
+  if (!(iac > 0 && iac <= 1)) p.push("I_ac must be above 0 and at most 1.");
+  if (!(rho >= 0 && rho <= 1)) p.push("Ground albedo must be between 0 and 1.");
+  const dv = [+$("dy").value, +$("dm").value, +$("dd").value];
+  let hour = +$("th").value + (+$("tm").value) / 60; if (!Number.isFinite(hour)) hour = 12;
+  if (dv.some(x => !Number.isFinite(x)) || dv[2] < 1) p.push("Choose a date.");
+  if (p.length) return {err: p.join(" ")};
+  let psi = az - 180; if (psi > 180) psi -= 360; if (psi < -180) psi += 360;
+  return {L, lon, elev, tz, psi, az, tilt: tiltRaw, A, shgc, iac, rho, k: A * shgc * iac / 1000, y: dv[0], m: dv[1], d: dv[2], hour};
+}
+function etAt(c, std, n, shift, h) {
+  const AST = astParts(h, n, c.lon, std, shift), sun = sunPos(c.L, n, AST);
+  if (!(sun.beta > 0)) return 0;
+  const eo = Eo(n), op = optical(n, c.elev, c.L), sk = clearSky(eo, airMass(sun.beta), op.tb, op.td);
+  return onSurface(sk.Eb, sk.Ed, eo, sun.beta, sun.phi, c.psi, c.tilt, c.rho).Et;
+}
+/* day profile: E_t every 3 minutes from 00:00 to 24:00 */
+function dayProfile(c, std, y, m, d) {
+  const n = dayOfYear(y, m, d), shift = offsetHours(c.tz, y, m, d) - std, step = 0.05, N = 480, et = new Array(N + 1);
+  for (let i = 0; i <= N; i++) et[i] = etAt(c, std, n, shift, i * step);
+  let H = 0, peak = {v: 0, h: 0};
+  for (let i = 0; i < N; i++) H += (et[i] + et[i+1]) / 2 * step;
+  et.forEach((v, i) => { if (v > peak.v) peak = {v, h: i * step}; });
+  return {et, step, H: H / 1000, peak};
+}
+/* whole year, for any list of surfaces at once: annual peak E_t (refined) and highest-energy day of each */
+function skyAt(c, std, n, shift, h) {
+  const sun = sunPos(c.L, n, astParts(h, n, c.lon, std, shift));
+  if (!(sun.beta > 0)) return null;
+  const eo = Eo(n), op = optical(n, c.elev, c.L), sk = clearSky(eo, airMass(sun.beta), op.tb, op.td);
+  return {sun, eo, Eb: sk.Eb, Ed: sk.Ed};
+}
+function annualMulti(c, std, surfs) {
+  const days = [], S = surfs.length;
+  for (let month=1; month<=12; month++) { const dim = new Date(2026, month, 0).getDate(); for (let d=1; d<=dim; d++) days.push([month, d, dayOfYear(2026, month, d), offsetHours(c.tz, 2026, month, d) - std]); }
+  const et = (sk, sf) => sk ? onSurface(sk.Eb, sk.Ed, sk.eo, sk.sun.beta, sk.sun.phi, sf.psi, sf.tilt, c.rho).Et : 0;
+  const best = surfs.map(() => ({v: -1, m: 1, d: 1, h: 12})), bestDay = surfs.map(() => ({H: -1, m: 1, d: 1}));
+  for (const [month, d, n, shift] of days) {
+    const Hs = new Array(S).fill(0);
+    for (let h=0; h<24; h+=0.1) {
+      const sk = skyAt(c, std, n, shift, h);
+      for (let i=0; i<S; i++) { const v = et(sk, surfs[i]); Hs[i] += v * 0.1; if (v > best[i].v) best[i] = {v, m: month, d, h}; }
+    }
+    for (let i=0; i<S; i++) if (Hs[i] > bestDay[i].H) bestDay[i] = {H: Hs[i], m: month, d};
+  }
+  return surfs.map((sf, i) => {
+    const b = best[i], idx = days.findIndex(x => x[0]===b.m && x[1]===b.d);
+    let bb = {v: et(skyAt(c, std, days[idx][2], std === undefined ? 0 : days[idx][3], b.h), sf), m: b.m, d: b.d, h: b.h};
+    for (let q=Math.max(0, idx-3); q<=Math.min(days.length-1, idx+3); q++) {
+      const [month, d, n, shift] = days[q];
+      for (let h=b.h-0.15; h<=b.h+0.1501; h+=0.01) { const v = et(skyAt(c, std, n, shift, h), sf); if (v > bb.v) bb = {v, m: month, d, h}; }
+    }
+    const hp = dayProfile(Object.assign({}, c, {psi: sf.psi, tilt: sf.tilt}), std, 2026, bestDay[i].m, bestDay[i].d);
+    return {peak: bb, day: {m: bestDay[i].m, d: bestDay[i].d, H: hp.H, peak: hp.peak}};
+  });
+}
+function annual(c, std) { return annualMulti(c, std, [{psi: c.psi, tilt: c.tilt}])[0]; }
+
+let oriKey = "", oriVal = null;
+const ORI8 = [["N", 180], ["NE", -135], ["E", -90], ["SE", -45], ["S", 0], ["SW", 45], ["W", 90], ["NW", 135]];
+function renderOrient(c, std, mine, sg) {
+  const vertical = c.tilt === 0 || c.tilt === 180, tl = vertical ? 90 : c.tilt;
+  const surfs = ORI8.map(([n, psi]) => ({psi, tilt: tl})).concat([{psi: 0, tilt: 0}]);
+  const key = [c.L, c.lon, c.elev, c.tz, c.rho, tl, $("taub").value, $("taud").value].join("|");
+  if (key !== oriKey) { oriKey = key; oriVal = annualMulti(c, std, surfs); }
+  const names = ORI8.map(o => o[0]).concat(["Horizontal"]);
+  const rows = oriVal.map((r, i) => ({name: names[i], Et: r.peak.v, when: fmtWhen(r.peak.m, r.peak.d, r.peak.h), H: r.day.H, dayTxt: ymd(2026, r.day.m, r.day.d)}));
+  const eight = rows.slice(0, 8), flat = rows[8];
+  const rE = x => Math.round(x), rH = x => Math.round(x * c.k * 0 + x * sg * c.A * 100) / 100;
+  const topE = Math.max(...eight.map(r => rE(r.Et))), topH = Math.max(...eight.map(r => rH(r.H)));
+  const namesE = eight.filter(r => rE(r.Et) === topE).map(r => r.name), namesH = eight.filter(r => rH(r.H) === topH).map(r => r.name);
+  const join = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a[0];
+  $("orientLead").textContent = "The same glass (" + c.A.toFixed(2) + " m², SHGC " + c.shgc.toFixed(2) + ", I_ac " + c.iac.toFixed(2) + ") facing each way at tilt " + tl + "°. Highest peak of the eight directions: " + join(namesE) + ", " + topE + " W/m² (" + (topE * c.k).toFixed(2) + " kW). Highest daily energy: " + join(namesH) + ", " + topH.toFixed(2) + " kWh/day. Flat glass on a roof, for reference: " + rE(flat.Et) + " W/m² and " + rH(flat.H).toFixed(2) + " kWh/day.";
+  const yr = t => t.replace(/^(\d{4}-)/, '<span class="yr">$1</span>');
+  const line = (nm, Et, when, H, dayTxt, cls) => `<tr class="${cls}"><td>${nm}</td><td class="n">${Et.toFixed(0)}</td><td class="n">${(Et * sg).toFixed(1)}</td><td class="n">${(Et * c.k).toFixed(2)}</td><td class="n">${yr(when)}</td><td class="n">${(H * sg * c.A).toFixed(2)}</td><td class="n">${yr(dayTxt)}</td></tr>`;
+  $("orient").innerHTML = "<thead><tr><th>Facing</th><th>E<sub>t,max</sub> W/m²</th><th>q″ W/m²</th><th>q kW</th><th>Peak occurs</th><th>Q<sub>daily</sub> kWh/day</th><th>Highest-energy day</th></tr></thead><tbody>" +
+    line("Your window (" + c.az.toFixed(0) + "°, tilt " + c.tilt.toFixed(0) + "°)", mine.peak.v, fmtWhen(mine.peak.m, mine.peak.d, mine.peak.h), mine.day.H, ymd(2026, mine.day.m, mine.day.d), "mine top") +
+    rows.map((r, i) => line(r.name + (i < 8 && rE(r.Et) === topE ? " ▲" : "") + (i < 8 && rH(r.H) === topH ? " ◆" : ""), r.Et, r.when, r.H, r.dayTxt, (i < 8 && (rE(r.Et) === topE || rH(r.H) === topH)) ? "key" : "")).join("") + "</tbody>";
+  $("orientNote").textContent = "▲ highest annual peak and ◆ highest daily energy among the eight directions. " + (vertical ? "Your tilt is " + c.tilt.toFixed(0) + "°, so the eight directions are shown for vertical glass, which is the annual maximum on each wall." : (tl === 90 ? "At tilt 90° the eight rows are the annual maximum on each wall." : "The eight rows are for glass at your tilt; set the tilt to 90° to see the annual maximum on each wall.")) + " Values are clear-sky, so east and west mirror each other.";
+}
+/* ---- render ---- */
+function render() {
+  syncButtons();
+  const c = readInputs(), warn = $("warn");
+  if (c.err) { warn.textContent = c.err; warn.classList.add("show"); ["dash","chart","dayFaces","dayHoriz","hours","schedCards","schedWorst","schedMonths","schedHours"].forEach(id => $(id).innerHTML = ""); ["resLead","resNote","dayLead","dayEbEd","schedNote","schedMsg"].forEach(id => $(id).textContent = ""); prof = null; return; }
+  warn.classList.remove("show");
+  zone = c.tz;
+  const expLon = 15 * standardOffset(c.tz), gap = Math.abs(((c.lon - expLon + 540) % 360) - 180);
+  if (gap > 25) { warn.textContent = "Check the time zone: longitude " + c.lon.toFixed(1) + "° is " + gap.toFixed(0) + "° from the centre of " + c.tz + ". A zone and a longitude that disagree shift every clock time by hours."; warn.classList.add("show"); }
+  $("placeMeta").textContent = (placeName ? placeName + " · " : "") + "lat " + c.L.toFixed(2) + "°, lon " + c.lon.toFixed(2) + "°, elevation " + Math.round(c.elev) + " m, " + c.tz;
+  paintCount("taub", "cntB"); paintCount("taud", "cntD");
+  const std = standardOffset(c.tz), key = [c.L, c.lon, c.elev, c.tz, c.psi, c.tilt, c.rho, $("taub").value, $("taud").value].join("|");
+  if (key !== annKey) { annKey = key; ann = annual(c, std); }
+  prof = dayProfile(c, std, c.y, c.m, c.d); prof.c = c;
+  const sg = c.shgc * c.iac, f = (x, n) => x.toFixed(n);
+  const col = (Et, H, whenTxt) => ({Et, qpp: Et * sg, q: Et * c.k, H, Hq: H * sg, Qd: H * sg * c.A, when: whenTxt});
+  const atSky = sk => sk ? onSurface(sk.Eb, sk.Ed, sk.eo, sk.sun.beta, sk.sun.phi, c.psi, c.tilt, c.rho) : {Et:0, Etb:0, Etd:0, Etr:0, theta:90};
+  const now = atSky(skyAt(c, std, dayOfYear(c.y, c.m, c.d), offsetHours(c.tz, c.y, c.m, c.d) - std, c.hour));
+  const pk = atSky(skyAt(c, std, dayOfYear(2026, ann.peak.m, ann.peak.d), offsetHours(c.tz, 2026, ann.peak.m, ann.peak.d) - std, ann.peak.h));
+  const A0 = col(now.Et, null, ymd(c.y, c.m, c.d) + " " + fmtClock(c.hour));
+  const A1 = col(ann.peak.v, null, fmtWhen(ann.peak.m, ann.peak.d, ann.peak.h));
+  const A2 = col(prof.peak.v, prof.H, ymd(c.y, c.m, c.d) + " " + fmtClock(prof.peak.h));
+  const A3 = col(ann.day.peak.v, ann.day.H, "day " + ymd(2026, ann.day.m, ann.day.d));
+  const rows = [
+    ["Incident irradiance E<sub>t</sub>", r => f(r.Et, 0), "W/m²", "", false],
+    ["Window radiation gain q″", r => f(r.qpp, 1), "W/m²", "", false],
+    ["Total window gain q", r => f(r.q, 2), "kW", "", true],
+    ["Daily incident radiation", r => r.H == null ? "—" : f(r.H, 2), "kWh/m²·day", "", false],
+    ["Daily transmitted, per m² of glass", r => r.H == null ? "—" : f(r.Hq, 2), "kWh/m²·day", "", false],
+    ["Daily solar heat gain Q<sub>daily</sub>", r => r.H == null ? "—" : f(r.Qd, 2), "kWh/day", "", true],
+    ["When", r => r.when, "", "", false]
+  ];
+  $("dash").innerHTML = "<thead><tr><th>Metric</th><th>Annual maximum</th><th>Selected time</th><th>Chosen date, peak</th><th>Highest-energy day, peak</th><th></th></tr></thead><tbody>" +
+    rows.map(([name, fn, unit, , key]) => `<tr class="${key ? "key" : ""}"><td data-u="${unit}">${name}</td>` + [A1, A0, A2, A3].map(r => `<td class="n">${fn(r)}</td>`).join("") + `<td class="u">${unit}</td></tr>`).join("") + "</tbody>";
+  renderOrient(c, std, ann, sg);
+  $("resLead").textContent = "Window " + c.A.toFixed(2) + " m², facing " + c.az.toFixed(0) + "° (" + compass(c.az) + "), tilt " + c.tilt.toFixed(0) + "°, SHGC " + c.shgc.toFixed(2) + ", I_ac " + c.iac.toFixed(2) + ". Annual maximum = the highest instant of the year; selected time = the date and clock time in section 1; chosen date, peak = the highest instant on that date; highest-energy day = the day of the year with the largest daily total.";
+  const op = optical(dayOfYear(c.y, c.m, c.d), c.elev, c.L);
+  const badList = ["taub","taud"].filter(id => { const k = tauCount(id); return k.ok === false; });
+  $("tauMeta").textContent = (badList.length ? "A list that does not hold exactly 12 valid entries is ignored and the estimate is used for it. " : "") + "For the chosen date: τb = " + op.tb.toFixed(3) + ", τd = " + op.td.toFixed(3) + (op.user ? " (station values where given, estimate otherwise)." : " (generic estimate from month and elevation).");
+  const comp = (lbl, g) => g.Et < 0.5 ? lbl + ": no sun on this glass." : `${lbl}: beam ${Math.round(g.Etb)}, diffuse ${Math.round(g.Etd)}, ground-reflected ${Math.round(g.Etr)} W/m²; ` + (g.Etb > 0 ? `beam incidence angle ${g.theta.toFixed(0)}°.` : "glass in shade from the beam.");
+  const notes = [comp("At the selected time", now), comp("At the annual maximum", pk)];
+  if ((now.Etb > 0 && now.theta > 60) || (pk.Etb > 0 && pk.theta > 60)) notes.push("Beam incidence above 60°: SHGC is a normal-incidence value, so the gain there is overstated.");
+  if (prof.peak.v < 1) notes.push("No sun reaches this glass on the chosen date.");
+  $("resNote").textContent = notes.join(" ");
+  paintEstimate(c.L, c.elev);
+  drawChart();
+  renderWalls(c, std);
+  renderSchedule(c, std);
+}
+function fmtWhen(m, d, h) { return ymd(2026, m, d) + " " + fmtClock(h); }
+function compass(az) { return ["N","NE","E","SE","S","SW","W","NW"][Math.round(((az % 360) + 360) % 360 / 45) % 8]; }
+
+/* ---- walls and the horizontal on the chosen date ---- */
+function renderWalls(c, std) {
+  const n = dayOfYear(c.y, c.m, c.d), shift = offsetHours(c.tz, c.y, c.m, c.d) - std;
+  const wall = (sk, psi) => sk ? onWall(sk.Eb, sk.Ed, sk.eo, sk.sun.beta, sk.sun.phi, psi, c.rho) : 0;
+  const hz = sk => sk ? onHoriz(sk.Eb, sk.Ed, sk.eo, sk.sun.beta) : 0;
+  const box = (k, v, u) => `<div class="box"><div class="k">${k}</div><div class="v">${Math.round(v)}</div><div class="u">${u}</div></div>`;
+  const sk = skyAt(c, std, n, shift, c.hour);
+  $("dayLead").textContent = `At ${fmtClock(c.hour)} local time on ${ymd(c.y, c.m, c.d)}, in W/m².`;
+  $("dayEbEd").textContent = sk ? `Clear-sky beam normal Eb = ${Math.round(sk.Eb)} W/m², diffuse horizontal Ed = ${Math.round(sk.Ed)} W/m², sun altitude ${sk.sun.beta.toFixed(1)}°. At solar noon on the 21st of a month these are the figures to compare with the Ebn and Edn at noon rows of the ASHRAE station table.` : "Sun is below the horizon at this time.";
+  $("dayFaces").innerHTML = ORI.map(([nm, psi]) => box(nm, wall(sk, psi), "W/m² at this time")).join("");
+  $("dayHoriz").innerHTML = box("Horizontal", hz(sk), "W/m² at this time");
+  let body = "";
+  for (let h=0; h<24; h++) {
+    const s = skyAt(c, std, n, shift, h); if (!s) continue;
+    body += `<tr><td>${String(h).padStart(2,"0")}:00</td><td>${Math.round(hz(s))}</td>` + ORI.map(([, psi]) => `<td>${Math.round(wall(s, psi))}</td>`).join("") + "</tr>";
+  }
+  $("hours").innerHTML = "<tr><th>Hour</th><th>Horiz.</th>" + ORI.map(o => `<th>${o[0]}</th>`).join("") + "</tr>" + (body || "<tr><td colspan='10'>The sun does not rise at any full hour on this date.</td></tr>");
+}
+
+/* ---- window schedule: worst coincident glass gain ---- */
+let schedKey = "", schedVal = null, winSeq = 0;
+function windowEts(sk, wins) {
+  return wins.map(w => sk ? onSurface(sk.Eb, sk.Ed, sk.eo, sk.sun.beta, sk.sun.phi, w.psi, w.tilt, w.rhoEff).Et : 0);
+}
+function scheduleWorst(c, std, wins) {
+  const days = [];
+  for (let month=1; month<=12; month++) {
+    const dim = new Date(2026, month, 0).getDate();
+    for (let d=1; d<=dim; d++) days.push([month, d, dayOfYear(2026, month, d), offsetHours(c.tz, 2026, month, d) - std]);
+  }
+  const k = wins.map(w => w.A * w.shgc * w.iac);
+  const gainAt = (n, shift, h) => {
+    const et = windowEts(skyAt(c, std, n, shift, h), wins);
+    return {et, tot: et.reduce((a, e, i) => a + k[i] * e, 0)};
+  };
+  let best = {tot:-1, m:1, d:1, h:12};
+  const monthBest = Array.from({length:12}, () => ({tot:-1, d:1, h:12}));
+  const ind = wins.map(() => ({et:-1, m:1, d:1, h:12}));
+  for (const [month, d, n, shift] of days) {
+    for (let h=0; h<24; h+=0.1) {
+      const g = gainAt(n, shift, h);
+      if (g.tot > best.tot) best = {tot:g.tot, m:month, d, h};
+      if (g.tot > monthBest[month-1].tot) monthBest[month-1] = {tot:g.tot, d, h};
+      g.et.forEach((e, i) => { if (e > ind[i].et) ind[i] = {et:e, m:month, d, h}; });
+    }
+  }
+  const refine = (b, val) => {
+    const idx = days.findIndex(x => x[0]===b.m && x[1]===b.d);
+    let bb = {v:val(days[idx][2], days[idx][3], b.h), m:b.m, d:b.d, h:b.h};
+    for (let q=Math.max(0, idx-3); q<=Math.min(days.length-1, idx+3); q++) {
+      const [month, d, n, shift] = days[q];
+      for (let h=b.h-0.15; h<=b.h+0.1501; h+=0.01) { const v = val(n, shift, h); if (v > bb.v) bb = {v, m:month, d, h}; }
+    }
+    return bb;
+  };
+  const tot = refine(best, (n, sh, h) => gainAt(n, sh, h).tot);
+  const atWorst = gainAt(dayOfYear(2026, tot.m, tot.d), offsetHours(c.tz, 2026, tot.m, tot.d) - std, tot.h);
+  const indR = ind.map((b, i) => { const r = refine({m:b.m, d:b.d, h:b.h}, (n, sh, h) => gainAt(n, sh, h).et[i]); return {et:r.v, m:r.m, d:r.d, h:r.h}; });
+  return {tot, atWorst, k, months:monthBest, ind:indR, sumInd: indR.reduce((a, b, i) => a + k[i] * b.et, 0)};
+}
+function readSchedule(rho) {
+  return [...document.querySelectorAll("#schedBody tr")].map((tr, i) => {
+    const q = cl => tr.querySelector("." + cl), f = cl => parseFloat(q(cl).value);
+    const facing = q("sf").value, flat = facing === "H", tv = f("st"), nn = f("sn");
+    const az = flat ? 180 : ((Number(facing) % 360) + 360) % 360;
+    const tilt = flat ? 0 : (Number.isFinite(tv) ? Math.min(180, Math.max(0, tv)) : 90);
+    let psi = az - 180; if (psi > 180) psi -= 360; if (psi < -180) psi += 360;
+    const named = AZ.find(([, a]) => a === az);
+    const label = flat ? "Horizontal" : (named ? named[0] : az.toFixed(0) + "°") + ", tilt " + tilt + "°";
+    const A = Math.max(0, f("sw") || 0) * Math.max(0, f("sh") || 0) * Math.max(1, Number.isFinite(nn) ? Math.round(nn) : 1);
+    return {name: q("sname").value.trim() || ("W" + (i+1)), label, tilt, psi, A,
+            shgc: Math.max(0, f("sg") || 0), iac: Math.max(0, f("si") || 0), rhoEff: flat ? 0 : rho};
+  });
+}
+function addWindowRow(v) {
+  v = Object.assign({name:"W" + (++winSeq), w:1.5, h:1.5, n:1, facing:"180", tilt:90, glass:"d_lowe_sc", shgc:0.35, shade:"none", iac:1}, v || {});
+  const opt = (list, sel) => list.map(r => `<option value="${r[0]}"${r[0]===sel?" selected":""}>${r[1]}${r[2]!=null?" ("+r[2].toFixed(2)+")":""}</option>`).join("");
+  const fv = String(v.facing);
+  let fo = AZ.map(([n, a]) => `<option value="${a}"${String(a)===fv?" selected":""}>${n}</option>`).join("");
+  if (fv !== "H" && !AZ.some(([, a]) => String(a) === fv)) fo += `<option value="${fv}" selected>${fv}°</option>`;
+  fo += `<option value="H"${fv==="H"?" selected":""}>H (horizontal)</option>`;
+  const tr = document.createElement("tr");
+  tr.innerHTML =
+    `<td data-l="Name"><input class="sname" type="text" value="${String(v.name).replace(/"/g,"&quot;")}" style="min-width:70px" /></td>` +
+    `<td data-l="Width m"><input class="sw" type="number" inputmode="decimal" step="any" min="0" value="${v.w}" style="min-width:62px" /></td>` +
+    `<td data-l="Height m"><input class="sh" type="number" inputmode="decimal" step="any" min="0" value="${v.h}" style="min-width:62px" /></td>` +
+    `<td data-l="No."><input class="sn" type="number" inputmode="decimal" step="1" min="1" value="${v.n}" style="min-width:52px" /></td>` +
+    `<td data-l="Facing"><select class="sf">${fo}</select></td>` +
+    `<td data-l="Tilt °"><input class="st" type="number" inputmode="decimal" step="any" min="0" max="180" value="${fv==="H"?0:v.tilt}" style="min-width:56px" /></td>` +
+    `<td data-l="Glass type"><select class="sgt" style="min-width:150px">${opt(GLASS, v.glass)}</select></td>` +
+    `<td data-l="SHGC"><input class="sg" type="number" inputmode="decimal" step="any" min="0" max="1" value="${v.shgc}" style="min-width:60px" /></td>` +
+    `<td data-l="Interior shade"><select class="sht" style="min-width:150px">${opt(SHADE, v.shade)}</select></td>` +
+    `<td data-l="I_ac"><input class="si" type="number" inputmode="decimal" step="any" min="0" max="1" value="${v.iac}" style="min-width:60px" /></td>` +
+    `<td><button type="button" class="rm" aria-label="Remove window">×</button></td>`;
+  $("schedBody").appendChild(tr);
+}
+function onSchedEvent(e) {
+  const t = e.target, tr = t.closest("tr"); if (!tr) return;
+  const sync = (selCls, inCls, list) => { const v = parseFloat(tr.querySelector("." + inCls).value), hit = list.find(r => r[2] != null && Math.abs(r[2] - v) < 1e-9); tr.querySelector("." + selCls).value = hit ? hit[0] : "custom"; };
+  if (t.classList.contains("sgt")) { const r = GLASS.find(x => x[0] === t.value); if (r && r[2] != null) tr.querySelector(".sg").value = r[2].toFixed(2); }
+  else if (t.classList.contains("sht")) { const r = SHADE.find(x => x[0] === t.value); if (r && r[2] != null) tr.querySelector(".si").value = r[2].toFixed(2); }
+  else if (t.classList.contains("sg")) sync("sgt", "sg", GLASS);
+  else if (t.classList.contains("si")) sync("sht", "si", SHADE);
+  else if (t.classList.contains("sf") && t.value === "H") tr.querySelector(".st").value = 0;
+  else if (t.classList.contains("sf") && parseFloat(tr.querySelector(".st").value) === 0) tr.querySelector(".st").value = 90;
+  render();
+}
+function renderSchedule(c, std) {
+  const wins = readSchedule(c.rho), live = wins.filter(w => w.A > 0 && w.shgc > 0 && w.iac > 0);
+  const cf = (name, val, note) => `<div class="box"><div class="k">${name}</div><div class="v">${val}</div><div class="u">${note}</div></div>`;
+  const msg = $("schedMsg");
+  if (!wins.length) { msg.textContent = "No windows listed. Add a window."; $("schedCards").innerHTML = ""; ["schedWorst","schedMonths","schedHours"].forEach(i => $(i).innerHTML = ""); $("schedNote").textContent = ""; return; }
+  const skipped = wins.length - live.length;
+  msg.textContent = wins.length + " window row(s), total glass area " + wins.reduce((a, w) => a + w.A, 0).toFixed(2) + " m²" + (skipped ? ". " + skipped + " row(s) have zero area, SHGC or I_ac and add nothing." : ".");
+  const key = [c.L, c.lon, c.elev, c.tz, $("taub").value, $("taud").value, JSON.stringify(wins.map(w => [w.psi, w.tilt, w.A, w.shgc, w.iac, w.rhoEff]))].join("|");
+  if (key !== schedKey) { schedKey = key; schedVal = scheduleWorst(c, std, wins); }
+  const R = schedVal, floor = parseFloat($("floorA").value), hasFloor = Number.isFinite(floor) && floor > 0;
+  const fmtFl = kW => hasFloor ? ` · ${(kW * 1000 / floor).toFixed(0)} W/m² floor` : "";
+  const n = dayOfYear(c.y, c.m, c.d), shift = offsetHours(c.tz, c.y, c.m, c.d) - std;
+  const totAt = h => { const et = windowEts(skyAt(c, std, n, shift, h), wins); return {et, tot: et.reduce((a, e, i) => a + R.k[i] * e, 0)}; };
+  const sel = totAt(c.hour);
+  let dayPeak = {tot:0, h:c.hour};
+  for (let h=0; h<=24.001; h+=0.05) { const g = totAt(h); if (g.tot > dayPeak.tot) dayPeak = {tot:g.tot, h}; }
+  const W = R.tot;
+  $("schedCards").innerHTML =
+    cf("Worst glass gain, whole area", (W.v / 1000).toFixed(2), "kW · " + (W.v > 0 ? fmtWhen(W.m, W.d, W.h) : "no sun") + fmtFl(W.v / 1000)) +
+    cf("Sum of each window's own maximum", (R.sumInd / 1000).toFixed(2), "kW · not at one moment" + fmtFl(R.sumInd / 1000)) +
+    cf("Gain at the selected time", (sel.tot / 1000).toFixed(2), "kW · " + (W.v > 0 ? (sel.tot / W.v * 100).toFixed(0) : "—") + " % of the worst" + fmtFl(sel.tot / 1000)) +
+    cf("Peak on the chosen date", (dayPeak.tot / 1000).toFixed(2), dayPeak.tot > 0 ? "kW at " + fmtClock(dayPeak.h) : "kW · no sun on these windows");
+  $("schedNote").textContent = "Worst glass gain adds all windows at the same moment, so it is lower than the sum of each window's own maximum, because windows facing different ways peak at different times. It is the instantaneous clear-sky solar gain through the glass, an upper bound, not the cooling load. SHGC is a normal-incidence value, so gain at large incidence angles is overstated." + (R.sumInd > 0 ? " Here the worst coincident gain is " + (W.v / R.sumInd * 100).toFixed(0) + " % of the sum of the individual maxima." : "");
+  const rowsW = wins.map((w, i) => { const et = R.atWorst.et[i], q = R.k[i] * et; return `<tr><td>${w.name}</td><td>${w.label}</td><td>${w.A.toFixed(2)}</td><td>${Math.round(et)}</td><td>${(q / 1000).toFixed(2)}</td><td>${W.v > 0 ? (q / W.v * 100).toFixed(0) : 0} %</td><td>${Math.round(R.ind[i].et)} · ${(R.k[i] * R.ind[i].et / 1000).toFixed(2)} kW</td></tr>`; }).join("");
+  $("schedWorst").innerHTML = `<tr><th>Window</th><th>Facing</th><th>Area m²</th><th>E_t W/m²</th><th>Gain kW</th><th>Share</th><th>Own maximum (E_t · kW)</th></tr>` + rowsW +
+    `<tr><td><b>Total</b></td><td></td><td>${wins.reduce((a, w) => a + w.A, 0).toFixed(2)}</td><td></td><td><b>${(W.v / 1000).toFixed(2)}</b></td><td>100 %</td><td>${(R.sumInd / 1000).toFixed(2)} kW</td></tr>`;
+  const top = Math.max(...R.months.map(x => x.tot));
+  $("schedMonths").innerHTML = "<tr><th>Month</th><th>Worst gain kW</th><th>When (nearest 6 min)</th><th></th></tr>" +
+    R.months.map((x, i) => `<tr><td>${MONTHS[i]}</td><td>${(x.tot / 1000).toFixed(2)}</td><td>${x.tot > 0 ? fmtWhen(i + 1, x.d, x.h).slice(5) : "—"}</td><td>${x.tot === top && top > 0 ? "◀ highest" : ""}</td></tr>`).join("");
+  let rowsH = "";
+  const names = wins.length <= 6;
+  for (let h=0; h<24; h++) {
+    const g = totAt(h); if (g.tot < 1) continue;
+    rowsH += `<tr><td>${String(h).padStart(2, "0")}:00</td><td>${(g.tot / 1000).toFixed(2)}</td>` + (names ? g.et.map((e, i) => `<td>${(R.k[i] * e / 1000).toFixed(2)}</td>`).join("") : "") + "</tr>";
+  }
+  $("schedHours").innerHTML = "<tr><th>Hour</th><th>Total kW</th>" + (names ? wins.map(w => `<th>${w.name} kW</th>`).join("") : "") + "</tr>" + (rowsH || "<tr><td colspan='2'>No sun on these windows on this date.</td></tr>");
+}
+
+/* ---- chart ---- */
+const CH = {W: 760, H: 330, L: 58, R: 16, T: 14, B: 40};
+function sizeChart() { const cw = Math.round($("chart").parentElement.clientWidth) || 760; CH.W = Math.max(300, Math.min(760, cw)); CH.H = CH.W < 500 ? 300 : 330; CH.L = CH.W < 500 ? 46 : 58; $("chart").setAttribute("viewBox", "0 0 " + CH.W + " " + CH.H); }
+function chartMax() { const m = Math.max(...prof.et, 50); const nice = [100, 200, 250, 400, 500, 800, 1000, 1200, 1500]; return nice.find(v => v >= m * 1.05) || Math.ceil(m / 200) * 200; }
+function drawChart() {
+  sizeChart();
+  const {W, H, L, R, T, B} = CH, pW = W - L - R, pH = H - T - B, c = prof.c, sg = c.shgc * c.iac, ymax = chartMax();
+  const x = h => L + h / 24 * pW, y = v => T + pH - v / ymax * pH, F = 'font-family="serif"';
+  let g = `<rect x="0.5" y="0.5" width="${W-1}" height="${H-1}" fill="#fffaf0" stroke="#1a1714"/>`;
+  for (let h=0; h<=24; h+=(W < 500 ? 6 : 3)) g += `<line x1="${x(h)}" y1="${T}" x2="${x(h)}" y2="${T+pH}" stroke="#e4d8bc"/><text x="${x(h)}" y="${T+pH+16}" text-anchor="middle" font-size="11" ${F}>${String(h).padStart(2,"0")}:00</text>`;
+  const stepY = ymax / 5;
+  for (let i=0; i<=5; i++) { const v = i * stepY; g += `<line x1="${L}" y1="${y(v)}" x2="${L+pW}" y2="${y(v)}" stroke="#e4d8bc"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" font-size="11" ${F}>${Math.round(v)}</text>`; }
+  g += `<text transform="translate(14 ${T+pH/2}) rotate(-90)" text-anchor="middle" font-size="12" ${F}>W/m² of glass</text>`;
+  const pts = prof.et.map((v, i) => [x(i * prof.step), v]);
+  const area = (fn, fill, stroke) => { let d = `M${x(0)} ${y(0)}`; pts.forEach(([px, v]) => d += `L${px.toFixed(1)} ${y(fn(v)).toFixed(1)}`); d += `L${x(24)} ${y(0)}Z`; return `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`; };
+  g += area(v => v, "rgba(201,185,143,.55)", "#8a7f6c") + area(v => v * sg, "rgba(192,57,43,.55)", "#c0392b");
+  const hs = Math.min(24, Math.max(0, c.hour));
+  g += `<line x1="${x(hs)}" y1="${T}" x2="${x(hs)}" y2="${T+pH}" stroke="#1a1714" stroke-width="2"/><text x="${Math.min(x(hs) + 4, L + pW - 4)}" y="${T + 12}" text-anchor="${x(hs) + 60 > L + pW ? "end" : "start"}" font-size="11" ${F}>${fmtClock(hs)}</text>`;
+  g += `<line id="cursor" x1="0" y1="${T}" x2="0" y2="${T+pH}" stroke="#1a1714" stroke-dasharray="3 3" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${pW}" height="${pH}" fill="transparent"/>`;
+  g += `<line x1="${L}" y1="${T}" x2="${L}" y2="${T+pH}" stroke="#1a1714"/><line x1="${L}" y1="${T+pH}" x2="${L+pW}" y2="${T+pH}" stroke="#1a1714"/>`;
+  $("chart").innerHTML = g;
+  const hit = $("hit"), tip = $("tip"), wrap = $("chartWrap"), cur = $("cursor");
+  const move = ev => {
+    const r = $("chart").getBoundingClientRect(), cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left, vx = cx / r.width * W;
+    const t = Math.min(24, Math.max(0, (vx - L) / pW * 24)); tip.innerHTML = tipText(t); tip.style.display = "block";
+    cur.setAttribute("x1", x(t)); cur.setAttribute("x2", x(t)); cur.setAttribute("visibility", "visible");
+    const tw = tip.offsetWidth, left = Math.min(r.width - tw - 4, Math.max(4, cx + 12)); tip.style.left = left + "px"; tip.style.top = "12px";
+  };
+  const leave = () => { tip.style.display = "none"; cur.setAttribute("visibility", "hidden"); };
+  hit.addEventListener("mousemove", move); hit.addEventListener("mouseleave", leave);
+  hit.addEventListener("touchstart", move, {passive: true}); hit.addEventListener("touchmove", move, {passive: true}); hit.addEventListener("touchend", leave);
+}
+function tipText(t) {
+  const c = prof.c, sg = c.shgc * c.iac, step = prof.step, i = Math.min(prof.et.length - 1, Math.round(t / step)), et = prof.et[i];
+  const hb = Math.min(23, Math.floor(t)), i0 = Math.round(hb / step), i1 = Math.round((hb + 1) / step);
+  const sumTo = e => { let H = 0; for (let j = 0; j < e; j++) H += (prof.et[j] + prof.et[j+1]) / 2 * step; return H * sg * c.A / 1000; };
+  const hourE = sumTo(i1) - sumTo(i0), cum = sumTo(i1);
+  return `<b>${fmtClock(t)}</b><br>E<sub>t</sub> ${et.toFixed(0)} W/m²<br>q″ ${(et * sg).toFixed(1)} W/m²<br>q ${(et * c.k).toFixed(2)} kW<br>Hour ${String(hb).padStart(2,"0")}:00–${String(hb + 1).padStart(2,"0")}:00: ${hourE.toFixed(2)} kWh<br>Total to ${String(hb + 1).padStart(2,"0")}:00: ${cum.toFixed(2)} kWh`;
+}
+
+/* ---- optical-depth helpers (counter) ---- */
+function tauCount(id) {
+  const t = ($(id).value || "").trim(); if (!t) return {n:0, ok:null};
+  const a = t.split(/[\s,;]+/).filter(Boolean), blank = a.filter(x => /^[-?x]$/i.test(x)).length;
+  const bad = a.filter(x => !/^[-?x]$/i.test(x) && !(Number(x) > 0 && Number.isFinite(Number(x)))).length;
+  return {n:a.length, bad, blank, ok: a.length === 12 && bad === 0 && blank < 12};
+}
+function paintCount(id, cid) {
+  const c = tauCount(id), el = $(cid);
+  if (c.ok === null) { el.textContent = "blank: estimate used"; el.className = "count"; return; }
+  const nums = ($(id).value || "").trim().split(/[\s,;]+/).filter(Boolean).map(Number).filter(x => Number.isFinite(x) && x > 0);
+  const odd = c.ok && nums.some(x => id === "taub" ? (x < 0.1 || x > 1.5) : (x < 0.5 || x > 4));
+  el.className = "count " + (c.ok && !odd ? "ok" : "bad");
+  el.textContent = c.ok ? ((c.blank ? (12 - c.blank) + " station values, " + c.blank + " month(s) use the estimate" : "12 values") + (odd ? " — some values look unusual (τb is normally about 0.3 to 0.9, τd about 1.4 to 2.8). Check for a decimal comma or a wrong row." : "")) : (c.n + " value(s)" + (c.bad ? ", " + c.bad + " not a positive number" : "") + " — need exactly 12");
+}
+/* ---- controls ---- */
+const AZ = [["N",0],["NE",45],["E",90],["SE",135],["S",180],["SW",225],["W",270],["NW",315]], TILT = [["Vertical 90°",90],["Skylight 0°",0]];
+function buildButtons() {
+  $("azBtns").innerHTML = AZ.map(([n, v]) => `<button type="button" data-v="${v}">${n}</button>`).join("");
+  $("tiltBtns").innerHTML = TILT.map(([n, v]) => `<button type="button" data-v="${v}">${n}</button>`).join("");
+  $("azBtns").addEventListener("click", e => { if (e.target.dataset.v != null) { $("az").value = e.target.dataset.v; render(); } });
+  $("tiltBtns").addEventListener("click", e => { if (e.target.dataset.v != null) { $("tilt").value = e.target.dataset.v; render(); } });
+}
+function syncButtons() {
+  const az = parseFloat($("az").value), tl = parseFloat($("tilt").value);
+  document.querySelectorAll("#azBtns button").forEach(b => b.classList.toggle("on", Math.abs(((az - b.dataset.v + 540) % 360) - 180) < 1e-9));
+  document.querySelectorAll("#tiltBtns button").forEach(b => b.classList.toggle("on", tl === +b.dataset.v));
+  $("tiltHint").textContent = tl === 0 ? "Flat window: azimuth is not used." : (tl === 90 ? "Vertical window." : "Sloped window facing the azimuth above.");
+}
+function pickPreset(selId, inputId, hintId, list) { const row = list.find(r => r[0] === $(selId).value) || list[0]; if (row[2] != null) $(inputId).value = row[2].toFixed(2); $(hintId).textContent = row[3]; render(); }
+function syncPreset(selId, inputId, hintId, list) { const v = parseFloat($(inputId).value), hit = list.find(r => r[2] != null && Math.abs(r[2] - v) < 1e-9); $(selId).value = hit ? hit[0] : "custom"; $(hintId).textContent = (hit || list[0])[3]; }
+async function findCity() {
+  const q = $("city").value.trim(), box = $("hits"), seq = ++searchSeq; box.innerHTML = ""; if (q.length < 2) { box.hidden = true; return; }
+  box.hidden = false; box.innerHTML = "<li><button type='button' disabled>Searching…</button></li>";
+  try {
+    const res = await fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=8&language=en&format=json");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const rows = (await res.json()).results || []; if (seq !== searchSeq) return;
+    if (!rows.length) { box.innerHTML = "<li><button type='button' disabled>No city found</button></li>"; return; }
+    box.innerHTML = "";
+    rows.forEach(r => { const li = document.createElement("li"), b = document.createElement("button"); b.type = "button";
+      const bits = [r.name, r.admin1, r.country].filter(Boolean).join(", "), elev = Number.isFinite(r.elevation) ? r.elevation : null;
+      b.textContent = bits + "  ·  " + (elev == null ? "elevation unknown" : Math.round(elev) + " m");
+      b.onclick = () => { placeName = bits; $("city").value = bits; box.hidden = true; $("lat").value = r.latitude; $("lon").value = r.longitude; if (elev != null) $("elev").value = Math.round(elev); $("tzname").value = r.timezone || "UTC"; render(); };
+      li.appendChild(b); box.appendChild(li); });
+  } catch (e) { if (seq === searchSeq) box.innerHTML = "<li><button type='button' disabled>Lookup failed — type latitude, longitude and elevation under the location values</button></li>"; }
+}
+window.addEventListener("resize", () => { if (prof) drawChart(); });
+buildButtons();
+fillSelect("glassType", GLASS); fillSelect("shadeType", SHADE);
+$("glassType").addEventListener("change", () => pickPreset("glassType", "shgc", "glassHint", GLASS));
+$("shadeType").addEventListener("change", () => pickPreset("shadeType", "iac", "shadeHint", SHADE));
+$("shgc").addEventListener("input", () => syncPreset("glassType", "shgc", "glassHint", GLASS));
+$("iac").addEventListener("input", () => syncPreset("shadeType", "iac", "shadeHint", SHADE));
+syncPreset("glassType", "shgc", "glassHint", GLASS); syncPreset("shadeType", "iac", "shadeHint", SHADE);
+$("findBtn").addEventListener("click", findCity);
+$("city").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); findCity(); } });
+["lat", "lon", "elev"].forEach(id => $(id).addEventListener("input", () => { placeName = ""; }));
+["lat","lon","elev","tzname","rho","dm","dd","dy","th","tm","area","az","tilt","shgc","iac","taub","taud","floorA"].forEach(id => $(id).addEventListener("input", render));
+["th","tm"].forEach(id => $(id).addEventListener("change", render));
+fillSelect("rhoType", ALBEDO.map(r => [r[0], r[1], r[2], ""])); syncAlbedo();
+$("rhoType").addEventListener("change", () => { const r = ALBEDO.find(x => x[0] === $("rhoType").value); if (r && r[2] != null) $("rho").value = r[2].toFixed(2); render(); });
+$("rho").addEventListener("input", syncAlbedo);
+paintPresetTables();
+addWindowRow();
+$("schedBody").addEventListener("input", onSchedEvent);
+$("schedBody").addEventListener("change", e => { if (e.target.tagName === "SELECT") onSchedEvent(e); });
+$("schedBody").addEventListener("click", e => { if (e.target.classList.contains("rm")) { e.target.closest("tr").remove(); render(); } });
+$("btnAddWin").addEventListener("click", () => { addWindowRow(); render(); });
+$("btnCopyWin").addEventListener("click", () => {
+  const A = Math.max(0, parseFloat($("area").value) || 0), tl = parseFloat($("tilt").value), az = parseFloat($("az").value);
+  const flat = tl === 0, a = Math.round((((az % 360) + 360) % 360) * 10) / 10;
+  addWindowRow({w: +A.toFixed(3), h: 1, n: 1, facing: flat ? "H" : String(a), tilt: flat ? 0 : (Number.isFinite(tl) ? tl : 90), glass: $("glassType").value, shgc: parseFloat($("shgc").value) || 0, shade: $("shadeType").value, iac: parseFloat($("iac").value) || 0});
+  render();
+});
+const MONTH_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function daysIn(y, m) { return new Date(y, m, 0).getDate(); }
+function fillDays(keep) {
+  const y = +$("dy").value, m = +$("dm").value, n = daysIn(y, m);
+  const day = Math.min(keep || +$("dd").value || 1, n);
+  $("dd").innerHTML = Array.from({length:n}, (_,i) => `<option${i+1===day?" selected":""}>${i+1}</option>`).join("");
+}
+function fillWhen() {
+  const now = new Date(), y0 = now.getFullYear();
+  $("dm").innerHTML = MONTH_FULL.map((name,i) => `<option value="${i+1}"${i===now.getMonth()?" selected":""}>${name}</option>`).join("");
+  $("dy").innerHTML = [y0-1,y0,y0+1,y0+2].map(y => `<option${y===y0?" selected":""}>${y}</option>`).join("");
+  $("th").innerHTML = Array.from({length:24}, (_,h) => { const s=String(h).padStart(2,"0"); return `<option${h===15?" selected":""}>${s}</option>`; }).join("");
+  $("tm").innerHTML = Array.from({length:60}, (_,i) => { const s=String(i).padStart(2,"0"); return `<option${i===0?" selected":""}>${s}</option>`; }).join("");
+  fillDays(now.getDate());
+}
+$("dm").addEventListener("change", () => fillDays());
+$("dy").addEventListener("change", () => fillDays());
+fillWhen();
+render();
+</script>
+</body>
+</html>

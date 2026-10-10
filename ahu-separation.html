@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#cfc3a8" />
+<title>AHU stream separation</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.45 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:980px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 40px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:22px 0 8px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:4px; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
+.pair { display:grid; grid-template-columns:1fr 72px; }
+input, select { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:7px 8px; min-height:36px; border-radius:0; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid #8a7f6c; border-left:0; background:#efe6d4; font-size:12px; color:var(--muted); }
+.results { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:9px 12px; min-height:78px; }
+.box .k { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font-size:20px; font-weight:600; margin-top:4px; }
+.box .u { font-size:12px; color:var(--muted); }
+.box.bad { background:#f3e4d4; }
+.box.good { background:#e7efe4; }
+svg.unit { width:100%; height:auto; background:var(--panel); border:1px solid var(--ink); display:block; }
+.hint { display:block; margin-top:3px; font-size:12px; font-weight:400; color:var(--muted); letter-spacing:0; text-transform:none; }
+details.guide { border:1px solid var(--ink); background:var(--panel); padding:8px 12px; margin:0 0 14px; }
+details.guide summary { cursor:pointer; font-weight:700; font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+table.names { width:100%; border-collapse:collapse; margin:10px 0 2px; font-size:14px; }
+table.names th, table.names td { border-bottom:1px solid var(--faint); padding:6px 8px; text-align:left; vertical-align:top; }
+table.names th { width:148px; font-size:13px; }
+.pick { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; margin:8px 0; }
+.pick button { border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:12px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; min-height:44px; padding:6px 4px; cursor:pointer; }
+.pick button.on { background:var(--ink); color:var(--paper); }
+svg.roof { width:100%; height:auto; background:var(--panel); border:1px solid var(--ink); display:block; margin-top:8px; }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12px; color:var(--muted); }
+@media (max-width:720px) {
+  .book { margin:0; padding:16px 14px 28px; box-shadow:none; }
+  .fields, .results { grid-template-columns:1fr; }
+  .pick { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  h1 { font-size:24px; }
+  input, select { font-size:16px; min-height:44px; }
+  nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:8px; text-align:left; font-size:13px; }
+}
+@media print { nav.pages { display:none !important; } }
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet X · BS EN 16798-3:2025 · 9.6.5 and 9.7</div>
+  <h1>AHU separation</h1>
+  <div class="sub">Roof openings first, then the heat recovery</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a class="on" href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<h2>1. AHU roof unit — intake to exhaust</h2>
+<p class="lead">Table E.3 is for one supply-and-extract unit on the roof. A is the distance between its fresh-air opening and its used-air opening. Two or more separate units are not in this table: use sheet VIII.</p>
+<div class="pick" id="pick"></div>
+<svg class="roof" id="roof" viewBox="0 0 680 280" role="img" aria-label="Roof unit intake and exhaust"></svg>
+
+<h2>Heat recovery classification</h2>
+<p class="lead">Two streams meet inside the heat recovery. A leak moves air from the tunnel at the higher pressure into the tunnel at the lower pressure.</p>
+<details class="guide">
+<summary>What the terms mean</summary>
+<table class="names">
+<thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Fresh-air tunnel</td><td>Outside air passing through the heat recovery toward the rooms. The standard calls this the outdoor-air side. It is not extract.</td></tr>
+<tr><td>Used-air tunnel</td><td>Air from the rooms passing through the heat recovery toward the outside. The standard calls this the exhaust-air side.</td></tr>
+<tr><td>ODA (P)</td><td>Dust in the outside air, before the filters. 1 is the cleanest, 3 is the dustiest.</td></tr>
+<tr><td>SUP (P)</td><td>Dust allowed in the air to the rooms, after the filters. 1 is the cleanest. SUP 6 means no dust filter.</td></tr>
+<tr><td>ODA (G)</td><td>Gas in the outside air: nitrogen dioxide, sulphur dioxide or ozone. 1 is the cleanest. Leave this unused if you are only choosing a dust filter.</td></tr>
+<tr><td>SUP (G)</td><td>How much of that gas may remain in the air to the rooms. 1 is the cleanest. Not the same list as SUP (P).</td></tr>
+<tr><td>ETA</td><td>Used air from the rooms. 1 is the cleanest, 4 is the dirtiest.</td></tr>
+<tr><td>EATR</td><td>Measured on the heat recovery only. The percent of air toward the rooms that came from the used-air tunnel. Type 2 for 2%, not 0.02.</td></tr>
+<tr><td>OACF</td><td>Measured on the heat recovery only. Fresh air entering it, divided by air leaving it toward the rooms. 1.00 means the two flows match. Its class need not match the EATR class.</td></tr>
+</tbody>
+</table>
+</details>
+<h2>2. Must the tunnels be kept apart?</h2>
+<div class="fields">
+  <div><label for="eta">ETA — used air from the rooms<span class="hint">1 cleanest, 4 dirtiest</span></label>
+    <select id="eta">
+      <option value="1">ETA 1 — fairly clean</option>
+      <option value="2">ETA 2 — some pollution</option>
+      <option value="3" selected>ETA 3 — dirty</option>
+      <option value="4">ETA 4 — very dirty</option>
+    </select>
+  </div>
+  <div><label for="room">Rooms being supplied<span class="hint">Compared with the ETA above</span></label>
+    <select id="room">
+      <option value="1" selected>No dirtier than ETA 1</option>
+      <option value="2">No dirtier than ETA 2</option>
+      <option value="3">No dirtier than ETA 3</option>
+      <option value="4">No dirtier than ETA 4</option>
+    </select>
+  </div>
+</div>
+<div class="results" id="need"></div>
+<p class="lead">ETA 1 may go back to other rooms. ETA 2 may go back only to the same room. ETA 3 and ETA 4 do not go back to any room.</p>
+
+<h2>3. Pressures in the two tunnels</h2>
+<div class="fields">
+  <div><label for="po">Fresh-air tunnel<span class="hint">Outdoor-air side of the heat recovery</span></label><div class="pair"><input id="po" type="number" step="1" value="80" /><span>Pa</span></div></div>
+  <div><label for="pe">Used-air tunnel<span class="hint">Exhaust-air side of the heat recovery</span></label><div class="pair"><input id="pe" type="number" step="1" value="40" /><span>Pa</span></div></div>
+</div>
+<p class="lead">Same gauge, both read at the heat recovery. The fresh-air tunnel should be the higher number.</p>
+<div class="results" id="press"></div>
+
+<h2>4. Filters</h2>
+<div class="fields">
+  <div><label for="stages">Dust filters on the air to the rooms</label>
+    <select id="stages"><option value="1">One</option><option value="2" selected>Two or more</option></select>
+  </div>
+  <div><label for="drive">Fan blowing air to the rooms</label>
+    <select id="drive"><option value="direct">Direct drive</option><option value="belt" selected>Belt drive</option></select>
+  </div>
+</div>
+<p class="lead" id="order"></p>
+<svg class="unit" id="unit" viewBox="0 0 760 248" role="img" aria-label="Air handling unit streams"></svg>
+<div class="fields">
+  <div><label for="oda">ODA (P) — dust outside</label>
+    <select id="oda">
+      <option value="1">1 — PM2.5 up to 5 µg/m³</option>
+      <option value="2" selected>2 — PM2.5 up to 7.5 µg/m³</option>
+      <option value="3">3 — PM2.5 above 7.5 µg/m³</option>
+    </select>
+  </div>
+  <div><label for="sup">SUP (P) — dust to the rooms</label>
+    <select id="sup">
+      <option value="1">1 — PM2.5 up to 1.25</option>
+      <option value="2" selected>2 — PM2.5 up to 2.5</option>
+      <option value="3">3 — PM2.5 up to 3.75</option>
+      <option value="4">4 — PM2.5 up to 5</option>
+      <option value="5">5 — PM2.5 up to 7.5</option>
+      <option value="6">6 — no dust filter</option>
+    </select>
+  </div>
+  <div><label for="odag">ODA (G) — gas outside<span class="hint">Not used unless you are choosing a gas filter</span></label>
+    <select id="odag">
+      <option value="0">Not used</option>
+      <option value="1">1 — NO₂ up to 10 µg/m³</option>
+      <option value="2">2 — NO₂ up to 15 µg/m³</option>
+      <option value="3">3 — NO₂ above 15 µg/m³</option>
+    </select>
+  </div>
+  <div><label for="supg">SUP (G) — gas to the rooms<span class="hint">NO₂, SO₂ and ozone. Not the dust class.</span></label>
+    <select id="supg">
+      <option value="1">1 — NO₂ up to 2.5</option>
+      <option value="2" selected>2 — NO₂ up to 5</option>
+      <option value="3">3 — NO₂ up to 7.5</option>
+      <option value="4">4 — NO₂ up to 10</option>
+      <option value="5">5 — NO₂ up to 15</option>
+    </select>
+  </div>
+</div>
+<div class="results" id="filt"></div>
+
+<h2>5. Heat recovery leakage</h2>
+<p class="lead">EATR and OACF are both for the heat recovery only. Their class numbers may differ. The casing class is a different part of the unit.</p>
+<div class="fields">
+  <div><label for="eatr">EATR<span class="hint">Type 2 for 2%. Do not type 0.02.</span></label><div class="pair"><input id="eatr" type="number" inputmode="decimal" min="0" step="0.1" placeholder="optional" /><span>%</span></div></div>
+  <div><label for="oacf">OACF<span class="hint">1.00 equal. About 0.98 if EATR is 2%.</span></label><div class="pair"><input id="oacf" type="number" inputmode="decimal" min="0" step="0.01" placeholder="optional" /><span>—</span></div></div>
+</div>
+<div class="results" id="leak"></div>
+<p class="lead">Casing, if not specified: at least L3. L2 is better. That is not an EATR class and not an OACF class.</p>
+
+<footer>Read from BS EN 16798-3:2025, clauses 9.2.3, 9.6.5, 9.7 and 9.8, Annex E.4 Table E.3, and the default filter classes in Table B.3. This sheet does not size the fans.</footer>
+</article>
+<script>
+const $ = id => document.getElementById(id);
+function num(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : null; }
+const ETA = {1:"low", 2:"moderate", 3:"high", 4:"very high"};
+const FILT = {
+  1:{1:["ePM10 50 %","ePM1 60 %"],2:["ePM1 50 %"],3:["ePM2.5 50 %"],4:["ePM10 50 %"],5:["ePM10 50 %"],6:[]},
+  2:{1:["ePM1 50 %","ePM1 60 %"],2:["ePM10 50 %","ePM1 60 %"],3:["ePM1 50 %"],4:["ePM2.5 50 %"],5:["ePM10 50 %"],6:[]},
+  3:{1:["ePM1 50 %","ePM1 80 %"],2:["ePM1 50 %","ePM1 60 %"],3:["ePM10 50 %","ePM1 60 %"],4:["ePM1 50 %"],5:["ePM2.5 50 %"],6:[]}
+};
+const EFF = {
+  1:{1:"70 % on ePM1",2:"50 % on ePM1",3:"50 % on ePM2.5",4:"50 % on ePM10",5:"50 % on ePM10",6:"none"},
+  2:{1:"80 % on ePM1",2:"70 % on ePM1",3:"70 % on ePM2.5",4:"80 % on ePM10",5:"50 % on ePM10",6:"none"},
+  3:{1:"90 % on ePM1",2:"80 % on ePM1",3:"80 % on ePM2.5",4:"90 % on ePM10",5:"80 % on ePM10",6:"none"}
+};
+const GAS = {
+  1:{1:"70 %, recommended",2:"not set",3:"not set",4:"not set",5:"not set"},
+  2:{1:"80 %, required",2:"70 %, required",3:"50 %, recommended",4:"not set",5:"not set"},
+  3:{1:"90 %, required",2:"80 %, required",3:"70 %, recommended",4:"not set",5:"not set"}
+};
+function eatrClass(p) {
+  if (p === 0) return [0, "no transfer"];
+  if (p <= 1) return [1, "up to 1 %"];
+  if (p <= 3) return [2, "up to 3 %"];
+  if (p <= 5) return [3, "up to 5 %"];
+  if (p <= 7) return [4, "up to 7 %"];
+  return [5, "not classified"];
+}
+function oacfClass(v) {
+  const d = Math.abs(v - 1);
+  const dir = v > 1 ? "fresh air leaks toward the outside" : v < 1 ? "used room air leaks into the air to the rooms" : "no net transfer";
+  let c = 5;
+  if (v === 1) c = 0;
+  else if (v >= 0.97 && v <= 1.03) c = 1;
+  else if (v >= 0.95 && v <= 1.05) c = 2;
+  else if (v >= 0.93 && v <= 1.07) c = 3;
+  else if (v >= 0.90 && v <= 1.10) c = 4;
+  return [c, dir];
+}
+function box(title, value, note, cls) {
+  return `<div class="box${cls ? " " + cls : ""}"><div class="k">${title}</div><div class="v">${value}</div><div class="u">${note}</div></div>`;
+}
+function calc() {
+  const eta = +$("eta").value, room = +$("room").value;
+  const dirty = eta >= 3 || eta > room;
+  let why = "Used air from the rooms is ETA " + eta + " (" + ETA[eta] + "). ";
+  if (eta >= 3) why += "The fresh-air tunnel must be at the higher pressure.";
+  else if (eta > room) why += "Dirtier than the rooms, so the fresh-air tunnel must be higher.";
+  else why += "The fresh-air tunnel does not have to be the higher one.";
+  $("need").innerHTML = box(dirty ? "Keep apart" : "Not required", dirty ? "Fresh-air tunnel higher" : "Either tunnel may be higher", why, dirty ? "bad" : "good");
+
+  const po = num("po"), pe = num("pe");
+  if (po == null || pe == null) {
+    $("press").innerHTML = box("Pressure check", "Enter both", "One pressure for the fresh-air tunnel, one for the used-air tunnel.", "");
+  } else {
+    const ok = po > pe;
+    const gap = po - pe;
+    let note = "Fresh-air tunnel: " + po + " Pa. Used-air tunnel: " + pe + " Pa. ";
+    if (gap > 0) note += "A leak carries fresh air out of the building, not used air into the rooms.";
+    else if (gap < 0) note += "A leak can carry used air into the rooms.";
+    else note += "A leak can still carry used air into the rooms.";
+    if (!dirty && ok) note += " Not required here, but safer.";
+    if (!dirty && !ok) note += " Allowed for this ETA.";
+    $("press").innerHTML = box("Higher tunnel", ok ? "Fresh air, by " + gap.toFixed(0) + " Pa" : (gap < 0 ? "Used air, by " + Math.abs(gap).toFixed(0) + " Pa" : "Equal"), note, (dirty && !ok) ? "bad" : "good");
+  }
+
+  const stages = +$("stages").value, belt = $("drive").value === "belt";
+  let order;
+  if (stages === 1 && belt) order = "One filter and a belt-driven fan: put that filter after the fan, so dust from the belt is not blown into the rooms.";
+  else if (stages === 1) order = "One filter and a direct-drive fan: the filter can sit where the fresh air enters, before the fan, so dust stays out of the unit.";
+  else order = "Two or more filters: the first filter is before the heating or cooling, and the next filter is after it. A coarse filter at the inlet can make the later filters last longer.";
+  $("order").textContent = order;
+  draw(stages, belt, po, pe, dirty);
+
+  const oda = +$("oda").value, sup = +$("sup").value;
+  const parts = FILT[oda][sup];
+  const list = parts.length ? parts.join(", then ") : "No dust filter required";
+  let final = "";
+  if (sup <= 2 && sup !== 6) final = " The last filter is at least ePM1 50 %.";
+  else if (sup === 3) final = " The last filter is at least ePM2.5 50 %.";
+  const odag = +$("odag").value, supg = +$("supg").value;
+  let gas = "Gas is not being checked.";
+  if (odag) {
+    gas = "For nitrogen dioxide, sulphur dioxide or ozone: " + GAS[odag][supg] + ". Put an ePM1 filter before the gas filter. If the gas filter is loose granules, put an ePM1 filter after it as well.";
+  }
+  $("filt").innerHTML =
+    box("Dust filters", list, "Combined removal from Table 18: " + EFF[oda][sup] + "." + final, "") +
+    box("Gas filter", odag ? GAS[odag][supg] : "Not used", gas, "");
+
+  const eatr = num("eatr"), oacf = num("oacf");
+  let eHtml, oHtml, clash = "";
+  if (eatr != null && oacf != null) {
+    const floor = 1 - eatr / 100;
+    if (oacf < floor - 1e-6) {
+      clash = "These two cannot both be true. With EATR " + eatr + "%, OACF must be at least " + floor.toFixed(3) + ". " + oacf + " is lower. A 2% EATR matches an OACF of about 0.98.";
+    }
+  }
+  if (eatr == null) eHtml = box("EATR", "Not entered", "Exhaust air transfer ratio: the share of air to the rooms that came from the used room air.", "");
+  else {
+    const [c, t] = eatrClass(eatr);
+    eHtml = box("EATR", "Class " + c, eatr.toFixed(2) + " % · " + t, clash ? "bad" : (c <= 2 ? "good" : c >= 5 ? "bad" : ""));
+  }
+  if (oacf == null) oHtml = box("OACF", "Not entered", "Class 4 or better is 0.90 to 1.10. A lower class number is tighter.", "");
+  else {
+    const [c, dir] = oacfClass(oacf);
+    const ok = c <= 4 && !clash;
+    const limit = c <= 4 ? "Meets class 4 or better." : "Outside class 4.";
+    oHtml = box("OACF", "Class " + c, oacf.toFixed(3) + " · " + dir + ". " + limit, ok ? "good" : "bad");
+  }
+  $("leak").innerHTML = eHtml + oHtml + (clash ? box("Check", "The pair disagrees", clash, "bad wide") : "");
+  drawRoof();
+}
+function draw(stages, belt, po, pe, dirty) {
+  const ink = "#1a1714", faint = "#8a7f6c";
+  const after = stages === 1 ? belt : true;
+  const before = stages >= 2 || !belt;
+  const cells = [];
+  cells.push(["Fresh air in", "in"]);
+  if (before) cells.push([stages >= 2 ? "Filter 1" : "Filter", "box"]);
+  if (!after) cells.push(["Fan", "fan"]);
+  cells.push(["Heat recovery", "hr"]);
+  if (after && stages === 1) cells.push(["Fan", "fan"]);
+  if (after) cells.push([stages >= 2 ? "Filter 2" : "Filter", "box"]);
+  cells.push(["To the rooms", "out"]);
+  let g = `<rect width="760" height="250" fill="#fffdf7"/>`;
+  const y1 = 36, h = 48, gap = 8;
+  const w = (700 - gap * (cells.length - 1)) / cells.length;
+  cells.forEach((c, i) => {
+    const x = 30 + i * (w + gap);
+    g += `<rect x="${x}" y="${y1}" width="${w}" height="${h}" fill="#fffdf7" stroke="${ink}"/>`;
+    g += `<text x="${x + w / 2}" y="${y1 + 29}" text-anchor="middle" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${c[0]}</text>`;
+    if (i < cells.length - 1) g += `<text x="${x + w + gap / 2}" y="${y1 + 30}" text-anchor="middle" font-size="14">→</text>`;
+  });
+  g += `<text x="30" y="24" font-size="12" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">Air to the rooms. Fresh air comes from outside. This is not extract.</text>`;
+  const ex = [["From the rooms", "in"], ["Heat recovery", "hr"], ["Fan", "fan"], ["To outside", "out"]];
+  const w2 = (700 - gap * 3) / 4;
+  ex.forEach((c, i) => {
+    const x = 30 + (3 - i) * (w2 + gap);
+    g += `<rect x="${x}" y="150" width="${w2}" height="${h}" fill="#fffdf7" stroke="${ink}"/>`;
+    g += `<text x="${x + w2 / 2}" y="179" text-anchor="middle" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${c[0]}</text>`;
+  });
+  g += `<text x="30" y="140" font-size="12" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">Used air, flowing to the left and then outside</text>`;
+  const hi = po != null && pe != null && po > pe;
+  const lo = po != null && pe != null && po <= pe;
+  const arrow = hi ? "A leak at the heat recovery blows fresh air toward the outside." : lo ? "A leak at the heat recovery pulls used room air into the air to the rooms." : "Enter both pressures to see which way a leak would travel.";
+  g += `<text x="380" y="232" text-anchor="middle" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif" fill="${lo && dirty ? "#8a2a16" : ink}">${arrow}</text>`;
+  $("unit").innerHTML = g;
+}
+["eta","room","po","pe","stages","drive","oda","sup","odag","supg","eatr","oacf"].forEach(id => $(id).addEventListener("input", calc));
+const ROOF = [
+  {n:1, min:null, name:"Stacked, same end", rule:"Not allowed"},
+  {n:2, min:2.0, name:"Step, opposite ends", rule:"A > 2.0 m. Inlet and outlet may be swapped."},
+  {n:3, min:1.3, name:"Step, same direction", rule:"A > 1.3 m. Inlet and outlet may be swapped."},
+  {n:4, min:1.3, name:"Opposite, or up and out", rule:"A > 1.3 m. The side inlet may be on any of the three faces marked."},
+  {n:5, min:1.3, name:"Side and end", rule:"A > 1.3 m. Inlet and outlet may be swapped."},
+  {n:6, min:2.0, name:"Side louvre and end", rule:"A > 2.0 m. Inlet and outlet may be swapped."},
+  {n:7, min:2.0, name:"Side louvre, upward end", rule:"A > 2.0 m. Inlet and outlet may be swapped."}
+];
+let roofN = 2;
+function roofButtons() {
+  $("pick").innerHTML = ROOF.map(r => `<button type="button" data-n="${r.n}" class="${r.n===roofN?"on":""}">${r.n}<br>${r.name}</button>`).join("");
+  $("pick").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { roofN = +b.dataset.n; roofButtons(); calc(); }));
+}
+const INK = "#1a1714", PAPER = "#fffdf7";
+function P(o, x, y, z) { return [o[0] + x + y * 0.46, o[1] - z - y * 0.24]; }
+function pg(pts) { return `<polygon points="${pts.map(p => p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")}" fill="${PAPER}" stroke="${INK}" stroke-width="1.35" stroke-linejoin="round"/>`; }
+function ln(a, b) { return `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${INK}" stroke-width="1.15"/>`; }
+function cabinet(o, L, D, H) {
+  const p = (x,y,z) => P(o, x, y, z);
+  let s = pg([p(0,0,H), p(L,0,H), p(L,D,H), p(0,D,H)]);
+  s += pg([p(L,0,0), p(L,D,0), p(L,D,H), p(L,0,H)]);
+  s += pg([p(0,0,0), p(L,0,0), p(L,0,H), p(0,0,H)]);
+  const a = p(0,0,0), b = p(L,0,0);
+  s += pg([a, b, [b[0], b[1] + 7], [a[0], a[1] + 7]]);
+  return s;
+}
+function hatchFront(o, x0, x1, z0, z1) {
+  const p = (x,z) => P(o, x, 0, z);
+  let s = pg([p(x0,z0), p(x1,z0), p(x1,z1), p(x0,z1)]);
+  for (let i = 1; i <= 4; i++) s += ln(p(x0, z0 + (z1-z0)*i/5), p(x1, z0 + (z1-z0)*i/5));
+  return s;
+}
+function hatchRight(o, L, z0, z1) {
+  const p = (y,z) => P(o, L, y, z);
+  const y0 = 6, y1 = 28;
+  let s = pg([p(y0,z0), p(y1,z0), p(y1,z1), p(y0,z1)]);
+  for (let i = 1; i <= 4; i++) s += ln(p(y0, z0+(z1-z0)*i/5), p(y1, z0+(z1-z0)*i/5));
+  return s;
+}
+function hatchLeft(o, z0, z1) {
+  const p = (y,z) => P(o, 0, y, z);
+  let s = pg([p(8,z0), p(30,z0), p(30,z1), p(8,z1)]);
+  for (let i = 1; i <= 4; i++) s += ln(p(8, z0+(z1-z0)*i/5), p(30, z0+(z1-z0)*i/5));
+  return s;
+}
+function arrowsAt(x, y, dir) {
+  let s = "";
+  for (const dy of [-6, 6]) {
+    if (dir === "R") s += `<path d="M${x} ${y+dy} h30 M${x+24} ${y+dy-4} l8 4 l-8 4" fill="none" stroke="${INK}" stroke-width="1.15"/>`;
+    if (dir === "L") s += `<path d="M${x} ${y+dy} h-30 M${x-24} ${y+dy-4} l-8 4 l8 4" fill="none" stroke="${INK}" stroke-width="1.15"/>`;
+    if (dir === "U") s += `<path d="M${x+dy} ${y} v-28 M${x+dy-4} ${y-22} l4 -8 l4 8" fill="none" stroke="${INK}" stroke-width="1.15"/>`;
+  }
+  return s;
+}
+function dimLine(x1, x2, y, label) {
+  const m = (x1 + x2) / 2;
+  return `<path d="M${x1} ${y} H${x2} M${x1} ${y-6} v12 M${x2} ${y-6} v12" fill="none" stroke="${INK}" stroke-width="1.05"/>
+    <polygon points="${x1},${y} ${x1+8},${y-3.2} ${x1+8},${y+3.2}" fill="${INK}"/>
+    <polygon points="${x2},${y} ${x2-8},${y-3.2} ${x2-8},${y+3.2}" fill="${INK}"/>
+    <rect x="${m-46}" y="${y-16}" width="92" height="16" fill="${PAPER}"/>
+    <text x="${m}" y="${y-4}" text-anchor="middle" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${label}</text>`;
+}
+function crossOver(x, y, w, h) {
+  return `<path d="M${x} ${y} L${x+w} ${y+h} M${x+w} ${y} L${x} ${y+h}" fill="none" stroke="${INK}" stroke-width="2.4"/>`;
+}
+function cap(text) {
+  return `<text x="340" y="268" text-anchor="middle" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${text}</text>`;
+}
+function drawRoof() {
+  const r = ROOF[roofN - 1];
+  let g = `<rect width="680" height="280" fill="${PAPER}"/>`;
+  g += `<text x="16" y="24" font-size="14" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${r.n}. ${r.name}</text>`;
+  if (roofN === 1) {
+    const a = [48, 150];
+    g += cabinet(a, 168, 40, 42);
+    g += cabinet([a[0], a[1] - 42], 130, 40, 40);
+    g += hatchFront([a[0], a[1] - 42], 14, 52, 8, 30);
+    g += arrowsAt(P([a[0], a[1] - 42], 52, 0, 18)[0] + 4, P([a[0], a[1] - 42], 30, 0, 18)[1], "R");
+    g += hatchRight(a, 168, 8, 30);
+    g += arrowsAt(P(a, 168, 16, 18)[0] + 14, P(a, 168, 16, 18)[1], "R");
+    g += crossOver(30, 52, 240, 120);
+    const b = [400, 156];
+    g += cabinet(b, 140, 40, 40);
+    g += cabinet([b[0], b[1] - 40], 140, 40, 40);
+    g += hatchRight(b, 140, 8, 28);
+    g += arrowsAt(P(b, 140, 16, 18)[0] + 14, P(b, 140, 16, 18)[1], "R");
+    g += hatchRight([b[0], b[1] - 40], 140, 8, 28);
+    g += arrowsAt(P([b[0], b[1] - 40], 140, 16, 18)[0] + 14, P([b[0], b[1] - 40], 140, 16, 18)[1], "R");
+    g += crossOver(385, 58, 230, 120);
+    g += cap("Not allowed. Do not place the two openings one above the other.");
+  } else if (roofN === 2) {
+    const o = [70, 158];
+    g += cabinet(o, 400, 46, 46);
+    g += cabinet([o[0], o[1] - 46], 200, 46, 48);
+    g += hatchFront([o[0], o[1] - 46], 16, 58, 10, 36);
+    g += arrowsAt(P([o[0], o[1] - 46], 58, 0, 22)[0] + 4, P([o[0], o[1] - 46], 36, 0, 22)[1], "R");
+    g += hatchRight(o, 400, 10, 34);
+    g += arrowsAt(P(o, 400, 16, 22)[0] + 14, P(o, 400, 16, 22)[1], "R");
+    const x0 = P([o[0], o[1] - 46], 200, 0, 0)[0];
+    const x1 = P(o, 400, 0, 0)[0];
+    g += dimLine(x0, x1, 198, "A  >  2.0 m");
+    g += cap("Lower part projects past the upper part. Inlet and outlet may be swapped.");
+  } else if (roofN === 3) {
+    const o = [70, 158];
+    g += cabinet(o, 400, 46, 46);
+    g += cabinet([o[0], o[1] - 46], 210, 46, 48);
+    const up = [o[0], o[1] - 46];
+    g += hatchRight(up, 210, 10, 36);
+    g += arrowsAt(P(up, 210, 16, 22)[0] + 14, P(up, 210, 16, 22)[1], "R");
+    g += hatchRight(o, 400, 10, 34);
+    g += arrowsAt(P(o, 400, 16, 22)[0] + 14, P(o, 400, 16, 22)[1], "R");
+    g += dimLine(P(up, 210, 0, 0)[0], P(o, 400, 0, 0)[0], 198, "A  >  1.3 m");
+    g += cap("Both openings face the same way. Inlet and outlet may be swapped.");
+  } else if (roofN === 4) {
+    const o = [28, 168];
+    g += cabinet(o, 210, 40, 40) + cabinet([o[0], o[1] - 40], 210, 40, 42);
+    g += hatchFront([o[0], o[1] - 40], 14, 50, 8, 30);
+    g += arrowsAt(P([o[0], o[1] - 40], 50, 0, 18)[0] + 4, P([o[0], o[1] - 40], 30, 0, 18)[1], "R");
+    g += hatchRight(o, 210, 8, 28);
+    g += arrowsAt(P(o, 210, 14, 18)[0] + 12, P(o, 210, 14, 18)[1], "R");
+    g += dimLine(o[0] + 8, P(o, 210, 0, 0)[0], 206, "A > 1.3 m");
+    const q = [390, 168];
+    g += cabinet(q, 170, 42, 50);
+    g += cabinet([q[0] + 55, q[1] - 50], 52, 26, 30);
+    g += arrowsAt(q[0] + 78, q[1] - 80, "U");
+    g += hatchFront(q, 14, 48, 12, 36);
+    g += `<text x="${q[0] + 8}" y="${q[1] + 24}" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">**</text>`;
+    g += hatchRight(q, 170, 12, 36);
+    g += `<text x="${P(q, 170, 16, 20)[0] + 40}" y="${P(q, 170, 16, 20)[1] + 4}" font-size="13" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">**</text>`;
+    g += cap("Left: openings at opposite ends. Right: top discharge, side inlet on any face marked **.");
+  } else if (roofN === 5) {
+    const o = [60, 150];
+    g += cabinet(o, 430, 48, 52);
+    g += hatchFront(o, 150, 198, 12, 40);
+    g += arrowsAt(P(o, 198, 0, 26)[0] + 6, P(o, 170, 0, 26)[1], "R");
+    g += hatchRight(o, 430, 12, 40);
+    g += arrowsAt(P(o, 430, 16, 26)[0] + 14, P(o, 430, 16, 26)[1], "L");
+    g += dimLine(P(o, 174, 0, 0)[0], P(o, 430, 0, 0)[0], 196, "A  >  1.3 m");
+    g += cap("Side opening and end opening. Inlet and outlet may be swapped.");
+  } else if (roofN === 6) {
+    const o = [48, 150];
+    g += cabinet(o, 470, 48, 52);
+    g += hatchFront(o, 56, 104, 12, 40);
+    g += arrowsAt(P(o, 104, 0, 26)[0] + 6, P(o, 80, 0, 26)[1], "R");
+    g += hatchRight(o, 470, 12, 40);
+    g += arrowsAt(P(o, 470, 16, 26)[0] + 14, P(o, 470, 16, 26)[1], "L");
+    g += dimLine(P(o, 80, 0, 0)[0], P(o, 470, 0, 0)[0], 196, "A  >  2.0 m");
+    g += cap("Side louvre and end opening. Further apart than arrangement 5.");
+  } else {
+    const o = [56, 170];
+    g += cabinet(o, 280, 46, 46);
+    const e = [o[0] + 280, o[1]];
+    g += cabinet(e, 130, 46, 96);
+    g += hatchFront(o, 40, 88, 10, 34);
+    g += arrowsAt(P(o, 88, 0, 22)[0] + 6, P(o, 64, 0, 22)[1], "R");
+    const top = P(e, 64, 18, 96);
+    g += arrowsAt(top[0], top[1], "U");
+    g += dimLine(P(o, 64, 0, 0)[0], e[0] + 64, 214, "A  >  2.0 m");
+    g += cap("Side louvre, with the other opening discharging upward at the end.");
+  }
+  $("roof").innerHTML = g;
+}
+roofButtons();
+calc();
+</script>
+</body>
+</html>

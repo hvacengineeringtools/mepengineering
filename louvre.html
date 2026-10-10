@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#cfc3a8" />
+<title>Louvre face velocity analysis</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:1020px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 40px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header.top { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:26px 0 10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--ink); padding-bottom:5px; display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+h2 .more { text-transform:none; letter-spacing:0; font-weight:400; font-size:13px; }
+h3 { font-size:15px; margin:0 0 8px; font-weight:700; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; max-width:72ch; }
+fieldset { border:1px solid var(--rule); background:var(--panel); margin:0 0 12px; padding:10px 14px 14px; }
+legend { font-size:13px; font-weight:700; padding:0 6px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+.fields.three { grid-template-columns:repeat(3,1fr); }
+.fields.four { grid-template-columns:repeat(4,1fr); }
+.fields > div, .sec-in > div { display:flex; flex-direction:column; justify-content:flex-end; }
+label { display:block; font-size:12.5px; font-weight:700; margin-bottom:4px; }
+.hint { display:block; margin-top:2px; font-size:12px; font-weight:400; color:var(--muted); }
+.pair { display:grid; grid-template-columns:1fr 64px; }
+input, select { width:100%; border:1px solid var(--rule); background:#fff; color:var(--ink); font:15px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:7px 8px; min-height:38px; border-radius:0; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid var(--rule); border-left:0; background:var(--tint); font-size:12px; color:var(--muted); }
+details.adv { margin-top:12px; border-top:1px dashed var(--rule); padding-top:8px; }
+details.adv summary { cursor:pointer; font-size:13px; font-weight:700; }
+details.adv .fields { margin-top:10px; }
+button.link { background:none; border:0; padding:0; font:inherit; color:var(--ink); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.answer { border:2px solid var(--ink); background:var(--panel); padding:12px 16px; }
+.answer .k { font-size:13px; color:var(--muted); }
+.answer .v { font-size:30px; font-weight:600; line-height:1.15; font-variant-numeric:tabular-nums; }
+.answer .u { font-size:13px; color:var(--muted); }
+.answer.good { background:var(--ok); }
+.answer.bad { background:var(--warn); }
+.pairs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.pairs .answer { border-width:1px; padding:9px 12px; }
+.pairs .answer .v { font-size:22px; }
+dl.facts { display:grid; grid-template-columns:auto auto; gap:0; margin:10px 0 0; border-top:1px solid var(--faint); }
+dl.facts dt, dl.facts dd { margin:0; padding:6px 0; border-bottom:1px solid var(--faint); font-size:14px; }
+dl.facts dd { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+ul.checks { list-style:none; margin:10px 0 0; padding:0; }
+ul.checks li { font-size:13.5px; padding:6px 10px; border-left:3px solid var(--ink); background:var(--panel); margin-bottom:4px; }
+ul.checks li.warn { background:var(--warn); }
+.scroll { overflow-x:auto; margin-top:8px; }
+.items .ih, .items .ir { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr); gap:8px; align-items:center; }
+.items .ih { font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; }
+.items .ir { margin-bottom:8px; }
+.items .ir > label { margin:0; font-size:13px; }
+.items .ir > label input { font-size:13px; min-height:36px; }
+.howto { margin:0 0 10px; padding:9px 12px; background:var(--paper); border-left:3px solid var(--ink); font-size:13.5px; }
+.howto p { margin:0 0 4px; } .howto ul { margin:0; padding-left:18px; } .howto li { margin:2px 0; }
+.isz { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) auto minmax(0,.9fr); gap:6px; align-items:center; margin:-4px 0 12px; font-size:12px; color:var(--muted); }
+.isz .x { text-align:center; }
+.isz .isv { grid-column:1 / -1; font-size:12px; }
+.isz .isv:empty { display:none; }
+.meshcalc { margin:-2px 0 10px; padding:8px 10px; border:1px dashed var(--rule); background:var(--paper); }
+.meshcalc .chk { display:flex; gap:8px; align-items:center; font-size:13px; font-weight:700; margin:0; cursor:pointer; }
+.meshcalc .chk input { width:18px; height:18px; min-height:0; margin:0; -webkit-appearance:checkbox; appearance:auto; }
+.meshcalc .fields { margin-top:10px; }
+.meshcalc .span3 { grid-column:1 / -1; }
+table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); }
+table.ref th, table.ref td { border:1px solid var(--faint); text-align:left; }
+table.ref .num { text-align:right; font-variant-numeric:tabular-nums; }
+.mcres { margin:8px 0 0; font-size:13px; }
+.mcres.warn { background:var(--warn); padding:6px 8px; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+.breakdown { margin:4px 0 0; padding:0; list-style:none; font-size:12.5px; color:var(--muted); }
+.breakdown li span:last-child { white-space:nowrap; }
+.breakdown li { display:flex; justify-content:space-between; gap:8px; border-top:1px dotted var(--faint); padding:2px 0; }
+@media (max-width:760px) { .isz { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); } .isz > span:first-child { grid-column:1 / -1; } .items .ih { display:none; } .items .ir { grid-template-columns:1fr 1fr; } .items .ir > label { grid-column:1 / -1; } }
+table.cd { width:100%; border-collapse:collapse; background:var(--panel); margin-top:8px; font-size:14px; }
+table.cd th, table.cd td { border:1px solid var(--ink); padding:6px 9px; text-align:left; vertical-align:top; }
+table.cd th { background:var(--tint); font-size:12.5px; }
+table.cd tr.on td { background:var(--ink); color:var(--paper); }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12.5px; color:var(--muted); }
+
+/* Pull-out bar */
+.pull { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:30; background:var(--ink); color:var(--paper); border:1px solid var(--ink); border-right:0; padding:16px 9px; font:600 13px/1 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; letter-spacing:.06em; cursor:pointer; box-shadow:-4px 4px 0 rgba(42,36,28,.18); }
+.pull span { display:block; writing-mode:vertical-rl; -webkit-writing-mode:vertical-rl; }
+@media (hover:hover) { .pull:hover { background:#3a332b; } }
+.scrim { position:fixed; inset:0; background:rgba(26,23,20,.3); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:35; }
+.scrim.on { opacity:1; pointer-events:auto; }
+.drawer { position:fixed; top:0; right:0; height:100%; width:min(600px, 94vw); background:var(--paper); border-left:1px solid var(--ink); box-shadow:-8px 0 0 rgba(42,36,28,.14); transform:translateX(102%); visibility:hidden; transition:transform .25s ease, visibility 0s linear .25s; z-index:40; display:flex; flex-direction:column; }
+.drawer.open { transform:none; visibility:visible; transition:transform .25s ease; }
+.drawer .bar { display:flex; justify-content:space-between; align-items:center; padding:14px 20px 10px; border-bottom:1px solid var(--ink); }
+.drawer .bar h2 { margin:0; border:0; padding:0; }
+.drawer .close { background:var(--panel); border:1px solid var(--ink); font:600 13px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:6px 12px; cursor:pointer; color:var(--ink); }
+.tabs { display:flex; gap:0; padding:0 20px; border-bottom:1px solid var(--faint); overflow-x:auto; }
+.tabs button { background:none; border:0; border-bottom:3px solid transparent; padding:10px 12px 8px; font:14px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; color:var(--muted); cursor:pointer; white-space:nowrap; }
+.tabs button[aria-selected="true"] { color:var(--ink); font-weight:700; border-bottom-color:var(--ink); }
+.drawer .body { overflow:auto; padding:16px 20px 40px; flex:1; }
+.drawer .body p { font-size:14.5px; }
+.drawer .eq { font-size:14.5px; padding:8px 12px; background:var(--panel); border-left:3px solid var(--ink); margin:0 0 8px; font-variant-numeric:tabular-nums; }
+.drawer .eq b { font-weight:600; }
+.drawer h3 { margin:18px 0 6px; }
+.drawer h3:first-child { margin-top:0; }
+[role="tabpanel"][hidden] { display:none; }
+
+@media (max-width:760px) {
+  .book { margin:0; padding:16px 14px 72px; box-shadow:none; }
+  .fields, .fields.three, .fields.four, .pairs { grid-template-columns:1fr; }
+  h1 { font-size:24px; }
+  input, select { font-size:16px; min-height:44px; }
+  nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:8px; text-align:left; font-size:13px; }
+  .pull { top:auto; bottom:0; left:0; right:0; transform:none; border:0; border-top:1px solid var(--ink); padding:15px 15px calc(15px + env(safe-area-inset-bottom, 0px)); font-size:15px; box-shadow:none; }
+  .pull span { writing-mode:horizontal-tb; -webkit-writing-mode:horizontal-tb; }
+  .drawer { width:100%; border-left:0; }
+}
+@media (prefers-reduced-motion:reduce) { .drawer, .scrim { transition:none; } }
+@media print {
+  nav.pages, .pull, .scrim, .drawer .close, .tabs { display:none !important; }
+  .drawer { position:static; transform:none; visibility:visible; width:auto; height:auto; box-shadow:none; border:0; border-top:1px solid var(--ink); margin-top:20px; }
+  .drawer .body { overflow:visible; }
+  [role="tabpanel"][hidden] { display:block; }
+}
+
+.layout { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:22px; align-items:start; }
+.layout > section > h2:first-child { margin-top:4px; }
+.result-col { position:sticky; top:12px; }
+svg.elev { width:100%; height:auto; display:block; background:var(--panel); border:1px solid var(--rule); border-top:0; }
+.feelwrap { border:1px solid var(--ink); background:var(--panel); }
+svg.person, svg.scale { width:100%; height:auto; display:block; }
+svg.scale { border-top:1px solid var(--faint); }
+.feelcap { display:grid; grid-template-columns:1fr auto; gap:12px 18px; padding:12px 16px; border-top:1px solid var(--ink); align-items:center; }
+.feelcap .band { font-size:19px; font-weight:600; }
+.feelcap .lead { margin:2px 0; }
+.seg { display:inline-flex; border:1px solid var(--ink); }
+.seg button { background:var(--panel); border:0; padding:8px 12px; font:13.5px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; cursor:pointer; color:var(--ink); }
+.seg button + button { border-left:1px solid var(--ink); }
+.seg button[aria-pressed="true"] { background:var(--ink); color:var(--paper); }
+.wind { fill:none; stroke:var(--ink); stroke-linecap:round; stroke-dasharray:16 12; animation:flow linear infinite; }
+.wind.rev { animation-direction:reverse; }
+@keyframes flow { to { stroke-dashoffset:-56; } }
+@media (prefers-reduced-motion:reduce) { .wind { animation:none; } }
+@media (pointer:coarse) { .seg button { min-height:44px; padding:10px 14px; } }
+@media (max-width:760px) {
+  .layout { grid-template-columns:1fr; }
+  .result-col { position:static; }
+  .feelcap { grid-template-columns:1fr; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+.items .pair > span { min-width:40px; padding:0 6px; }
+.isz .pair > span { min-width:40px; padding:0 6px; }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+</head>
+<body>
+<article class="book">
+<header class="top">
+  <div class="kicker">Sheet XI · Louvre face velocity analysis</div>
+  <h1>Louvre face velocity analysis</h1>
+  <div class="sub">Face area, free area and pressure drop · BS EN 13030 classes</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a class="on" href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<p class="lead">Enter the airflow and the face velocity, then the one side the building fixes. The sheet sizes the louvre, gives its pressure drop, and shows how the air will feel to someone standing in it.</p>
+
+<div class="layout">
+<section aria-labelledby="h-in">
+<h2 id="h-in">Inputs</h2>
+<fieldset>
+  <legend>Louvre</legend>
+  <div class="fields">
+    <div><label for="duty">Intake or exhaust</label>
+      <select id="duty"><option value="exhaust">Exhaust</option><option value="intake">Intake</option></select></div>
+    <div><label for="place">Position</label>
+      <select id="place"><option>High level</option><option>Low level</option><option>Mid level</option></select></div>
+    <div><label for="weather">Weather louvre</label>
+      <select id="weather"><option value="Y">Yes</option><option value="N">No</option></select></div>
+    <div><label for="acoustic">Acoustic louvre</label>
+      <select id="acoustic"><option value="N">No</option><option value="Y">Yes</option></select></div>
+  </div>
+</fieldset>
+<fieldset>
+  <legend>Airflow and size</legend>
+  <div class="fields">
+    <div><label for="q">Airflow</label><div class="pair"><input id="q" type="number" inputmode="decimal" min="0" step="1" value="1330" /><span>l/s</span></div></div>
+    <div><label for="vf">Face velocity</label><div class="pair"><input id="vf" type="number" inputmode="decimal" min="0" step="0.1" value="2.5" /><span>m/s</span></div></div>
+    <div><label for="free">Free area<span class="hint">Share of the face that is open. Type 50 for 50%.</span></label><div class="pair"><input id="free" type="number" inputmode="decimal" min="0" max="100" step="1" value="50" /><span>%</span></div></div>
+    <div><label for="cd" id="cdlabel">Discharge coefficient, Cd<span class="hint">From the maker’s BS EN 13030 test.</span></label><div class="pair"><input id="cd" type="number" inputmode="decimal" min="0" step="0.01" value="0.40" /><span>—</span></div></div>
+    <div><label for="side">Side the building fixes</label>
+      <select id="side"><option value="w">Width</option><option value="h">Height</option></select></div>
+    <div><label for="fixed" id="fixedlabel">Fixed width</label><div class="pair"><input id="fixed" type="number" inputmode="decimal" min="0" step="1" value="600" /><span>mm</span></div></div>
+  </div>
+  <details class="adv">
+    <summary>Coefficient basis</summary>
+    <div class="fields">
+      <div><label for="basis">Coefficient measured on<span class="hint">BS EN 13030 uses the core area.</span></label>
+        <select id="basis"><option value="gross">Core (face) area</option><option value="free">Free area</option></select></div>
+    </div>
+  </details>
+</fieldset>
+<fieldset>
+  <legend>Air</legend>
+  <div class="fields">
+    <div><label for="tair">Air temperature<span class="hint">Of the air passing the louvre.</span></label><div class="pair"><input id="tair" type="number" inputmode="decimal" step="1" value="20" /><span>°C</span></div></div>
+    <div><label for="elev">Site elevation<span class="hint">Above sea level.</span></label><div class="pair"><input id="elev" type="number" inputmode="decimal" step="10" value="0" /><span>m</span></div></div>
+  </div>
+  <p class="hint" id="rhonote" style="margin:8px 0 0"></p>
+</fieldset>
+<fieldset>
+  <legend>Other items in the airway</legend>
+  <div class="howto">
+    <p><b>A pressure drop only means something at a velocity.</b> It rises with the square of the air speed, so 4 Pa at 2.0 m/s becomes 6.3 Pa at 2.5 m/s. For each item, enter the maker’s figure and the velocity it was quoted at; the sheet converts it to this job.</p>
+    <ul>
+      <li><b>Figure already at your airflow and size</b>, for example from the maker’s selection software: leave the velocity blank. It is added as typed.</li>
+      <li><b>Item the same size as the louvre</b>, for example a damper fitted directly behind it: leave the size blank. The sheet uses the louvre face velocity.</li>
+      <li><b>Item smaller or larger than the louvre</b>, for example a fire damper in the duct: give its size. The sheet uses the air speed through the item, not the louvre face velocity.</li>
+      <li><b>Not fitted:</b> leave the row blank.</li>
+    </ul>
+  </div>
+  <div class="items">
+    <div class="ih"><span></span><span>Maker’s pressure drop</span><span>Quoted at velocity</span></div>
+    <div class="ir"><label for="m_dp">Bird or insect mesh</label><div class="pair"><input id="m_dp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="value" /><span>Pa</span></div><div class="pair"><input id="m_v" type="number" inputmode="decimal" min="0" step="0.1" placeholder="quoted" /><span>m/s</span></div></div>
+    <div class="meshcalc">
+      <label class="chk"><input id="mc_use" type="checkbox" /> Calculate the mesh pressure drop from the mesh size</label>
+      <div id="mc_box" hidden>
+        <div class="fields three">
+          <div class="span3"><label for="mc_pre">Mesh type<span class="hint">Typical woven meshes; the aperture and wire stay editable. Confirm with the louvre maker.</span></label>
+            <select id="mc_pre">
+              <option value="">Custom: type the aperture and wire</option>
+              <option value="12.7|1.6">Bird mesh, heavy: 12.7 mm (½ in) square, 1.6 mm wire</option>
+              <option value="12|1.0">Bird mesh, light: 12 mm square, 1.0 mm wire</option>
+              <option value="19|1.6">Bird mesh, large: 19 mm (¾ in) square, 1.6 mm wire</option>
+              <option value="6|0.8">Vermin mesh: 6 mm square, 0.8 mm wire</option>
+              <option value="2|0.5">Insect mesh, stainless: 2 mm square, 0.5 mm wire</option>
+              <option value="1.2|0.28">Insect mesh, aluminium fly screen: 1.2 mm, 0.28 mm wire</option>
+            </select>
+          </div>
+          <div><label for="mc_a">Aperture<span class="hint">Clear gap between wires.</span></label><div class="pair"><input id="mc_a" type="number" inputmode="decimal" min="0" step="0.1" placeholder="—" /><span>mm</span></div></div>
+          <div><label for="mc_d">Wire diameter</label><div class="pair"><input id="mc_d" type="number" inputmode="decimal" min="0" step="0.01" placeholder="—" /><span>mm</span></div></div>
+          <div><label for="mc_f">Or open area<span class="hint">If the maker states it.</span></label><div class="pair"><input id="mc_f" type="number" inputmode="decimal" min="1" max="99" step="1" placeholder="—" /><span>%</span></div></div>
+        </div>
+        <p class="mcres" id="mc_res"></p>
+      </div>
+    </div>
+    <div class="ir"><label for="d_dp">Damper, fully open</label><div class="pair"><input id="d_dp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="value" /><span>Pa</span></div><div class="pair"><input id="d_v" type="number" inputmode="decimal" min="0" step="0.1" placeholder="quoted" /><span>m/s</span></div></div>
+    <div class="isz"><span>Damper size: leave blank if the same as the louvre</span><div class="pair"><input id="d_w" type="number" inputmode="decimal" min="0" step="10" placeholder="W" aria-label="Damper width" /><span>mm</span></div><span class="x">×</span><div class="pair"><input id="d_h" type="number" inputmode="decimal" min="0" step="10" placeholder="H" aria-label="Damper height" /><span>mm</span></div><span class="isv" id="d_vs"></span></div>
+    <div class="ir"><label for="o_dp"><input id="o_name" type="text" value="" placeholder="Other, e.g. attenuator" aria-label="Name of other item" /></label><div class="pair"><input id="o_dp" type="number" inputmode="decimal" min="0" step="0.1" placeholder="value" /><span>Pa</span></div><div class="pair"><input id="o_v" type="number" inputmode="decimal" min="0" step="0.1" placeholder="quoted" /><span>m/s</span></div></div>
+    <div class="isz"><span>Item size: leave blank if the same as the louvre</span><div class="pair"><input id="o_w" type="number" inputmode="decimal" min="0" step="10" placeholder="W" aria-label="Other item width" /><span>mm</span></div><span class="x">×</span><div class="pair"><input id="o_h" type="number" inputmode="decimal" min="0" step="10" placeholder="H" aria-label="Other item height" /><span>mm</span></div><span class="isv" id="o_vs"></span></div>
+  </div>
+
+</fieldset>
+</section>
+
+<section class="result-col" aria-labelledby="h-out">
+<h2 id="h-out">Result <button class="link more" type="button" data-open="formulae">How it is worked out</button></h2>
+<div id="out" aria-live="polite"></div>
+</section>
+</div>
+
+<h2>How the air feels <button class="link more" type="button" data-open="comfort">Comfort tables</button></h2>
+<p class="lead" id="feelLead">A person standing in the airstream at the louvre. Switch between the velocity across the face and the faster air leaving the blades.</p>
+<div class="feelwrap">
+  <svg class="person" id="person" viewBox="0 0 640 290" role="img" aria-labelledby="feelTitle"><title id="feelTitle">Person in the airstream</title><g id="personDraw"></g></svg>
+  <svg class="scale" id="scale" viewBox="0 0 640 90" aria-hidden="true"></svg>
+  <div class="feelcap">
+    <div>
+      <div class="band" id="bandName">—</div>
+      <p class="lead" id="bandText"></p>
+      <div class="hint" id="bandVel"></div>
+    </div>
+    <div class="seg" role="group" aria-label="Velocity shown">
+      <button type="button" id="showFace" aria-pressed="true">Face velocity</button>
+      <button type="button" id="showBlade" aria-pressed="false">Leaving the blades</button>
+    </div>
+  </div>
+</div>
+
+<footer>Preliminary sizing only. Notes, formulae and the class tables are in the Notes and formulae bar.</footer>
+</article>
+
+<button class="pull" id="pull" type="button" aria-controls="drawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Notes and formulae">
+  <div class="bar"><h2>Notes and formulae</h2><button class="close" type="button">Close</button></div>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="t-formulae" data-tab="formulae" aria-controls="tab-formulae">Formulae</button>
+    <button role="tab" type="button" id="t-classes" data-tab="classes" aria-controls="tab-classes">Louvre classes</button>
+    <button role="tab" type="button" id="t-comfort" data-tab="comfort" aria-controls="tab-comfort">Comfort data</button>
+    <button role="tab" type="button" id="t-notes" data-tab="notes" aria-controls="tab-notes">Notes</button>
+  </div>
+  <div class="body">
+    <div role="tabpanel" id="tab-formulae" aria-labelledby="t-formulae">
+      <p class="lead">Worked with the values on the sheet. The figures update as you type.</p>
+      <div id="worked"></div>
+    </div>
+    <div role="tabpanel" id="tab-classes" aria-labelledby="t-classes" hidden>
+      <h3>Airflow class, from Ce or Cd</h3>
+      <p>The class for the coefficient you entered is marked.</p>
+      <table class="cd" id="cdtable">
+        <thead><tr><th>Class</th><th>Ce or Cd</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr data-c="1"><td>1</td><td>0.40 and above</td><td>Excellent</td></tr>
+          <tr data-c="2"><td>2</td><td>0.30 to 0.399</td><td>Very good</td></tr>
+          <tr data-c="3"><td>3</td><td>0.20 to 0.299</td><td>Good</td></tr>
+          <tr data-c="4"><td>4</td><td>0.199 and below</td><td>Fair</td></tr>
+        </tbody>
+      </table>
+      <h3>Rain class, from rain rejection</h3>
+      <p>Rain rejection is the share of simulated rain kept out. It is not Ce or Cd.</p>
+      <table class="cd">
+        <thead><tr><th>Class</th><th>Rain rejection</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>99% and above</td><td>Excellent</td></tr>
+          <tr><td>B</td><td>95% to 98.9%</td><td>Very good</td></tr>
+          <tr><td>C</td><td>80% to 94.9%</td><td>Good</td></tr>
+          <tr><td>D</td><td>below 80%</td><td>Fair</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px">The descriptions are the sheet’s own words. The standard defines only the class bands.</p>
+    </div>
+    <div role="tabpanel" id="tab-comfort" aria-labelledby="t-comfort" hidden>
+      <p>The row for the velocity shown in the drawing is marked.</p>
+      <h3>Indoors, occupied zone</h3>
+      <p>Room air velocity and occupant reaction, after ASHRAE.</p>
+      <div class="scroll"><table class="cd feel">
+        <thead><tr><th>m/s</th><th>fpm</th><th>Reaction</th></tr></thead>
+        <tbody>
+          <tr data-lo="0" data-hi="0.08"><td>0 to 0.08</td><td>0 to 16</td><td>Complaints of stagnant air</td></tr>
+          <tr data-lo="0.08" data-hi="0.13"><td>0.08 to 0.13</td><td>16 to 25</td><td>Ideal design</td></tr>
+          <tr data-lo="0.13" data-hi="0.25"><td>0.13 to 0.25</td><td>25 to 50</td><td>Probably favourable; 0.25 m/s is near the most a seated person tolerates</td></tr>
+          <tr data-lo="0.25" data-hi="0.33"><td>0.25 to 0.33</td><td>50 to 65</td><td>Unfavourable; light papers blow off a desk</td></tr>
+          <tr data-lo="0.33" data-hi="0.38"><td>0.33 to 0.38</td><td>65 to 75</td><td>Upper limit for people moving about slowly</td></tr>
+          <tr data-lo="0.38" data-hi="1.6"><td>0.38 to 1.5</td><td>75 to 300</td><td>Some factory air-conditioning installations</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Outdoors, or in the jet from a louvre</h3>
+      <p>Effect of wind on people, Beaufort scale, after Penwarden (1973).</p>
+      <div class="scroll"><table class="cd feel">
+        <thead><tr><th>Beaufort</th><th>m/s</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr data-lo="1.6" data-hi="3.4"><td>2</td><td>1.6 to 3.3</td><td>Wind felt on the face</td></tr>
+          <tr data-lo="3.4" data-hi="5.5"><td>3</td><td>3.4 to 5.4</td><td>Hair disturbed, clothing flaps, a newspaper is hard to read</td></tr>
+          <tr data-lo="5.5" data-hi="8.0"><td>4</td><td>5.5 to 7.9</td><td>Raises dust and loose paper, hair disarranged</td></tr>
+          <tr data-lo="8.0" data-hi="10.8"><td>5</td><td>8.0 to 10.7</td><td>Force of the wind felt on the body; risk of stumbling on entering a windy zone</td></tr>
+          <tr data-lo="10.8" data-hi="13.9"><td>6</td><td>10.8 to 13.8</td><td>Umbrellas hard to use, walking unsteady, wind noise in the ears unpleasant</td></tr>
+          <tr data-lo="13.9" data-hi="17.2"><td>7</td><td>13.9 to 17.1</td><td>Inconvenience felt when walking</td></tr>
+          <tr data-lo="17.2" data-hi="20.8"><td>8</td><td>17.2 to 20.7</td><td>Progress impeded, balance difficult in gusts</td></tr>
+          <tr data-lo="20.8" data-hi="1e9"><td>9</td><td>20.8 to 24.4</td><td>People blown over by gusts</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div role="tabpanel" id="tab-notes" aria-labelledby="t-notes" hidden>
+      <h3>Use of this sheet</h3>
+      <p>Preliminary sizing only. Use the maker’s stated coefficient and free area, and the area that coefficient was measured on. Confirm the airflow and rain classes on the BS EN 13030 test for that louvre. This sheet does not calculate sound reduction.</p>
+      <h3>Coefficient basis</h3>
+      <p>BS EN 13030 measures Ce and Cd on the core area: the face of the louvre less its frame. Free area is not used in the test. A core-area coefficient applied to the free area overstates the pressure drop by 1/R², four times at 50% free area.</p>
+      <h3>Face area and opening size</h3>
+      <p>The face area here is the core area. The overall louvre, and the builder’s opening, are larger by the frame and any mullions. Take those from the maker.</p>
+      <h3>Rain class</h3>
+      <p>The rain test runs with a 13 m/s wind at face velocities from 0 to 3.5 m/s. A louvre can be class A at a low velocity and class C at a higher one, so read the class at the design face velocity.</p>
+      <h3>Air density</h3>
+      <p>Pressure drop is proportional to air density. The sheet works it out from the air temperature and the site elevation. Atmospheric pressure comes from the standard-atmosphere equation in ASHRAE Fundamentals, Chapter 1; density then follows from the ideal-gas law for dry air. Humidity lowers density slightly, usually by less than 1%. For example, exhaust air at 35 °C is about 1.15 kg/m³ at sea level, about 5% below standard air at 20 °C.</p>
+      <h3>Other items in the airway</h3>
+      <p>Mesh, dampers, attenuators and plenums add their own pressure drop to the louvre’s. Enter each from the maker’s data with the face velocity it was quoted at. Pressure drop rises with the square of velocity, so the sheet scales each figure by (velocity through the item ÷ quoted velocity)². That velocity is the louvre face velocity unless you give the item its own size, as for a fire damper in a smaller duct. It also scales by density relative to standard air at 1.2 kg/m³, the usual basis for makers’ data. With no quoted velocity, the figure is added as typed. Insect mesh can add a noticeable pressure drop; check it is in the maker’s louvre test or add it here, not both.</p>
+      <h3>Calculating the mesh</h3>
+      <p>Without maker’s data, tick “Calculate the mesh pressure drop from the mesh size”. For a square woven mesh with aperture a and wire diameter d, the open area is f = [a / (a + d)]², or type the maker’s open area. The loss coefficient for a wire screen is ζ = 1.3 × (1 − f) + (1/f − 1)² (Idelchik and Fried, <i>Flow Resistance: A Design Guide for Engineers</i>, 1989). The pressure drop is ζ × ½ρV², with V the louvre face velocity, assuming the mesh covers the whole core.</p>
+      <h3>Mesh sizes</h3>
+      <p>No standard fixes the mesh fitted behind a louvre; it is the maker’s choice or the specifier’s. Woven wire cloth is made to ISO 9044, and ISO 4783 lists preferred combinations of aperture and wire diameter. The <i>Mesh type</i> list gives common louvre meshes as a starting point: 12–19 mm square bird mesh in 1.0–1.6 mm wire, 6 mm vermin mesh, and 1–2 mm insect mesh. Every value can be changed. A preset gives these open areas:</p>
+      <div class="scroll"><table class="ref"><thead><tr><th>Mesh</th><th>Aperture a, mm</th><th>Wire d, mm</th><th>Open area f</th><th>ζ</th></tr></thead><tbody id="meshTbl"></tbody></table></div>
+      <p>Insect mesh roughly doubles to quadruples the pressure drop of a bird mesh at the same face velocity, and clogs. Where insect mesh is required, consider a larger louvre or a removable screen.</p>
+      <p>The formula is for a clean mesh and a Reynolds number of about 1,000 or more. The sheet works the Reynolds number out from the wire diameter and the speed through the openings. Fine insect meshes at louvre speeds often fall below 1,000, where the real loss is higher, so the result is then a minimum. Mesh also collects dirt and insects; plan for cleaning or allow a margin.</p>
+      <h3>Marked results</h3>
+      <p>A blade velocity of 5 m/s or more, and a pressure drop above 150 Pa, are shaded as prompts to check the selection. They are this sheet’s own prompts, not limits from a standard.</p>
+      <h3>How the air feels</h3>
+      <p>The drawing is original to this site. Up to 1.5 m/s it follows the ASHRAE table of occupant reaction in a room; above that, the Beaufort effects on people after Penwarden (1973). Outdoor wind is gusty and a louvre jet is steadier, so treat the drawing as a guide. Near an intake the air slows quickly with distance from the face.</p>
+    </div>
+  </div>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+function num(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : null; }
+function f(x, d) { return Number(x).toFixed(d); }
+function aero(cd) {
+  if (cd >= 0.4) return [1, "Excellent"];
+  if (cd >= 0.3) return [2, "Very good"];
+  if (cd >= 0.2) return [3, "Good"];
+  return [4, "Fair"];
+}
+
+/* ---------- Comfort bands ---------- */
+const BANDS = [
+  { lo: 0,    hi: 0.08, name: "Stagnant air", text: "Complaints of stagnant air." },
+  { lo: 0.08, hi: 0.13, name: "Ideal for a room", text: "Ideal design velocity for an occupied room." },
+  { lo: 0.13, hi: 0.25, name: "Favourable", text: "Probably favourable. 0.25 m/s is near the most a seated person tolerates." },
+  { lo: 0.25, hi: 0.33, name: "Papers move", text: "Unfavourable indoors. Light papers blow off a desk." },
+  { lo: 0.33, hi: 0.38, name: "Limit for walking", text: "Upper limit for people moving about slowly." },
+  { lo: 0.38, hi: 1.6,  name: "Factory air", text: "Clearly felt. Used only in some factory air-conditioning installations." },
+  { lo: 1.6,  hi: 3.4,  name: "Beaufort 2", text: "Wind felt on the face." },
+  { lo: 3.4,  hi: 5.5,  name: "Beaufort 3", text: "Hair disturbed, clothing flaps, a newspaper is hard to read." },
+  { lo: 5.5,  hi: 8.0,  name: "Beaufort 4", text: "Raises dust and loose paper, hair disarranged." },
+  { lo: 8.0,  hi: 10.8, name: "Beaufort 5", text: "Force of the wind felt on the body. Risk of stumbling on entering a windy zone." },
+  { lo: 10.8, hi: 13.9, name: "Beaufort 6", text: "Umbrellas hard to use, walking unsteady, wind noise in the ears unpleasant." },
+  { lo: 13.9, hi: 17.2, name: "Beaufort 7", text: "Inconvenience felt when walking." },
+  { lo: 17.2, hi: 20.8, name: "Beaufort 8", text: "Progress impeded, balance difficult in gusts." },
+  { lo: 20.8, hi: Infinity, name: "Beaufort 9", text: "People blown over by gusts." }
+];
+const bandOf = v => BANDS.find(b => v >= b.lo && v < b.hi) || BANDS[0];
+function interp(v, pts) {
+  if (v <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    if (v <= pts[i][0]) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; return y0 + (y1 - y0) * (v - x0) / (x1 - x0); }
+  }
+  return pts[pts.length - 1][1];
+}
+const lnT = (v, a, b) => v > 0 ? clamp((Math.log(v) - Math.log(a)) / (Math.log(b) - Math.log(a)), 0, 1) : 0;
+
+function drawPerson(v, intake) {
+  const lean = interp(v, [[3.4, 0], [5.5, 3], [8, 7], [10.8, 12], [13.9, 18], [17.2, 24], [20.8, 30]]);
+  const t = lnT(v, 0.25, 8), t2 = lnT(v, 1.6, 17.2);
+  const flap = 26 * t2;
+  const spread = v >= 8 ? 10 + 8 * t2 : 2;
+  const raise = v >= 10.8;
+  const ink = "var(--ink)", paper = "var(--panel)";
+  let s = "";
+
+  // ground and louvre
+  s += `<line x1="16" y1="273" x2="624" y2="273" stroke="${ink}" stroke-width="1.5"/>`;
+  for (let x = 24; x < 624; x += 14) s += `<line x1="${x}" y1="273" x2="${x - 8}" y2="281" stroke="var(--faint)" stroke-width="1"/>`;
+  s += `<rect x="40" y="66" width="48" height="186" fill="${paper}" stroke="${ink}" stroke-width="2"/>`;
+  for (let i = 0; i < 10; i++) { const y = 76 + i * 18; s += `<path d="M45,${y} L64,${y + 8} L83,${y}" fill="none" stroke="${ink}" stroke-width="1.6"/>`; }
+  s += `<text x="64" y="266" text-anchor="middle" font-size="12" fill="var(--muted)">Louvre</text>`;
+  s += `<text x="64" y="56" text-anchor="middle" font-size="12" fill="var(--muted)">${intake ? "Air in" : "Air out"}</text>`;
+
+  // wind
+  const n = v <= 0 ? 0 : v < 0.08 ? 0 : v < 0.38 ? 1 : v < 1.6 ? 2 : v < 5.5 ? 3 : v < 10.8 ? 4 : v < 17.2 ? 5 : 6;
+  const dur = clamp(4 / Math.sqrt(v + 0.05), 0.35, 7).toFixed(2);
+  const sw = (1.1 + 0.07 * Math.min(v, 20)).toFixed(2);
+  for (let i = 0; i < n; i++) {
+    const y = n === 1 ? 160 : 100 + i * (136 / (n - 1));
+    s += `<path class="wind${intake ? " rev" : ""}" style="animation-duration:${dur}s" stroke-width="${sw}" d="M98,${y.toFixed(1)} C170,${(y - 6).toFixed(1)} 250,${(y + 6).toFixed(1)} 336,${y.toFixed(1)}"/>`;
+  }
+  if (v >= 5.5) for (const y of [128, 196]) s += `<path class="wind${intake ? " rev" : ""}" style="animation-duration:${dur}s" stroke-width="${sw}" d="M440,${y} C500,${y - 5} 560,${y + 5} 620,${y}"/>`;
+
+  // loose paper
+  if ((v >= 0.25 && v < 0.38) || (v >= 5.5 && v < 10.8)) {
+    const pts = v < 1 ? [[318, 186, -18]] : [[470, 150, 32], [540, 214, -24]];
+    for (const [x, y, r] of pts) s += `<g transform="rotate(${r} ${x} ${y})"><rect x="${x - 11}" y="${y - 8}" width="22" height="16" fill="${paper}" stroke="${ink}" stroke-width="1.2"/><line x1="${x - 7}" y1="${y - 3}" x2="${x + 7}" y2="${y - 3}" stroke="${ink}" stroke-width=".8"/><line x1="${x - 7}" y1="${y + 2}" x2="${x + 5}" y2="${y + 2}" stroke="${ink}" stroke-width=".8"/></g>`;
+  }
+
+  // person, drawn facing the louvre (left), leaning into the wind
+  let p = "";
+  p += `<path d="M392,118 L${(399 + flap * 0.35).toFixed(1)},158 L${(401 + flap * 0.5).toFixed(1)},184" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  p += `<path d="M364,112 Q379,106 394,112 L${(399 + flap * 0.2).toFixed(1)},160 L${(403 + flap).toFixed(1)},${(206 - flap * 0.15).toFixed(1)} L357,206 L361,160 Z" fill="${paper}" stroke="${ink}" stroke-width="2" stroke-linejoin="round"/>`;
+  p += `<line x1="372" y1="114" x2="369" y2="205" stroke="${ink}" stroke-width="1"/>`;
+  p += raise
+    ? `<path d="M366,118 L346,140 L356,101" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`
+    : `<path d="M366,118 L360,158 L361,184" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  p += `<rect x="373" y="102" width="10" height="11" fill="${paper}" stroke="${ink}" stroke-width="1.5"/>`;
+  // hair strands, behind the head
+  const ang = 92 - 84 * t, len = 16 + 30 * t, wave = 2 + 6 * t2;
+  [[392, 80], [395, 86], [396, 93], [394, 100]].forEach(([sx, sy], k) => {
+    const a = (ang + (k - 1.5) * 7) * Math.PI / 180;
+    const ex = sx + len * Math.cos(a), ey = sy + len * Math.sin(a);
+    const w = wave * (k % 2 ? 1 : -1);
+    const mx = (sx + ex) / 2 - Math.sin(a) * w, my = (sy + ey) / 2 + Math.cos(a) * w;
+    p += `<path d="M${sx},${sy} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/>`;
+  });
+  p += `<circle cx="378" cy="92" r="16" fill="${paper}" stroke="${ink}" stroke-width="2"/>`;
+  p += `<path d="M362,90 Q364,73 379,74 Q395,75 395,93 Q388,84 376,83 Q367,83 362,90 Z" fill="${ink}"/>`;
+  p += `<path d="M362.5,92 L359,97 L363,98" fill="none" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round"/>`;
+  p += v >= 8
+    ? `<path d="M366,91 L373,89" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>`
+    : `<circle cx="369.5" cy="90" r="1.9" fill="${ink}"/>`;
+  let mouth;
+  if (v < 0.08) mouth = "M365,102 L373,102";
+  else if (v < 0.25) mouth = "M365,101 Q369,105 373,101";
+  else if (v < 3.4) mouth = "M365,102 L373,102";
+  else if (v < 8) mouth = "M365,104 Q369,100 373,104";
+  else mouth = "M364,101 L374,101 L374,105 L364,105 Z M364,103 L374,103";
+  p += `<path d="${mouth}" fill="none" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/>`;
+  if (v > 0 && v < 0.08) p += `<path d="M370,66 q3,-4 0,-8 q-3,-4 0,-8 M384,64 q3,-4 0,-8 q-3,-4 0,-8" fill="none" stroke="${ink}" stroke-width="1.3"/>`;
+
+  const mirror = intake ? `translate(760,0) scale(-1,1) ` : "";
+  // legs stay planted: hips follow the lean, feet stay on the ground
+  const r = -lean * Math.PI / 180;
+  const hip = (x, y) => [380 + (x - 380) * Math.cos(r) - (y - 272) * Math.sin(r), 272 + (x - 380) * Math.sin(r) + (y - 272) * Math.cos(r)];
+  const [h1x, h1y] = hip(371, 202), [h2x, h2y] = hip(389, 202);
+  const legs = `<path d="M${h1x.toFixed(1)},${h1y.toFixed(1)} L${368 - spread},270 M${h2x.toFixed(1)},${h2y.toFixed(1)} L${392 + spread},270" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>` +
+    `<path d="M${358 - spread},271 L${370 - spread},271 M${390 + spread},271 L${402 + spread},271" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`;
+  s += `<g transform="${mirror}">${legs}<g transform="rotate(${(-lean).toFixed(1)} 380 272)">${p}</g></g>`;
+  $("personDraw").innerHTML = s;
+}
+
+function drawScale(vShow, vFace, vBlade) {
+  const X = v => 16 + 608 * (Math.log(clamp(v, 0.05, 30)) - Math.log(0.05)) / (Math.log(30) - Math.log(0.05));
+  const cur = bandOf(vShow);
+  let s = "";
+  BANDS.forEach((b, i) => {
+    const x0 = X(Math.max(b.lo, 0.05)), x1 = X(Math.min(b.hi, 30));
+    const on = b === cur && vShow > 0;
+    s += `<rect x="${x0.toFixed(1)}" y="24" width="${(x1 - x0).toFixed(1)}" height="20" fill="${on ? "var(--ink)" : i % 2 ? "var(--tint)" : "var(--panel)"}" stroke="var(--ink)" stroke-width=".7"/>`;
+  });
+  [0.1, 0.25, 0.5, 1, 2, 5, 10, 20].forEach(v => {
+    const x = X(v).toFixed(1);
+    s += `<line x1="${x}" y1="44" x2="${x}" y2="50" stroke="var(--ink)"/><text x="${x}" y="62" text-anchor="middle" font-size="11" fill="var(--muted)">${v}</text>`;
+  });
+  s += `<text x="632" y="62" text-anchor="end" font-size="11" fill="var(--muted)">m/s</text>`;
+  const xd = X(1.6).toFixed(1);
+  s += `<line x1="${xd}" y1="20" x2="${xd}" y2="86" stroke="var(--ink)" stroke-dasharray="3 3"/>`;
+  s += `<text x="${((16 + +xd) / 2).toFixed(1)}" y="82" text-anchor="middle" font-size="11.5" fill="var(--ink)">Indoors, occupied zone</text>`;
+  s += `<text x="${((+xd + 624) / 2).toFixed(1)}" y="82" text-anchor="middle" font-size="11.5" fill="var(--ink)">Wind on people, Beaufort scale</text>`;
+  const tri = (v, filled) => { const x = X(v); return `<path d="M${(x - 7).toFixed(1)},6 L${(x + 7).toFixed(1)},6 L${x.toFixed(1)},20 Z" fill="${filled ? "var(--ink)" : "var(--panel)"}" stroke="var(--ink)" stroke-width="1.5"/>`; };
+  if (vBlade > 0) s += tri(vBlade, vShow === vBlade);
+  if (vFace > 0) s += tri(vFace, vShow === vFace);
+  $("scale").innerHTML = s;
+}
+
+let showBlade = false;
+function drawFeel(vf, vb) {
+  const intake = $("duty").value === "intake";
+  const v = showBlade && vb > 0 ? vb : (vf || 0);
+  const b = bandOf(v);
+  drawPerson(v, intake);
+  drawScale(v, vf || 0, vb || 0);
+  $("bandName").textContent = v > 0 ? f(v, v < 1 ? 2 : 1) + " m/s, " + b.name : "Enter a face velocity";
+  $("bandText").textContent = v > 0 ? b.text : "";
+  $("bandVel").textContent = (vf > 0 ? "Filled marker: face velocity " + f(vf, 2) + " m/s. " : "") +
+    (vb > 0 ? "Open marker: leaving the blades " + f(vb, 2) + " m/s. " : "") +
+    (intake ? "At an intake the air slows quickly away from the face." : "");
+  $("feelTitle").textContent = "Person in the airstream at " + f(v, 2) + " m/s. " + b.text;
+  document.querySelectorAll("table.feel tbody tr").forEach(tr => {
+    tr.classList.toggle("on", v > 0 && v >= parseFloat(tr.dataset.lo) && v < parseFloat(tr.dataset.hi));
+  });
+}
+$("showFace").addEventListener("click", () => { showBlade = false; $("showFace").setAttribute("aria-pressed", "true"); $("showBlade").setAttribute("aria-pressed", "false"); calc(); });
+$("showBlade").addEventListener("click", () => { showBlade = true; $("showBlade").setAttribute("aria-pressed", "true"); $("showFace").setAttribute("aria-pressed", "false"); calc(); });
+
+/* ---------- Elevation ---------- */
+function elevation(W, H, side) {
+  const bw = 220, bh = 160, s = Math.min(bw / W, bh / H);
+  const w = W * s, h = H * s, x0 = 46 + (bw - w) / 2, y0 = 40 + (bh - h) / 2;
+  const nb = clamp(Math.round(H / 75), 3, 16);
+  let g = `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/>`;
+  g += `<rect x="${x0 + 4}" y="${y0 + 4}" width="${Math.max(w - 8, 0)}" height="${Math.max(h - 8, 0)}" fill="none" stroke="var(--ink)" stroke-width=".8"/>`;
+  for (let i = 1; i < nb; i++) { const y = y0 + 4 + i * (h - 8) / nb; g += `<line x1="${x0 + 4}" y1="${y}" x2="${x0 + w - 4}" y2="${y}" stroke="var(--ink)" stroke-width="1.1"/>`; }
+  const yd = y0 - 14, xd = x0 + w + 14;
+  g += `<path d="M${x0},${yd} L${x0 + w},${yd} M${x0},${yd - 5} L${x0},${yd + 5} M${x0 + w},${yd - 5} L${x0 + w},${yd + 5}" stroke="var(--ink)"/>`;
+  g += `<text x="${x0 + w / 2}" y="${yd - 7}" text-anchor="middle" font-size="13" ${side === "w" ? 'font-weight="700"' : ""}>${W} mm${side === "w" ? ", fixed" : ""}</text>`;
+  g += `<path d="M${xd},${y0} L${xd},${y0 + h} M${xd - 5},${y0} L${xd + 5},${y0} M${xd - 5},${y0 + h} L${xd + 5},${y0 + h}" stroke="var(--ink)"/>`;
+  g += `<text transform="translate(${xd + 9} ${y0 + h / 2}) rotate(90)" text-anchor="middle" font-size="13" ${side === "h" ? 'font-weight="700"' : ""}>${H} mm${side === "h" ? ", fixed" : ""}</text>`;
+  g += `<text x="12" y="226" font-size="11" fill="var(--muted)">Elevation of the core, to scale</text>`;
+  return `<svg class="elev" viewBox="0 0 320 234" role="img" aria-label="Louvre elevation ${W} by ${H} millimetres">${g}</svg>`;
+}
+
+/* ---------- Main calculation ---------- */
+function calc() {
+  const side = $("side").value, basis = $("basis").value, intake = $("duty").value === "intake";
+  const coef = intake ? "Ce" : "Cd";
+  $("fixedlabel").textContent = side === "w" ? "Fixed width" : "Fixed height";
+  $("cdlabel").firstChild.textContent = intake ? "Entry coefficient, Ce" : "Discharge coefficient, Cd";
+  const qLs = num("q"), vf = num("vf"), free = num("free"), cd = num("cd"), fixed = num("fixed");
+  // Air density: ASHRAE standard atmosphere for pressure, ideal gas for dry air
+  const tair = num("tair") != null ? num("tair") : 20, elev = num("elev") != null ? num("elev") : 0;
+  const pAtm = 101.325 * Math.pow(1 - 2.25577e-5 * elev, 5.2559);
+  const rho = tair > -273 && pAtm > 0 ? pAtm * 1000 / (287.055 * (tair + 273.15)) : null;
+  $("rhonote").textContent = rho ? `Air density ${f(rho, 3)} kg/m³ (dry air at ${f(pAtm, 1)} kPa and ${tair} °C).` : "Check the temperature and elevation.";
+  const n = cd > 0 ? String(aero(cd)[0]) : "";
+  document.querySelectorAll("#cdtable tr[data-c]").forEach(tr => tr.classList.toggle("on", tr.dataset.c === n));
+
+  if (!(qLs > 0) || !(vf > 0) || !(free > 0) || free > 100 || !(cd > 0) || !(rho > 0) || !(fixed > 0)) {
+    $("out").innerHTML = `<div class="answer"><div class="k">Minimum louvre size</div><div class="v">—</div><div class="u">Enter the airflow, face velocity, free area (up to 100%), coefficient and the fixed side to size the louvre.</div></div>`;
+    $("worked").innerHTML = "<p>Waiting for the inputs.</p>";
+    drawFeel(vf > 0 ? vf : 0, 0);
+    return;
+  }
+  const Q = qLs / 1000, R = free / 100;
+  const A = Q / vf, Af = A * R;
+  const otherMm = A / (fixed / 1000) * 1000;
+  const nominal = Math.ceil(otherMm / 50 - 1e-9) * 50;
+  const W = side === "w" ? fixed : nominal, H = side === "w" ? nominal : fixed;
+  const Acoef = basis === "gross" ? A : Af;
+  const vb = Q / Af;
+  const dPl = (rho / 2) * Math.pow(Q / (cd * Acoef), 2);
+  // Optional mesh calculation (Idelchik & Fried, wire screens): zeta = 1.3(1 - f) + (1/f - 1)^2, on the approach velocity
+  const mcUse = $("mc_use").checked;
+  $("mc_box").hidden = !mcUse;
+  $("m_dp").readOnly = $("m_v").readOnly = mcUse;
+  let mesh = null;
+  if (mcUse) {
+    const a = num("mc_a"), d = num("mc_d"), fp = num("mc_f");
+    let fo = null, fromSize = false;
+    if (fp > 0 && fp < 100) fo = fp / 100;
+    else if (a > 0 && d > 0) { fo = Math.pow(a / (a + d), 2); fromSize = true; }
+    if (fo) {
+      const zeta = 1.3 * (1 - fo) + Math.pow(1 / fo - 1, 2);
+      const dPm = zeta * 0.5 * rho * vf * vf;
+      const T = (tair != null ? tair : 20) + 273.15;
+      const mu = 1.716e-5 * Math.pow(T / 273.15, 1.5) * (273.15 + 110.4) / (T + 110.4);
+      const Re = d > 0 ? (vf / fo) * (d / 1000) * rho / mu : null;
+      mesh = { fo, zeta, dPm, Re, fromSize, a, d };
+      $("m_dp").value = f(dPm, 1); $("m_v").value = vf;
+      const low = Re != null && Re < 1000;
+      $("mc_res").className = "mcres" + (low ? " warn" : "");
+      $("mc_res").innerHTML = `Open area ${f(fo * 100, 0)}%, loss coefficient ζ ${f(zeta, 2)}, <b>${f(dPm, 1)} Pa</b> at ${vf} m/s, clean mesh.` +
+        (Re != null ? ` Reynolds number about ${Math.round(Re)}.` : "") +
+        (low ? " The formula assumes about 1,000 or more; below that the real loss is higher, so treat this as a minimum." : "") +
+        " Dirt and insects raise it further.";
+    } else {
+      $("m_dp").value = ""; $("m_v").value = "";
+      $("mc_res").className = "mcres"; $("mc_res").textContent = "Enter the aperture and wire diameter, or the open area.";
+    }
+  }
+  // Other items: maker's pressure drop scaled by (face velocity / quoted velocity)² and by density relative to standard air
+  const items = [["m", "Bird or insect mesh"], ["d", "Damper, fully open"], ["o", ($("o_name").value.trim() || "Other item")]].map(([k, name]) => {
+    if (k === "m" && mcUse) return mesh ? { name: "Mesh, calculated", calc: true, val: mesh.dPm } : null;
+    const p0 = num(k + "_dp"), v0 = num(k + "_v");
+    // Velocity through the item: its own size if given, otherwise the louvre face velocity
+    let vi = vf, own = false;
+    if (k !== "m") {
+      const iw = num(k + "_w"), ih = num(k + "_h");
+      if (iw > 0 && ih > 0) { vi = Q / (iw * ih / 1e6); own = true; }
+      $(k + "_vs").textContent = own ? `Air speed through it: ${f(vi, 2)} m/s (louvre face ${vf} m/s).` : "";
+    }
+    if (!(p0 > 0)) return null;
+    const val = v0 > 0 ? p0 * Math.pow(vi / v0, 2) * rho / 1.2 : p0;
+    return { name: own && v0 > 0 ? name + ` at ${f(vi, 1)} m/s` : name, p0, v0, val, vi, own };
+  }).filter(Boolean);
+  const dPi = items.reduce((a, it) => a + it.val, 0);
+  const dP = dPl + dPi;
+  const vAtSize = Q / (W * H / 1e6);
+  const [cls, cname] = aero(cd);
+  const other = side === "w" ? "Height" : "Width";
+
+  const checks = [];
+  if (dP > 150) checks.push(["warn", "Pressure drop is above 150 Pa. Consider a larger louvre or a better coefficient."]);
+  if (vb >= 5) checks.push(["warn", "Air leaves the blades at 5 m/s or more. Check noise and the comfort drawing below."]);
+  if ($("weather").value === "Y") checks.push([vf > 3.5 ? "warn" : "", "Weather louvre: read the rain class from the maker’s BS EN 13030 results at " + vf + " m/s face velocity." + (vf > 3.5 ? " This is above 3.5 m/s, the highest test velocity, so no class applies." : "")]);
+  if ($("acoustic").value === "Y") checks.push(["", "Acoustic louvre: state the sound reduction needed separately. This sheet does not calculate it."]);
+  checks.push(["", "Add the pressure drop to the fan duty."]);
+
+  $("out").innerHTML =
+    `<div class="answer good"><div class="k">Minimum louvre size, width × height</div><div class="v">${W} × ${H} mm</div>` +
+    `<div class="u">${other} calculated as ${Math.round(otherMm)} mm, rounded up to the next 50 mm. ${$("place").value}, ${intake ? "intake" : "exhaust"}.</div></div>` +
+    elevation(W, H, side) +
+    `<div class="pairs">` +
+      `<div class="answer${dP > 150 ? " bad" : ""}"><div class="k">${items.length ? "Total pressure drop" : "Pressure drop"}</div><div class="v">${f(dP, 1)} Pa</div><div class="u">At the required face area, ρ ${f(rho, 2)} kg/m³.</div>` +
+        (items.length ? `<ul class="breakdown"><li><span>Louvre</span><span>${f(dPl, 1)} Pa</span></li>${items.map(it => `<li><span>${it.name}</span><span>${f(it.val, 1)} Pa</span></li>`).join("")}</ul>` : "") + `</div>` +
+      `<div class="answer${vb >= 5 ? " bad" : ""}"><div class="k">Air leaving the blades</div><div class="v">${f(vb, 2)} m/s</div><div class="u">Airflow ÷ free area.</div></div>` +
+    `</div>` +
+    `<dl class="facts">` +
+      `<dt>Face (core) area needed</dt><dd>${f(A, 3)} m²</dd>` +
+      `<dt>Free area, ${free}%</dt><dd>${f(Af, 3)} m²</dd>` +
+      `<dt>Face velocity at the size chosen</dt><dd>${f(vAtSize, 2)} m/s</dd>` +
+      `<dt>${coef} ${cd}</dt><dd>Class ${cls}, ${cname}</dd>` +
+    `</dl>` +
+    `<ul class="checks">${checks.map(([c, t]) => `<li${c ? ` class="${c}"` : ""}>${t}</li>`).join("")}</ul>`;
+
+  const areaWord = basis === "gross" ? "core area A" : "free area Af";
+  $("worked").innerHTML =
+    `<h3>Face area</h3><div class="eq">A = Q / V<sub>f</sub> = ${f(Q, 3)} / ${vf} = <b>${f(A, 3)} m²</b></div>` +
+    `<h3>Free area</h3><div class="eq">A<sub>f</sub> = A × R = ${f(A, 3)} × ${R} = <b>${f(Af, 3)} m²</b></div>` +
+    `<h3>${other}</h3><div class="eq">${other} = A / fixed side = ${f(A, 3)} / ${fixed / 1000} = ${f(otherMm / 1000, 3)} m, so <b>${nominal} mm</b> rounded up to 50 mm</div>` +
+    `<h3>Air density</h3><div class="eq">p = 101.325 × (1 − 2.25577×10<sup>−5</sup> × ${elev})<sup>5.2559</sup> = ${f(pAtm, 2)} kPa</div>` +
+    `<div class="eq">ρ = p / (R × T) = ${f(pAtm * 1000, 0)} / (287.055 × ${f(tair + 273.15, 2)}) = <b>${f(rho, 3)} kg/m³</b></div>` +
+    `<h3>Louvre pressure drop</h3><div class="eq">ΔP = (ρ / 2) × [Q / (${coef} × ${areaWord})]² = (${f(rho, 3)} / 2) × [${f(Q, 3)} / (${cd} × ${f(Acoef, 3)})]² = <b>${f(dPl, 1)} Pa</b></div>` +
+    (items.length ? `<h3>Other items</h3>` + items.map(it => it.calc
+        ? (mesh.fromSize ? `<div class="eq">Mesh open area f = [a / (a + d)]² = [${mesh.a} / (${mesh.a} + ${mesh.d})]² = ${f(mesh.fo, 3)}</div>` : `<div class="eq">Mesh open area f = ${f(mesh.fo, 3)}, as given</div>`) +
+          `<div class="eq">ζ = 1.3 × (1 − f) + (1/f − 1)² = 1.3 × ${f(1 - mesh.fo, 3)} + ${f(1 / mesh.fo - 1, 3)}² = ${f(mesh.zeta, 3)}</div>` +
+          `<div class="eq">${it.name}: ζ × ½ρV<sub>f</sub>² = ${f(mesh.zeta, 3)} × 0.5 × ${f(rho, 3)} × ${vf}² = <b>${f(it.val, 1)} Pa</b></div>`
+        : it.v0 > 0
+        ? (it.own ? `<div class="eq">Air speed through it = Q / (its width × height) = <b>${f(it.vi, 2)} m/s</b></div>` : "") +
+          `<div class="eq">${it.name}: ${it.p0} × (${f(it.vi, 2)} / ${it.v0})² × ${f(rho, 3)} / 1.2 = <b>${f(it.val, 1)} Pa</b></div>`
+        : `<div class="eq">${it.name}: ${it.p0} Pa as typed, no velocity given</div>`).join("") +
+      `<div class="eq">Total = ${f(dPl, 1)} + ${items.map(it => f(it.val, 1)).join(" + ")} = <b>${f(dP, 1)} Pa</b></div>` : "") +
+    `<h3>Velocity leaving the blades</h3><div class="eq">V<sub>b</sub> = Q / A<sub>f</sub> = ${f(Q, 3)} / ${f(Af, 3)} = <b>${f(vb, 2)} m/s</b></div>` +
+    `<h3>Face velocity at the size chosen</h3><div class="eq">V = Q / (W × H) = ${f(Q, 3)} / (${W / 1000} × ${H / 1000}) = <b>${f(vAtSize, 2)} m/s</b></div>` +
+    `<h3>Symbols</h3><p>Q airflow, m³/s. V<sub>f</sub> required face velocity, m/s. R free-area ratio. ρ air density, kg/m³. p atmospheric pressure. R gas constant of dry air, 287.055 J/(kg·K). T absolute temperature. ${coef} ${intake ? "entry" : "discharge"} coefficient, measured on the ${basis === "gross" ? "core" : "free"} area.</p>`;
+
+  drawFeel(vf, vb);
+}
+$("meshTbl").innerHTML = [...$("mc_pre").options].filter(o => o.value).map(o => { const [a, d] = o.value.split("|").map(Number), fo = Math.pow(a / (a + d), 2), z = 1.3 * (1 - fo) + Math.pow(1 / fo - 1, 2); return `<tr><td>${o.textContent.split(":")[0]}</td><td class="num">${a}</td><td class="num">${d}</td><td class="num">${fo.toFixed(2)}</td><td class="num">${z.toFixed(2)}</td></tr>`; }).join("");
+$("mc_pre").addEventListener("change", () => { const v = $("mc_pre").value; if (v) { const [a, d] = v.split("|"); $("mc_a").value = a; $("mc_d").value = d; $("mc_f").value = ""; } calc(); });
+["mc_a", "mc_d"].forEach(id => $(id).addEventListener("input", () => { const v = $("mc_pre").value; if (v && v !== $("mc_a").value + "|" + $("mc_d").value) $("mc_pre").value = ""; }));
+["duty","place","weather","acoustic","q","vf","free","cd","side","fixed","basis","tair","elev","m_dp","m_v","d_dp","d_v","o_dp","o_v","o_name","d_w","d_h","o_w","o_h","mc_use","mc_a","mc_d","mc_f"].forEach(id => $(id).addEventListener("input", calc));
+$("mc_use").addEventListener("change", () => { if (!$("mc_use").checked) { $("m_dp").value = ""; $("m_v").value = ""; } calc(); });
+calc();
+</script>
+<script>
+(function () {
+  const drawer = document.getElementById("drawer");
+  const pull = document.getElementById("pull");
+  const scrim = document.getElementById("scrim");
+  const tabs = [...drawer.querySelectorAll('[role="tab"]')];
+  drawer.inert = true;
+  function showTab(name) {
+    tabs.forEach(t => {
+      const on = t.dataset.tab === name;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById("tab-" + t.dataset.tab).hidden = !on;
+    });
+  }
+  function open(name) {
+    if (name) showTab(name);
+    drawer.inert = false;
+    drawer.classList.add("open");
+    scrim.classList.add("on");
+    pull.setAttribute("aria-expanded", "true");
+    drawer.querySelector(".close").focus();
+  }
+  function close() {
+    drawer.classList.remove("open");
+    scrim.classList.remove("on");
+    pull.setAttribute("aria-expanded", "false");
+    drawer.inert = true;
+    pull.focus();
+  }
+  pull.addEventListener("click", () => drawer.classList.contains("open") ? close() : open());
+  scrim.addEventListener("click", close);
+  drawer.querySelector(".close").addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && drawer.classList.contains("open")) close(); });
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => showTab(t.dataset.tab));
+    t.addEventListener("keydown", e => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      showTab(n.dataset.tab); n.focus();
+    });
+  });
+  document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => open(b.dataset.open)));
+  showTab(tabs[0].dataset.tab);
+  window.addEventListener("beforeprint", () => { drawer.inert = false; });
+})();
+
+</script>
+</body>
+</html>

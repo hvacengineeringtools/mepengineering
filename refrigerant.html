@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#cfc3a8" />
+<title>Refrigerant discharge design</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:1020px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 40px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header.top { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:26px 0 10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--ink); padding-bottom:5px; display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+h2 .more { text-transform:none; letter-spacing:0; font-weight:400; font-size:13px; }
+h3 { font-size:15px; margin:0 0 8px; font-weight:700; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; max-width:72ch; }
+fieldset { border:1px solid var(--rule); background:var(--panel); margin:0 0 12px; padding:10px 14px 14px; }
+legend { font-size:13px; font-weight:700; padding:0 6px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+.fields.three { grid-template-columns:repeat(3,1fr); }
+.fields.four { grid-template-columns:repeat(4,1fr); }
+.fields > div, .sec-in > div { display:flex; flex-direction:column; justify-content:flex-end; }
+label { display:block; font-size:12.5px; font-weight:700; margin-bottom:4px; }
+.hint { display:block; margin-top:2px; font-size:12px; font-weight:400; color:var(--muted); }
+.pair { display:grid; grid-template-columns:1fr 64px; }
+input, select { width:100%; border:1px solid var(--rule); background:#fff; color:var(--ink); font:15px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:7px 8px; min-height:38px; border-radius:0; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid var(--rule); border-left:0; background:var(--tint); font-size:12px; color:var(--muted); }
+details.adv { margin-top:12px; border-top:1px dashed var(--rule); padding-top:8px; }
+details.adv summary { cursor:pointer; font-size:13px; font-weight:700; }
+details.adv .fields { margin-top:10px; }
+button.link { background:none; border:0; padding:0; font:inherit; color:var(--ink); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.answer { border:2px solid var(--ink); background:var(--panel); padding:12px 16px; }
+.answer .k { font-size:13px; color:var(--muted); }
+.answer .v { font-size:30px; font-weight:600; line-height:1.15; font-variant-numeric:tabular-nums; }
+.answer .u { font-size:13px; color:var(--muted); }
+.answer.good { background:var(--ok); }
+.answer.bad { background:var(--warn); }
+.pairs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.pairs .answer { border-width:1px; padding:9px 12px; }
+.pairs .answer .v { font-size:22px; }
+dl.facts { display:grid; grid-template-columns:auto auto; gap:0; margin:10px 0 0; border-top:1px solid var(--faint); }
+dl.facts dt, dl.facts dd { margin:0; padding:6px 0; border-bottom:1px solid var(--faint); font-size:14px; }
+dl.facts dd { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+ul.checks { list-style:none; margin:10px 0 0; padding:0; }
+ul.checks li { font-size:13.5px; padding:6px 10px; border-left:3px solid var(--ink); background:var(--panel); margin-bottom:4px; }
+ul.checks li.warn { background:var(--warn); }
+.scroll { overflow-x:auto; margin-top:8px; }
+table.cd { width:100%; border-collapse:collapse; background:var(--panel); margin-top:8px; font-size:14px; }
+table.cd th, table.cd td { border:1px solid var(--ink); padding:6px 9px; text-align:left; vertical-align:top; }
+table.cd th { background:var(--tint); font-size:12.5px; }
+table.cd tr.on td { background:var(--ink); color:var(--paper); }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12.5px; color:var(--muted); }
+
+/* Pull-out bar */
+.pull { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:30; background:var(--ink); color:var(--paper); border:1px solid var(--ink); border-right:0; padding:16px 9px; font:600 13px/1 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; letter-spacing:.06em; cursor:pointer; box-shadow:-4px 4px 0 rgba(42,36,28,.18); }
+.pull span { display:block; writing-mode:vertical-rl; -webkit-writing-mode:vertical-rl; }
+@media (hover:hover) { .pull:hover { background:#3a332b; } }
+.scrim { position:fixed; inset:0; background:rgba(26,23,20,.3); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:35; }
+.scrim.on { opacity:1; pointer-events:auto; }
+.drawer { position:fixed; top:0; right:0; height:100%; width:min(600px, 94vw); background:var(--paper); border-left:1px solid var(--ink); box-shadow:-8px 0 0 rgba(42,36,28,.14); transform:translateX(102%); visibility:hidden; transition:transform .25s ease, visibility 0s linear .25s; z-index:40; display:flex; flex-direction:column; }
+.drawer.open { transform:none; visibility:visible; transition:transform .25s ease; }
+.drawer .bar { display:flex; justify-content:space-between; align-items:center; padding:14px 20px 10px; border-bottom:1px solid var(--ink); }
+.drawer .bar h2 { margin:0; border:0; padding:0; }
+.drawer .close { background:var(--panel); border:1px solid var(--ink); font:600 13px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:6px 12px; cursor:pointer; color:var(--ink); }
+.tabs { display:flex; gap:0; padding:0 20px; border-bottom:1px solid var(--faint); overflow-x:auto; }
+.tabs button { background:none; border:0; border-bottom:3px solid transparent; padding:10px 12px 8px; font:14px Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; color:var(--muted); cursor:pointer; white-space:nowrap; }
+.tabs button[aria-selected="true"] { color:var(--ink); font-weight:700; border-bottom-color:var(--ink); }
+.drawer .body { overflow:auto; padding:16px 20px 40px; flex:1; }
+.drawer .body p { font-size:14.5px; }
+.drawer .eq { font-size:14.5px; padding:8px 12px; background:var(--panel); border-left:3px solid var(--ink); margin:0 0 8px; font-variant-numeric:tabular-nums; }
+.drawer .eq b { font-weight:600; }
+.drawer h3 { margin:18px 0 6px; }
+.drawer h3:first-child { margin-top:0; }
+[role="tabpanel"][hidden] { display:none; }
+
+@media (max-width:760px) {
+  .book { margin:0; padding:16px 14px 72px; box-shadow:none; }
+  .fields, .fields.three, .fields.four, .pairs { grid-template-columns:1fr; }
+  h1 { font-size:24px; }
+  input, select { font-size:16px; min-height:44px; }
+  nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:8px; text-align:left; font-size:13px; }
+  .pull { top:auto; bottom:0; left:0; right:0; transform:none; border:0; border-top:1px solid var(--ink); padding:15px 15px calc(15px + env(safe-area-inset-bottom, 0px)); font-size:15px; box-shadow:none; }
+  .pull span { writing-mode:horizontal-tb; -webkit-writing-mode:horizontal-tb; }
+  .drawer { width:100%; border-left:0; }
+}
+@media (prefers-reduced-motion:reduce) { .drawer, .scrim { transition:none; } }
+@media print {
+  nav.pages, .pull, .scrim, .drawer .close, .tabs { display:none !important; }
+  .drawer { position:static; transform:none; visibility:visible; width:auto; height:auto; box-shadow:none; border:0; border-top:1px solid var(--ink); margin-top:20px; }
+  .drawer .body { overflow:visible; }
+  [role="tabpanel"][hidden] { display:block; }
+}
+
+.summary { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.summary .answer .v { font-size:24px; }
+.summary .answer .k { font-weight:700; color:var(--ink); }
+.summary a { color:inherit; }
+.sec-in { display:grid; grid-template-columns:repeat(3,1fr); gap:12px 16px; margin:0 0 6px; }
+.sheet { border-top:1px solid var(--ink); }
+.sheet .row { display:grid; grid-template-columns:minmax(150px,1.1fr) 150px minmax(180px,1.6fr); gap:10px 18px; align-items:center; padding:9px 0; border-bottom:1px solid var(--faint); }
+.sheet .lab { font-size:14.5px; }
+.sheet .nums div { display:grid; grid-template-columns:1fr 46px; border:1px solid var(--ink); background:var(--panel); }
+.sheet .nums div + div { border-top:0; }
+.sheet .nums b { padding:4px 8px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+.sheet .nums span { display:flex; align-items:center; justify-content:center; border-left:1px solid var(--ink); background:var(--tint); font-size:12px; color:var(--muted); }
+.sheet .note { font-size:13px; color:var(--muted); }
+.sheet .row.final { background:var(--ok); margin:0 -8px; padding:10px 8px; border-bottom:1px solid var(--ink); }
+.sheet .row.final .lab { font-weight:700; }
+.boxes { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.boxes .answer { border-width:1px; padding:9px 12px; }
+.boxes .answer .v { font-size:20px; }
+.refnote { font-size:13.5px; color:var(--muted); margin:6px 0 10px; }
+table.ref { border-collapse:collapse; width:max-content; min-width:100%; font-size:12px; background:var(--panel); }
+table.ref th, table.ref td { border:1px solid var(--ink); padding:4px 6px; text-align:left; white-space:nowrap; vertical-align:bottom; }
+table.ref th { background:var(--tint); font-weight:700; }
+table.ref .num { text-align:right; font-variant-numeric:tabular-nums; }
+table.ref tr.on td { background:var(--ink); color:var(--paper); }
+.drawer { width:min(760px, 96vw); }
+
+/* Refrigerant warnings */
+.alert { position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); gap:4px 16px; align-items:start; margin:14px 0 4px; padding:20px 18px 16px; border:2px solid var(--ink); box-shadow:5px 5px 0 rgba(26,23,20,.16); }
+.alert::before { content:""; position:absolute; left:0; right:0; top:0; height:9px; background:repeating-linear-gradient(-45deg, var(--a-stripe) 0 12px, var(--ink) 12px 24px); }
+.alert[hidden] { display:none; }
+.alert.caution { --a-stripe:#e3a61b; --a-bg:#fcf0cf; --a-tag:#7a5300; background:var(--a-bg); }
+.alert.danger { --a-stripe:#b3261e; --a-bg:#f7dcd6; --a-tag:#8f1d15; background:var(--a-bg); }
+.alert .ico { width:56px; height:56px; margin-top:4px; }
+.alert .tag { display:inline-block; font:700 11px/1 "Palatino Linotype", Palatino, Georgia, serif; letter-spacing:.14em; text-transform:uppercase; color:#fff; background:var(--a-tag); padding:5px 8px 4px; margin-bottom:6px; }
+.alert .ttl { font-size:21px; line-height:1.25; font-weight:700; margin:0 0 6px; }
+.alert p { margin:0 0 6px; font-size:14.5px; }
+.alert ul { margin:4px 0 0; padding-left:18px; font-size:14px; }
+.alert ul li { margin-bottom:2px; }
+.flag { display:block; margin:0 0 6px; padding:4px 7px; font:700 12px/1.3 "Palatino Linotype", Palatino, Georgia, serif; color:#fff; background:var(--f-bg); }
+.flag.caution { --f-bg:#7a5300; }
+.flag.danger { --f-bg:#8f1d15; }
+select.flagged-caution { border:2px solid #e3a61b; background-color:#fcf0cf; }
+select.flagged-danger { border:2px solid #b3261e; background-color:#f7dcd6; }
+
+/* Why A2L is larger */
+details.why { margin:14px 0 4px; border:2px solid var(--ink); background:var(--panel); }
+details.why > summary { list-style:none; display:flex; gap:12px; align-items:center; padding:12px 16px; background:var(--tint); font-weight:700; font-size:16px; }
+details.why > summary::-webkit-details-marker { display:none; }
+details.why > summary .badge { flex:none; display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 17px/1 Georgia, serif; }
+details.why > summary .chev { margin-left:auto; font-weight:400; font-size:13px; color:var(--muted); }
+details.why[open] > summary .chev::after { content:"Hide"; }
+details.why:not([open]) > summary .chev::after { content:"Show"; }
+details.why .in { padding:14px 16px 16px; }
+.cmp { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 0 14px; }
+.cmp > div { border:1px solid var(--ink); padding:8px 10px; background:var(--paper); }
+.cmp > div.big { background:var(--ink); color:var(--paper); }
+.cmp .k { font-size:12.5px; opacity:.85; }
+.cmp .v { font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; }
+.cmp .x { font-size:12.5px; }
+ol.whylist { margin:0; padding-left:22px; }
+ol.whylist li { margin-bottom:8px; font-size:14.5px; }
+ol.whylist li b { display:block; }
+@media (max-width:760px) {
+  .alert { grid-template-columns:1fr; }
+  .alert .ico { width:44px; height:44px; }
+  .cmp { grid-template-columns:1fr; }
+}
+@media print { details.why .in { display:block; } .alert { box-shadow:none; } }
+@media (max-width:760px) {
+  .summary, .sec-in, .boxes { grid-template-columns:1fr; }
+  .sheet .row { grid-template-columns:1fr; gap:4px; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+</head>
+<body>
+<article class="book">
+<header class="top">
+  <div class="kicker">Sheet XII · Refrigerant discharge design</div>
+  <h1>Refrigerant discharge design</h1>
+  <div class="sub">Machinery-room ventilation · BS EN 378-2, BS EN 378-3 and ANSI/ASHRAE 15-2024</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a class="on" href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<p class="lead">Choose the refrigerant and enter the room. The charge is that of the largest refrigerating system with any part in the room. The sheet gives the airflow by BS EN 378 for the room and for a ventilated enclosure, and by ASHRAE 15.</p>
+
+<h2>Refrigerant and room</h2>
+<fieldset>
+  <legend>Inputs used by all three checks</legend>
+  <div class="fields three">
+    <div><label for="refri">Refrigerant<span class="hint">Sets the density and the ASHRAE safety group.</span></label><select id="refri"></select></div>
+    <div><label for="charge">Largest refrigerant charge</label><div class="pair"><input id="charge" type="number" inputmode="decimal" min="0" step="0.1" value="50" /><span>kg</span></div></div>
+    <div><label for="vol">Room volume</label><div class="pair"><input id="vol" type="number" inputmode="decimal" min="0" step="0.1" value="160" /><span>m³</span></div></div>
+    <div><label for="area">Floor area</label><div class="pair"><input id="area" type="number" inputmode="decimal" min="0" step="0.1" value="40" /><span>m²</span></div></div>
+    <div><label for="people">People present<span class="hint">For ASHRAE Level 1.</span></label><div class="pair"><input id="people" type="number" inputmode="decimal" min="0" step="1" value="1" /><span>people</span></div></div>
+  </div>
+</fieldset>
+
+<div class="alert caution" id="alertHC" role="alert" hidden>
+  <svg class="ico" viewBox="0 0 56 56" aria-hidden="true"><path d="M28 4 L53 50 H3 Z" fill="#e3a61b" stroke="#1a1714" stroke-width="3" stroke-linejoin="round"/><rect x="25.5" y="19" width="5" height="17" rx="1.5" fill="#1a1714"/><circle cx="28" cy="42.5" r="3" fill="#1a1714"/></svg>
+  <div>
+    <span class="tag" id="alertHCtag">Caution · A3, higher flammability</span>
+    <div class="ttl">Manufacturer may have specific recommendations for ventilation and gas sensors</div>
+    <p><span id="alertHCname">This refrigerant</span> is a hydrocarbon and is highly flammable. The airflows below are a starting point only. Before sizing the fan, check the equipment maker’s installation instructions for:</p>
+    <ul>
+      <li>the ventilation rate, and where the extract and make-up air must be;</li>
+      <li>the gas sensor: type, number, height (low, as the gas is heavier than air) and alarm set point;</li>
+      <li>fans, lights and electrics suitable for a flammable atmosphere;</li>
+      <li>charge limits for an A3 refrigerant, which this sheet does not check.</li>
+    </ul>
+    <p style="margin-top:8px">Where the maker asks for more than this sheet, follow the maker.</p>
+  </div>
+</div>
+<div class="alert danger" id="alertNH3" role="alert" hidden>
+  <svg class="ico" viewBox="0 0 56 56" aria-hidden="true"><path d="M28 4 L53 50 H3 Z" fill="#b3261e" stroke="#1a1714" stroke-width="3" stroke-linejoin="round"/><rect x="25.5" y="19" width="5" height="17" rx="1.5" fill="#fff"/><circle cx="28" cy="42.5" r="3" fill="#fff"/></svg>
+  <div>
+    <span class="tag">Warning · R717 ammonia · B2L, higher toxicity</span>
+    <div class="ttl">Ammonia — not recommended. Detailed checking is needed.</div>
+    <p>Ammonia is toxic at very low concentrations, and ASHRAE 15 no longer covers it. Do not size an ammonia plant room from this sheet alone: the figures below follow IIAR 2 in outline and are for reference only.</p>
+    <ul>
+      <li>A specialist design to IIAR 2 and BS EN 378 is needed.</li>
+      <li>It must cover detection and alarm levels, emergency ventilation, temperature control, the discharge point and the room’s construction and exits.</li>
+      <li>Ammonia is lighter than air: detectors and extract go high.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Design airflows <button class="link more" type="button" data-open="formulae">How they are worked out</button></h2>
+<div class="summary" id="summary" aria-live="polite"></div>
+
+<h2 id="s1">1. BS EN 378-3, machinery room</h2>
+<p class="lead">4 air changes an hour run continuously. The emergency rate is the formula, capped at 15 air changes an hour.</p>
+<div class="sheet" id="en"></div>
+
+<h2 id="s2">2. BS EN 378-2, ventilated enclosure</h2>
+<p class="lead">An enclosure around an appliance using A2L, B2L, A2, B2, A3 or B3. The final rate is the greatest of three figures.</p>
+<div class="sec-in">
+  <div><label for="rho">Vapour density at 25 °C<span class="hint">Filled from the refrigerant. You can type another.</span></label><div class="pair"><input id="rho" type="number" inputmode="decimal" min="0" step="0.01" value="2.13" /><span>kg/m³</span></div></div>
+</div>
+<div class="sheet" id="enc"></div>
+
+<h2 id="s3"><span id="s3title">3. ASHRAE 15, machinery room</span></h2>
+<p class="lead">Level 1 runs when people are present. Level 2 runs when the detector calls for it. Size the fan for the greater.</p>
+<div class="sec-in">
+  <div><label for="group">Safety group<span class="hint" id="grouphint">Set from the refrigerant.</span></label>
+    <select id="group">
+      <option value="a1">A1 or B1</option>
+      <option value="a2">A2, A3, B2 or B3</option>
+      <option value="a2l">A2L or B2L</option>
+      <option value="nh3">R-717 ammonia, IIAR 2</option>
+    </select></div>
+  <div id="condwrap"><label for="cond">Pressure from<span class="hint">BS EN 378-2 air-cooled conditions, your own condensing temperature, or a typed pressure.</span></label>
+    <select id="cond">
+      <option value="55">Ambient up to 32 °C, condensing 55 °C</option>
+      <option value="59">Ambient up to 38 °C, condensing 59 °C</option>
+      <option value="63">Ambient up to 43 °C, condensing 63 °C</option>
+      <option value="67">Ambient up to 55 °C, condensing 67 °C</option>
+      <option value="t">Other condensing temperature</option>
+      <option value="typed">Type the pressure (nameplate PS)</option>
+    </select></div>
+  <div id="ctwrap" hidden><label for="ct">Condensing temperature<span class="hint">20 to 75 °C. Bubble point for blends.</span></label><div class="pair"><input id="ct" type="number" inputmode="decimal" min="20" max="75" step="0.5" value="60" /><span>°C</span></div></div>
+  <div id="dpwrap"><label for="dp">High-side (discharge) design pressure<span class="hint" id="dphint">Gauge.</span></label><div class="pair"><input id="dp" type="number" inputmode="decimal" min="0" step="0.01" value="3.42" /><span>MPa</span></div></div>
+</div>
+<div class="boxes" id="ash"></div>
+
+<details class="why" id="why">
+  <summary><span class="badge">?</span><span>Why ASHRAE 15 gives a much larger airflow for A2L and B2L</span><span class="chev"></span></summary>
+  <div class="in">
+    <div class="cmp" id="whycmp"></div>
+    <ol class="whylist">
+      <li><b>It is sized for a different purpose.</b>For A1, B1 and the other groups, Level 2 is Equation 8-1b, a general purge rate that depends only on the charge. A2L and B2L refrigerants are mildly flammable, so for them Level 2 is sized to dilute the refrigerant from a large leak and keep the room below the concentration at which it could ignite.</li>
+      <li><b>It follows the leak, not only the charge.</b>How fast refrigerant escapes depends on the system’s design pressure, so a higher pressure gives a higher airflow. The rate grows with charge up to the threshold charge G′; above G′ it levels off at the plateau rate Q′.</li>
+      <li><b>A bigger room does not reduce it.</b>The Level 2 airflow does not depend on room volume. A larger room gives fewer air changes an hour, but the same airflow.</li>
+      <li><b>BS EN 378 works differently.</b>Its machinery-room formula, like Equation 8-1b, depends only on the charge, so it gives much less air. The two standards are not interchangeable; design to the one that applies to the project.</li>
+      <li><b>How to bring it down.</b>Split the charge into smaller independent circuits, since G is the charge of the largest single circuit, or choose equipment with a lower design pressure.</li>
+    </ol>
+    <p class="hint" style="margin-top:8px">B2L refrigerants other than ammonia use the same method. Ammonia follows IIAR 2.</p>
+  </div>
+</details>
+
+<footer>Preliminary check only. Notes, formulae and the refrigerant data are in the Notes and formulae bar.</footer>
+</article>
+
+<button class="pull" id="pull" type="button" aria-controls="drawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Notes and formulae">
+  <div class="bar"><h2>Notes and formulae</h2><button class="close" type="button">Close</button></div>
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="t-formulae" data-tab="formulae" aria-controls="tab-formulae">Formulae</button>
+    <button role="tab" type="button" id="t-data" data-tab="data" aria-controls="tab-data">Refrigerant data</button>
+    <button role="tab" type="button" id="t-notes" data-tab="notes" aria-controls="tab-notes">Notes</button>
+  </div>
+  <div class="body">
+    <div role="tabpanel" id="tab-formulae" aria-labelledby="t-formulae">
+      <p class="lead">Worked with the values on the sheet. The figures update as you type.</p>
+      <div id="worked"></div>
+    </div>
+    <div role="tabpanel" id="tab-data" aria-labelledby="t-data" hidden>
+      <p class="refnote">The refrigerant chosen on the sheet is marked. A typed density overrides the table. The mark 13 is on the source sheet; the note that went with it is not on this page.</p>
+      <div class="scroll">
+<table class="ref">
+<thead>
+<tr>
+  <th rowspan="2">Number</th><th rowspan="2">Name</th><th rowspan="2">Type</th><th rowspan="2">ODP</th>
+  <th colspan="3">GWP, AR4 used in GB at present</th>
+  <th rowspan="2">PFAS</th><th rowspan="2">F-gas</th>
+  <th colspan="3">Safety</th>
+  <th rowspan="2">Density at 25 °C<br>kg/m³</th>
+  <th rowspan="2">Practical limit<br>kg/m³</th>
+  <th rowspan="2">ATEL/ODL<br>kg/m³</th>
+  <th colspan="4">High-side (discharge) pressure<br>MPa gauge, at condensing temperature</th>
+</tr>
+<tr>
+  <th>AR4</th><th>AR5</th><th>AR6</th>
+  <th>Class</th><th>Toxicity</th><th>Flammability</th>
+  <th>55 °C</th><th>59 °C</th><th>63 °C</th><th>67 °C</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>R32</td><td>Difluoromethane</td><td>HFC</td><td class="num">0</td><td class="num">675</td><td class="num">677</td><td class="num">771</td><td>No</td><td>Phase down</td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">2.13</td><td class="num">0.061</td><td class="num">0.30</td><td class="num">3.42</td><td class="num">3.75</td><td class="num">4.10</td><td class="num">4.47</td></tr>
+<tr><td>R134a</td><td>1,1,1,2-Tetrafluoroethane</td><td>HFC</td><td class="num">0</td><td class="num">1430</td><td class="num">1300</td><td class="num">1530</td><td>Yes</td><td>Rapid phase down</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">4.17</td><td class="num">0.25</td><td class="num">0.21</td><td class="num">1.39</td><td class="num">1.54</td><td class="num">1.70</td><td class="num">1.88</td></tr>
+<tr><td>R290</td><td>Propane</td><td>HC</td><td class="num">0</td><td class="num">3</td><td class="num">3</td><td class="num">0.02</td><td>No</td><td>Not an F-gas</td><td>A3</td><td>A, lower</td><td>3, higher</td><td class="num">1.80</td><td class="num">0.008</td><td class="num">0.09</td><td class="num">1.81</td><td class="num">1.97</td><td class="num">2.15</td><td class="num">2.34</td></tr>
+<tr><td>R404A</td><td>R125/R143a/R134a (44%/52%/4%)</td><td>HFC</td><td class="num">0</td><td class="num">3922</td><td class="num">3943</td><td class="num">4728</td><td>Yes</td><td>Banned in new refrigeration; servicing restricted</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">3.99</td><td class="num">0.52</td><td class="num">0.52</td><td class="num">2.48</td><td class="num">2.72</td><td class="num">2.98</td><td class="num">3.25</td></tr>
+<tr><td>R407C</td><td>R32/R125/R134a (23%/25%/52%)</td><td>HFC</td><td class="num">0</td><td class="num">1774</td><td class="num">1624</td><td class="num">1908</td><td>Yes</td><td>Rapid phase down</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">3.52</td><td class="num">0.31</td><td class="num">0.29</td><td class="num">2.38</td><td class="num">2.61</td><td class="num">2.85</td><td class="num">3.11</td></tr>
+<tr><td>R410A</td><td>R32/R125 (50%/50%)</td><td>HFC</td><td class="num">0</td><td class="num">2088</td><td class="num">1924</td><td class="num">2256</td><td>Yes</td><td>Rapid phase down</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">2.97</td><td class="num">0.44</td><td class="num">0.42</td><td class="num">3.34</td><td class="num">3.66</td><td class="num">4.00</td><td class="num">4.37</td></tr>
+<tr><td>R452B</td><td>R32/R125/R1234yf (67%/7%/26%)</td><td>HFC/HFO blend</td><td class="num">0</td><td class="num">698</td><td class="num">676</td><td class="num">779</td><td>Yes</td><td>Future reduction likely<sup>13</sup></td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">2.60</td><td class="num">0.062</td><td class="num">0.364</td><td class="num">3.20</td><td class="num">3.50</td><td class="num">3.82</td><td class="num">4.17</td></tr>
+<tr><td>R454B</td><td>R32/R1234yf (68.9%/31.1%)</td><td>HFC/HFO blend</td><td class="num">0</td><td class="num">466</td><td class="num">467</td><td class="num">531</td><td>Yes</td><td>Future reduction likely<sup>13</sup></td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">2.56</td><td class="num">0.059</td><td class="num">0.358</td><td class="num">3.17</td><td class="num">3.47</td><td class="num">3.79</td><td class="num">4.13</td></tr>
+<tr><td>R454C</td><td>R32/R1234yf (21.5%/78.5%)</td><td>HFC/HFO blend</td><td class="num">0</td><td class="num">148</td><td class="num">146</td><td class="num">166</td><td>Yes</td><td>Future reduction likely<sup>13</sup></td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">3.71</td><td class="num">0.059</td><td class="num">0.445</td><td class="num">2.27</td><td class="num">2.48</td><td class="num">2.70</td><td class="num">2.94</td></tr>
+<tr><td>R513A</td><td>R1234yf/R134a (56%/44%)</td><td>HFC/HFO blend</td><td class="num">0</td><td class="num">631</td><td class="num">572</td><td class="num">673</td><td>Yes</td><td>Future reduction likely<sup>13</sup></td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">4.43</td><td class="num">0.329</td><td class="num">0.329</td><td class="num">1.44</td><td class="num">1.59</td><td class="num">1.75</td><td class="num">1.93</td></tr>
+<tr><td>R514A</td><td>R1336mzz(Z)/R1130(E) (74.7%/25.3%)</td><td>HFO/HCO blend</td><td class="num">0</td><td>No data</td><td class="num">2</td><td>No data</td><td>Yes</td><td>Low GWP</td><td>B1</td><td>B, higher</td><td>1, non-flammable</td><td class="num">5.71</td><td>No data</td><td>No data</td><td>No data</td><td>No data</td><td>No data</td><td>No data</td></tr>
+<tr><td>R515B</td><td>R1234ze(E)/R227ea (91.1%/8.9%)</td><td>HFO/HFC blend</td><td class="num">0</td><td class="num">293</td><td class="num">299</td><td class="num">322</td><td>Yes</td><td>Future reduction likely<sup>13</sup></td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">4.80</td><td>No data</td><td>No data</td><td class="num">1.03</td><td class="num">1.15</td><td class="num">1.27</td><td class="num">1.40</td></tr>
+<tr><td>R600</td><td>Butane</td><td>HC</td><td class="num">0</td><td class="num">3</td><td class="num">3</td><td class="num">0.006</td><td>No</td><td>Not an F-gas</td><td>A3</td><td>A, lower</td><td>3, higher</td><td class="num">2.38</td><td class="num">0.008</td><td class="num">0.0024</td><td class="num">0.46</td><td class="num">0.52</td><td class="num">0.58</td><td class="num">0.65</td></tr>
+<tr><td>R600a</td><td>Isobutane</td><td>HC</td><td class="num">0</td><td class="num">3</td><td class="num">3</td><td class="num">0.006</td><td>No</td><td>Not an F-gas</td><td>A3</td><td>A, lower</td><td>3, higher</td><td class="num">2.38</td><td class="num">0.011</td><td class="num">0.059</td><td class="num">0.67</td><td class="num">0.75</td><td class="num">0.83</td><td class="num">0.92</td></tr>
+<tr><td>R717</td><td>Ammonia</td><td>Natural</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>No</td><td>Not an F-gas</td><td>B2L</td><td>B, higher</td><td>2L, lower</td><td class="num">0.70</td><td class="num">0.00035</td><td class="num">0.00022</td><td class="num">2.21</td><td class="num">2.45</td><td class="num">2.71</td><td class="num">2.99</td></tr>
+<tr><td>R744</td><td>Carbon dioxide</td><td>Natural</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td>No</td><td>Not an F-gas</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">1.80</td><td class="num">0.1</td><td class="num">0.072</td><td colspan="4">Above critical point (31 °C); use nameplate PS</td></tr>
+<tr><td>R1233zd(E)</td><td>trans-1-Chloro-3,3,3-trifluoropropene</td><td>HCFO</td><td class="num">0.00034</td><td class="num">1</td><td class="num">1</td><td class="num">3.88</td><td>Yes</td><td>Low GWP</td><td>A1</td><td>A, lower</td><td>1, non-flammable</td><td class="num">5.33</td><td class="num">0.086</td><td class="num">0.086</td><td class="num">0.24</td><td class="num">0.28</td><td class="num">0.32</td><td class="num">0.37</td></tr>
+<tr><td>R1234yf</td><td>2,3,3,3-Tetrafluoropropene</td><td>HFO</td><td class="num">0</td><td class="num">4</td><td class="num">&lt;1</td><td class="num">0.501</td><td>Yes</td><td>Low GWP</td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">4.66</td><td class="num">0.058</td><td class="num">0.47</td><td class="num">1.36</td><td class="num">1.50</td><td class="num">1.65</td><td class="num">1.81</td></tr>
+<tr><td>R1234ze(E)</td><td>trans-1,3,3,3-Tetrafluoropropene</td><td>HFO</td><td class="num">0</td><td class="num">7</td><td class="num">&lt;1</td><td class="num">1.37</td><td>Yes</td><td>Low GWP</td><td>A2L</td><td>A, lower</td><td>2L, lower</td><td class="num">4.66</td><td class="num">0.061</td><td class="num">0.28</td><td class="num">1.03</td><td class="num">1.15</td><td class="num">1.27</td><td class="num">1.40</td></tr>
+</tbody>
+</table>
+      </div>
+      <p class="refnote">Density is for the vapour as an ideal gas at 25 °C and 101.325 kPa, from the molar mass; blends use the mass fractions shown. AR6 values are GWP-100 from IPCC AR6 WG I, Table 7.SM.7; blend values are mass-weighted. AR4 has no values for HFOs or hydrocarbons, so the AR4 column for them holds the figures used in GB F-gas reporting. Practical limit and ATEL/ODL are from BS EN 378-1 Annex E and ISO 817; check them against the edition you are working to.</p>
+    </div>
+    <div role="tabpanel" id="tab-notes" aria-labelledby="t-notes" hidden>
+      <h3>Use of this sheet</h3>
+      <p>Preliminary check only. Confirm each clause against a licensed copy before the airflow is used for a fan. National rules can ask for more than the minimum of 4 air changes an hour. This sheet does not place the detector, the exhaust inlet or the discharge.</p>
+      <h3>BS EN 378-3, machinery room</h3>
+      <p>Clause 5.13. Qmin is 4 air changes an hour, the continuous minimum. Qmax is 0.014 × charge<sup>2/3</sup> m³/s. Fifteen air changes an hour is taken as always sufficient, so it caps Qmax.</p>
+      <h3>BS EN 378-2, ventilated enclosure</h3>
+      <p>Clause 6.2.15. Qmin by calculation is compared with 4 air changes an hour and with 2 m³/h; the greatest is used. The enclosure is kept at 20 Pa or more below the room. Charge limits from toxicity and flammability are not assessed here. The clause is written for A2L, B2L, A2, B2, A3 and B3; for A1 and B1 the number is still shown.</p>
+      <h3>ASHRAE 15</h3>
+      <p>Level 1 is the greater of 0.5 cfm/ft² of floor (2.54 l/s per m²) and 20 cfm (9.44 l/s) a person. Level 1 must also be able to hold the room within a 10 °C temperature rise and below 50 °C; the sheet does not check this. Level 2 for groups other than A2L and B2L is Q = 70 × √charge l/s (Equation 8-1b).</p>
+      <p>For A2L and B2L other than R-717, Level 2 follows Table 8-3, the calculation method that stands as an alternative to the chart. With P the absolute design pressure: G′ = 267 × P<sup>−0.72</sup> kg and Q′ = 6.67 × P<sup>0.62</sup> m³/s. Below 0.1 G′ the rate is 0.102 Q′; between 0.1 G′ and G′ it is Q′ × [1 + 0.39 × ln(G/G′)]; above G′ it is Q′. It is never less than Level 1 and is rounded up to two significant figures. The SI coefficient 6.67 is from the June 2024 errata to ASHRAE 15-2022; the printed 0.400 was wrong. The chart, but not the equations, stops at 4.8 MPa design pressure.</p>
+      <p>The A2L rate is sized to keep a large leak of a flammable refrigerant diluted, so it is usually far above the Equation 8-1b rate and the BS EN 378 rate. Several hundred air changes an hour is normal for a large charge in a small room. To reduce it, split the charge into smaller independent circuits, or lower the design pressure if the equipment allows. A larger room does not reduce the Level 2 airflow, which does not depend on room volume.</p>
+      <p>Addendum q to ASHRAE 15-2022 (2024) takes R-717 out of the scope of ASHRAE 15; ammonia machinery rooms follow IIAR 2. For R-717 the sheet therefore uses IIAR 2-2021: occupied ventilation the greater of 0.5 cfm/ft² (2.54 l/s per m²) and 20 cfm (9.44 l/s) a person; emergency ventilation 30 air changes an hour of the gross room volume, started by the detector at 150 ppm; and temperature-control ventilation to keep the room at or below 40 °C (104 °F), which the sheet does not calculate. The 30 air-change rate is meant to keep a large release below ammonia’s flammable limit. Ammonia is toxic long before it is flammable, so detection, alarm, evacuation and shutdown carry the safety case. IIAR 2 also asks for an emergency-fan discharge velocity of at least 2,500 ft/min (12.7 m/s).</p>
+      <h3>High-side design pressure</h3>
+      <p>The pressure the high side (compressor discharge, condenser, receiver and liquid line) is designed and tested for, as a gauge pressure. On European equipment it is PS on the nameplate. The sheet fills a typical value: the refrigerant’s saturation pressure, at the bubble point for blends, at the condensing temperature BS EN 378-2 specifies for an air-cooled condenser at the chosen ambient. Pressures are calculated with CoolProp; blend values use its mixture model. For water-cooled plant, BS EN 378-2 uses the maximum leaving water temperature plus 8 K instead. Choose “Other condensing temperature” to use your own temperature from 20 to 75 °C, or “Type the pressure” to enter any value. Typing in the pressure box switches to “Type the pressure”, so a later change of refrigerant keeps your figure. Always check against the PS on the nameplate. R744 has no saturation pressure above 31 °C, so type its PS. The same pressures are listed in the refrigerant data table.</p>
+      <h3>Outdoor opening: natural ventilation</h3>
+      <p>The outdoor opening is a natural-ventilation requirement. It applies only where the refrigerating system is outdoors, more than 6.1 m (20 ft) from any building opening, and enclosed by a penthouse, lean-to or other open structure. Such an enclosure may be ventilated naturally or mechanically. For natural ventilation the free opening area is F = 0.138 × √G m² (F = G<sup>0.5</sup> ft², G in lb). If mechanical ventilation is used instead, size the fan as for a machinery room. Place the openings by the refrigerant’s density relative to air: low for refrigerants heavier than air, high for lighter ones such as R-717. It does not apply to an indoor machinery room, which needs the Level 1 and Level 2 fans.</p>
+      <h3>To confirm against the standards</h3>
+      <p>The 15 air-change cap in BS EN 378-3; the enclosure formula in BS EN 378-2 clause 6.2.15; the section numbers in the 2024 edition of ASHRAE 15; and the practical limits for R452B, R454B, R454C, R513A, R1233zd(E) and R600.</p>
+    </div>
+  </div>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+function num(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : null; }
+function flow(m3s) {
+  if (!(m3s > 0)) return "—";
+  const h = m3s * 3600, ls = m3s * 1000;
+  return (h >= 100 ? Math.round(h) : h.toFixed(1)) + " m³/h, " + (ls >= 100 ? Math.round(ls) : ls.toFixed(1)) + " l/s";
+}
+function sig2(x) {
+  if (!(x > 0)) return 0;
+  const p = Math.pow(10, Math.floor(Math.log10(x)) - 1);
+  return Math.ceil(x / p - 1e-12) * p;
+}
+function answer(title, value, note, cls) {
+  return `<div class="answer${cls ? " " + cls : ""}"><div class="k">${title}</div><div class="v">${value}</div><div class="u">${note}</div></div>`;
+}
+function flowRow(label, m3h, note, final) {
+  const nums = !(m3h > 0) ? `<div class="nums"><div><b>—</b><span></span></div></div>`
+    : `<div class="nums"><div><b>${Math.round(m3h)}</b><span>m³/h</span></div><div><b>${Math.round(m3h / 3.6)}</b><span>l/s</span></div></div>`;
+  return `<div class="row${final ? " final" : ""}"><div class="lab">${label}</div>${nums}<div class="note">${note || ""}</div></div>`;
+}
+function textRow(label, value, unit, note) {
+  return `<div class="row"><div class="lab">${label}</div><div class="nums"><div><b>${value}</b><span>${unit}</span></div></div><div class="note">${note || ""}</div></div>`;
+}
+
+const rows = [...document.querySelectorAll("table.ref tbody tr")];
+const REFS = rows.map(tr => {
+  const td = [...tr.children].map(c => c.textContent.trim());
+  const rho = parseFloat(td[12]);
+  return { id: td[0], name: td[1], cls: td[9], rho: Number.isFinite(rho) ? rho : null, pl: td[13], atel: td[14] };
+});
+const refSel = $("refri");
+refSel.innerHTML = REFS.map((r, i) => `<option value="${i}">${r.id}, ${r.cls}${r.id === "R717" ? " ⚠ not recommended" : r.cls === "A3" ? " ⚠ check maker" : ""}</option>`).join("") + '<option value="">Other, type the density</option>';
+refSel.value = String(Math.max(0, REFS.findIndex(r => r.id === "R32")));
+const chosen = () => refSel.value === "" ? null : REFS[Number(refSel.value)];
+
+function groupFor(r) {
+  if (!r) return null;
+  if (r.id === "R717") return "nh3";
+  if (/^(A1|B1)$/.test(r.cls)) return "a1";
+  if (/L$/.test(r.cls)) return "a2l";
+  return "a2";
+}
+// Saturation pressure at the bubble point, gauge MPa, 20 to 75 °C in 1 K steps (CoolProp). null where none exists.
+const PSAT = {"R32":[1.373,1.414,1.457,1.5,1.544,1.588,1.634,1.681,1.728,1.777,1.826,1.877,1.928,1.981,2.034,2.089,2.144,2.201,2.258,2.317,2.377,2.438,2.5,2.563,2.628,2.693,2.76,2.828,2.898,2.968,3.04,3.113,3.187,3.263,3.34,3.419,3.498,3.58,3.662,3.746,3.832,3.919,4.008,4.098,4.19,4.283,4.378,4.475,4.573,4.673,4.775,4.879,4.985,5.093,5.203,5.316],"R134a":[0.47,0.488,0.507,0.525,0.544,0.564,0.584,0.605,0.626,0.647,0.669,0.691,0.714,0.737,0.761,0.786,0.811,0.836,0.862,0.888,0.915,0.943,0.971,1.0,1.029,1.059,1.089,1.12,1.152,1.184,1.217,1.25,1.284,1.319,1.354,1.39,1.427,1.464,1.502,1.541,1.58,1.621,1.661,1.703,1.745,1.788,1.832,1.877,1.922,1.969,2.016,2.063,2.112,2.161,2.212,2.263],"R290":[0.735,0.757,0.78,0.803,0.827,0.851,0.875,0.9,0.926,0.951,0.978,1.004,1.032,1.06,1.088,1.117,1.146,1.176,1.206,1.237,1.268,1.3,1.332,1.365,1.399,1.433,1.468,1.503,1.539,1.575,1.612,1.65,1.688,1.726,1.766,1.806,1.846,1.888,1.93,1.972,2.015,2.059,2.104,2.149,2.195,2.242,2.289,2.337,2.386,2.435,2.485,2.536,2.588,2.641,2.694,2.748],"R404A":[0.996,1.026,1.057,1.088,1.12,1.153,1.187,1.221,1.255,1.291,1.327,1.364,1.401,1.44,1.479,1.518,1.559,1.6,1.642,1.685,1.728,1.773,1.818,1.864,1.91,1.958,2.007,2.056,2.106,2.157,2.21,2.263,2.316,2.371,2.427,2.484,2.542,2.601,2.661,2.722,2.784,2.847,2.911,2.977,3.043,3.111,3.18,3.251,3.323,3.396,3.471,3.547,3.625,null,null,null],"R407C":[0.936,0.966,0.995,1.026,1.057,1.089,1.121,1.154,1.188,1.223,1.258,1.293,1.33,1.367,1.405,1.444,1.483,1.523,1.564,1.605,1.648,1.691,1.734,1.779,1.825,1.871,1.918,1.966,2.015,2.064,2.115,2.166,2.218,2.271,2.325,2.38,2.436,2.492,2.55,2.609,2.668,2.729,2.79,2.853,2.916,2.981,3.046,3.113,3.18,3.249,3.318,3.389,3.461,3.534,3.608,3.683],"R410A":[1.346,1.386,1.427,1.469,1.512,1.556,1.6,1.646,1.692,1.74,1.788,1.837,1.887,1.938,1.99,2.043,2.097,2.153,2.209,2.266,2.324,2.384,2.444,2.506,2.569,2.632,2.697,2.764,2.831,2.9,2.97,3.041,3.113,3.187,3.262,3.339,3.416,3.495,3.576,3.658,3.741,3.826,3.913,4.001,4.09,4.181,4.274,4.369,4.465,4.563,4.663,4.764,null,null,null,null],"R452B":[1.295,1.334,1.373,1.413,1.455,1.497,1.539,1.583,1.627,1.673,1.719,1.766,1.814,1.863,1.913,1.964,2.016,2.069,2.122,2.177,2.233,2.29,2.347,2.406,2.466,2.527,2.589,2.652,2.717,2.782,2.848,2.916,2.985,3.055,3.126,3.198,3.272,3.347,3.423,3.501,3.58,3.66,3.741,3.824,3.908,3.994,4.081,4.169,4.259,4.351,4.444,4.538,4.635,4.732,null,null],"R454B":[1.283,1.322,1.361,1.401,1.441,1.483,1.525,1.569,1.613,1.658,1.704,1.75,1.798,1.846,1.896,1.946,1.997,2.05,2.103,2.157,2.212,2.268,2.326,2.384,2.443,2.504,2.565,2.627,2.691,2.756,2.821,2.888,2.956,3.026,3.096,3.168,3.24,3.314,3.389,3.466,3.544,3.623,3.704,3.786,3.869,3.953,4.039,4.127,4.215,4.305,4.397,4.49,4.585,4.681,4.779,4.879],"R454C":[0.93,0.958,0.987,1.016,1.046,1.076,1.107,1.138,1.17,1.202,1.235,1.269,1.304,1.338,1.374,1.41,1.447,1.485,1.523,1.561,1.601,1.641,1.682,1.723,1.765,1.808,1.852,1.896,1.941,1.986,2.033,2.08,2.128,2.176,2.225,2.275,2.326,2.378,2.43,2.483,2.537,2.592,2.647,2.703,2.761,2.818,2.877,2.936,2.997,3.058,3.12,3.182,null,null,null,null],"R513A":[0.512,0.531,0.55,0.569,0.588,0.609,0.629,0.65,0.671,0.693,0.716,0.738,0.762,0.785,0.81,0.834,0.859,0.885,0.911,0.938,0.965,0.993,1.022,1.05,1.08,1.11,1.14,1.172,1.203,1.236,1.268,1.302,1.336,1.371,1.406,1.442,1.479,1.516,1.554,1.593,1.632,1.672,1.713,1.754,1.796,1.839,1.882,1.927,1.972,2.017,2.064,2.111,2.159,2.208,2.258,2.309],"R515B":[0.326,0.339,0.353,0.368,0.382,0.397,0.412,0.428,0.444,0.46,0.477,0.494,0.511,0.529,0.547,0.566,0.585,0.604,0.624,0.644,0.665,0.686,0.708,0.729,0.752,0.775,0.798,0.822,0.846,0.871,0.896,0.921,0.948,0.974,1.001,1.029,1.057,1.086,1.115,1.145,1.175,1.206,1.238,1.27,1.302,1.335,1.369,1.403,1.438,1.474,1.51,1.547,1.584,1.622,1.661,1.7],"R600":[0.106,0.113,0.12,0.127,0.134,0.142,0.15,0.157,0.165,0.174,0.182,0.191,0.199,0.208,0.218,0.227,0.237,0.246,0.256,0.267,0.277,0.288,0.299,0.31,0.321,0.333,0.345,0.357,0.369,0.382,0.394,0.407,0.421,0.434,0.448,0.462,0.477,0.491,0.506,0.521,0.537,0.553,0.569,0.585,0.602,0.619,0.636,0.653,0.671,0.689,0.708,0.727,0.746,0.765,0.785,0.805],"R600a":[0.201,0.21,0.22,0.229,0.239,0.249,0.26,0.27,0.281,0.292,0.303,0.315,0.327,0.339,0.351,0.363,0.376,0.389,0.403,0.416,0.43,0.444,0.458,0.473,0.488,0.503,0.519,0.534,0.55,0.567,0.584,0.601,0.618,0.635,0.653,0.672,0.69,0.709,0.728,0.748,0.768,0.788,0.809,0.83,0.851,0.873,0.895,0.917,0.94,0.963,0.986,1.01,1.034,1.059,1.084,1.109],"R717":[0.756,0.783,0.812,0.841,0.871,0.901,0.933,0.965,0.997,1.031,1.065,1.1,1.136,1.173,1.21,1.249,1.288,1.328,1.369,1.411,1.453,1.497,1.541,1.587,1.633,1.68,1.729,1.778,1.828,1.879,1.932,1.985,2.039,2.095,2.151,2.209,2.267,2.327,2.388,2.45,2.513,2.577,2.643,2.71,2.778,2.847,2.917,2.989,3.062,3.136,3.211,3.288,3.366,3.445,3.526,3.608],"R744":[5.628,5.763,5.902,6.043,6.186,6.333,6.482,6.635,6.79,6.95,7.112,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"R1233zd(E)":[0.007,0.011,0.016,0.02,0.024,0.029,0.034,0.039,0.044,0.049,0.054,0.059,0.065,0.071,0.076,0.082,0.089,0.095,0.101,0.108,0.115,0.122,0.129,0.136,0.144,0.151,0.159,0.167,0.176,0.184,0.193,0.201,0.21,0.22,0.229,0.239,0.249,0.259,0.269,0.279,0.29,0.301,0.312,0.324,0.335,0.347,0.359,0.372,0.385,0.397,0.411,0.424,0.438,0.452,0.466,0.48],"R1234yf":[0.491,0.508,0.526,0.544,0.562,0.581,0.601,0.62,0.641,0.661,0.682,0.704,0.726,0.748,0.771,0.794,0.818,0.842,0.866,0.892,0.917,0.943,0.97,0.997,1.024,1.053,1.081,1.11,1.14,1.17,1.201,1.232,1.264,1.297,1.33,1.363,1.398,1.432,1.468,1.504,1.541,1.578,1.616,1.654,1.694,1.733,1.774,1.815,1.857,1.9,1.943,1.987,2.032,2.078,2.124,2.171],"R1234ze(E)":[0.326,0.34,0.353,0.368,0.382,0.397,0.412,0.428,0.444,0.46,0.477,0.494,0.511,0.529,0.547,0.566,0.585,0.604,0.624,0.644,0.665,0.686,0.708,0.73,0.752,0.775,0.798,0.822,0.846,0.871,0.896,0.922,0.948,0.974,1.001,1.029,1.057,1.086,1.115,1.145,1.175,1.206,1.237,1.269,1.302,1.335,1.369,1.403,1.438,1.474,1.51,1.546,1.584,1.622,1.66,1.7]};
+function psat(id, T) {
+  const row = PSAT[id];
+  if (!row || !(T >= 20 && T <= 75)) return null;
+  const i = Math.floor(T - 20), f = T - 20 - i;
+  const a = row[i], b = row[Math.min(i + 1, row.length - 1)];
+  if (a == null || (f > 0 && b == null)) return null;
+  const pa = Math.log(a + 0.101325), pb = Math.log((f > 0 ? b : a) + 0.101325);
+  return Math.exp(pa + (pb - pa) * f) - 0.101325;
+}
+let dpAuto = null, dpT = null;
+function condTemp() {
+  const c = $("cond").value;
+  if (c === "typed") return null;
+  if (c === "t") return num("ct");
+  return Number(c);
+}
+function fillDp() {
+  const c = $("cond").value, r = chosen();
+  $("ctwrap").hidden = c !== "t";
+  if (c === "typed") { dpAuto = null; dpHint(); return; }
+  dpT = condTemp();
+  const v = r && dpT != null ? psat(r.id, dpT) : null;
+  dpAuto = v == null ? null : Math.round(v * 100) / 100;
+  $("dp").value = dpAuto != null ? dpAuto : "";
+  dpHint();
+}
+function dpHint() {
+  const r = chosen(), c = $("cond").value, dp = num("dp");
+  const used = $("group").value === "a2l" ? "" : " Used only for the A2L and B2L rate.";
+  let h;
+  if (c === "typed") h = "Gauge. Your value; use the nameplate PS.";
+  else if (dpAuto != null && dp != null && Math.abs(dp - dpAuto) < 1e-9)
+    h = "Gauge. " + r.id + " saturation pressure at " + dpT + " °C" + (/^R[45]\d\d[A-Z]$/.test(r.id) ? ", bubble point" : "") + ". Replace with the nameplate PS.";
+  else if (dpAuto == null)
+    h = "Gauge. No saturation pressure for " + (r ? r.id : "a typed refrigerant") + (dpT != null ? " at " + dpT + " °C" : "") + ". Type the nameplate PS.";
+  else h = "Gauge. Typed value.";
+  $("dphint").textContent = h + used;
+}
+$("cond").addEventListener("change", () => { fillDp(); calc(); });
+$("ct").addEventListener("input", () => { fillDp(); calc(); });
+$("dp").addEventListener("input", () => {
+  // typing a pressure keeps it: switch to "Type the pressure" so a new refrigerant will not overwrite it
+  if ($("cond").value !== "typed") { $("cond").value = "typed"; $("ctwrap").hidden = true; dpAuto = null; }
+  dpHint();
+});
+function syncFromRefrigerant() {
+  fillDp();
+  const r = chosen();
+  if (r && r.rho != null) $("rho").value = r.rho;
+  const g = groupFor(r);
+  if (g) $("group").value = g;
+  $("grouphint").textContent = r ? (r.id === "R717" ? "Set from R717. ASHRAE 15 excludes ammonia, so IIAR 2 is used." : "Set from " + r.id + ", class " + r.cls + ". You can change it.") : "Choose the group.";
+}
+refSel.addEventListener("change", () => { syncFromRefrigerant(); calc(); });
+$("group").addEventListener("change", () => { $("grouphint").textContent = "Chosen by hand."; });
+
+let lastGroup = null;
+function calc() {
+  const m = num("charge"), area = num("area"), people = num("people"), vol = num("vol"), dp = num("dp"), rho = num("rho");
+  const group = $("group").value, ref = chosen();
+  dpHint();
+  rows.forEach((tr, i) => tr.classList.toggle("on", ref && REFS[i] === ref));
+
+  if (!(m > 0)) {
+    const msg = answer("Charge needed", "—", "Enter the largest refrigerant charge in the room.", "");
+    $("summary").innerHTML = msg; $("en").innerHTML = ""; $("enc").innerHTML = ""; $("ash").innerHTML = "";
+    $("worked").innerHTML = "<p>Waiting for the charge.</p>";
+    return;
+  }
+
+  // 1. BS EN 378-3
+  const vFormula = 0.014 * Math.pow(m, 2 / 3);
+  const qMaxH = vFormula * 3600;
+  const formulaAch = vol > 0 ? qMaxH / vol : null;
+  const qMinH = vol > 0 ? vol * 4 : null;
+  const qCapH = vol > 0 ? vol * 15 : null;
+  const qFinalH = vol > 0 ? Math.min(qMaxH, qCapH) : qMaxH;
+  const capped = vol > 0 && qMaxH > qCapH;
+  $("en").innerHTML =
+    flowRow("Qmin, continuous", qMinH, vol > 0 ? "4 air changes an hour." : "Enter the room volume.") +
+    flowRow("Qmax by calculation", qMaxH, "0.014 × charge<sup>2/3</sup>." + (formulaAch != null ? " That is " + formulaAch.toFixed(1) + " air changes an hour." : "")) +
+    flowRow("15 air changes an hour", qCapH, "Always sufficient, so the upper limit.") +
+    flowRow("Emergency rate, final Qmax", qFinalH, capped ? "The calculation is above 15 air changes an hour, so the cap is used." : "The smaller of the calculation and 15 air changes an hour.", true);
+
+  // 2. Enclosure
+  let encFinal = null;
+  if (rho > 0) {
+    const qCalc = 60 * m / rho;
+    const q4 = vol > 0 ? vol * 4 : null;
+    encFinal = Math.max(qCalc, q4 || 0, 2);
+    const fromTable = ref && ref.rho != null && Math.abs(rho - ref.rho) < 0.0001;
+    const src = (ref ? ref.id + ", " + ref.name + ". " : "") + (fromTable ? "Density from the table." : "Density typed.") +
+      (ref ? " Practical limit " + ref.pl + " kg/m³. ATEL/ODL " + ref.atel + " kg/m³." : "") +
+      (ref && /^(A1|B1)$/.test(ref.cls) ? " The clause is written for flammable groups; the number is shown for reference." : "");
+    $("enc").innerHTML =
+      textRow("Refrigerant", ref ? ref.id : "Typed", "", src) +
+      flowRow("Qmin by calculation", qCalc, "60 × charge / density. " + (vol > 0 ? (qCalc / vol).toFixed(1) + " air changes an hour." : "")) +
+      flowRow("4 air changes an hour", q4, vol > 0 ? "The rate must be at least this." : "Enter the room volume.") +
+      textRow("Not less than", "2", "m³/h", "Under all circumstances.") +
+      flowRow("Final Qmin", encFinal, "The greatest of the three.", true);
+  } else {
+    $("enc").innerHTML = textRow("Density", "—", "kg/m³", ref && ref.rho == null ? ref.id + " has no density in the table. Type one above." : "Type the vapour density at 25 °C.");
+  }
+
+  // 3. ASHRAE 15
+  const q1a = area > 0 ? 0.00254 * area : 0, q1p = people > 0 ? 0.00944 * people : 0;
+  const q1 = Math.max(q1a, q1p) || null;
+  let q2 = null, q2note, a2lWork = "";
+  if (group === "a2l") {
+    if (!(dp > 0)) { q2note = "Enter the high-side design pressure."; }
+    else {
+      const P = dp + 0.1013, Gp = 267 * Math.pow(P, -0.72), Qp = 6.67 * Math.pow(P, 0.62);
+      let raw;
+      if (m < 0.1 * Gp) raw = Qp * 0.102;
+      else if (m <= Gp) raw = Qp * (1 + 0.39 * Math.log(m / Gp));
+      else raw = Qp;
+      q2 = sig2(Math.max(raw, q1 || 0));
+      q2note = "Table 8-3 calculation method, rounded up to two significant figures. Threshold charge G′ " + Gp.toFixed(1) + " kg" + (m > Gp ? "; the charge is above it, so the plateau rate Q′ applies." : ".") + (dp > 4.8 ? " Above 4.8 MPa the chart no longer applies; the equations still do." : "");
+      a2lWork = `<div class="eq">P = ${dp} + 0.1013 = ${P.toFixed(4)} MPa. G′ = 267 × P<sup>−0.72</sup> = ${Gp.toFixed(1)} kg. Q′ = 6.67 × P<sup>0.62</sup> = ${Qp.toFixed(2)} m³/s. Level 2 = <b>${flow(q2)}</b></div>`;
+    }
+  } else if (group === "nh3") {
+    q2 = vol > 0 ? 30 * vol / 3600 : null;
+    q2note = vol > 0 ? "IIAR 2 emergency ventilation: 30 air changes an hour of the gross room volume. Starts at 150 ppm ammonia." : "Enter the room volume.";
+  } else {
+    q2 = 0.070 * Math.sqrt(m);
+    q2note = "Equation 8-1b, 70 × √charge l/s.";
+  }
+  const nh3 = group === "nh3";
+  $("s3title").textContent = nh3 ? "3. IIAR 2, ammonia machinery room" : "3. ASHRAE 15, machinery room";
+  const fan = (q1 && q2) ? Math.max(q1, q2) : (q2 || q1);
+  const fanAlt = Math.max(group === "a2l" || nh3 ? (q2 || 0) : 0.070 * Math.sqrt(m), q1 || 0);
+  const AIR = 1.18; // kg/m³, air at 25 °C, ideal gas
+  const rhoRef = ref && ref.rho != null ? ref.rho : (rho > 0 ? rho : null);
+  const placeNote = rhoRef == null ? "Place openings by the refrigerant’s density relative to air." :
+    rhoRef > AIR ? (ref ? ref.id : "This refrigerant") + " is heavier than air, so place the openings low." :
+    (ref ? ref.id : "This refrigerant") + " is lighter than air, so place the openings high.";
+  $("ash").innerHTML =
+    answer(nh3 ? "Occupied ventilation" : "Level 1, people present", q1 ? flow(q1) : "—", q1 ? "Greater of floor area (" + flow(q1a) + ") and people (" + flow(q1p) + ")." : "Enter the floor area or the people present.", "") +
+    answer(nh3 ? "Emergency ventilation, detector" : "Level 2, detector", q2 ? flow(q2) : "—", q2note, "") +
+    answer("Fan to provide", fan ? flow(fan) : "—", nh3 ? "The greater of the two. IIAR 2 also needs temperature-control airflow to keep the room at or below 40 °C, not checked here." : "The greater of Level 1 and Level 2.", "good") +
+    answer("Outdoor enclosure, natural ventilation", (0.138 * Math.sqrt(m)).toFixed(2) + " m² free opening",
+      "Only for plant outdoors, more than 6.1 m from building openings, in a penthouse, lean-to or other open structure. " +
+      "If ventilated mechanically instead, the fan is " + flow(fanAlt) + ". " + placeNote + " Not for an indoor machinery room." + (nh3 ? " The opening equation is from ASHRAE 15, so for ammonia confirm it against IIAR 2." : ""), "");
+
+  // Warnings
+  const isNH3 = !!(ref && ref.id === "R717"), isHC = !!(ref && ref.cls === "A3");
+  $("alertHC").hidden = !isHC; $("alertNH3").hidden = !isNH3;
+  if (isHC) {
+    $("alertHCtag").textContent = "Caution · " + ref.id + " " + ref.name.toLowerCase() + " · A3, higher flammability";
+    $("alertHCname").textContent = ref.id + " (" + ref.name.toLowerCase() + ")";
+  }
+  refSel.classList.toggle("flagged-caution", isHC);
+  refSel.classList.toggle("flagged-danger", isNH3);
+  const flag = isNH3 ? '<span class="flag danger">⚠ Ammonia: not recommended, detailed checking needed</span>'
+    : isHC ? '<span class="flag caution">⚠ Check the maker’s ventilation and sensor requirements</span>' : "";
+
+  // Why A2L is larger
+  const why = $("why");
+  if (group !== lastGroup) { why.open = group === "a2l"; lastGroup = group; }
+  why.hidden = nh3;
+  const q81b = 0.070 * Math.sqrt(m);
+  if (group === "a2l" && q2) {
+    $("whycmp").innerHTML =
+      `<div><div class="k">Equation 8-1b, if it applied</div><div class="v">${Math.round(q81b * 3600)} m³/h</div><div class="x">0.070 × √${m}</div></div>` +
+      `<div><div class="k">BS EN 378-3 emergency</div><div class="v">${Math.round(qFinalH)} m³/h</div><div class="x">0.014 × ${m}<sup>2/3</sup>, capped</div></div>` +
+      `<div class="big"><div class="k">ASHRAE 15, A2L Level 2</div><div class="v">${Math.round(q2 * 3600)} m³/h</div><div class="x">About ${Math.round(q2 / q81b)} times Equation 8-1b</div></div>`;
+    $("whycmp").hidden = false;
+  } else $("whycmp").hidden = true;
+
+  // Summary
+  const ok = isNH3 || isHC ? "" : "good";
+  $("summary").innerHTML =
+    answer("BS EN 378-3 room", flow(qFinalH / 3600), flag + (qMinH ? "Emergency rate. Continuous " + flow(qMinH / 3600) + "." : "Emergency rate.") + ' <a href="#s1">Details</a>', ok) +
+    answer("BS EN 378-2 enclosure", encFinal ? flow(encFinal / 3600) : "—", flag + (encFinal ? "Final Qmin." : "Needs a density.") + ' <a href="#s2">Details</a>', encFinal ? ok : "") +
+    answer(nh3 ? "IIAR 2 ammonia fan" : "ASHRAE 15 fan", fan ? flow(fan) : "—", flag + (fan && vol > 0 ? Math.round(fan * 3600 / vol) + " air changes an hour. " : "") + (nh3 ? "IIAR 2 emergency rate; ASHRAE 15 excludes ammonia. " : group === "a2l" && q2 && q2 > q1 ? 'A2L rate, sized to dilute a large leak, so far above BS EN 378. <a href="#why" onclick="document.getElementById(\'why\').open=true">Why so large?</a> ' : "") + (nh3 ? "Greater of occupied and emergency." : "Greater of Level 1 and Level 2.") + ' <a href="#s3">Details</a>', fan ? ok : "");
+
+  // Formulae
+  $("worked").innerHTML =
+    `<h3>BS EN 378-3, machinery room</h3>` +
+    `<div class="eq">Qmin = 4 × V = 4 × ${vol != null ? vol : "—"} = <b>${qMinH ? Math.round(qMinH) + " m³/h" : "—"}</b></div>` +
+    `<div class="eq">Qmax = 0.014 × m<sup>2/3</sup> = 0.014 × ${m}<sup>2/3</sup> = ${vFormula.toFixed(4)} m³/s = <b>${Math.round(qMaxH)} m³/h</b>${formulaAch != null ? ", " + formulaAch.toFixed(1) + " air changes an hour" : ""}</div>` +
+    `<div class="eq">Final Qmax = min(Qmax, 15 × V) = <b>${Math.round(qFinalH)} m³/h</b></div>` +
+    `<h3>BS EN 378-2, ventilated enclosure</h3>` +
+    (rho > 0 ? `<div class="eq">Q = 60 × m / ρ = 60 × ${m} / ${rho} = ${Math.round(60 * m / rho)} m³/h</div><div class="eq">Final Qmin = max(Q, 4 × V, 2 m³/h) = <b>${Math.round(encFinal)} m³/h</b></div>` : `<p>Needs a vapour density.</p>`) +
+    `<h3>${nh3 ? "IIAR 2, ammonia" : "ASHRAE 15"}</h3>` +
+    `<div class="eq">${nh3 ? "Occupied" : "Level 1"} = max(0.00254 × ${area != null ? area : 0} m², 0.00944 × ${people != null ? people : 0} people) = <b>${flow(q1)}</b></div>` +
+    (group === "a2l" ? a2lWork + `<p>Pressure used: ${dp != null ? dp : "—"} MPa gauge, ${$("cond").value === "typed" ? "typed" : "saturation pressure at " + condTemp() + " °C"}.</p><p>Below 0.1 G′ use 0.102 Q′. Between 0.1 G′ and G′ use Q′ × [1 + 0.39 × ln(m / G′)]. Above G′ use Q′. Never below Level 1.</p>`
+      : nh3 ? `<div class="eq">Emergency = 30 × V = 30 × ${vol != null ? vol : "—"} m³ per hour = <b>${flow(q2)}</b></div><p>Alarm at 25 ppm, emergency ventilation at 150 ppm, compressors and pumps shut down above 40,000 ppm.</p>`
+      : `<div class="eq">Level 2 = 0.070 × √m = 0.070 × √${m} = <b>${flow(q2)}</b></div>`) +
+    `<h3>Outdoor enclosure</h3>` +
+    `<div class="eq">Natural ventilation: free opening F = 0.138 × √m = 0.138 × √${m} = <b>${(0.138 * Math.sqrt(m)).toFixed(2)} m²</b></div>` +
+    `<div class="eq">Mechanical ventilation instead: fan as for a machinery room = <b>${flow(fanAlt)}</b></div>` +
+    `<p>${placeNote}</p>` +
+    `<h3>Symbols</h3><p>m charge of the largest system, kg. V room volume, m³. ρ vapour density at 25 °C, kg/m³. P absolute high-side design pressure, MPa.</p>`;
+}
+["charge","area","people","vol","dp","rho","group"].forEach(id => $(id).addEventListener("input", calc));
+syncFromRefrigerant();
+calc();
+</script>
+<script>
+(function () {
+  const drawer = document.getElementById("drawer");
+  const pull = document.getElementById("pull");
+  const scrim = document.getElementById("scrim");
+  const tabs = [...drawer.querySelectorAll('[role="tab"]')];
+  drawer.inert = true;
+  function showTab(name) {
+    tabs.forEach(t => {
+      const on = t.dataset.tab === name;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById("tab-" + t.dataset.tab).hidden = !on;
+    });
+  }
+  function open(name) {
+    if (name) showTab(name);
+    drawer.inert = false;
+    drawer.classList.add("open");
+    scrim.classList.add("on");
+    pull.setAttribute("aria-expanded", "true");
+    drawer.querySelector(".close").focus();
+  }
+  function close() {
+    drawer.classList.remove("open");
+    scrim.classList.remove("on");
+    pull.setAttribute("aria-expanded", "false");
+    drawer.inert = true;
+    pull.focus();
+  }
+  pull.addEventListener("click", () => drawer.classList.contains("open") ? close() : open());
+  scrim.addEventListener("click", close);
+  drawer.querySelector(".close").addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && drawer.classList.contains("open")) close(); });
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => showTab(t.dataset.tab));
+    t.addEventListener("keydown", e => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      showTab(n.dataset.tab); n.focus();
+    });
+  });
+  document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => open(b.dataset.open)));
+  showTab(tabs[0].dataset.tab);
+  window.addEventListener("beforeprint", () => { drawer.inert = false; });
+})();
+
+</script>
+</body>
+</html>

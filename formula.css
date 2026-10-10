@@ -1,0 +1,114 @@
+/* Typeset formulae and worked steps, shared by sheets I, II, III and IX.
+   Used with formula.js. Keep this file beside those pages. */
+
+.mx-formula, .mx-work {
+  --mx-math:"STIX Two Text","Cambria Math","Latin Modern Roman","Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",P052,"TeX Gyre Pagella","Iowan Old Style",Georgia,"Noto Serif","DejaVu Serif",serif;
+  font-family:var(--mx-math); color:var(--ink,#1a1714); font-variant-numeric:lining-nums;
+}
+
+/* ---- formula block ---- */
+.mx-formula {
+  display:grid; grid-template-columns:auto auto auto; justify-content:center; align-items:center;
+  column-gap:14px; row-gap:26px; background:var(--panel,#fffdf7); border:1px solid var(--ink,#1a1714);
+  outline:1px solid var(--faint,#d7cbb3); outline-offset:-5px; padding:26px 20px;
+  font-size:23px; line-height:1; overflow-x:auto;
+}
+.mx-formula.tagged { grid-template-columns:auto auto auto auto; }
+.mx-lhs { justify-self:end; white-space:nowrap; }
+.mx-op { justify-self:center; }
+.mx-rhs { justify-self:start; }
+.mx-tag { justify-self:end; padding-left:18px; font-size:16px; color:var(--muted,#5a5348); white-space:nowrap; }
+.mx-note { grid-column:1 / -1; justify-self:center; font-size:16px; line-height:1.4; color:var(--muted,#5a5348); text-align:center; }
+
+/* ---- shared maths pieces ---- */
+.mx-formula i, .mx-work i { font-style:italic; }
+.mx-formula sub, .mx-work sub { font-size:.66em; font-style:normal; line-height:0; vertical-align:-.28em; margin-left:.06em; }
+.mx-formula sup, .mx-work sup { font-size:.66em; line-height:0; vertical-align:.5em; margin-left:.04em; margin-right:.14em; }
+.mx-formula i, .mx-work i { padding-right:.05em; }
+.mx-formula sub i, .mx-work sub i { font-style:italic; }
+.mx-frac { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; white-space:nowrap; margin:0 .1em; }
+.mx-num, .mx-den { padding:0 .45em; }
+.mx-num { padding-bottom:.28em; border-bottom:1px solid var(--ink,#1a1714); }
+.mx-den { padding-top:.32em; }
+.mx-sq { display:inline-flex; align-items:stretch; vertical-align:middle; white-space:nowrap; margin:0 .1em; }
+.mx-sq::before {
+  content:""; flex:0 0 .8em; margin-right:-.5px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M2 58 L22 50 L46 96 L100 1.5' fill='none' stroke='%231a1714' stroke-width='1.25' vector-effect='non-scaling-stroke' stroke-linejoin='miter'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%;
+}
+.mx-sq > .mx-rd { border-top:1px solid var(--ink,#1a1714); padding:.2em .25em 0 .2em; display:block; white-space:nowrap; }
+.mx-ov { display:inline-block; border-top:1px solid var(--ink,#1a1714); line-height:.92; padding:0 .06em; }
+.mx-eqs { margin:0 .12em; }
+.mx-dot { margin:0; }
+.mx-res { font-weight:600; }
+
+/* ---- symbol list ---- */
+.mx-defs { display:grid; grid-template-columns:1fr 1fr; gap:6px 28px; margin:14px 0 0; padding:0; list-style:none; font-size:14px; }
+.mx-defs li { display:grid; grid-template-columns:48px 1fr; gap:8px; align-items:baseline; }
+.mx-defs b { font-family:"STIX Two Text","Cambria Math","Latin Modern Roman","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif","DejaVu Serif",serif; font-weight:400; font-size:16px; }
+.mx-defs b i { font-style:italic; }
+.mx-defs b sub { font-size:.68em; line-height:0; vertical-align:-.25em; font-style:normal; }
+.mx-defs b sub i { font-style:italic; }
+
+/* ---- worked steps ---- */
+.mx-work { background:var(--panel,#fffdf7); border:1px solid var(--ink,#1a1714); }
+.mx-st { display:grid; grid-template-columns:2.4em minmax(0,1fr); column-gap:6px; padding:14px 18px 15px; border-top:1px solid var(--faint,#d7cbb3); }
+.mx-st:first-child { border-top:0; }
+.mx-no { font:700 12px/1.9 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif; color:var(--muted,#5a5348); letter-spacing:.08em; }
+.mx-ti { font:700 13.5px/1.4 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif; letter-spacing:.02em; color:var(--muted,#5a5348); margin:0 0 9px; }
+.mx-m { display:block; font-size:19px; line-height:1.55; padding:3px 0; }
+.mx-m + .mx-m { margin-top:6px; }
+.mx-nt { font:14px/1.45 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif; color:var(--muted,#5a5348); margin:8px 0 0; }
+.mx-st.bad .mx-nt { color:#8a2a16; }
+.mx-empty { padding:16px 18px; font:14.5px/1.45 "Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif; color:var(--muted,#5a5348); }
+
+@media (max-width:720px) {
+  .mx-formula, .mx-formula.tagged { grid-template-columns:auto auto auto; font-size:17px; padding:20px 12px; column-gap:8px; row-gap:22px; justify-content:start; }
+  .mx-rhs { white-space:nowrap; }
+  .mx-tag { grid-column:1 / -1; justify-self:end; padding:0; margin-top:-14px; font-size:13px; }
+  .mx-note { justify-self:start; text-align:left; font-size:14px; }
+  .mx-defs { grid-template-columns:1fr; }
+  .mx-st { padding:12px 12px 13px; grid-template-columns:1.9em minmax(0,1fr); }
+  .mx-m { font-size:17px; }
+}
+@media print { .mx-formula, .mx-work { break-inside:avoid; } }
+
+/* ---- slide-out "Notes and formulae" panel (same behaviour as the louvre sheet) ---- */
+.mx-pull { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:30; background:var(--ink,#1a1714); color:var(--paper,#f7f1e4); border:1px solid var(--ink,#1a1714); border-right:0; padding:16px 9px; font:600 13px/1 "Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",P052,"TeX Gyre Pagella","Iowan Old Style",Georgia,"Noto Serif","DejaVu Serif",serif; letter-spacing:.06em; cursor:pointer; box-shadow:-4px 4px 0 rgba(42,36,28,.18); }
+.mx-pull span { display:block; writing-mode:vertical-rl; -webkit-writing-mode:vertical-rl; }
+@media (hover:hover) { .mx-pull:hover { background:#3a332b; } }
+.mx-scrim { position:fixed; inset:0; background:rgba(26,23,20,.3); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:35; }
+.mx-scrim.on { opacity:1; pointer-events:auto; }
+.mx-drawer { position:fixed; top:0; right:0; height:100%; width:min(640px,94vw); background:var(--paper,#f7f1e4); border-left:1px solid var(--ink,#1a1714); box-shadow:-8px 0 0 rgba(42,36,28,.14); transform:translateX(102%); visibility:hidden; transition:transform .25s ease, visibility 0s linear .25s; z-index:40; display:flex; flex-direction:column; color:var(--ink,#1a1714); }
+.mx-drawer.open { transform:none; visibility:visible; transition:transform .25s ease; }
+.mx-bar { display:flex; justify-content:space-between; align-items:center; padding:14px 20px 10px; border-bottom:1px solid var(--ink,#1a1714); }
+.mx-bar h2 { margin:0 !important; border:0 !important; padding:0 !important; }
+.mx-close { background:var(--panel,#fffdf7); border:1px solid var(--ink,#1a1714); font:600 13px "Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif; padding:6px 12px; cursor:pointer; color:var(--ink,#1a1714); border-radius:0; }
+.mx-tabs { display:flex; padding:0 20px; border-bottom:1px solid var(--faint,#d7cbb3); overflow-x:auto; }
+.mx-tabs button { background:none; border:0; border-bottom:3px solid transparent; padding:10px 12px 8px; font:14px "Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif; color:var(--muted,#5a5348); cursor:pointer; white-space:nowrap; border-radius:0; }
+.mx-tabs button[aria-selected="true"] { color:var(--ink,#1a1714); font-weight:700; border-bottom-color:var(--ink,#1a1714); }
+.mx-body { overflow:auto; padding:16px 20px 40px; flex:1; font-family:"Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",P052,"TeX Gyre Pagella",Georgia,"Noto Serif",serif; }
+.mx-body p { font-size:14.5px; line-height:1.5; margin:0 0 10px; }
+.mx-body h3 { font-size:13px; letter-spacing:.06em; text-transform:none; margin:18px 0 6px; }
+.mx-body h3:first-child { margin-top:0; }
+.mx-body [role="tabpanel"][hidden] { display:none; }
+.mx-body .mx-formula { font-size:20px; padding:20px 14px; column-gap:10px; justify-content:start; }
+.mx-body .mx-formula .mx-note { justify-self:start; text-align:left; font-size:14px; }
+.mx-body .mx-formula .mx-tag { font-size:13px; }
+.mx-body .mx-m { font-size:18px; }
+.mx-body .mx-defs { font-size:13.5px; }
+.mx-open { text-transform:none; letter-spacing:0; font-weight:400; font-size:13px; background:none; border:0; padding:0; font:inherit; color:var(--ink,#1a1714); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+@media (max-width:760px) {
+  .book { padding-bottom:72px !important; }
+  .mx-pull { top:auto; bottom:0; left:0; right:0; transform:none; border:0; border-top:1px solid var(--ink,#1a1714); padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); font-size:15px; box-shadow:none; }
+  .mx-pull span { writing-mode:horizontal-tb; -webkit-writing-mode:horizontal-tb; }
+  .mx-drawer { width:100%; border-left:0; }
+  .mx-body .mx-formula { font-size:17px; padding:16px 10px; }
+  .mx-body .mx-m { font-size:16.5px; }
+}
+@media (prefers-reduced-motion:reduce) { .mx-drawer, .mx-scrim { transition:none; } }
+@media print {
+  .mx-pull, .mx-scrim, .mx-close, .mx-tabs, .mx-open { display:none !important; }
+  .mx-drawer { position:static; transform:none; visibility:visible; width:auto; height:auto; box-shadow:none; border:0; border-top:1px solid var(--ink,#1a1714); margin-top:20px; }
+  .mx-body { overflow:visible; }
+  .mx-body [role="tabpanel"][hidden] { display:block; }
+}

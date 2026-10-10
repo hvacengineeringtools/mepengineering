@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Minimum distance between exhaust discharge and outdoor-air intake for flows above 0.5 m³/s." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VIII — Intake separation</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.45 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:980px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 40px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:5px; margin:0 0 20px; }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); background:var(--panel); font:11px/1.25 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:22px 0 8px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:4px; }
+p { margin:0 0 8px; }
+.lead { color:var(--muted); font-size:14.5px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
+.pair { display:grid; grid-template-columns:1fr 88px; }
+input, select { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; padding:7px 8px; min-height:36px; border-radius:0; }
+.pair span { display:flex; align-items:center; justify-content:center; border:1px solid #8a7f6c; border-left:0; background:#efe6d4; font-size:12px; color:var(--muted); }
+.hint { font-size:13px; color:var(--muted); margin-top:8px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:9px 12px; min-height:78px; }
+.box .k { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font-size:26px; font-weight:600; margin-top:4px; }
+.box .u { font-size:12px; color:var(--muted); }
+.box.bad { background:#f3e4d4; }
+.box.good { background:#e7efe4; }
+.warn { display:none; border:1px solid var(--ink); padding:8px 10px; margin-top:12px; font-size:14px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; background:var(--panel); border:1px solid var(--ink); display:block; }
+.check { width:100%; border-collapse:collapse; font-size:14px; }
+.check th, .check td { border-bottom:1px solid var(--faint); padding:7px 6px; text-align:left; vertical-align:top; }
+.check th { font-size:12px; letter-spacing:.06em; text-transform:uppercase; }
+.check td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.tag { font-weight:700; }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12px; color:var(--muted); }
+@media (max-width:720px) {
+  .book { margin:0; padding:16px 14px 28px; box-shadow:none; }
+  .fields, .results { grid-template-columns:1fr; }
+  h1 { font-size:24px; }
+  input, select { font-size:16px; min-height:44px; }
+  nav.pages a { min-height:48px; flex-direction:row; justify-content:flex-start; gap:8px; text-align:left; font-size:13px; }
+}
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+@media (max-width:720px) {
+  table.stack thead { display:none; }
+  table.stack, table.stack tbody { display:block; }
+  table.stack tr { display:grid; grid-template-columns:auto 96px minmax(0,1fr); gap:6px 10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--faint); }
+  table.stack td { border:0; padding:0; }
+  table.stack td:first-child { grid-column:1 / -1; }
+  table.stack td.n { text-align:left; white-space:normal; overflow-wrap:anywhere; }
+  table.stack td.n input { width:96px !important; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+.howread { border:1px solid var(--faint); background:var(--panel); padding:10px 14px; margin:12px 0 4px; font-size:14px; }
+.howread ul { margin:4px 0 8px; padding-left:20px; }
+.howread p { margin:0 0 8px; }
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VIII · BS EN 16798-3:2025 · Annex C, C.1.3.2</div>
+  <h1>Intake and exhaust separation</h1>
+  <div class="sub">Figure C.1 — air volume flow above 0.5 m³/s</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a class="on" href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<p class="lead">Use this sheet when the greater of the exhaust flow and the outdoor-air flow is above 0.5 m³/s. At or below 0.5 m³/s, use <a href="dilution-distance.html">Table C.3</a>.</p>
+
+<h2>Exhaust air category</h2>
+<p class="lead">EHA is the exhaust air after it leaves the building. The class is the pollution of that air, from Table 7. A higher class needs a greater distance from an outdoor-air intake.</p>
+<table class="check">
+<thead><tr><th>Class</th><th>Pollution</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>EHA 1</td><td>Low</td><td>Air from rooms whose main sources are the building materials and structure, and from occupied rooms whose main sources are human metabolism and the building itself. Rooms where smoking is allowed are excluded.</td></tr>
+<tr><td>EHA 2</td><td>Moderate</td><td>Air from occupied rooms that is dirtier than EHA 1, from those same sources and/or from human activity.</td></tr>
+<tr><td>EHA 3</td><td>High</td><td>Air from rooms where moisture, processes, chemicals, tobacco smoke or similar sources substantially reduce the air quality.</td></tr>
+<tr><td>EHA 4</td><td>Very high</td><td>Air with odours and impurities in concentrations well above those allowed in an occupied zone. EHA 4 is to be discharged at roof level (9.2.5).</td></tr>
+</tbody>
+</table>
+
+<h2>1. Openings</h2>
+<div class="fields">
+  <div><label for="eha">Exhaust category</label>
+    <select id="eha">
+      <option value="1">EHA 1 — low pollution</option>
+      <option value="2">EHA 2 — moderate pollution</option>
+      <option value="3">EHA 3 — high pollution</option>
+      <option value="4" selected>EHA 4 — very high pollution</option>
+    </select>
+  </div>
+  <div><label for="place">Exhaust relative to the intake</label>
+    <select id="place">
+      <option value="above">Exhaust above the intake</option>
+      <option value="level" selected>Same height</option>
+      <option value="below">Exhaust below the intake</option>
+    </select>
+  </div>
+  <div><label for="qe">Exhaust air flow</label><div class="pair"><input id="qe" type="number" inputmode="decimal" min="0" step="0.1" value="3" /><span>m³/s</span></div></div>
+  <div><label for="qo">Outdoor air flow</label><div class="pair"><input id="qo" type="number" inputmode="decimal" min="0" step="0.1" value="3" /><span>m³/s</span></div></div>
+  <div><label for="h">Vertical distance h</label><div id="hNote" style="font-size:12.5px;color:var(--muted,#5a5348);margin:-2px 0 4px">Greyed out because the openings are at the same height (h = 0). Choose "above" or "below" to enter h.</div><div class="pair"><input id="h" type="number" inputmode="decimal" min="0" step="0.1" value="0" /><span>m</span></div></div>
+  <div><label for="L">Horizontal distance, if already known</label><div class="pair"><input id="L" type="number" inputmode="decimal" min="0" step="0.1" placeholder="optional" /><span>m</span></div></div>
+  <div><label for="vel">Exhaust velocity, optional</label><div class="pair"><input id="vel" type="number" inputmode="decimal" min="0" step="0.1" placeholder="optional" /><span>m/s</span></div></div>
+</div>
+<p class="hint">h is h₁ when the exhaust is above the intake, and h₂ when it is below. The flow used on the chart is the greater of the two flows. Figure C.1 is drawn for an exhaust velocity up to 6 m/s; a higher velocity may allow a shorter distance, but the figure gives no reduction.</p>
+
+<h2>2. Result</h2>
+<div class="results" id="out"></div>
+<div class="warn" id="warn"></div>
+
+<h2>3. What h and L are</h2>
+<p class="lead">This drawing follows the small sketch printed beside Figure C.1: a stepped building in section, with the outdoor-air intake T on the middle step, an exhaust A₁ on the step above and an exhaust A₂ on the step below. h is the vertical distance and L the horizontal distance between the exhaust and the intake. Only the exhaust you chose is drawn. The distances are drawn to scale from your entries and redraw as you change them; the red dashed line is the minimum from Figure C.1. The drawing is redrawn for this site.</p>
+<svg class="chart" id="sect" viewBox="0 0 760 420" role="img" aria-label="Stepped building section: intake T on the middle step, exhaust A1 above with distances h1 and L2, exhaust A2 below with distances h2 and L1"></svg>
+<p class="hint" id="sectNote"></p>
+<div class="howread">
+  <p><b>Horizontal and vertical together.</b> Figure C.1 has the vertical distance on one axis and the horizontal distance on the other, so an exhaust that is both above (or below) and to the side is read directly: enter h and L, and the sheet reads the horizontal distance needed at your h and compares it with your L. Do not combine the two into one diagonal distance.</p>
+  <p><b>Openable windows.</b> Clause C.1.3 speaks of ventilation intakes. Treating an openable window as an intake is a common, cautious reading; it is not stated in the standard.</p>
+</div>
+
+<h2>4. Figure C.1</h2>
+<p class="lead" id="cap"></p>
+<svg class="chart" id="chart" viewBox="0 0 760 430" role="img" aria-label="Minimum horizontal separation against vertical separation"></svg>
+<p class="hint">The marked point is this opening. A point on or to the right of its curve meets the figure. Each curve is a straight-line reading of Figure C.1, accurate to about ±0.2 m, and starts from the same distance in both panels. EHA 1 and EHA 2 need no horizontal separation once the exhaust is 2 m or more above the intake; when it is 4 m or more below, the requirement also falls to zero.</p>
+
+<h2>5. Other location checks from C.1</h2>
+<table class="check stack">
+<thead><tr><th>Check</th><th>Required</th><th>Entered</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Intake clear of a refuse point, a parking place for three or more cars, a driveway, a loading area, a sewer vent or a chimney</td><td class="n">≥ 8 m</td><td class="n"><input id="dSrc" type="number" inputmode="decimal" min="0" step="0.1" placeholder="m" style="width:72px" /></td><td class="n" id="rSrc">—</td></tr>
+<tr><td>EHA 1 or EHA 2 discharged from a wall: distance to the next building</td><td class="n">≥ 8 m</td><td class="n"><input id="dBld" type="number" inputmode="decimal" min="0" step="0.1" placeholder="m" style="width:72px" /></td><td class="n" id="rBld">—</td></tr>
+<tr><td>Bottom of the intake above the roof or ground, against snow</td><td class="n">≥ 1.5 × snow</td><td class="n"><input id="snow" type="number" inputmode="decimal" min="0" step="0.01" placeholder="snow m" style="width:72px" /></td><td class="n" id="rSnow">—</td></tr>
+<tr><td>Height of the intake opening above the surface</td><td class="n">compare</td><td class="n"><input id="hOpen" type="number" inputmode="decimal" min="0" step="0.01" placeholder="m" style="width:72px" /></td><td class="n" id="rOpen">—</td></tr>
+<tr><td>Unprotected opening face velocity</td><td class="n">≤ 2 m/s</td><td class="n"><input id="face" type="number" inputmode="decimal" min="0" step="0.1" placeholder="m/s" style="width:72px" /></td><td class="n" id="rFace">—</td></tr>
+</tbody>
+</table>
+
+<footer>
+  Method: BS EN 16798-3:2025, Annex C. Separation distances from Figure C.1 (clause C.1.3.2), applicable where product or system tests of mixing are not available; location checks from C.1.1 and C.1.2; exhaust categories from Table 7; EHA 4 discharge from 9.2.5.
+  On a tall building, place the openings so that wind and buoyancy do not defeat the separation.
+</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers and are not reproduced here. These calculations are provided for design checking only, without warranty of any kind; verify results against the cited standards and the project requirements before relying on them.</div>
+</article>
+<script>
+const LINES = [
+  {key:"12", name:"EHA 1 and 2", above:[2.9, -1.45], below:[2.9, -0.725]},
+  {key:"3", name:"EHA 3", above:[8.0, -2.32], below:[8.0, -0.50]},
+  {key:"a", name:"EHA 4, 0.3 m³/s", above:[10.0, -2.27], below:[10.0, -0.26]},
+  {key:"b", name:"EHA 4, 1.5 m³/s", above:[12.5, -2.43], below:[12.5, -0.21]},
+  {key:"c", name:"EHA 4, 3 m³/s", above:[16.0, -2.67], below:[16.0, -0.167]},
+  {key:"d", name:"EHA 4, 6 m³/s", above:[20.0, -2.67], below:[20.0, -0.095]}
+];
+const $ = id => document.getElementById(id);
+function num(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : null; }
+function Lof(line, side, h) { const [x0, s] = line[side]; return Math.max(0, x0 + s * Math.max(0, h)); }
+function pick(cat, q) {
+  if (cat === "1" || cat === "2") return LINES[0];
+  if (cat === "3") return LINES[1];
+  if (q <= 0.3) return LINES[2];
+  if (q <= 1.5) return LINES[3];
+  if (q <= 3) return LINES[4];
+  return LINES[5];
+}
+function judge(el, ok, text) { el.textContent = text; el.className = "n tag"; el.style.color = ok ? "#1d4a28" : "#8a2a16"; }
+function calc() {
+  const cat = $("eha").value, place = $("place").value;
+  $("h").disabled = place === "level";
+  $("hNote").style.display = place === "level" ? "" : "none";
+  const qe = num("qe"), qo = num("qo"), hIn = num("h"), L = num("L"), vel = num("vel");
+  const warn = $("warn"); warn.className = "warn"; warn.textContent = "";
+  const notes = [];
+  if (qe == null && qo == null) { $("out").innerHTML = ""; notes.push("Enter an exhaust flow or an outdoor-air flow."); }
+  const q = Math.max(qe || 0, qo || 0);
+  const side = place === "below" ? "below" : "above";
+  const h = place === "level" ? 0 : (hIn || 0);
+  const line = pick(cat, q);
+  const Lmin = Lof(line, side, h);
+  if (q > 0 && q <= 0.5) notes.push("The governing flow is " + q.toFixed(2) + " m³/s, which is not above 0.5 m³/s. Use the dilution sheet, Table C.3.");
+  if (cat === "4" && q > 6) notes.push("Figure C.1 stops at 6 m³/s. The 6 m³/s curve is shown and is not a substitute for a higher flow.");
+  if (vel != null && vel > 6) notes.push("Exhaust velocity is above 6 m/s. The figure allows a shorter distance, but it does not say by how much. The distance below is the unreduced figure.");
+  if (cat === "4") notes.push("EHA 4 exhaust shall be led to the roof of the building (9.2.5); it may not discharge through a wall. Figure C.1 still gives its distance from intakes, for example on the roof.");
+  if (cat === "1" || cat === "2") notes.push("If this EHA 1 or EHA 2 exhaust discharges through a wall, it is acceptable only if it is also at least 8 m from the next building (C.1.2).");
+  if (notes.length) { warn.textContent = notes.join(" "); warn.classList.add("show"); }
+  const pass = L == null ? null : L + 1e-9 >= Lmin;
+  const cls = pass == null ? "" : pass ? " good" : " bad";
+  $("out").innerHTML =
+    `<div class="box"><div class="k">Governing flow</div><div class="v">${q.toFixed(2)}</div><div class="u">m³/s · greater of exhaust and outdoor air</div></div>` +
+    `<div class="box"><div class="k">Curve</div><div class="v" style="font-size:18px;padding-top:6px">${line.name}</div><div class="u">${place === "below" ? "exhaust below" : place === "above" ? "exhaust above" : "same height"}</div></div>` +
+    `<div class="box${cls}"><div class="k">Minimum horizontal distance</div><div class="v">${Lmin.toFixed(1)}</div><div class="u">m${L == null ? "" : pass ? " · the entered distance meets it" : " · the entered distance is short"}</div></div>`;
+  $("cap").textContent = "Horizontal separation L against vertical separation. Upper panel: exhaust above the intake (h₁). Lower panel: exhaust below the intake (h₂).";
+  draw(line, side, h, Lmin, L);
+  drawSection(cat, place, h, Lmin, L);
+  const dSrc = num("dSrc"), dBld = num("dBld"), snow = num("snow"), hOpen = num("hOpen"), face = num("face");
+  $("rSrc").textContent = dSrc == null ? "—" : dSrc >= 8 ? "Meets 8 m" : "Short of 8 m";
+  if (dSrc != null) judge($("rSrc"), dSrc >= 8, dSrc >= 8 ? "Meets 8 m" : "Short of 8 m");
+  const wall = cat === "1" || cat === "2";
+  if (!wall) { $("rBld").textContent = "Not an EHA 1 or 2 wall rule"; $("rBld").style.color = ""; }
+  else if (dBld == null) $("rBld").textContent = "—";
+  else judge($("rBld"), dBld >= 8, dBld >= 8 ? "Meets 8 m" : "Short of 8 m");
+  if (snow == null || hOpen == null) { $("rSnow").textContent = "—"; $("rOpen").textContent = hOpen == null ? "—" : hOpen.toFixed(2) + " m"; }
+  else { const need = 1.5 * snow; judge($("rSnow"), hOpen + 1e-9 >= need, "Need " + need.toFixed(2) + " m"); judge($("rOpen"), hOpen + 1e-9 >= need, hOpen.toFixed(2) + " m"); }
+  if (face == null) $("rFace").textContent = "—";
+  else judge($("rFace"), face <= 2, face <= 2 ? "Within 2 m/s" : "Above 2 m/s");
+}
+function drawSection(cat, place, h, Lmin, Lact) {
+  const F = "Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif";
+  const ink = "#1a1714", red = "#8a2a16", grey = "#5a5348";
+  const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.size || 13}" text-anchor="${o.anchor || "start"}" fill="${o.fill || ink}"${o.italic ? ' font-style="italic"' : ""} font-family="${F}">${t}</text>`;
+  const ln = (x1, y1, x2, y2, c = ink, w = 1, dash = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
+  const arrow = (x1, x2, y, c, hollow) => { const d = x2 < x1 ? 1 : -1; return ln(x1, y, x2 + 9 * d, y, c, 1.6) + `<polygon points="${x2},${y} ${x2 + 11 * d},${y - 5} ${x2 + 11 * d},${y + 5}" fill="${hollow ? "#fffdf7" : c}" stroke="${c}" stroke-width="1.2"/>`; };
+  const louvre = (x, y0, y1) => `<rect x="${x - 4}" y="${y0}" width="8" height="${y1 - y0}" fill="#fffdf7" stroke="${ink}" stroke-width="1.4"/>` + [0.25, 0.5, 0.75].map(k => ln(x - 4, y0 + k * (y1 - y0) + 2, x + 4, y0 + k * (y1 - y0) - 2)).join("");
+  const vdim = (x, ya, yb) => ln(x, ya, x, yb) + ln(x - 5, ya, x + 5, ya) + ln(x - 5, yb, x + 5, yb);
+  const hdim = (y, xa, xb) => ln(xa, y, xb, y) + ln(xa, y - 5, xa, y + 5) + ln(xb, y - 5, xb, y + 5);
+  const m = v => v.toFixed(1) + " m";
+  const L = Lact != null ? Lact : Lmin, Lmax = Math.max(L, Lmin, 0.5), short = Lact != null && Lact + 1e-9 < Lmin;
+  let g = "", sc, top = 0, bottom = 270;
+  if (place === "level") {
+    sc = Math.min(80, 440 / (Lmax + 0.5));
+    const w = 70, x0 = 380 - (2 * w + Lmax * sc) / 2, y0 = 110, xA = x0 + w + L * sc, xM = x0 + w + Lmin * sc;
+    g += T(380, 40, "Same height: the wall seen from outside, h = 0", { anchor:"middle" });
+    top = 18; bottom = 262;
+    g += `<rect x="${x0}" y="${y0}" width="${w}" height="46" fill="#fffdf7" stroke="${ink}" stroke-width="1.6"/>` + T(x0 + w / 2, y0 + 28, "T", { anchor:"middle" }) + T(x0 + w / 2, y0 - 10, "intake", { anchor:"middle", size:12, fill:grey });
+    g += `<rect x="${xA}" y="${y0}" width="${w}" height="46" fill="${short ? "#e9c7b5" : ink}" stroke="${ink}" stroke-width="1.6"/>` + T(xA + w / 2, y0 + 28, "A", { anchor:"middle", fill:short ? ink : "#fffdf7" }) + T(xA + w / 2, y0 - 10, "exhaust", { anchor:"middle", size:12, fill:grey });
+    g += ln(x0 + w, y0 + 46, x0 + w, 200, grey, 0.7, "3 3") + ln(xA, y0 + 46, xA, 200, grey, 0.7, "3 3") + hdim(194, x0 + w, xA) + T((x0 + w + xA) / 2, 186, "L = " + m(L), { anchor:"middle", italic:true });
+    if (Math.abs(xM - xA) > 1) g += ln(xM, y0 - 24, xM, 236, red, 1.2, "6 4") + T(xM, 252, "minimum " + m(Lmin), { anchor:"middle", fill:red, size:12 });
+    else g += T(xA, 236, "on the minimum, " + m(Lmin), { anchor:"middle", fill:red, size:12 });
+  } else {
+    const up = place === "above", lh = 14;
+    if (up) {
+      sc = Math.min(80, 400 / (Lmax + 0.6), 270 / Math.max(h + 1.2, 1));
+      const xT = 230, yG = 400, yTb = yG - 40, yTt = yTb - lh, yAb = yTt - h * sc, yAt = yAb - lh, xA = xT + L * sc, xM = xT + Lmin * sc;
+      const roof = yTt - Math.min(h * sc / 2, 18);
+      g += ln(30, yG, xT, yG, ink, 1.4) + `<path d="M${xT} ${yG} V${roof} H${xA} V${yAt - 36} H${xA + 70}" fill="none" stroke="${ink}" stroke-width="3"/>`;
+      g += louvre(xT, yTt, yTb) + louvre(xA, yAt, yAb);
+      g += arrow(xT - 80, xT - 6, (yTt + yTb) / 2, ink, true) + T(xT - 88, (yTt + yTb) / 2 + 4, "T intake", { anchor:"end" });
+      g += arrow(xA - 6, xA - 70, (yAt + yAb) / 2, short ? red : ink, false) + T(xA - 78, (yAt + yAb) / 2 + 4, "A₁ exhaust", { anchor:"end", fill:short ? red : ink });
+      const xd = Math.max(xA, xM) + 46;
+      if (h > 0) g += ln(xA + 4, yAb, xd + 6, yAb, grey, 0.7, "3 3") + ln(xT + 4, yTt, xd + 6, yTt, grey, 0.7, "3 3") + vdim(xd, yAb, yTt) + T(xd + 10, (yAb + yTt) / 2 + 4, "h₁ = " + m(h), { italic:true });
+      g += ln(xA, roof, xA, yG + 30, grey, 0.7, "3 3") + hdim(yG + 22, xT, xA) + T((xT + xA) / 2, yG + 16, "L₂ = " + m(L), { anchor:"middle", italic:true });
+      if (Math.abs(xM - xA) > 1) g += ln(xM, yAt - 46, xM, yG, red, 1.2, "6 4") + T(xM, yAt - 52, "minimum L₂ = " + m(Lmin), { anchor:"middle", fill:red, size:12 });
+      else g += T(xA, yAt - 52, "on the minimum, " + m(Lmin), { anchor:"middle", fill:red, size:12 });
+      top = yAt - 72; bottom = yG + 34;
+    } else {
+      sc = Math.min(80, 380 / (Lmax + 0.6), 270 / Math.max(h + 1.2, 1));
+      const xT = 250 + Lmax * sc, yTt = 60, yTb = yTt + lh, yAt = yTb + h * sc, yAb = yAt + lh, yG = yAb + 40, xA = xT - L * sc, xM = xT - Lmin * sc;
+      const roof = yTb + Math.min(h * sc / 2, 18);
+      g += ln(30, yG, xA, yG, ink, 1.4) + `<path d="M${xA} ${yG} V${roof} H${xT} V${yTt - 36} H${xT + 70}" fill="none" stroke="${ink}" stroke-width="3"/>`;
+      g += louvre(xT, yTt, yTb) + louvre(xA, yAt, yAb);
+      g += arrow(xT - 80, xT - 6, (yTt + yTb) / 2, ink, true) + T(xT - 88, (yTt + yTb) / 2 + 4, "T intake", { anchor:"end" });
+      g += arrow(xA - 6, xA - 70, (yAt + yAb) / 2, short ? red : ink, false) + T(xA - 78, (yAt + yAb) / 2 + 4, "A₂ exhaust", { anchor:"end", fill:short ? red : ink });
+      const xd = xT + 46;
+      if (h > 0) g += ln(xT + 4, yTb, xd + 6, yTb, grey, 0.7, "3 3") + ln(xA + 4, yAt, xd + 6, yAt, grey, 0.7, "3 3") + vdim(xd, yTb, yAt) + T(xd + 10, (yTb + yAt) / 2 + 4, "h₂ = " + m(h), { italic:true });
+      g += ln(xT, roof, xT, yG + 30, grey, 0.7, "3 3") + ln(xA, yG, xA, yG + 30, grey, 0.7, "3 3") + hdim(yG + 22, xA, xT) + T((xT + xA) / 2, yG + 16, "L₁ = " + m(L), { anchor:"middle", italic:true });
+      if (Math.abs(xM - xA) > 1) g += ln(xM, yAt - 24, xM, yG, red, 1.2, "6 4") + T(Math.min(xA, xM) - 10, yAt - 30, "red line: minimum L₁ = " + m(Lmin), { anchor:"end", fill:red, size:12 });
+      else g += T(xA - 10, yAt - 30, "on the minimum, " + m(Lmin), { anchor:"end", fill:red, size:12 });
+      top = Math.min(yTt - 50, yAt - 46); bottom = yG + 34;
+    }
+  }
+  /* fit the height to the drawing, then add the scale bar and notes */
+  const head = cat === "4" ? 34 : 10, dy = top - head, VH = Math.max(bottom - dy + 34, 220);
+  let out = `<rect width="760" height="${VH}" fill="#fffdf7"/><g transform="translate(0 ${-dy})">${g}</g>`;
+  const bar = sc * 1 >= 30 ? 1 : sc * 2 >= 30 ? 2 : 5;
+  out += ln(24, VH - 14, 24 + bar * sc, VH - 14, ink, 2) + T(30 + bar * sc, VH - 10, bar + " m", { size:11 });
+  out += T(736, VH - 10, "distances to scale · opening sizes schematic", { anchor:"end", size:11, fill:grey });
+  if (cat === "4") out += T(20, 22, "EHA 4: discharge at roof level, not through a wall (9.2.5)", { fill:red });
+  $("sect").setAttribute("viewBox", `0 0 760 ${VH}`);
+  $("sect").innerHTML = out;
+  const which = place === "above" ? "L₂" : place === "below" ? "L₁" : "L";
+  $("sectNote").textContent = `Figure C.1 needs ${which} of at least ${m(Lmin)} at this vertical distance; the red dashed line marks it.` +
+    (Lact == null ? " No horizontal distance entered, so the exhaust is drawn on the minimum." : Lact + 1e-9 >= Lmin ? ` Your ${m(Lact)} meets it.` : ` Your ${m(Lact)} is short by ${m(Lmin - Lact)}.`);
+}
+function draw(active, side, h, Lmin, Lact) {
+  const W = 760, H = 430, x0 = 70, x1 = 730, ySplit = 200;
+  const X = x => x0 + (x / 22) * (x1 - x0);
+  const Yu = v => 36 + (6 - v) / 6 * (ySplit - 52);
+  const Yd = v => ySplit + 28 + (v / 12) * (H - 36 - (ySplit + 28));
+  let g = `<rect width="${W}" height="${H}" fill="#fffdf7"/>`;
+  const grid = (yA, yB, horiz, vmax) => {
+    for (let x = 0; x <= 22; x += 2) g += `<line x1="${X(x)}" y1="${yA}" x2="${X(x)}" y2="${yB}" stroke="#e4d8bc"/>`;
+    for (let i = 0; i <= horiz; i++) { const y = yA + (yB - yA) * i / horiz; g += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#e4d8bc"/>`; }
+    g += `<line x1="${x0}" y1="${yA}" x2="${x1}" y2="${yA}" stroke="#1a1714"/><line x1="${x0}" y1="${yB}" x2="${x1}" y2="${yB}" stroke="#1a1714"/><line x1="${x0}" y1="${yA}" x2="${x0}" y2="${yB}" stroke="#1a1714"/>`;
+    for (let x = 0; x <= 22; x += 2) g += `<text x="${X(x)}" y="${yB + 14}" text-anchor="middle" font-size="11" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${x}</text>`;
+    for (let v = 0; v <= vmax; v += 2) {
+      const y = vmax === 6 ? Yu(v) : Yd(v);
+      g += `<text x="${x0 - 8}" y="${y + 4}" text-anchor="end" font-size="11" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${v}</text>`;
+    }
+  };
+  grid(36, ySplit - 16, 6, 6);
+  grid(ySplit + 28, H - 36, 6, 12);
+  g += `<text x="${(x0+x1)/2}" y="16" text-anchor="middle" font-size="12" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">Exhaust above the intake · h₁, m</text>`;
+  g += `<text x="${(x0+x1)/2}" y="${H - 6}" text-anchor="middle" font-size="12" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">Exhaust below the intake · h₂, m · horizontal distance, m</text>`;
+  const path = (line, which, Y, vmax) => {
+    const [x0m, s] = line[which];
+    let d = "";
+    const hEnd = s < 0 ? Math.min(vmax, -x0m / s) : vmax;   /* stop where the line reaches L = 0 */
+    for (let i = 0; i <= 40; i++) {
+      const hv = hEnd * i / 40, xv = Math.max(0, x0m + s * hv);
+      d += (i ? "L" : "M") + X(xv).toFixed(1) + " " + Y(hv).toFixed(1) + " ";
+    }
+    const on = line === active;
+    g += `<path d="${d}" fill="none" stroke="${on ? "#1a1714" : "#8a7f6c"}" stroke-width="${on ? 2.4 : 1}" />`;
+  };
+  LINES.forEach(ln => { path(ln, "above", Yu, 6); path(ln, "below", Yd, 12); });
+  const Y = side === "below" ? Yd : Yu;
+  g += `<circle cx="${X(Lmin)}" cy="${Y(h)}" r="5" fill="#1a1714"/>`;
+  if (Lact != null) g += `<circle cx="${X(Math.min(22, Lact))}" cy="${Y(h)}" r="5" fill="none" stroke="#1a1714" stroke-width="1.6"/>`;
+  g += `<text x="${X(Lmin) + 8}" y="${Y(h) - 8}" font-size="12" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">${Lmin.toFixed(1)} m</text>`;
+  $("chart").innerHTML = g;
+}
+["eha","place","qe","qo","h","L","vel","dSrc","dBld","snow","hOpen","face"].forEach(id => $(id).addEventListener("input", calc));
+$("place").addEventListener("change", () => { if ($("place").value === "level") $("h").value = "0"; calc(); });
+calc();
+</script>
+</body>
+</html>

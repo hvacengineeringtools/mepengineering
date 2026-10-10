@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Stack-driven natural ventilation with high and low openings on opposite walls." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet III — Cross stack ventilation</title>
+<style>
+:root {
+  --paper: #f7f1e4;
+  --ink: #1a1714;
+  --faint: #d7cbb3;
+  --panel: #fffdf7;
+  --muted: #5a5348;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #cfc3a8;
+  color: var(--ink);
+  font: 16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;
+}
+.book {
+  max-width: 680px;
+  margin: 24px auto 48px;
+  background: var(--paper);
+  padding: 28px 34px 48px;
+  border: 1px solid #2a241c;
+  box-shadow: 0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12);
+}
+header {
+  text-align: center;
+  border-bottom: 1px solid var(--ink);
+  padding: 4px 0 14px;
+  margin-bottom: 16px;
+}
+.kicker { letter-spacing: .22em; text-transform: uppercase; font-size: 10px; color: var(--muted); }
+h1 { font-size: 26px; margin: 6px 0 2px; font-weight: 600; }
+.sub { font-size: 13px; color: var(--muted); font-style: italic; }
+nav.pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 8px;
+  margin: 0 0 22px;
+}
+nav.pages a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 7px 6px;
+  font-size: 12px;
+  background: var(--panel);
+}
+nav.pages a.on { background: var(--ink); color: var(--paper); }
+h2 {
+  font-size: 13px;
+  margin: 26px 0 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--faint);
+  padding-bottom: 5px;
+}
+p { margin: 0 0 10px; }
+.lead { color: var(--muted); font-size: 15px; }
+.figs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 4px; }
+.fig { background: var(--panel); border: 1px solid var(--faint); padding: 8px; margin: 0; }
+.fig img { width: 100%; height: auto; max-height: 180px; object-fit: contain; display: block; background: #fff; }
+.cap { font-size: 11px; text-align: center; color: var(--muted); margin: 6px 0 0; font-style: italic; }
+.eq {
+  background: var(--panel);
+  border-left: 2px solid var(--ink);
+  padding: 8px 12px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13.5px;
+  margin: 8px 0 12px;
+  line-height: 1.55;
+}
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.field { margin: 0; }
+label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.pair { display: grid; grid-template-columns: 1fr 108px; gap: 6px; }
+input, select {
+  width: 100%;
+  border: 1px solid #8a7f6c;
+  background: var(--panel);
+  color: var(--ink);
+  font: 15px/1.2 "Courier New", Courier, monospace;
+  padding: 6px 8px;
+  min-height: 36px;
+  border-radius: 0;
+}
+input:focus, select:focus { outline: 1px solid var(--ink); border-color: var(--ink); }
+.results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.box { border: 1px solid var(--ink); background: var(--panel); padding: 10px 12px; }
+.box .k { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.box .v { font: 600 26px/1.1 "Courier New", Courier, monospace; margin-top: 4px; }
+.box .u { font-size: 12px; color: var(--muted); }
+.si { font-size: 12px; margin-top: 8px; color: var(--muted); }
+.warn { display: none; border: 1px solid var(--ink); padding: 7px 9px; margin: 10px 0; font-size: 13px; }
+.warn.show { display: block; }
+svg.chart { width: 100%; height: auto; max-height: 180px; border: 1px solid var(--faint); background: var(--panel); display: block; margin: 8px 0; }
+footer { margin-top: 28px; border-top: 1px solid var(--faint); padding-top: 10px; font-size: 11px; color: var(--muted); }
+@media (max-width: 640px) {
+  .book { margin: 0; padding: 20px 16px 36px; box-shadow: none; }
+  .figs, .fields, .results, nav.pages { grid-template-columns: 1fr; }
+}
+@media print { body { background: #fff; } .book { box-shadow: none; margin: 0; border: 0; } }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style id="wf">
+/* window factor panel (sheets II and III) */
+.wf-panel { border:1px solid var(--faint); background:var(--panel); padding:12px 14px; margin:10px 0 10px; }
+.wf-row { display:grid; grid-template-columns:150px minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr); gap:10px 12px; align-items:end; padding:10px 0; border-bottom:1px solid var(--faint); }
+.wf-row:first-child { padding-top:0; }
+.wf-row:last-child { border-bottom:0; }
+.wf-row label { font-size:12px; margin-bottom:4px; }
+.wf-name { font-weight:700; font-size:14px; align-self:center; }
+.wf-out { display:flex; flex-direction:column; justify-content:flex-end; min-height:40px; }
+.wf-out .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.wf-out .v { font:600 20px/1.1 "Courier New", Courier, monospace; }
+.wf-out .u { font-size:11.5px; color:var(--muted); line-height:1.3; }
+.wf-how { margin:10px 0 12px; padding:10px 14px; border:1px solid var(--faint); background:var(--panel); }
+.wf-how summary { font-weight:700; font-size:14px; }
+.wf-steps { padding-left:20px; margin:8px 0 8px; font-size:14px; }
+.wf-steps li { margin:6px 0; }
+.figs.charts-2 { margin:10px 0 4px; }
+.figs.charts-2 .fig { margin:0; }
+.fig.wide { grid-column:1 / -1; margin:8px auto; }
+@media (max-width:900px) { .wf-row { grid-template-columns:1fr 1fr; } .wf-name { grid-column:1 / -1; } }
+@media (max-width:600px) { .wf-row { grid-template-columns:1fr; } .figs.charts-2 { grid-template-columns:1fr; } }
+</style>
+<link rel="stylesheet" href="formula.css" />
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet III · BS 5925:1991</div>
+  <h1>Natural Ventilation</h1>
+  <div class="sub">Four openings · opposite walls · temperature difference only</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a class="on" href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<h2>1. Arrangement</h2>
+<p class="lead">With the room warmer than outside, air leaves through the high openings A1 and A2 and enters through the low openings A3 and A4. h<sub>a</sub> is the height between the high and low centre lines.</p>
+<div class="figs">
+<figure class="fig wide">
+  <svg viewBox="0 0 380 235" role="img" aria-label="Room with openings on opposite walls: A1 and A2 high with air out, A3 and A4 low with air in, height ha between the high and low centre lines" style="width:100%;height:auto;display:block;background:#fff"><line x1="10" y1="215" x2="370" y2="215" stroke="#1a1714" stroke-width="1.4"/><line x1="14" y1="215" x2="7" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="24" y1="215" x2="17" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="34" y1="215" x2="27" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="44" y1="215" x2="37" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="54" y1="215" x2="47" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="64" y1="215" x2="57" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="74" y1="215" x2="67" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="84" y1="215" x2="77" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="94" y1="215" x2="87" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="104" y1="215" x2="97" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="114" y1="215" x2="107" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="124" y1="215" x2="117" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="134" y1="215" x2="127" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="144" y1="215" x2="137" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="154" y1="215" x2="147" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="164" y1="215" x2="157" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="174" y1="215" x2="167" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="184" y1="215" x2="177" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="194" y1="215" x2="187" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="204" y1="215" x2="197" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="214" y1="215" x2="207" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="224" y1="215" x2="217" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="234" y1="215" x2="227" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="244" y1="215" x2="237" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="254" y1="215" x2="247" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="264" y1="215" x2="257" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="274" y1="215" x2="267" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="284" y1="215" x2="277" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="294" y1="215" x2="287" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="304" y1="215" x2="297" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="314" y1="215" x2="307" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="324" y1="215" x2="317" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="334" y1="215" x2="327" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="344" y1="215" x2="337" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="354" y1="215" x2="347" y2="222" stroke="#1a1714" stroke-width="0.8"/><line x1="364" y1="215" x2="357" y2="222" stroke="#1a1714" stroke-width="0.8"/><rect x="101.5" y="31.5" width="177" height="182" fill="#efe6d4"/><path d="M100 215 V172 M100 148 V82 M100 58 V30 H280 V58 M280 82 V148 M280 172 V215" fill="none" stroke="#1a1714" stroke-width="3"/><line x1="150" y1="70" x2="51.0" y2="70.0" stroke="#1a1714" stroke-width="2"/><polygon points="45,70 54.0,74.0 54.0,66.0" fill="#1a1714"/><line x1="230" y1="70" x2="329.0" y2="70.0" stroke="#1a1714" stroke-width="2"/><polygon points="335,70 326.0,66.0 326.0,74.0" fill="#1a1714"/><line x1="45" y1="160" x2="144.0" y2="160.0" stroke="#1a1714" stroke-width="2"/><polygon points="150,160 141.0,156.0 141.0,164.0" fill="#1a1714"/><line x1="335" y1="160" x2="236.0" y2="160.0" stroke="#1a1714" stroke-width="2"/><polygon points="230,160 239.0,164.0 239.0,156.0" fill="#1a1714"/><text x="28" y="60" text-anchor="start" font-size="15" fill="#1a1714" font-weight="700" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">A1</text><text x="338" y="60" text-anchor="start" font-size="15" fill="#1a1714" font-weight="700" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">A2</text><text x="28" y="185" text-anchor="start" font-size="15" fill="#1a1714" font-weight="700" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">A3</text><text x="338" y="185" text-anchor="start" font-size="15" fill="#1a1714" font-weight="700" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">A4</text><line x1="190" y1="115.0" x2="190.0" y2="76.0" stroke="#5a5348" stroke-width="1.2"/><polygon points="190,70 186.0,79.0 194.0,79.0" fill="#5a5348"/><line x1="190" y1="115.0" x2="190.0" y2="154.0" stroke="#5a5348" stroke-width="1.2"/><polygon points="190,160 194.0,151.0 186.0,151.0" fill="#5a5348"/><text x="197" y="120.0" text-anchor="start" font-size="14" fill="#5a5348" font-style="italic" font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">hₐ</text><line x1="150" y1="70" x2="230" y2="70" stroke="#5a5348" stroke-width="0.8" stroke-dasharray="2 3"/><line x1="150" y1="160" x2="230" y2="160" stroke="#5a5348" stroke-width="0.8" stroke-dasharray="2 3"/><text x="10" y="120" text-anchor="start" font-size="14" fill="#1a1714"  font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">θₒ</text><text x="350" y="120" text-anchor="start" font-size="14" fill="#1a1714"  font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">θₒ</text><text x="118" y="48" text-anchor="start" font-size="13" fill="#1a1714"  font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">inside, θᵢ</text><text x="190" y="205" text-anchor="middle" font-size="11" fill="#5a5348"  font-family="Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif">high openings out · low openings in</text></svg>
+  <p class="cap">Fig. 1 &nbsp; A1, A2 high, air out &nbsp;·&nbsp; A3, A4 low, air in &nbsp;·&nbsp; h<sub>a</sub> between the high and low centre lines</p>
+</figure>
+</div>
+
+<h2>2. Formula</h2>
+<div class="eq">
+Q<sub>b</sub> = C<sub>d</sub> A<sub>b</sub> (2 Δθ h<sub>a</sub> g / (θ̄ + 273.15))<sup>0.5</sup><br />
+1 / A<sub>b</sub>² = 1 / (A1 + A2)² + 1 / (A3 + A4)²
+</div>
+<p class="lead">For stack flow the high openings act together, the low openings act together, and the two groups are in series: A1 + A2 is the total outlet and A3 + A4 the total inlet. BS 5925 writes the same rule with its own opening numbers, in which its two upper openings are A1 and A3. C<sub>d</sub> defaults to 0.61. θ̄ is the mean temperature in °C.</p>
+
+<h2>3. Windows in the openings</h2>
+<p class="lead">The areas entered below are the free areas of the holes in the wall. Where a hole is closed by a window that opens only part way, less air gets through. For each opening, choose the window. The sheet multiplies the area by the factor F and puts the effective area F × A into the formula. The openings act in series, so the most restricted one limits the flow. Only referenced factors are offered: J(φ) from BS 5925 and the window maker’s tested data.</p>
+<div class="wf-panel">
+  <div id="wfRows"></div>
+  <p class="si" id="wfSum"></p>
+</div>
+<details class="wf-how" open>
+  <summary>How to evaluate an opening window</summary>
+  <ol class="wf-steps">
+    <li><b>Maker’s tested data, best.</b> If the window maker gives an effective or aerodynamic free area at your opening angle, tested for example to BS EN 13141-1, divide it by C<sub>d</sub> × A and enter the result as <i>Maker’s factor</i>.</li>
+    <li><b>Casement or centre-pivoted light: J(φ).</b> Read J(φ) from figs. 3a and 3b, the same curves as sheet I. Here it is used as a reduction on the area of that opening and capped at 1. BS 5925 gives J(φ) for one opening with buoyancy, so applying it to each opening of a pair is an approximation.</li>
+    <li><b>Top-, bottom- or side-hung sash.</b> BS 5925 gives no factor for these. Use the maker’s tested effective area at the opening angle, entered as <i>Maker’s factor</i>.</li>
+    <li><b>Louvre, grille or open hole.</b> Choose <i>No window</i> and enter the free area. Use sheet XI for a louvre’s own pressure loss.</li>
+  </ol>
+</details>
+<div id="wfJ">
+  <div class="figs charts-2">
+    <figure class="fig">
+      <svg id="wfCas" viewBox="0 0 300 220" role="img" aria-label="J(phi) against opening angle for side-hung casement windows" style="width:100%;height:auto;display:block;background:#fff"></svg>
+      <p class="cap">Fig. 3a &nbsp; Side-hung casement. Dots mark the openings above.</p>
+    </figure>
+    <figure class="fig">
+      <svg id="wfPiv" viewBox="0 0 300 220" role="img" aria-label="J(phi) against opening angle for centre-pivoted windows" style="width:100%;height:auto;display:block;background:#fff"></svg>
+      <p class="cap">Fig. 3b &nbsp; Centre-pivoted window. Dots mark the openings above.</p>
+    </figure>
+  </div>
+  <p class="si">Figs. 3a and 3b are the curves of sheet I, read from the opening-light charts of BS 5925:1991 at 0, 15, 30, 45, 60 and 90° and joined with straight lines. Between the three height ÷ width curves the sheet interpolates; outside 0.86–2.28 it uses the nearest curve. Check them against your copy of the standard.</p>
+</div>
+
+<h2>4. Values</h2>
+<div class="fields">
+  <div class="field">
+    <label for="a1">A1 — high left, air out</label>
+    <div class="pair">
+      <input id="a1" type="number" step="any" value="0.6" />
+      <select id="a1u">
+        <option value="sqm" selected>m²</option>
+        <option value="sqcm">cm²</option>
+        <option value="sqft">ft²</option>
+        <option value="sqinch">in²</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="a2">A2 — high right, air out</label>
+    <div class="pair">
+      <input id="a2" type="number" step="any" value="0.6" />
+      <select id="a2u">
+        <option value="sqm" selected>m²</option>
+        <option value="sqcm">cm²</option>
+        <option value="sqft">ft²</option>
+        <option value="sqinch">in²</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="a3">A3 — low left, air in</label>
+    <div class="pair">
+      <input id="a3" type="number" step="any" value="0.6" />
+      <select id="a3u">
+        <option value="sqm" selected>m²</option>
+        <option value="sqcm">cm²</option>
+        <option value="sqft">ft²</option>
+        <option value="sqinch">in²</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="a4">A4 — low right, air in</label>
+    <div class="pair">
+      <input id="a4" type="number" step="any" value="0.6" />
+      <select id="a4u">
+        <option value="sqm" selected>m²</option>
+        <option value="sqcm">cm²</option>
+        <option value="sqft">ft²</option>
+        <option value="sqinch">in²</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="ha">Height difference, h<sub>a</sub> / Z<sub>a</sub></label>
+    <div class="pair">
+      <input id="ha" type="number" step="any" value="2.0" />
+      <select id="hau">
+        <option value="m" selected>m</option>
+        <option value="cm">cm</option>
+        <option value="mm">mm</option>
+        <option value="ft">ft</option>
+        <option value="in">in</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="vol">Room volume (for ACH)</label>
+    <div class="pair">
+      <input id="vol" type="number" step="any" value="80" />
+      <select id="volU">
+        <option value="m3" selected>m³</option>
+        <option value="ft3">ft³</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="to">Outdoor temperature, T<sub>o</sub></label>
+    <div class="pair">
+      <input id="to" type="number" step="any" value="12" />
+      <select id="toU">
+        <option value="celsius" selected>°C</option>
+        <option value="fahrenheit">°F</option>
+        <option value="kelvin">K</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="ti">Indoor temperature, T<sub>i</sub></label>
+    <div class="pair">
+      <input id="ti" type="number" step="any" value="22" />
+      <select id="tiU">
+        <option value="celsius" selected>°C</option>
+        <option value="fahrenheit">°F</option>
+        <option value="kelvin">K</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="cd">Discharge coefficient, C<sub>d</sub></label>
+    <input id="cd" type="number" step="any" value="0.61" />
+  </div>
+  <div class="field">
+    <label for="flowU">Show airflow as</label>
+    <select id="flowU">
+      <option value="lps" selected>L/s</option>
+      <option value="m3_sec">m³/s</option>
+      <option value="m3_hour">m³/h</option>
+      <option value="ft3_min">CFM</option>
+    </select>
+  </div>
+</div>
+
+<div id="warn" class="warn">Enter numeric areas and height. F × A1 + F × A2 and F × A3 + F × A4 must both be greater than zero.</div>
+
+<div class="results">
+  <div class="box">
+    <div class="k">Airflow Q<sub>b</sub></div>
+    <div class="v" id="qOut">—</div>
+    <div class="u" id="qUnitLabel">L/s</div>
+  </div>
+  <div class="box">
+    <div class="k">Air changes</div>
+    <div class="v" id="achOut">—</div>
+    <div class="u">per hour</div>
+  </div>
+</div>
+<p class="si" id="siLine"></p>
+<p class="si"><button class="mx-open" type="button" data-mxopen="steps">How it is worked out</button></p>
+
+<h2>5. Temperature sweep</h2>
+<p class="lead">Indoor temperature held still; outdoor temperature moves ±10 °C.</p>
+<svg id="chart" class="chart" viewBox="0 0 700 240" aria-label="Airflow against outdoor temperature"></svg>
+
+<footer>
+  Method: BS 5925:1991, buoyancy-driven flow through openings on opposite walls. High openings act in series with low openings: 1/A<sub>b</sub>² = 1/(A1 + A2)² + 1/(A3 + A4)². Wind is not included.
+  Each area is multiplied by its window factor F first: J(φ) from the BS 5925 opening-light charts (capped at 1, an approximation outside the single-opening case), or a maker’s figure.
+  g = 9.81 m/s²; mean absolute temperature θ̄ + 273.15 K with θ̄ = (T<sub>i</sub> + T<sub>o</sub>)/2 in °C. Default C<sub>d</sub> = 0.61.
+  The temperature sweep holds T<sub>i</sub> and varies T<sub>o</sub> from T<sub>i</sub> − 10 K to T<sub>i</sub> + 10 K.
+</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers and are not reproduced here. These calculations are provided for design checking only, without warranty of any kind; verify results against the cited standards and the project requirements before relying on them.</div>
+</article>
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-formulae" data-tab="formulae" aria-controls="mxtab-formulae">Formulae</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-formulae" aria-labelledby="mxt-formulae">
+      <div id="fx" role="math"></div>
+      <ul id="fxDefs"></ul>
+      <p style="margin-top:14px">BS 5925:1991, openings on opposite walls, buoyancy only. For stack flow the high openings act together, the low openings act together, and the two groups are in series: A<sub>1</sub> + A<sub>2</sub> is the total outlet and A<sub>3</sub> + A<sub>4</sub> the total inlet. BS 5925 writes the same rule with its own opening numbers, in which its two upper openings are A1 and A3. In the formula each A is an effective area, the free area multiplied by its window factor F (section 3). C<sub>d</sub> defaults to 0.61. Here θ̄ is the mean temperature in °C, and 273.15 is added in the formula.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>Worked with the values on the sheet, in the order the sheet calculates them. The figures update as you type.</p>
+      <div id="work"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Method</h3>
+      <p>BS 5925:1991, buoyancy-driven flow through openings on opposite walls. High openings act in series with low openings: 1/A<sub>b</sub>² = 1/(A1 + A2)² + 1/(A3 + A4)². Wind is not included.</p>
+      <h3>Window factor F</h3>
+      <p>Each area is multiplied by its window factor F first: J(φ) from the BS 5925 opening-light charts (capped at 1, an approximation outside the single-opening case), or a maker’s figure.</p>
+      <h3>Constants</h3>
+      <p>g = 9.81 m/s². Mean absolute temperature θ̄ + 273.15 K with θ̄ = (T<sub>i</sub> + T<sub>o</sub>)/2 in °C. Default C<sub>d</sub> = 0.61.</p>
+      <h3>Temperature sweep</h3>
+      <p>The sweep holds T<sub>i</sub> and varies T<sub>o</sub> from T<sub>i</sub> − 10 K to T<sub>i</sub> + 10 K.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+/* ---------- window factor for each opening (shared by sheets II and III) ---------- */
+const WF = (() => {
+  const FONT = "Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif";
+  /* Same J(φ) values as sheet I: read from the BS 5925 opening-light charts at 0, 15, 30, 45, 60, 90 degrees */
+  const JTABLE = {
+    casement: { "2.28": [0.00, 0.22, 0.51, 0.71, 0.88, 1.13], "1.72": [0.00, 0.31, 0.54, 0.75, 0.90, 1.04], "0.86": [0.00, 0.41, 0.62, 0.74, 0.84, 0.97] },
+    pivot:    { "2.28": [0.00, 0.42, 0.68, 0.84, 0.93, 1.03], "1.72": [0.00, 0.38, 0.71, 0.86, 0.94, 0.98], "0.86": [0.00, 0.46, 0.77, 0.90, 0.99, 1.03] }
+  };
+  const ANGLES = [0, 15, 30, 45, 60, 90], RATIOS = [0.86, 1.72, 2.28];
+  const TYPES = [
+    ["none", "No window, free opening"],
+    ["casement", "Casement · J(φ)"],
+    ["pivot", "Centre-pivot · J(φ)"],
+    ["own", "Maker’s factor F"]
+  ];
+  let OPEN = [], drawn = false;
+  const $ = id => document.getElementById(id);
+  const num = (id, d) => { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : d; };
+
+  function jRow(type, hw, phi) {
+    const row = JTABLE[type][hw], x = Math.max(0, Math.min(90, phi));
+    for (let i = 0; i < ANGLES.length - 1; i++) {
+      const a = ANGLES[i], b = ANGLES[i + 1];
+      if (x <= b) return row[i] + (x - a) / (b - a) * (row[i + 1] - row[i]);
+    }
+    return row[row.length - 1];
+  }
+  /* J between the three height ÷ width curves, linear in the ratio, held at the end curves outside 0.86–2.28 */
+  function jAt(type, r, phi) {
+    const rr = Math.max(RATIOS[0], Math.min(RATIOS[2], r));
+    const k = rr <= RATIOS[1] ? 0 : 1, r0 = RATIOS[k], r1 = RATIOS[k + 1];
+    const j0 = jRow(type, r0.toFixed(2), phi), j1 = jRow(type, r1.toFixed(2), phi);
+    return j0 + (rr - r0) / (r1 - r0) * (j1 - j0);
+  }
+
+  function factor(o) {
+    const t = $("wf_t_" + o.id).value, r = num("wf_r_" + o.id, 1.72), phi = Math.max(0, Math.min(90, num("wf_p_" + o.id, 0)));
+    if (t === "none") return { t, F:1, txt:"free opening" };
+    if (t === "own") { const F = Math.max(0, Math.min(1, num("wf_f_" + o.id, 1))); return { t, F, txt:"maker’s factor" }; }
+    if (!(r > 0)) return { t, F:NaN, txt:"enter height ÷ width" };
+    if (t === "casement" || t === "pivot") {
+      const J = jAt(t, r, phi), F = Math.min(1, J);
+      const out = r < RATIOS[0] || r > RATIOS[2] ? `; ratio outside 0.86–2.28, end curve used` : "";
+      return { t, F, J, r, phi, txt:`J(${phi.toFixed(0)}°) = ${J.toFixed(2)}${J > 1 ? ", capped at 1" : ""}${out}` };
+    }
+    return { t, F:NaN, txt:"" };
+  }
+
+  function rowHtml(o) {
+    return `<div class="wf-row">
+  <div class="wf-name">${o.label}</div>
+  <div><label for="wf_t_${o.id}">Window in the opening</label><select id="wf_t_${o.id}">${TYPES.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select></div>
+  <div class="wf-geo"><label for="wf_r_${o.id}">Height ÷ width of the light</label><input id="wf_r_${o.id}" type="number" inputmode="decimal" min="0.1" step="0.01" value="1.72" /></div>
+  <div class="wf-geo"><label for="wf_p_${o.id}">Opening angle φ, °</label><input id="wf_p_${o.id}" type="number" inputmode="decimal" min="0" max="90" step="1" value="30" /></div>
+  <div class="wf-own"><label for="wf_f_${o.id}">Factor F, 0–1</label><input id="wf_f_${o.id}" type="number" inputmode="decimal" min="0" max="1" step="0.01" value="0.5" /></div>
+  <div class="wf-out"><span class="k">F</span><span class="v" id="wf_o_${o.id}">1.00</span><span class="u" id="wf_n_${o.id}"></span></div>
+</div>`;
+  }
+
+  function drawJ(svgId, type, marks) {
+    const svg = $(svgId), L = 38, R = 12, T = 12, B = 34, W = 300, H = 220, pw = W - L - R, ph = H - T - B;
+    const X = a => L + a / 90 * pw, Y = j => T + ph - j / 1.2 * ph;
+    const dash = { "2.28": "", "1.72": "6 4", "0.86": "2 3" };
+    let g = "";
+    for (let a = 0; a <= 90; a += 15) g += `<line x1="${X(a)}" y1="${T}" x2="${X(a)}" y2="${T + ph}" stroke="#e4d8bc"/><text x="${X(a)}" y="${T + ph + 14}" text-anchor="middle" font-size="10" font-family="${FONT}">${a}</text>`;
+    for (let j = 0; j <= 1.2001; j += 0.2) g += `<line x1="${L}" y1="${Y(j)}" x2="${L + pw}" y2="${Y(j)}" stroke="#e4d8bc"/><text x="${L - 5}" y="${Y(j) + 3}" text-anchor="end" font-size="10" font-family="${FONT}">${j.toFixed(1)}</text>`;
+    g += `<rect x="${L}" y="${T}" width="${pw}" height="${ph}" fill="none" stroke="#1a1714"/>`;
+    g += `<line x1="${L}" y1="${Y(1)}" x2="${L + pw}" y2="${Y(1)}" stroke="#8a2a16" stroke-width="0.8" stroke-dasharray="3 3"/><text x="${L + 4}" y="${Y(1) - 4}" font-size="9.5" fill="#8a2a16" font-family="${FONT}">F capped at 1</text>`;
+    g += `<text x="${L + pw / 2}" y="${H - 4}" text-anchor="middle" font-size="11" font-family="${FONT}">opening angle φ, degrees</text>`;
+    Object.keys(JTABLE[type]).forEach(hw => {
+      const d = ANGLES.map((a, i) => (i ? "L" : "M") + X(a).toFixed(1) + " " + Y(JTABLE[type][hw][i]).toFixed(1)).join(" ");
+      g += `<path d="${d}" fill="none" stroke="#8a7f6c" stroke-width="1.2" stroke-dasharray="${dash[hw]}"/>`;
+    });
+    g += `<rect x="${X(52)}" y="${Y(0.47)}" width="${X(88) - X(52)}" height="${Y(0.03) - Y(0.47)}" fill="#fffdf7" stroke="#d7cbb3"/>`;
+    g += `<text x="${X(55)}" y="${Y(0.385)}" font-size="10" fill="#5a5348" font-family="${FONT}">height ÷ width</text>`;
+    ["2.28", "1.72", "0.86"].forEach((hw, k) => {
+      const y = Y(0.29 - k * 0.09);
+      g += `<line x1="${X(55)}" y1="${y}" x2="${X(66)}" y2="${y}" stroke="#8a7f6c" stroke-width="1.2" stroke-dasharray="${dash[hw]}"/><text x="${X(69)}" y="${y + 3.5}" font-size="10" fill="#5a5348" font-family="${FONT}">${hw}</text>`;
+    });
+    marks.forEach((m, i) => {
+      g += `<circle cx="${X(m.phi)}" cy="${Y(m.J)}" r="4.5" fill="#1a1714"/><text x="${X(m.phi) + 7}" y="${Y(m.J) - 6 - (i % 2) * 11}" font-size="11" font-family="${FONT}">${m.short} ${m.J.toFixed(2)}</text>`;
+    });
+    svg.innerHTML = g;
+  }
+
+  function read() {
+    const res = {}, marks = { casement:[], pivot:[] };
+    let anyJ = false;
+    OPEN.forEach(o => {
+      const t = $("wf_t_" + o.id).value, f = factor(o);
+      res[o.id] = f;
+      const geo = t !== "none" && t !== "own";
+      document.querySelectorAll(`#wf_r_${o.id}, #wf_p_${o.id}`).forEach(el => el.closest(".wf-geo").style.display = geo ? "" : "none");
+      $("wf_f_" + o.id).closest(".wf-own").style.display = t === "own" ? "" : "none";
+      $("wf_o_" + o.id).textContent = Number.isFinite(f.F) ? f.F.toFixed(2) : "—";
+      $("wf_n_" + o.id).textContent = f.txt;
+      if (t === "casement" || t === "pivot") { anyJ = true; marks[t].push({ short:o.short, phi:f.phi, J:f.J }); }
+    });
+    $("wfJ").style.display = anyJ ? "" : "none";
+    if (anyJ) { drawJ("wfCas", "casement", marks.casement); drawJ("wfPiv", "pivot", marks.pivot); }
+    return res;
+  }
+
+  function init(openings) {
+    OPEN = openings;
+    $("wfRows").innerHTML = openings.map(rowHtml).join("");
+  }
+  return { init, read };
+})();
+</script>
+<script>
+const areaF = {sqm:1, sqcm:0.0001, sqmm:1e-6, sqft:0.092903, sqinch:0.00064516};
+const flowF = {lps:0.001, m3_hour:1/3600, m3_sec:1, ft3_min:0.000471947};
+const volF = {m3:1, ft3:0.0283168};
+const lenF = {mm:0.001, cm:0.01, m:1, in:0.0254, ft:0.3048};
+const flowL = {lps:"L/s", m3_hour:"m³/h", m3_sec:"m³/s", ft3_min:"CFM"};
+const $ = id => document.getElementById(id);
+WF.init([
+  { id:"a1", short:"A1", label:"A1 · high left, air out" },
+  { id:"a2", short:"A2", label:"A2 · high right, air out" },
+  { id:"a3", short:"A3", label:"A3 · low left, air in" },
+  { id:"a4", short:"A4", label:"A4 · low right, air in" }
+]);
+
+function toC(x, unit) {
+  if (isNaN(x)) return null;
+  if (unit === "fahrenheit") return (x-32)*5/9;
+  if (unit === "kelvin") return x-273.15;
+  return x;
+}
+
+function flowSI(Ti, To, A1, A2, A3, A4, ha, Cd) {
+  if (![Ti,To,A1,A2,A3,A4,ha,Cd].every(Number.isFinite)) return null;
+  const left  = A1 + A2;   /* high openings, air out */
+  const right = A3 + A4;   /* low openings, air in */
+  if (left<=0 || right<=0 || ha<=0 || Cd<=0) return null;
+  const Ab = Math.sqrt(1 / (1/(left*left) + 1/(right*right)));
+  const meanC = (Ti + To) / 2;
+  const q = Cd * Ab * Math.sqrt((2 * Math.abs(Ti-To) * ha * 9.81) / (meanC + 273.15));
+  return {q, left, right, Ab};
+}
+
+function calculate() {
+  const A1 = parseFloat($("a1").value) * (areaF[$("a1u").value] || 1);
+  const A2 = parseFloat($("a2").value) * (areaF[$("a2u").value] || 1);
+  const A3 = parseFloat($("a3").value) * (areaF[$("a3u").value] || 1);
+  const A4 = parseFloat($("a4").value) * (areaF[$("a4u").value] || 1);
+  const ha = parseFloat($("ha").value) * (lenF[$("hau").value] || 1);
+  const Ti = toC(parseFloat($("ti").value), $("tiU").value);
+  const To = toC(parseFloat($("to").value), $("toU").value);
+  const Cd = parseFloat($("cd").value);
+  const V  = parseFloat($("vol").value) * (volF[$("volU").value] || 1);
+  const wf = WF.read();
+  const E = [A1 * wf.a1.F, A2 * wf.a2.F, A3 * wf.a3.F, A4 * wf.a4.F];
+  $("wfSum").textContent = E.every(Number.isFinite)
+    ? "Effective areas F × A: " + E.map((e, i) => "A" + (i + 1) + " " + e.toFixed(3)).join(", ") + " m². High group " + (E[0] + E[1]).toFixed(3) + " m², low group " + (E[2] + E[3]).toFixed(3) + " m²" +
+      (E[0] + E[1] > 0 && E[2] + E[3] > 0 ? (Math.abs(E[0] + E[1] - E[2] - E[3]) < 1e-9 ? "; the two groups are equal." : "; the " + (E[0] + E[1] < E[2] + E[3] ? "high" : "low") + " group is the smaller and limits the flow.") : ".")
+    : "";
+  const r = flowSI(Ti, To, E[0], E[1], E[2], E[3], ha, Cd);
+  if (!r) {
+    $("warn").classList.add("show");
+    $("qOut").textContent = "—";
+    $("achOut").textContent = "—";
+    $("siLine").textContent = "";
+    MX.steps($("work"), null, "Enter numeric areas and height to see the working.");
+    drawChart(null);
+    return;
+  }
+  $("warn").classList.remove("show");
+  const unit = $("flowU").value;
+  $("qOut").textContent = (r.q / (flowF[unit] || 1)).toFixed(3);
+  $("qUnitLabel").textContent = flowL[unit];
+  $("achOut").textContent = V>0 ? ((r.q*3600)/V).toFixed(2) : "—";
+  $("siLine").textContent =
+    "Working SI: F·A1+F·A2 = "+r.left.toFixed(3)+" m², F·A3+F·A4 = "+r.right.toFixed(3)+
+    " m², Ab = "+r.Ab.toFixed(3)+" m², ha = "+ha.toFixed(3)+" m, Ti = "+Ti.toFixed(1)+
+    " °C, To = "+To.toFixed(1)+" °C, Qb = "+r.q.toFixed(4)+" m³/s";
+  showSteps({Ti, To, A: [A1, A2, A3, A4], ha, Cd, V, wf, E, r, unit});
+  drawChart({Ti,A1:E[0],A2:E[1],A3:E[2],A4:E[3],ha,Cd,V});
+}
+
+/* ---- worked steps ---- */
+const sel = id => $(id).selectedOptions[0].textContent;
+const n = (x, d) => Number(x).toFixed(d).replace("-", "−");
+const pn = (x, d) => x < 0 ? "(" + n(x, d) + ")" : n(x, d);
+const sg = x => String(Number(Number(x).toPrecision(5)));      /* 5 significant figures, for flows */
+const FLOW_STEP = { lps: "÷ 0.001 m³/s per L/s", m3_sec: "", m3_hour: "× 3600 s per h", ft3_min: "÷ 0.000471947 m³/s per CFM" };
+function showSteps(s) {
+  const dT = Math.abs(s.Ti - s.To), meanC = (s.Ti + s.To) / 2, meanK = meanC + 273.15;
+  const root = Math.sqrt(2 * dT * s.ha * 9.81 / meanK);
+  const L = s.r.left, R = s.r.right, inv = 1 / (L * L) + 1 / (R * R);
+  const list = [];
+  const ids = ["a1", "a2", "a3", "a4"], F = ids.map(id => s.wf[id].F);
+  list.push({ t: "Values in SI units", m: ids.map((id, i) =>
+      "$A$_{" + (i + 1) + "} = " + $(id).value + " " + sel(id + "u") + " = **" + n(s.A[i], 3) + " m²**").concat([
+    "$h$_{a} = " + $("ha").value + " " + sel("hau") + " = **" + n(s.ha, 3) + " m**",
+    "$T$_{i} = " + $("ti").value + " " + sel("tiU") + " = **" + n(s.Ti, 1) + " °C**",
+    "$T$_{o} = " + $("to").value + " " + sel("toU") + " = **" + n(s.To, 1) + " °C**"
+  ]), n: "Areas in m², height in m and temperatures in °C. A1 and A2 are the high openings, where air leaves; A3 and A4 are the low openings, where it enters. g = 9.81 m/s²." });
+  list.push({ t: "Window factors", m: F.map((f, i) => "$F$_{" + (i + 1) + "} = **" + n(f, 2) + "**"),
+    n: ids.map((id, i) => "A" + (i + 1) + ": " + s.wf[id].txt).join(". ") + ". F is 1 for a free hole and never above 1." });
+  list.push({ t: "Effective areas", m: s.E.map((e, i) =>
+      "$A$_{" + (i + 1) + ",eff} = $F$_{" + (i + 1) + "} × $A$_{" + (i + 1) + "} = " + n(F[i], 2) + " × " + n(s.A[i], 3) + " = **" + n(e, 3) + " m²**"),
+    n: "These effective areas take the place of A1 to A4 in the formula from here on." });
+  list.push({ t: "High and low groups", m: [
+    "$A$_{1} + $A$_{2} = " + n(s.E[0], 3) + " + " + n(s.E[1], 3) + " = **" + n(L, 3) + " m²**",
+    "$A$_{3} + $A$_{4} = " + n(s.E[2], 3) + " + " + n(s.E[3], 3) + " = **" + n(R, 3) + " m²**"
+  ], n: "The high openings act together as the outlet and the low openings together as the inlet." });
+  list.push({ t: "Equivalent area of the two groups in series", m: [
+    "@frac{1}{$A$_{b}^{2}} = @frac{1}{($A$_{1} + $A$_{2})^{2}} + @frac{1}{($A$_{3} + $A$_{4})^{2}} = @frac{1}{" + n(L, 3) + "^{2}} + @frac{1}{" + n(R, 3) + "^{2}} = " + n(inv, 4) + " m⁻⁴",
+    "$A$_{b} = @frac{1}{@sqrt{" + n(inv, 4) + "}} = **" + n(s.r.Ab, 4) + " m²**"
+  ], n: "A<sub>b</sub> is smaller than either group, so the smaller group limits the flow most." });
+  list.push({ t: "Temperature difference", m: [
+    "Δ$θ$ = |$T$_{i} − $T$_{o}| = |" + n(s.Ti, 1) + " − " + pn(s.To, 1) + "| = **" + n(dT, 1) + " K**"
+  ] });
+  list.push({ t: "Mean temperature", m: [
+    "@bar{$θ$} = @frac{$T$_{i} + $T$_{o}}{2} = @frac{" + n(s.Ti, 1) + " + " + pn(s.To, 1) + "}{2} = **" + n(meanC, 2) + " °C**",
+    "@bar{$θ$} + 273.15 = " + n(meanC, 2) + " + 273.15 = **" + n(meanK, 2) + " K**"
+  ] });
+  list.push({ t: "Buoyancy term", m: [
+    "@sqrt{@frac{2 · Δ$θ$ · $h$_{a} · $g$}{@bar{$θ$} + 273.15}} = @sqrt{@frac{2 × " + n(dT, 1) + " × " + n(s.ha, 3) + " × 9.81}{" + n(meanK, 2) + "}} = **" + n(root, 4) + " m/s**"
+  ] });
+  list.push({ t: "Airflow", m: [
+    "$Q$_{b} = $C$_{d} · $A$_{b} · (buoyancy term)",
+    "$Q$_{b} = " + n(s.Cd, 2) + " × " + n(s.r.Ab, 4) + " × " + n(root, 4) + " = **" + sg(s.r.q) + " m³/s**"
+  ] });
+  if (s.unit !== "m3_sec") {
+    list.push({ t: "Airflow in the chosen unit", m: [
+      "$Q$_{b} = " + sg(s.r.q) + " m³/s " + FLOW_STEP[s.unit] + " = **" + n(s.r.q / flowF[s.unit], 3) + " " + flowL[s.unit] + "**"
+    ] });
+  }
+  if (s.V > 0) {
+    list.push({ t: "Air changes per hour", m: [
+      "$N$ = @frac{3600 · $Q$_{b}}{$V$} = @frac{3600 × " + sg(s.r.q) + "}{" + n(s.V, 1) + "} = **" + n(s.r.q * 3600 / s.V, 2) + " per hour**"
+    ], n: "Room volume " + $("vol").value + " " + sel("volU") + " = " + n(s.V, 1) + " m³." });
+  } else {
+    list.push({ t: "Air changes per hour", m: [], n: "No room volume entered, so the air-change rate is not calculated." });
+  }
+  MX.steps($("work"), list);
+}
+
+MX.formula($("fx"), [
+  "$Q$_{b} = $C$_{d} · $A$_{b} · @sqrt{@frac{2 · Δ$θ$ · $h$_{a} · $g$}{@bar{$θ$} + 273.15}}",
+  "@frac{1}{$A$_{b}^{2}} = @frac{1}{($A$_{1} + $A$_{2})^{2}} + @frac{1}{($A$_{3} + $A$_{4})^{2}}",
+  "Δ$θ$ = |$T$_{i} − $T$_{o}|",
+  "@bar{$θ$} = @frac{$T$_{i} + $T$_{o}}{2}"
+]);
+MX.defs($("fxDefs"), [
+  ["$Q$_{b}", "airflow through the openings, m³/s"],
+  ["$C$_{d}", "discharge coefficient, usually 0.61"],
+  ["$A$_{b}", "equivalent area of the high and low groups in series, m²"],
+  ["$A$_{1}, $A$_{2}", "effective areas of the high openings, air out, m²"],
+  ["$A$_{3}, $A$_{4}", "effective areas of the low openings, air in, m²"],
+  ["$h$_{a}", "height between the high and low centre lines, m"],
+  ["Δ$θ$", "indoor–outdoor temperature difference, K"],
+  ["@bar{$θ$}", "mean of indoor and outdoor temperature, °C"],
+  ["$g$", "9.81 m/s²"],
+  ["$F$", "window factor of an opening, 1 for a free hole"],
+  ["$T$_{i}, $T$_{o}", "indoor and outdoor temperature, °C"],
+  ["$N$", "air changes per hour, 1/h"]
+]);
+
+function drawChart(s) {
+  const svg = $("chart");
+  if (!s) { svg.innerHTML = ""; return; }
+  const W=700,H=240,L=50,R=16,T=16,B=36,pW=W-L-R,pH=H-T-B;
+  const pts=[];
+  for (let z=s.Ti-10; z<=s.Ti+10; z+=1) {
+    const r = flowSI(s.Ti,z,s.A1,s.A2,s.A3,s.A4,s.ha,s.Cd);
+    pts.push({t:z, ls: r ? r.q*1000 : 0});
+  }
+  const t0=pts[0].t, t1=pts[pts.length-1].t;
+  const yM=Math.max(...pts.map(p=>p.ls),0.001);
+  const x=t=>L+((t-t0)/(t1-t0))*pW;
+  const y=v=>T+pH-(v/yM)*pH;
+  const d=pts.map((p,i)=>(i?"L":"M")+x(p.t).toFixed(1)+" "+y(p.ls).toFixed(1)).join(" ");
+  let g="";
+  for (let i=0;i<=4;i++){
+    const v=yM*i/4, yy=y(v);
+    g+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#cbbf9a"/><text x="${L-6}" y="${yy+4}" font-size="11" text-anchor="end" font-family="serif">${v.toFixed(0)}</text>`;
+  }
+  for (let t=Math.ceil(t0); t<=Math.floor(t1); t+=2){
+    g+=`<text x="${x(t)}" y="${H-14}" font-size="11" text-anchor="middle" font-family="serif">${t}</text>`;
+  }
+  svg.innerHTML = `<rect x="0.5" y="0.5" width="699" height="239" fill="#fffaf0" stroke="#111"/>${g}
+    <line x1="${L}" y1="${T}" x2="${L}" y2="${T+pH}" stroke="#111"/>
+    <line x1="${L}" y1="${T+pH}" x2="${W-R}" y2="${T+pH}" stroke="#111"/>
+    <path d="${d}" fill="none" stroke="#111" stroke-width="2"/>
+    ${pts.map(p=>`<circle cx="${x(p.t)}" cy="${y(p.ls)}" r="2" fill="#111"/>`).join("")}
+    <text x="${W/2}" y="${H-3}" text-anchor="middle" font-size="12" font-family="serif">Outdoor temperature (°C) · airflow in L/s</text>`;
+}
+
+document.querySelectorAll("input, select").forEach(el => {
+  el.addEventListener("input", calculate);
+  el.addEventListener("change", calculate);
+});
+calculate();
+</script>
+</body>
+</html>

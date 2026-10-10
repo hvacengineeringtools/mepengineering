@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Pressure-vessel volume for a pump set by the start-frequency method." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VI — Pneumatic tank</title>
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background:#cfc3a8; color:var(--ink);
+  font:16px/1.45 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 40px; background:var(--paper); padding:26px 32px 36px;
+  border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset, 8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:2px 0 12px; margin-bottom:14px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:4px 0 2px; font-weight:600; letter-spacing:.01em; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:6px; margin:0 0 18px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink);
+  border:1px solid var(--ink); padding:6px 2px; font-size:10px; letter-spacing:.02em; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:12px; margin:22px 0 8px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:4px; }
+p { margin:0; }
+.lead { color:var(--muted); font-size:14.5px; margin-top:10px; }
+
+/* Typeset equations: serif italic variables, upright numbers, operators and subscript words */
+.formula {
+  --math:"STIX Two Text","Cambria Math","Latin Modern Roman","Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",P052,"TeX Gyre Pagella","Iowan Old Style",Georgia,"Noto Serif","DejaVu Serif",serif;
+  display:grid; grid-template-columns:auto auto auto; justify-content:center; align-items:center;
+  column-gap:14px; row-gap:26px; background:var(--panel); border:1px solid var(--ink);
+  outline:1px solid var(--faint); outline-offset:-5px; padding:26px 20px;
+  font-family:var(--math); font-size:23px; line-height:1; color:var(--ink);
+  font-variant-numeric:lining-nums; overflow-x:auto;
+}
+.formula i { font-style:italic; }
+.formula sub { font-size:.66em; font-style:normal; line-height:0; vertical-align:-.28em; margin-left:.06em; }
+.formula sub i { font-style:italic; }
+.eq { display:contents; }
+.eq .lhs { justify-self:end; white-space:nowrap; }
+.eq .op { justify-self:center; }
+.frac { justify-self:start; display:inline-flex; flex-direction:column; align-items:center; white-space:nowrap; }
+.frac .num, .frac .den { padding:0 .55em; }
+.frac .num { padding-bottom:.32em; border-bottom:1px solid var(--ink); }
+.frac .den { padding-top:.36em; }
+.dot { margin:0 .2em; }
+.defs { display:grid; grid-template-columns:1fr 1fr; gap:6px 28px; margin:14px 0 0; padding:0; list-style:none; font-size:14px; }
+.defs li { display:grid; grid-template-columns:34px 1fr; gap:8px; align-items:baseline; }
+.defs b { font-family:"STIX Two Text","Cambria Math","Latin Modern Roman","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif","DejaVu Serif",serif; font-weight:400; font-size:16px; }
+.defs b i { font-style:italic; }
+.defs b sub { font-size:.68em; line-height:0; vertical-align:-.25em; }
+
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 18px; }
+.field label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
+.pair { display:grid; grid-template-columns:1fr 96px; }
+.pair span, .solo {
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid #8a7f6c; border-left:0; background:#efe6d4;
+  font:12px/1 "Courier New", Courier, monospace; color:var(--muted);
+}
+.solo { border-left:1px solid #8a7f6c; min-height:36px; }
+input {
+  width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink);
+  font:15px/1.2 "Courier New", Courier, monospace; padding:7px 8px; min-height:36px; border-radius:0;
+}
+input:focus { outline:1px solid var(--ink); border-color:var(--ink); }
+
+.results { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:9px 12px 8px; min-height:78px; }
+.box .k { font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 24px/1.1 "Courier New", Courier, monospace; margin-top:6px; }
+.box .u { font-size:11px; color:var(--muted); margin-top:2px; }
+.warn { display:none; border:1px solid var(--ink); padding:7px 10px; margin-top:12px; font-size:13px; }
+@media (max-width:720px) {
+  .book { margin:0; padding:16px 14px 28px; }
+  nav.pages { grid-template-columns:repeat(3,1fr); }
+  .defs, .fields { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr 1fr; }
+  .eq { grid-template-columns:36px 12px 1fr; }
+}
+@media print { body { background:#fff; } .book { box-shadow:none; margin:0; border:0; } }
+footer { margin-top:26px; border-top:1px solid var(--faint); padding-top:10px; font-size:12px; line-height:1.5; color:var(--muted); }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VI · Pressure-vessel sizing</div>
+  <h1>Pneumatic pressure vessel</h1>
+  <div class="sub">Vessel volume for a pump set · start-frequency method</div>
+</header>
+<nav class="pages">
+  <a href="index.html"><span>—</span>Contents</a>
+  <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+  <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+  <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+  <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+  <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+  <a class="on" href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+  <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+  <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+  <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+  <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+  <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+  <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+  <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+  <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+</nav>
+
+<h2>Formula</h2>
+<div class="formula" role="math" aria-label="V equals 16.5 times Q times Pu times Pi, divided by Zmax times delta P times Pc. dV equals 16.5 times Q, divided by Zmax.">
+  <div class="eq" aria-hidden="true">
+    <span class="lhs"><i>V</i></span><span class="op">=</span>
+    <span class="frac"><span class="num">16.5<span class="dot">·</span><i>Q</i><span class="dot">·</span><i>P</i><sub>u</sub><span class="dot">·</span><i>P</i><sub>i</sub></span><span class="den"><i>Z</i><sub>max</sub><span class="dot">·</span>Δ<i>P</i><span class="dot">·</span><i>P</i><sub>c</sub></span></span>
+  </div>
+  <div class="eq" aria-hidden="true">
+    <span class="lhs">d<i>V</i></span><span class="op">=</span>
+    <span class="frac"><span class="num">16.5<span class="dot">·</span><i>Q</i></span><span class="den"><i>Z</i><sub>max</sub></span></span>
+  </div>
+</div>
+<ul class="defs">
+  <li><b><i>Q</i></b><span>factor × required flow, L/min</span></li>
+  <li><b>Δ<i>P</i></b><span><i>P</i><sub>u</sub> − <i>P</i><sub>i</sub>, bar absolute</span></li>
+  <li><b><i>P</i><sub>c</sub></b><span><i>P</i><sub>i</sub> − 0.5 bar, empty-tank charge</span></li>
+  <li><b><i>V</i></b><span>tank volume, litres</span></li>
+</ul>
+<p class="lead">P<sub>u</sub> is normally 0.5 to 1 bar above P<sub>i</sub>. Check the permitted starts per hour with the pump and motor manufacturer. Service pressure is a vessel rating and is not used here.</p>
+
+<h2>Inputs</h2>
+<div class="fields">
+  <div class="field"><label for="name">Service</label><input id="name" value="Potable water" /></div>
+  <div class="field"><label for="factor">Pump factor</label><input id="factor" type="number" step="any" value="1.1" /></div>
+  <div class="field"><label for="req">Required flow</label><div class="pair"><input id="req" type="number" step="any" value="409.09" /><span>L/min</span></div></div>
+  <div class="field"><label for="z">Z<sub>max</sub></label><div class="pair"><input id="z" type="number" step="any" value="18" /><span>starts / hr</span></div></div>
+  <div class="field"><label for="pbasis">Pressures entered as</label><select id="pbasis"><option value="abs" selected>Absolute (bar abs)</option><option value="gauge">Gauge (bar g) — 1.013 bar is added</option></select></div>
+  <div class="field"><label for="pi">P<sub>i</sub> · pump starts</label><div class="pair"><input id="pi" type="number" step="any" value="7" /><span id="piU">bar abs</span></div></div>
+  <div class="field"><label for="pu">P<sub>u</sub> · pump stops</label><div class="pair"><input id="pu" type="number" step="any" value="8" /><span id="puU">bar abs</span></div></div>
+</div>
+<div id="note" class="warn"></div>
+
+<h2>Result</h2>
+<div class="results">
+  <div class="box"><div class="k">Pump flow Q</div><div class="v" id="oQ">—</div><div class="u">L/min</div></div>
+  <div class="box"><div class="k">ΔP</div><div class="v" id="oDp">—</div><div class="u">bar</div></div>
+  <div class="box"><div class="k">P<sub>c</sub></div><div class="v" id="oPc">—</div><div class="u">bar abs (pre-charge, absolute)</div></div>
+  <div class="box"><div class="k">Tank volume V</div><div class="v" id="oV">—</div><div class="u">L</div></div>
+  <div class="box"><div class="k">Utilisable dV</div><div class="v" id="oDv">—</div><div class="u">L</div></div>
+  <div class="box"><div class="k">Selected size</div><div class="v" id="oDes">—</div><div class="u">L, next step up</div></div>
+</div>
+<footer>
+  Method: Boyle's law with a start-frequency limit. With the demand at half the pump flow, the shortest pump cycle sets the drawdown dV = 15 Q / Z<sub>max</sub> (Q in L/min, Z<sub>max</sub> in starts per hour), increased by 10 % to 16.5 Q / Z<sub>max</sub>.
+  The vessel volume is V = dV · P<sub>i</sub> · P<sub>u</sub> / (P<sub>c</sub> · ΔP) with all pressures absolute. The pre-charge is taken 0.5 bar below the cut-in pressure.
+  The selected size is the next size up in a typical nominal range; confirm it against the manufacturer's range and the vessel's pressure rating.
+</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers and are not reproduced here. These calculations are provided for design checking only, without warranty of any kind; verify results against the cited standards and the project requirements before relying on them.</div>
+</article>
+<script>
+const SIZES = [100,150,200,300,500,750,1000,1500,2000,3000,4000,5000,8000,10000];
+const $ = id => document.getElementById(id);
+function nextSize(v){
+  if(!Number.isFinite(v)||v<=0) return "—";
+  return SIZES.find(s => s + 1e-6 >= v) || Math.ceil(v/500)*500;
+}
+function calc(){
+  const req=parseFloat($("req").value), f=parseFloat($("factor").value);
+  const base=$("pbasis").value==="gauge"?1.01325:0;
+  $("piU").textContent=$("puU").textContent=base?"bar g":"bar abs";
+  const z=parseFloat($("z").value), pi=parseFloat($("pi").value)+base, pu=parseFloat($("pu").value)+base;
+  const Q=req*f, dP=pu-pi, Pc=pi-0.5;
+  const ok=Q>0 && z>0 && dP>0 && Pc>0 && pi>0 && pu>0;
+  const V=ok ? 16.5*Q*pu*pi/(z*dP*Pc) : NaN;
+  const dV=ok ? 16.5*Q/z : NaN;
+  const notes=[];
+  if(!(dP>0)) notes.push("Stop pressure must be above start pressure.");
+  if(!(Pc>0)) notes.push("Pre-charge Pc is not positive.");
+  if(z>10) notes.push("Starts per hour are above 10; confirm the pump and motor are rated for this.");
+  $("oQ").textContent=Number.isFinite(Q)?Q.toFixed(1):"—";
+  $("oDp").textContent=Number.isFinite(dP)?dP.toFixed(2):"—";
+  $("oPc").textContent=Number.isFinite(Pc)?Pc.toFixed(2):"—";
+  $("oV").textContent=Number.isFinite(V)?Math.round(V).toLocaleString("en-GB"):"—";
+  $("oDv").textContent=Number.isFinite(dV)?dV.toFixed(1):"—";
+  const size=nextSize(V);
+  $("oDes").textContent=size==="—"?"—":Number(size).toLocaleString("en-GB");
+  $("note").textContent=notes.join(" ");
+  $("note").style.display=notes.length?"block":"none";
+}
+document.querySelectorAll("input").forEach(el=>el.addEventListener("input", calc));
+$("pbasis").addEventListener("change", calc);
+calc();
+</script>
+</body>
+</html>
