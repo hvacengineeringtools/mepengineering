@@ -21,9 +21,10 @@ A static site of fifteen calculation sheets. Open `index.html` in a browser, or 
 | XII | `refrigerant.html` | Refrigerant discharge design: machinery-room ventilation, BS EN 378 and ASHRAE 15 |
 | XIII | `jet-fan.html` | Jet fans estimation: throw and coverage method compared with the pressure-loss (obstruction) method; preliminary design, verify with CFD; editable entrainment constant C and a tab on the accuracy of K, Kv, η and C |
 | XIV | `envelope.html` | Building envelope U- and R-value requirements by climate zone: city search, then Section 5 tables (ASHRAE/IES 90.1-2025 SI, ASHRAE 169-2025) |
+| XVI | `cooling-tower-simple.html` | Simple cooling tower sheet: heat rejected from flow and water temperatures, and the effect of a change in water flow on approach and water in/out (Merkel estimate with an assumed L/G and slope) |
 | XV | `cooling-tower-chiller.html` | Cooling tower: linked water in/out, range, approach, wet-bulb, flow and heat rejected; Merkel method (PDH M374) for an existing tower when the flow, wet-bulb, fan or load changes. Chiller: minimum COP and IPLV.SI from ASHRAE/IES 90.1-2025 (SI) Tables 6.8.1-3 and 6.8.1-16 with the Kadj adjustment of §6.4.1.2.1, a manufacturer’s selection (COP, IPLV.SI) adjusted to new evaporator and condenser water temperatures, tower water use (evaporation, bleed-off, drift, make-up), the rating conditions of the 90.1 and AHRI 551/591 tables, and the recorded Tables 6.8.1-3, 6.8.1-7 and 6.8.1-16 |
 
-`psychro.js` must stay beside sheets IV, V and XV. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX and XV: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
+`psychro.js` must stay beside sheets IV, V, XV and XVI. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX and XV: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
 
 ## Browsers and devices
 
