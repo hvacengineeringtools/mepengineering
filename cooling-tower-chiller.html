@@ -276,11 +276,11 @@ ol.steps li { margin:4px 0; }
   <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   </nav>
 
-<p class="lead">Works out the heat a cooling tower rejects, how the range and the water temperatures change when the flow or load changes, and how much water it evaporates, bleeds off, loses as drift and needs as make-up. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
-<nav class="toc" aria-label="On this page"><a href="#s1">1 Heat and temperatures</a><a href="#s2">2 Change of flow or load</a><a href="#s3">3 Water use</a></nav>
+<p class="lead">Works out the heat a cooling tower rejects, how the range and the water temperatures move when you change the flow or load, and how much water it evaporates, bleeds off, loses as drift and needs as make-up. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Heat and temperatures</a><a href="#s2">2 Water use</a></nav>
 
 <h2 id="s1">1. Heat rejected and water temperatures</h2>
-<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together by simple heat-balance arithmetic. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded). Tick <i>Hold</i> to keep a value fixed, for example the wet-bulb and the heat rejected while you change the flow. The sheet does not know how a particular tower responds; see section 2.</p>
+<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together by simple heat-balance arithmetic. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded). Tick <i>Hold</i> to keep a value fixed, for example the wet-bulb and the heat rejected while you change the flow. The sheet does not know how a particular tower responds. To see what a change of flow does, hold the heat rejected and the wet-bulb (and water out, if you want it kept), then type a new flow: the range and the other water temperature follow. Press “Keep these values as the first case” first if you want to compare.</p>
 
 <div class="fields three" id="ptFields">
   <div class="field" data-v="H"><label for="hwt">Water in (hot), T<sub>in</sub></label>
@@ -311,42 +311,13 @@ ol.steps li { margin:4px 0; }
 
 <div class="results" id="ptRes"></div>
 <p class="si">Chiller: <a id="toChiller" href="chiller-efficiency.html">open sheet XVI with these water temperatures</a> (water out → chiller entering, water in ← chiller leaving).</p>
-
-<h2 id="s2">2. If the water flow or the heat load changes</h2>
-<p class="lead">Change the water flow, then choose what stays the same. The sheet works out the new range and the new water in and out from the heat balance. The new case is also used in the water use below.</p>
-<div class="fields three">
-  <div class="field"><label for="scflow">New water flow</label>
-    <div class="pair"><input id="scflow" type="number" inputmode="decimal" step="any" /><span id="scflowU">L/s</span></div></div>
-  <div class="field"><label for="scpct">or as % of the flow above</label>
-    <div class="pair"><input id="scpct" type="number" inputmode="decimal" step="any" value="120" /><span>%</span></div></div>
-  <div class="field"><label for="scmode">What stays the same</label>
-    <select id="scmode">
-      <option value="q">Heat rejected (the range changes)</option>
-      <option value="r">Range (the heat rejected changes)</option>
-      <option value="newq">A new heat rejection that I enter</option>
-    </select></div>
-  <div class="field" id="scqWrap" hidden><label for="scq">New heat rejected</label>
-    <div class="pair"><input id="scq" type="number" inputmode="decimal" step="any" /><span>kW</span></div></div>
-  <div class="field"><label for="schold">Water temperatures: what stays the same</label>
-    <select id="schold">
-      <option value="mean">The average of water in and out</option>
-      <option value="out">Water out (cold)</option>
-      <option value="in">Water in (hot)</option>
-    </select>
-    <div class="hint" id="scholdHint"></div></div>
-  <div class="field"><label for="scwb">Wet-bulb for the new case</label>
-    <div class="pair"><input id="scwb" type="number" inputmode="decimal" step="any" /><span>°C</span></div>
-    <div class="hint" id="scwbHint">Same as the first case.</div></div>
-</div>
-<div class="box-note">The range follows from the heat balance, so it is exact. How far the tower’s water-out temperature moves when the flow changes depends on the tower’s fill, size and fan, which are not known here, so the sheet does not predict it. It holds the temperature you pick (the average by default) and splits the new range about it. As a check, for an example tower with the flow raised from 100 to 120 L/s at the same load, the average-held figures were 0.24 K above the Merkel-method result for both water in and water out. Treat the water temperatures as a first estimate, and use the maker’s performance curve at the new flow for a firm figure.</div>
-<div class="warn" id="scWarn" role="status"></div>
+<div class="btnrow" style="margin-top:14px"><button type="button" id="ptSave" class="ghost">Keep these values as the first case</button></div>
+<p class="hint" id="cmpHint"></p>
 <div class="table-scroll"><table class="cmp" id="scTable"></table></div>
-<h3 class="sub3">Other flows, same setting</h3>
-<div class="table-scroll"><table class="cmp" id="sweepTable"></table></div>
 
 <!-- ============ WATER ============ -->
-<h2 id="s3">3. Water use: evaporation, bleed-off and make-up</h2>
-<p class="lead">Estimates the water a tower evaporates, bleeds off and loses as drift, and the make-up that replaces it. It uses the flow and range of section 1 (first case) and, when you enter a new flow in section 2, the new case. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button></p>
+<h2 id="s2">2. Water use: evaporation, bleed-off and make-up</h2>
+<p class="lead">Estimates the water a tower evaporates, bleeds off and loses as drift, and the make-up that replaces it. It uses the flow and range of section 1 and, when you have kept a first case, both the first case and the current values. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button></p>
 <div class="fields three">
   <div class="field wide"><label for="emeth">Evaporation estimate used</label>
     <select id="emeth">
@@ -402,9 +373,6 @@ ol.steps li { margin:4px 0; }
     <div role="tabpanel" id="mxtab-tower" aria-labelledby="mxt-tower">
       <h3>Relations</h3>
       <div id="fxT1" role="math"></div>
-      <h3>Change of flow or load</h3>
-      <div id="fxT4" role="math"></div>
-      <ul id="fxT4Defs"></ul>
       <h3>Water use: evaporation, bleed-off, drift and make-up</h3>
       <div id="fxW" role="math"></div>
       <ul id="fxWDefs"></ul>
@@ -425,7 +393,7 @@ ol.steps li { margin:4px 0; }
     </div>
     <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
       <h3>Method</h3>
-<p>Heat rejected = water flow × 4.186 × range, with water at 1 kg per litre. Range = water in − water out; approach = water out − wet-bulb; effectiveness = range ÷ (range + approach). Evaporation, blow-down, drift and make-up follow PDH course M374 (Primo), sections 6 to 8, 10 and 20. When the flow or load changes, the new range follows from the heat balance. The new water temperatures are not predicted from the tower: they come from the rule you choose.</p>
+<p>Heat rejected = water flow × 4.186 × range, with water at 1 kg per litre. Range = water in − water out; approach = water out − wet-bulb; effectiveness = range ÷ (range + approach). Evaporation, blow-down, drift and make-up follow PDH course M374 (Primo), sections 6 to 8, 10 and 20. When you change the flow or load, the new range follows from the heat balance, and the water temperatures follow from whichever values you hold. They are not predicted from the tower’s own response.</p>
       <h3>What this sheet does not do</h3>
 <p>It does not model the tower’s own response (the Merkel method), so it cannot say how much water out rises when the flow rises, how the approach changes with the wet-bulb, or what the air flow does. That needs the tower characteristic (KaV/L against L/G) from the maker, or the maker’s performance curve. Closed-circuit towers, dry coolers and evaporative condensers are not covered.</p>
 <h3>Approach limit</h3>
@@ -537,7 +505,7 @@ function ptInput(v) {
   writeFields(v); recalc();
 }
 VARS.forEach(v => { $(ID[v]).addEventListener("input", () => ptInput(v)); $(ID[v]).addEventListener("change", () => { writeFields(null); }); });
-$("flowU").addEventListener("change", () => { writeFields(null); $("scflowU").textContent = FU[$("flowU").value].n; syncScFlow(); recalc(); });
+$("flowU").addEventListener("change", () => { writeFields(null); recalc(); });
 document.querySelectorAll("[data-hold]").forEach(cb => cb.addEventListener("change", () => {
   const v = cb.dataset.hold;
   if (cb.checked) {
@@ -552,46 +520,18 @@ $("ptReset").addEventListener("click", () => {
   pins = []; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
   hist = ["W", "F", "C", "H"];
   val.H = 35; val.C = 30; val.W = 25.5; val.F = 100; val.R = 5; val.A = 4.5; val.Q = K * 100 * 5;
-  scWbLinked = true; $("scpct").value = 120; $("scmode").value = "q"; $("schold").value = "mean";
+  snap = Object.assign({}, val);
   drivers = pickDrivers(pins.concat(hist, VARS));
-  writeFields(null); syncScFlow(); recalc();
+  writeFields(null); recalc();
 });
 
-/* ============================================================
-   2. A new flow or load: the heat balance gives the range; the water temperatures follow the rule chosen
-   ============================================================ */
-let scWbLinked = true, scqSet = false;
-function scenario(o) {
-  const R1 = val.R, F2 = o.F2;
-  const R2 = o.mode === "r" ? R1 : o.mode === "newq" ? o.Q2 / (K * F2) : R1 * val.F / F2;
-  if (!(R2 > 0) || !(F2 > 0)) return { ok: false };
-  let C2, H2;
-  if (o.hold === "out") { C2 = val.C; H2 = C2 + R2; }
-  else if (o.hold === "in") { H2 = val.H; C2 = H2 - R2; }
-  else { const mid = (val.H + val.C) / 2; H2 = mid + R2 / 2; C2 = mid - R2 / 2; }
-  return { ok: true, R: R2, H: H2, C: C2, A: C2 - o.W2, Q: K * F2 * R2, W: o.W2, F: F2 };
-}
-function readScenario() {
-  return { F2: toLps(num("scflow")), W2: num("scwb"), mode: $("scmode").value, Q2: num("scq"), hold: $("schold").value };
-}
-const scValid = o => o.F2 > 0 && isFinite(o.W2) && (o.mode !== "newq" || o.Q2 > 0);
-function syncScFlow() {
-  const p = num("scpct"); if (isFinite(p) && val.F > 0) $("scflow").value = fromLps(val.F * p / 100).toFixed(FU[$("flowU").value].d);
-  $("scflowU").textContent = FU[$("flowU").value].n;
-}
-$("scflow").addEventListener("input", () => { const f = toLps(num("scflow")); if (f > 0 && val.F > 0) $("scpct").value = (f / val.F * 100).toFixed(1); recalc(); });
-$("scpct").addEventListener("input", () => { const p = num("scpct"); if (isFinite(p) && val.F > 0) $("scflow").value = fromLps(val.F * p / 100).toFixed(FU[$("flowU").value].d); recalc(); });
-$("scwb").addEventListener("input", () => { scWbLinked = false; recalc(); });
-$("scmode").addEventListener("change", () => {
-  const nq = $("scmode").value === "newq"; $("scqWrap").hidden = !nq;
-  if (nq && !scqSet) { $("scq").value = val.Q.toFixed(1); scqSet = true; }
-  recalc();
-});
-["scq", "schold", "coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount"].forEach(id => $(id).addEventListener("input", recalc));
+/* the first case kept for comparison */
+let snap = { H: 35, C: 30, W: 25.5, F: 100, R: 5, A: 4.5, Q: K * 100 * 5 };
+const snapDiff = () => Math.abs(snap.F - val.F) > 1e-9 || Math.abs(snap.R - val.R) > 1e-9 || Math.abs(snap.H - val.H) > 1e-9 || Math.abs(snap.C - val.C) > 1e-9 || Math.abs(snap.W - val.W) > 1e-9;
+$("ptSave").addEventListener("click", () => { snap = Object.assign({}, val); recalc(); });
+["coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount"].forEach(id => $(id).addEventListener("input", recalc));
 
 function recalc() {
-  if (scWbLinked && isFinite(val.W)) $("scwb").value = val.W.toFixed(2);
-  if (val.F > 0 && isFinite(num("scpct")) && document.activeElement !== $("scflow")) $("scflow").value = fromLps(val.F * num("scpct") / 100).toFixed(FU[$("flowU").value].d);
   warnBox("ptWarn", ptWarnings());
   const okPt = val.R > 0 && val.A > 0 && val.F > 0;
   const eff = val.R / (val.R + val.A);
@@ -603,38 +543,21 @@ function recalc() {
   ].join("") : "";
   { const a = $("toChiller"); if (a && okPt) a.href = "chiller-efficiency.html?cin=" + val.C.toFixed(2) + "&cout=" + val.H.toFixed(2) + "&wb=" + val.W.toFixed(2) + "&app=" + val.A.toFixed(2); }
 
-  const o = readScenario(), sw = [];
-  let sc = null;
-  $("scholdHint").textContent = { mean: "Water in rises or falls by half the change of range, water out by the other half.", out: "Water in moves by the whole change of range.", in: "Water out moves by the whole change of range." }[$("schold").value];
-  if (!okPt) sw.push("Complete section 1 first.");
-  else if (scValid(o)) {
-    sc = scenario(o);
-    if (!sc.ok) sw.push("These inputs give no positive range. Check the flow and the heat rejected.");
-  } else sw.push("Enter a new flow and a wet-bulb.");
-  const T = $("scTable"), SW = $("sweepTable");
-  if (sc && sc.ok) {
-    if (!(sc.A > 0)) sw.push("The new water out is at or below the wet-bulb. A tower cannot do that: raise the water out, or lower the load or flow.");
-    else if (sc.A < 2.8) sw.push("The new approach is below about 2.8 K. Makers rarely guarantee less, so check with the maker.");
-    if (sc.A > 15) sw.push("A new approach above 15 K means the tower is badly under-sized for this case.");
-    const row = (nm, a, b, dd, u) => "<tr><th>" + nm + "</th><td>" + a + "</td><td><b>" + b + "</b></td><td>" + dd + "</td><td>" + u + "</td></tr>";
-    T.innerHTML = "<thead><tr><th></th><th>First case</th><th>New case</th><th>Change</th><th></th></tr></thead><tbody>" +
-      row("Water in", fmt(val.H, 2), fmt(sc.H, 2), sg(sc.H - val.H, 2), "°C") +
-      row("Water out", fmt(val.C, 2), fmt(sc.C, 2), sg(sc.C - val.C, 2), "°C") +
-      row("Approach", fmt(val.A, 2), fmt(sc.A, 2), sg(sc.A - val.A, 2), "K") +
-      row("Range", fmt(val.R, 2), fmt(sc.R, 2), sg(sc.R - val.R, 2), "K") +
-      row("Wet-bulb", fmt(val.W, 2), fmt(sc.W, 2), sg(sc.W - val.W, 2), "°C") +
-      row("Water flow", flowStr(val.F), flowStr(sc.F), sg(fromLps(sc.F - val.F), FU[$("flowU").value].d), FU[$("flowU").value].n) +
-      row("Heat rejected", fmt(val.Q, 0), fmt(sc.Q, 0), sg(sc.Q - val.Q, 0), "kW") + "</tbody>";
-    const dispD = FU[$("flowU").value].d, pnow = num("scpct");
-    const rows = []; for (let p = 50; p <= 150; p += 10) rows.push({ p, s: scenario(Object.assign({}, o, { F2: val.F * p / 100 })) });
-    const near = rows.reduce((b, r) => Math.abs(r.p - pnow) < Math.abs(b.p - pnow) ? r : b, rows[0]);
-    SW.innerHTML = "<thead><tr><th>Flow, %</th><th>Flow, " + FU[$("flowU").value].n + "</th><th>Water in, °C</th><th>Water out, °C</th><th>Approach, K</th><th>Range, K</th><th>Heat, kW</th></tr></thead><tbody>" +
-      rows.map(r => r.s.ok ? "<tr" + (r === near ? ' class="on"' : "") + "><td>" + r.p + "</td><td>" + fmt(fromLps(r.s.F), dispD) + "</td><td>" + fmt(r.s.H, 2) + "</td><td>" + fmt(r.s.C, 2) + "</td><td>" + fmt(r.s.A, 2) + "</td><td>" + fmt(r.s.R, 2) + "</td><td>" + fmt(r.s.Q, 0) + "</td></tr>" : "<tr><td>" + r.p + '</td><td colspan="6">no positive range</td></tr>').join("") + "</tbody>";
-  } else { T.innerHTML = ""; SW.innerHTML = ""; }
-  warnBox("scWarn", sw);
-  $("scwbHint").textContent = scWbLinked ? "Same as the first case." : "Changed from the first case.";
-  waterUse(okPt, val, sc && sc.ok ? sc : null);
-  working(sc && sc.ok ? sc : null, o);
+  const T = $("scTable"), diff = okPt && snapDiff();
+  if (diff) {
+    const row = (nm, a, b2, dd, u) => "<tr><th>" + nm + "</th><td>" + a + "</td><td><b>" + b2 + "</b></td><td>" + dd + "</td><td>" + u + "</td></tr>";
+    T.innerHTML = "<thead><tr><th></th><th>First case</th><th>Now</th><th>Change</th><th></th></tr></thead><tbody>" +
+      row("Water in", fmt(snap.H, 2), fmt(val.H, 2), sg(val.H - snap.H, 2), "°C") +
+      row("Water out", fmt(snap.C, 2), fmt(val.C, 2), sg(val.C - snap.C, 2), "°C") +
+      row("Approach", fmt(snap.A, 2), fmt(val.A, 2), sg(val.A - snap.A, 2), "K") +
+      row("Range", fmt(snap.R, 2), fmt(val.R, 2), sg(val.R - snap.R, 2), "K") +
+      row("Wet-bulb", fmt(snap.W, 2), fmt(val.W, 2), sg(val.W - snap.W, 2), "°C") +
+      row("Water flow", flowStr(snap.F), flowStr(val.F), sg(fromLps(val.F - snap.F), FU[$("flowU").value].d), FU[$("flowU").value].n) +
+      row("Heat rejected", fmt(snap.Q, 0), fmt(val.Q, 0), sg(val.Q - snap.Q, 0), "kW") + "</tbody>";
+    $("cmpHint").textContent = "Compared with the values kept as the first case.";
+  } else { T.innerHTML = ""; $("cmpHint").textContent = okPt ? "Change a value, and the change from the first case is shown here." : ""; }
+  waterUse(okPt, val, diff ? snap : null);
+  working(diff ? snap : null);
 }
 
 
@@ -664,8 +587,7 @@ function waterUse(okPt, v, sc) {
   if (meth === "lat" && !(fev > 0 && fev <= 100)) w.push("Enter the evaporative share, 0 to 100 %.");
   warnBox("wWarn", w);
   const u = WU[$("wunit").value], fe = (fev > 0 ? fev : 90);
-  const cases = [{ n: "First case", F: v.F, R: v.R }];
-  if (sc && sc.ok) cases.push({ n: "New case", F: sc.F, R: sc.R });
+  const cases = sc ? [{ n: "First case", F: sc.F, R: sc.R }, { n: "Now", F: v.F, R: v.R }] : [{ n: "Now", F: v.F, R: v.R }];
   const calc = c => {
     const V = c.F * 3.6, E = EMETH[meth].fx(V, c.R, fe), D = V * dr / 100;
     let B = coc > 1 ? E / (coc - 1) : NaN; if (dc && B - D < 0) B = D; if (dc) B = B - D;
@@ -684,17 +606,17 @@ function waterUse(okPt, v, sc) {
   }
   const dn = $("driftNote");
   if (coc > 1) {
-    const r1 = res[0], Bh = r1.E / (coc - 1);
+    const r1 = res[res.length - 1], Bh = r1.E / (coc - 1);
     dn.hidden = false;
-    dn.innerHTML = "<b>Drift loss, first case:</b> " + fmt(r1.D * u.f, u.d + 2) + " " + u.n + " (" + fmt(r1.D * 1000 / 3600, 4) + " L/s, " + fmt(dr, 4) + " % of flow). " +
+    dn.innerHTML = "<b>Drift loss:</b> " + fmt(r1.D * u.f, u.d + 2) + " " + u.n + " (" + fmt(r1.D * 1000 / 3600, 4) + " L/s, " + fmt(dr, 4) + " % of flow). " +
       (dc ? "Bleed-off = " + fmt(r1.E * u.f, u.d + 2) + " ÷ (" + fmt(coc, 2) + " − 1) − " + fmt(r1.D * u.f, u.d + 2) + " = <b>" + fmt(r1.B * u.f, u.d + 2) + " " + u.n + "</b>; without the drift correction it would be " + fmt(Bh * u.f, u.d + 2) + " " + u.n + "." :
         "Drift is added to the make-up on top of the bleed-off. With the drift correction ticked the bleed-off would be " + fmt(Math.max(0, Bh - r1.D) * u.f, u.d + 2) + " " + u.n + ".") +
       (dr > 0.01 ? " <b>High: normal design is 0.002 % to 0.005 %, and 0.01 % is the upper limit of acceptable practice.</b>" : dr > 0.005 ? " Acceptable, but above the usual 0.002 % to 0.005 % of a new tower." : dr > 0 ? " Within normal design (0.002 % to 0.005 %)." : "");
   } else dn.hidden = true;
   EV.innerHTML = "<thead><tr><th>Estimate, in " + u.n + "</th>" + res.map(r => "<th>" + r.c.n + "</th>").join("") + res.map(r => "<th>" + r.c.n + ", % of flow</th>").join("") + "</tr></thead><tbody>" +
     Object.keys(EMETH).map((k, i) => "<tr" + (k === meth ? ' class="on"' : "") + "><th>" + EMETH[k].n + (k === "lat" ? " (" + fmt(fe, 0) + " %)" : "") + "</th>" + res.map(r => "<td>" + fmt(r.all[i] * u.f, u.d) + "</td>").join("") + res.map(r => "<td>" + fmt(r.all[i] / r.V * 100, 3) + "</td>").join("") + "</tr>").join("") + "</tbody>";
-  const r0 = res[0];
-  $("evNote").textContent = "First case: heat rejected " + fmt(K * v.F * v.R, 0) + " kW. Evaporating all of it would take " + fmt(K * v.F * v.R / HFG * 3.6 * u.f, u.d) + " " + u.n + " (100 % share). Make-up per kWh rejected: " + fmt(coc > 1 ? r0.M * 1000 / (K * v.F * v.R) : NaN, 2) + " L/kWh.";
+  const r0 = res[res.length - 1];
+  $("evNote").textContent = "Heat rejected " + fmt(K * v.F * v.R, 0) + " kW. Evaporating all of it would take " + fmt(K * v.F * v.R / HFG * 3.6 * u.f, u.d) + " " + u.n + " (100 % share). Make-up per kWh rejected: " + fmt(coc > 1 ? r0.M * 1000 / (K * v.F * v.R) : NaN, 2) + " L/kWh.";
 }
 
 
@@ -739,19 +661,6 @@ MX.formula($("fxT1"), [
   "$B$ = @frac{$E$}{$N$ − 1}"
 ]);
 
-MX.formula($("fxT4"), [
-  "$R$_{2} = $R$_{1} · @frac{$ṁ$_{1}}{$ṁ$_{2}}     (heat rejected held)",
-  "$Q$_{2} = $ṁ$_{2} · $c$_{w} · $R$_{2}",
-  "$T$_{mean} = @frac{$T$_{in} + $T$_{out}}{2}",
-  "$T$_{in,2} = $T$_{mean} + @frac{$R$_{2}}{2},   $T$_{out,2} = $T$_{mean} − @frac{$R$_{2}}{2}"
-]);
-MX.defs($("fxT4Defs"), [
-  ["$ṁ$_{1}, $ṁ$_{2}", "water flow in the first and the new case, kg/s (= L/s)"],
-  ["$R$_{1}, $R$_{2}", "range in the first and the new case, K"],
-  ["$T$_{mean}", "average of water in and water out; or hold $T$_{out} or $T$_{in} instead"]
-]);
-
-
 MX.formula($("fxW"), [
   "$E$ = 0.00085 · 1.8 · $V$ · $R$",
   "$E$ = 0.0018 · $V$ · $R$",
@@ -784,21 +693,17 @@ MX.defs($("fxWDefs2"), [
   ["$N$, $δ$", "cycles of concentration; drift, % of flow"]
 ]);
 
-function working(sc, o) {
+function working(first) {
   const sT = [];
   if (val.R > 0 && val.A > 0 && val.F > 0) {
-    sT.push({ t: "First case", m: ["$R$ = " + fmt(val.H, 2) + " − " + fmt(val.C, 2) + " = **" + fmt(val.R, 2) + " K**", "$A$ = " + fmt(val.C, 2) + " − " + fmt(val.W, 2) + " = **" + fmt(val.A, 2) + " K**", "$Q$ = " + fmt(val.F, 2) + " × 4.186 × " + fmt(val.R, 2) + " = **" + fmt(val.Q, 1) + " kW**"], n: "Water at 1 kg per litre." });
-    if (sc) {
-      sT.push({ t: "New case: range", m: ["$R$_{2} = **" + fmt(sc.R, 3) + " K**" + (o.mode === "q" ? " (= " + fmt(val.R, 2) + " × " + fmt(val.F, 2) + " ÷ " + fmt(sc.F, 2) + ")" : o.mode === "r" ? " (range held)" : " (= " + fmt(o.Q2, 0) + " ÷ (4.186 × " + fmt(sc.F, 2) + "))"), "$Q$_{2} = " + fmt(sc.F, 2) + " × 4.186 × " + fmt(sc.R, 3) + " = **" + fmt(sc.Q, 1) + " kW**"] });
-      const mid = (val.H + val.C) / 2;
-      sT.push({ t: "New case: water temperatures", m: o.hold === "out" ? ["$T$_{out,2} = **" + fmt(sc.C, 2) + " °C** (held)", "$T$_{in,2} = " + fmt(sc.C, 2) + " + " + fmt(sc.R, 2) + " = **" + fmt(sc.H, 2) + " °C**"] : o.hold === "in" ? ["$T$_{in,2} = **" + fmt(sc.H, 2) + " °C** (held)", "$T$_{out,2} = " + fmt(sc.H, 2) + " − " + fmt(sc.R, 2) + " = **" + fmt(sc.C, 2) + " °C**"] : ["$T$_{mean} = (" + fmt(val.H, 2) + " + " + fmt(val.C, 2) + ") ÷ 2 = " + fmt(mid, 2) + " °C", "$T$_{in,2} = " + fmt(mid, 2) + " + " + fmt(sc.R, 2) + " ÷ 2 = **" + fmt(sc.H, 2) + " °C**", "$T$_{out,2} = " + fmt(mid, 2) + " − " + fmt(sc.R, 2) + " ÷ 2 = **" + fmt(sc.C, 2) + " °C**"], n: "The sheet holds this rule; it does not predict the tower’s own response." });
-    }
+    sT.push({ t: "Heat balance", m: ["$R$ = " + fmt(val.H, 2) + " − " + fmt(val.C, 2) + " = **" + fmt(val.R, 2) + " K**", "$A$ = " + fmt(val.C, 2) + " − " + fmt(val.W, 2) + " = **" + fmt(val.A, 2) + " K**", "$Q$ = " + fmt(val.F, 2) + " × 4.186 × " + fmt(val.R, 2) + " = **" + fmt(val.Q, 1) + " kW**", "$η$ = " + fmt(val.R, 2) + " ÷ (" + fmt(val.R, 2) + " + " + fmt(val.A, 2) + ") = **" + fmt(val.R / (val.R + val.A) * 100, 1) + " %**"], n: "Water at 1 kg per litre." });
+    if (first) sT.push({ t: "Change from the first case", m: ["$R$: " + fmt(first.R, 2) + " → **" + fmt(val.R, 2) + " K**", "$Q$ = " + fmt(first.F, 2) + " × 4.186 × " + fmt(first.R, 2) + " = " + fmt(first.Q, 1) + " kW, now **" + fmt(val.Q, 1) + " kW**"], n: "If the heat rejected is held, the range changes in inverse proportion to the flow: $R$ = $Q$ ÷ ($ṁ$ · $c$_{w})." });
   }
   if (lastWater) {
     const W0 = lastWater, uu = WU[$("wunit").value];
     W0.res.forEach(r => {
       const Em = { emp: "0.00085 × 1.8 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), thumb: "0.0018 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), lat: fmt(W0.fe, 0) + " % × " + fmt(K * r.c.F * r.c.R, 0) + " kW ÷ 2430 × 3600 ÷ 1000" }[W0.meth];
-      sT.push({ t: "Water use, " + r.c.n.toLowerCase(), m: ["$V$ = " + fmt(r.c.F, 2) + " L/s × 3.6 = **" + fmt(r.V, 2) + " m³/h**", "$E$ = " + Em + " = **" + fmt(r.E, 3) + " m³/h**", "$D$ = " + fmt(r.V, 2) + " × " + fmt(W0.dr, 4) + " ÷ 100 = **" + fmt(r.D, 4) + " m³/h**"].concat(W0.coc > 1 ? ["$B$ = " + fmt(r.E, 3) + " ÷ (" + fmt(W0.coc, 2) + " − 1)" + (W0.dc ? " − " + fmt(r.D, 4) : "") + " = **" + fmt(r.B, 3) + " m³/h**", "$M$ = " + fmt(r.E, 3) + " + " + fmt(r.B, 3) + " + " + fmt(r.D, 4) + " = **" + fmt(r.M, 3) + " m³/h**" + (uu.f !== 1 ? " = " + fmt(r.M * uu.f, uu.d) + " " + uu.n : "")] : []), n: W0.dc ? "Drift counted as part of the bleed-off." : "Bleed-off from the handbook relation; drift added to the make-up." });
+      sT.push({ t: "Water use, " + (r.c.n === "Now" ? "now" : "first case"), m: ["$V$ = " + fmt(r.c.F, 2) + " L/s × 3.6 = **" + fmt(r.V, 2) + " m³/h**", "$E$ = " + Em + " = **" + fmt(r.E, 3) + " m³/h**", "$D$ = " + fmt(r.V, 2) + " × " + fmt(W0.dr, 4) + " ÷ 100 = **" + fmt(r.D, 4) + " m³/h**"].concat(W0.coc > 1 ? ["$B$ = " + fmt(r.E, 3) + " ÷ (" + fmt(W0.coc, 2) + " − 1)" + (W0.dc ? " − " + fmt(r.D, 4) : "") + " = **" + fmt(r.B, 3) + " m³/h**", "$M$ = " + fmt(r.E, 3) + " + " + fmt(r.B, 3) + " + " + fmt(r.D, 4) + " = **" + fmt(r.M, 3) + " m³/h**" + (uu.f !== 1 ? " = " + fmt(r.M * uu.f, uu.d) + " " + uu.n : "")] : []), n: W0.dc ? "Drift counted as part of the bleed-off." : "Bleed-off from the handbook relation; drift added to the make-up." });
     });
   }
   MX.steps($("workT"), sT, "Enter a valid heat balance in section 1 to see the working.");
@@ -807,8 +712,6 @@ function working(sc, o) {
 /* ---------- start ---------- */
 buildTables();
 writeFields(null);
-syncScFlow();
-$("scflowU").textContent = FU[$("flowU").value].n;
 recalc();
 })();
 </script>
