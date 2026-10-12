@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#f7f1e4" />
 <meta name="format-detection" content="telephone=no" />
 <meta name="color-scheme" content="only light" />
-<meta name="description" content="Cooling tower approach, range and flow with the Merkel method, tower characteristic from maker or test data, and water use: evaporation, bleed-off and make-up." />
+<meta name="description" content="Cooling tower heat rejected, range, approach and water temperatures when the flow or load changes, and water use: evaporation, bleed-off, drift and make-up." />
 <meta name="author" content="Dennis Luk" />
 <meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
-<title>Sheet XV — Cooling tower performance and water use</title>
+<title>Sheet XV — Cooling tower heat rejection and water use</title>
 <link rel="stylesheet" href="formula.css" />
 <style>
 :root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
@@ -253,8 +253,8 @@ ol.steps li { margin:4px 0; }
 <article class="book">
 <header>
   <div class="kicker">Sheet XV</div>
-  <h1>Cooling tower performance and water use</h1>
-  <div class="sub">Tower approach, range and flow · Merkel method · evaporation, bleed-off and make-up</div>
+  <h1>Cooling tower heat rejection and water use</h1>
+  <div class="sub">Heat rejected, range and water temperatures · evaporation, bleed-off, drift and make-up</div>
 </header>
 <nav class="pages">
     <a href="index.html"><span>—</span>Contents</a>
@@ -276,59 +276,11 @@ ol.steps li { margin:4px 0; }
   <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   </nav>
 
-<p class="lead">The quick check gives the heat rejected and what a change of water flow does. Sections 1 to 4 then work out a cooling tower in full: its operating point, how its characteristic is found, what it does when the water flow, wet-bulb, fan speed or load changes, and how much water it uses. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">How the tower is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
-<nav class="toc" aria-label="On this page"><a href="#sq">Quick check</a><a href="#s1">1 Operating point</a><a href="#s2">2 Characteristic</a><a href="#s3">3 Existing tower</a><a href="#s4">4 Water use</a></nav>
+<p class="lead">Works out the heat a cooling tower rejects, how the range and the water temperatures change when the flow or load changes, and how much water it evaporates, bleeds off, loses as drift and needs as make-up. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Heat and temperatures</a><a href="#s2">2 Change of flow or load</a><a href="#s3">3 Water use</a></nav>
 
-<h2 id="sq">Quick check: heat rejected, and what a change of water flow does</h2>
-<p class="lead">The short version. Enter the water flow, the water temperatures in and out and the wet-bulb to get the heat the tower rejects, the range and the approach. Tick the box under it to change the flow and see the effect. This block stands on its own and uses a typical tower. Sections 1 to 4 below are the full method, with the tower’s own characteristic and water use.</p>
-<h3 class="sub3">Heat rejected by the tower</h3>
-<div class="fields four">
-  <div class="field"><label for="q_flow">Water flow</label>
-    <div class="pair"><input id="q_flow" type="number" inputmode="decimal" step="any" value="100" />
-      <select id="q_flowU" aria-label="Flow unit"><option value="lps">L/s</option><option value="m3h">m³/h</option><option value="gpm">US gpm</option></select></div></div>
-  <div class="field"><label for="q_hwt">Water in (hot)</label>
-    <div class="pair"><input id="q_hwt" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div></div>
-  <div class="field"><label for="q_cwt">Water out (cold)</label>
-    <div class="pair"><input id="q_cwt" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div></div>
-  <div class="field"><label for="q_wbt">Wet-bulb of the air</label>
-    <div class="pair"><input id="q_wbt" type="number" inputmode="decimal" step="any" value="25.5" /><span>°C</span></div></div>
-</div>
-<div class="warn" id="q_warn1" role="status"></div>
-<div class="results" id="q_res1"></div>
-<p class="si">Heat rejected = water flow × 4.186 × (water in − water out). Range = in − out. Approach = out − wet-bulb.</p>
-
-<h3 class="sub3">What if the water flow changes?</h3>
-<label class="chk"><input type="checkbox" id="q_chg" /> Change the water flow and show the effect on the tower</label>
-<div id="q_chgBox" hidden>
-  <p class="lead" style="margin-top:12px">The same tower, the same heat rejected, the same wet-bulb and the same fan. Only the water flow changes.</p>
-  <div class="fields three">
-    <div class="field"><label for="q_flow2">New water flow</label>
-      <div class="pair"><input id="q_flow2" type="number" inputmode="decimal" step="any" /><span id="q_flow2U">L/s</span></div></div>
-    <div class="field"><label for="q_pct">or as % of the flow above</label>
-      <div class="pair"><input id="q_pct" type="number" inputmode="decimal" step="any" value="120" /><span>%</span></div></div>
-  </div>
-  <div class="warn" id="q_warn2" role="status"></div>
-  <div class="table-scroll"><table class="cmp" id="q_cmp"></table></div>
-  <h3 class="sub3">Other flows, same heat rejected</h3>
-  <div class="table-scroll"><table class="cmp" id="q_sweep"></table></div>
-  <details class="more">
-    <summary>Tower assumption (an estimate)</summary>
-    <p class="hint">The effect of flow depends on the tower’s fill and size, which are not known here. The sheet assumes a typical open-circuit tower: an air-to-water ratio of 1.2 at the first case and a characteristic slope of 0.65 (handbook value −0.5 to −0.8). A different slope changes the answer by a few tenths of a kelvin. For a particular tower, use the maker’s data in section 2 below.</p>
-    <div class="fields three">
-      <div class="field"><label for="q_lg1">Water to air ratio, L/G, first case</label>
-        <div class="pair"><input id="q_lg1" type="number" inputmode="decimal" step="any" value="1.2" /><span>kg/kg</span></div></div>
-      <div class="field"><label for="q_slope">Slope of the characteristic, m</label>
-        <div class="pair"><input id="q_slope" type="number" inputmode="decimal" step="any" value="0.65" /><span>–</span></div></div>
-      <div class="field"><label for="q_elev">Site elevation</label>
-        <div class="pair"><input id="q_elev" type="number" inputmode="decimal" step="any" value="0" /><span>m</span></div></div>
-    </div>
-  </details>
-</div>
-
-<hr class="soft" />
-<!-- ============ PART 1 ============ -->
-<h2 id="s1">1. Cooling tower operating point</h2>
-<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded); tick <i>Hold</i> to keep a value fixed. With <i>Existing tower</i> ticked, the tower’s own characteristic (section 2, set once at the design point) decides the approach, so changing the flow moves the approach and both water temperatures. Wet-bulb and heat rejected are held to start with; the approach cannot be held, because the tower sets it. Without it the boxes are tied by arithmetic only.</p>
+<h2 id="s1">1. Heat rejected and water temperatures</h2>
+<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together by simple heat-balance arithmetic. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded). Tick <i>Hold</i> to keep a value fixed, for example the wet-bulb and the heat rejected while you change the flow. The sheet does not know how a particular tower responds; see section 2.</p>
 
 <div class="fields three" id="ptFields">
   <div class="field" data-v="H"><label for="hwt">Water in (hot), T<sub>in</sub></label>
@@ -355,205 +307,46 @@ ol.steps li { margin:4px 0; }
     <label class="hold"><input type="checkbox" data-hold="Q" /> Hold</label><div class="tg"></div></div>
 </div>
 <div class="warn" id="ptWarn" role="status"></div>
-<label class="chk" style="margin-top:14px"><input type="checkbox" id="twFix" checked /> Existing tower: let the tower decide the approach, so the water temperatures respond to the flow, wet-bulb and load</label>
-<p class="hint" id="twHint"></p>
 <div class="btnrow"><button type="button" id="ptReset" class="ghost">Reset to example values</button></div>
 
 <div class="results" id="ptRes"></div>
 <p class="si">Chiller: <a id="toChiller" href="chiller-efficiency.html">open sheet XVI with these water temperatures</a> (water out → chiller entering, water in ← chiller leaving).</p>
 
-<h2 id="s2">2. Tower characteristic: how C is found</h2>
-<p class="lead">How a tower’s performance changes with flow depends on its characteristic <i>KaV/L</i> against <i>L/G</i>, written <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup>. It belongs to the fill, the tower type and its size, and it is not on any nameplate. Choose how to find <i>C</i> and <i>m</i>. Options 1 to 3 use the maker’s or measured data and are better. Option 4 is an estimate from one design point and is the default. Set this section once, at the design point; the tower rule in section 1 then keeps <i>C</i> and the air flow fixed while you change the load, flow or wet-bulb. Closed-circuit towers, dry or hybrid coolers and evaporative condensers do not follow the Merkel method and are not covered.</p>
-<div class="fields three">
-  <div class="field wide"><label for="cmode">How is C found?</label>
-    <select id="cmode">
-      <option value="cm">1. The maker’s constants C and m, or two points of the maker’s curve</option>
-      <option value="mk">2. Two or more of the maker’s selection points (flow, temperatures, wet-bulb)</option>
-      <option value="ts">3. Test or site measurements (CTI ATC-105 style)</option>
-      <option value="est" selected>4. One design point and an assumed slope m (estimate, default)</option>
-    </select></div>
-  <div class="field"><label for="elev">Site elevation</label>
-    <div class="pair"><input id="elev" type="number" inputmode="decimal" step="any" value="0" /><span>m</span></div>
-    <div class="hint">Sets the air pressure for the air-side enthalpy and density.</div></div>
-</div>
-<div class="box-note" id="cmGuide"></div>
-
-<!-- option 1 -->
-<div id="cmCM" hidden>
-  <div class="fields three" style="margin-top:12px">
-    <div class="field"><label for="c1form">The maker gives</label>
-      <select id="c1form"><option value="cm">C and m</option><option value="two">Two points of the KaV/L curve</option></select></div>
-  </div>
-  <div class="fields three" id="cmCMa" style="margin-top:12px">
-    <div class="field"><label for="cc">Constant C (KaV/L at L/G = 1)</label>
-      <div class="pair"><input id="cc" type="number" inputmode="decimal" step="any" value="1.03" min="0.01" /><span>–</span></div></div>
-    <div class="field"><label for="cm">Slope m</label>
-      <div class="pair"><input id="cm" type="number" inputmode="decimal" step="any" value="0.65" min="0.1" max="1.5" /><span>–</span></div></div>
-  </div>
-  <div class="fields four" id="cmTwo" style="margin-top:12px" hidden>
-    <div class="field"><label for="p1lg">Point 1, L/G</label><input id="p1lg" type="number" inputmode="decimal" step="any" value="0.9" /></div>
-    <div class="field"><label for="p1k">Point 1, KaV/L</label><input id="p1k" type="number" inputmode="decimal" step="any" value="1.11" /></div>
-    <div class="field"><label for="p2lg">Point 2, L/G</label><input id="p2lg" type="number" inputmode="decimal" step="any" value="1.5" /></div>
-    <div class="field"><label for="p2k">Point 2, KaV/L</label><input id="p2k" type="number" inputmode="decimal" step="any" value="0.79" /></div>
-  </div>
-</div>
-
-<!-- options 2 and 3 -->
-<div id="cmFit" hidden>
-  <div class="fields four" style="margin-top:12px">
-    <div class="field"><label for="fitU">Water flow unit</label>
-      <select id="fitU"><option value="lps">L/s</option><option value="m3h">m³/h</option><option value="gpm">US gpm</option></select></div>
-    <div class="field" id="fitAUw" hidden><label for="fitAU">Air flow unit</label>
-      <select id="fitAU"><option value="ms">m³/s</option><option value="mh">m³/h</option><option value="cfm">cfm</option></select></div>
-    <div class="field"><label for="mfit">Slope m, if only one point is given</label>
-      <div class="pair"><input id="mfit" type="number" inputmode="decimal" step="any" value="0.65" min="0.3" max="1" /><span>–</span></div>
-      <div class="hint">Not used when two or more points are filled in: the points give m.</div></div>
-  </div>
-  <div class="table-scroll"><table class="cmp fit" id="fitIn">
-    <thead><tr><th>Point</th><th>Water flow</th><th>Water in, °C</th><th>Water out, °C</th><th>Wet-bulb, °C</th><th class="ts">Dry-bulb, °C</th><th class="ts">Air flow</th></tr></thead>
-    <tbody>
-      <tr><th>1</th><td><input id="f1_flow" type="number" inputmode="decimal" step="any" value="100" /></td><td><input id="f1_in" type="number" inputmode="decimal" step="any" value="35" /></td><td><input id="f1_out" type="number" inputmode="decimal" step="any" value="30" /></td><td><input id="f1_wb" type="number" inputmode="decimal" step="any" value="25.5" /></td><td class="ts"><input id="f1_db" type="number" inputmode="decimal" step="any" value="32" /></td><td class="ts"><input id="f1_air" type="number" inputmode="decimal" step="any" value="75" /></td></tr>
-      <tr><th>2</th><td><input id="f2_flow" type="number" inputmode="decimal" step="any" value="120" /></td><td><input id="f2_in" type="number" inputmode="decimal" step="any" value="34.34" /></td><td><input id="f2_out" type="number" inputmode="decimal" step="any" value="30.18" /></td><td><input id="f2_wb" type="number" inputmode="decimal" step="any" value="25.5" /></td><td class="ts"><input id="f2_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f2_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
-      <tr><th>3</th><td><input id="f3_flow" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_in" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_out" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_wb" type="number" inputmode="decimal" step="any" /></td><td class="ts"><input id="f3_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f3_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
-      <tr><th>4</th><td><input id="f4_flow" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_in" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_out" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_wb" type="number" inputmode="decimal" step="any" /></td><td class="ts"><input id="f4_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f4_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
-    </tbody>
-  </table></div>
-  <p class="hint" id="fitHint"></p>
-  <div class="table-scroll"><table class="cmp" id="fitOut"></table></div>
-</div>
-
-<!-- air flow: options 2 and 4 -->
-<div id="airBlock" hidden>
-  <h3 class="sub3" id="airHead">Air flow and L/G</h3>
-  <div class="fields three">
-    <div class="field wide"><label for="lgsrc">How is the air flow known?</label>
-      <select id="lgsrc">
-        <option value="typed">From the maker’s fan air flow (m³/s, m³/h or cfm)</option>
-        <option value="fans">From the number of fans, the fan diameter and the air velocity</option>
-        <option value="power">From the fan power, pressure and efficiency (rough)</option>
-        <option value="assume">I have no air data: assume an L/G</option>
-      </select></div>
-  </div>
-  <div class="fields four" id="airTyped" style="margin-top:12px">
-    <div class="field"><label for="afl">Fan air flow (all fans, at the tower inlet)</label>
-      <div class="pair"><input id="afl" type="number" inputmode="decimal" step="any" value="75" min="0.1" />
-        <select id="afU" aria-label="Air flow unit"><option value="ms">m³/s</option><option value="mh">m³/h</option><option value="cfm">cfm</option></select></div>
-      <div class="hint">From the maker’s data sheet or submittal, at the speed of this operating point.</div></div>
-  </div>
-  <div class="fields four" id="airFans" style="margin-top:12px" hidden>
-    <div class="field"><label for="nfan">Number of fans (cells)</label>
-      <div class="pair"><input id="nfan" type="number" inputmode="decimal" step="1" value="2" min="1" /><span>–</span></div></div>
-    <div class="field"><label for="fdia">Fan diameter</label>
-      <div class="pair"><input id="fdia" type="number" inputmode="decimal" step="any" value="3.0" min="0.1" /><span>m</span></div></div>
-    <div class="field"><label for="fvel">Average air velocity through the fan</label>
-      <div class="pair"><input id="fvel" type="number" inputmode="decimal" step="any" value="5.3" min="0.1" /><span>m/s</span></div>
-      <div class="hint">Velocity traverse, or the maker’s figure. Typically 5 to 9 m/s. Velocity measured at the fan outlet, where the air is warmer, overstates the inlet air mass by about 3 to 6 %.</div></div>
-  </div>
-  <div class="fields four" id="airPower" style="margin-top:12px" hidden>
-    <div class="field"><label for="pkw">Fan shaft power (all fans) at this duty</label>
-      <div class="pair"><input id="pkw" type="number" inputmode="decimal" step="any" value="30" min="0.1" /><span>kW</span></div>
-      <div class="hint">Motor reading, or nameplate × load. Not the nameplate alone.</div></div>
-    <div class="field"><label for="pdp">Fan total pressure</label>
-      <div class="pair"><input id="pdp" type="number" inputmode="decimal" step="any" value="250" min="1" /><span>Pa</span></div>
-      <div class="hint">From the fan curve. Typically 100 to 300 Pa for tower fans.</div></div>
-    <div class="field"><label for="peff">Fan total efficiency</label>
-      <div class="pair"><input id="peff" type="number" inputmode="decimal" step="any" value="65" min="10" max="95" /><span>%</span></div>
-      <div class="hint">Typically 55 to 75 %. Air flow = power × efficiency ÷ pressure.</div></div>
-  </div>
-  <div class="fields four" id="airCommon" style="margin-top:12px">
-    <div class="field"><label for="adb">Dry-bulb of the entering air</label>
-      <div class="pair"><input id="adb" type="number" inputmode="decimal" step="any" value="32" /><span>°C</span></div>
-      <div class="hint">With the wet-bulb this gives the air density. Must be at or above the wet-bulb.</div></div>
-    <div class="field"><label for="fspd">Fan speed, % of the speed the air data is for</label>
-      <div class="pair"><input id="fspd" type="number" inputmode="decimal" step="any" value="100" min="10" max="150" /><span>%</span></div>
-      <div class="hint">100 % for a fixed-speed fan, or when the data is at this operating point. Air flow is proportional to speed.</div></div>
-    <div class="field"><label>Air volume used</label>
-      <div class="pair"><input id="aVol" type="text" readonly /><span>m³/s</span></div>
-      <div class="hint" id="aVolHint"></div></div>
-    <div class="field"><label>Water-to-air ratio, L/G</label>
-      <div class="pair"><input id="aLG" type="text" readonly /><span>kg/kg</span></div>
-      <div class="hint" id="aGhint"></div></div>
-  </div>
-  <div class="fields three" id="airAssume" style="margin-top:12px" hidden>
-    <div class="field"><label for="lg1">Water-to-air ratio at this point, L/G</label>
-      <div class="pair"><input id="lg1" type="number" inputmode="decimal" step="any" value="1.2" min="0.1" /><span>kg/kg</span></div>
-      <div class="hint">Typical towers sit around 0.75 to 1.5. Ask the maker for the design value.</div></div>
-  </div>
-  <div class="fields three" id="airSlope" style="margin-top:12px">
-    <div class="field"><label for="mslope">Slope of the characteristic, m</label>
-      <div class="pair"><input id="mslope" type="number" inputmode="decimal" step="any" value="0.65" min="0.3" max="1" /><span>–</span></div>
-      <div class="hint">Assumed: 0.5 to 0.8, about 0.6 to 0.7 for film fill. Use the maker’s slope if you have it (option 1).</div></div>
-  </div>
-  <details class="more" id="airGuide" open>
-    <summary>What to enter to get the air flow and L/G</summary>
-    <p class="hint">L/G is the water flow divided by the mass flow of dry air through the tower. The air side needs four things, all at the operating point you are describing.</p>
-    <div class="table-scroll"><table class="cmp guide">
-      <thead><tr><th>Route</th><th>You enter</th><th>Where to find it</th><th>How good</th></tr></thead>
-      <tbody>
-        <tr><th>Fan air flow</th><td>Air volume of all fans, at the tower inlet</td><td>Maker’s data sheet or submittal; fan curve at the design duty; a test report</td><td>Best, about ±5 %</td></tr>
-        <tr><th>Fans and velocity</th><td>Number of fans, fan diameter, average air velocity</td><td>Drawings, then a velocity traverse or the maker’s fan data</td><td>About ±10 %</td></tr>
-        <tr><th>Fan power</th><td>Shaft power, total pressure, total efficiency</td><td>Motor reading, fan curve and data sheet</td><td>Rough, about ±20 %. A sanity check only</td></tr>
-        <tr><th>None</th><td>An assumed L/G</td><td>Typically 0.75 to 1.5, the maker’s design value if known</td><td>Estimate. The spread is shown in section 3</td></tr>
-      </tbody>
-    </table></div>
-    <ol class="steps">
-      <li><b>Air volume.</b> Take it for the fan speed of the operating point. A fan at 80 % speed moves about 80 % of the air; multiply by the fan speed box.</li>
-      <li><b>Dry-air density.</b> The entering dry-bulb and the wet-bulb of section 1 fix the density (about 1.12 kg/m³ at 32 / 25.5 °C at sea level). Mass flow <i>G</i> = air volume × density.</li>
-      <li><b>L/G</b> = water flow ÷ <i>G</i>. A usual tower is 0.75 to 1.5. The sheet flags a value below 0.5 or above 2.5.</li>
-      <li><b>Check the air leaving.</b> The sheet gives the leaving air enthalpy and the saturated temperature it equals. It should be a few kelvin below the water in; a value at or above it means the air flow is too small for the range.</li>
-      <li><b>Do this once, at the design point.</b> Do not re-enter a new air flow for a different load. Change the load, flow or wet-bulb in section 1 or 3, and the fan speed in section 3, and the sheet scales the air for you.</li>
-    </ol>
-  </details>
-</div>
-<p class="hint" id="cmHint" style="margin-top:8px"></p>
-<div class="results" id="chRes"></div>
-<div class="warn" id="chWarn" role="status"></div>
-
-<h2 id="s3">3. Existing tower, conditions changed</h2>
-<p class="lead">The tower, its fill and its fan stay as they are. Change the water flow, then choose what is held. The sheet works out the new approach, water in and water out.</p>
+<h2 id="s2">2. If the water flow or the heat load changes</h2>
+<p class="lead">Change the water flow, then choose what stays the same. The sheet works out the new range and the new water in and out from the heat balance. The new case is also used in the water use below.</p>
 <div class="fields three">
   <div class="field"><label for="scflow">New water flow</label>
     <div class="pair"><input id="scflow" type="number" inputmode="decimal" step="any" /><span id="scflowU">L/s</span></div></div>
-  <div class="field"><label for="scpct">New flow as % of the flow above</label>
-    <div class="pair"><input id="scpct" type="number" inputmode="decimal" step="any" value="125" /><span>%</span></div></div>
+  <div class="field"><label for="scpct">or as % of the flow above</label>
+    <div class="pair"><input id="scpct" type="number" inputmode="decimal" step="any" value="120" /><span>%</span></div></div>
   <div class="field"><label for="scmode">What stays the same</label>
     <select id="scmode">
-      <option value="q">Heat rejected (range changes)</option>
-      <option value="r">Range (heat rejected changes)</option>
+      <option value="q">Heat rejected (the range changes)</option>
+      <option value="r">Range (the heat rejected changes)</option>
       <option value="newq">A new heat rejection that I enter</option>
     </select></div>
   <div class="field" id="scqWrap" hidden><label for="scq">New heat rejected</label>
     <div class="pair"><input id="scq" type="number" inputmode="decimal" step="any" /><span>kW</span></div></div>
+  <div class="field"><label for="schold">Water temperatures: what stays the same</label>
+    <select id="schold">
+      <option value="mean">The average of water in and out</option>
+      <option value="out">Water out (cold)</option>
+      <option value="in">Water in (hot)</option>
+    </select>
+    <div class="hint" id="scholdHint"></div></div>
   <div class="field"><label for="scwb">Wet-bulb for the new case</label>
     <div class="pair"><input id="scwb" type="number" inputmode="decimal" step="any" /><span>°C</span></div>
-    <div class="hint" id="scwbHint">Same as the operating point.</div></div>
-  <div class="field"><label for="scfan">Fan air flow, % of the first case</label>
-    <div class="pair"><input id="scfan" type="number" inputmode="decimal" step="any" value="100" min="10" max="150" /><span>%</span></div>
-    <div class="hint" id="scfanHint">100 % for a fixed-speed fan. Use the speed ratio for a variable-speed fan: air flow is proportional to speed.</div></div>
+    <div class="hint" id="scwbHint">Same as the first case.</div></div>
 </div>
+<div class="box-note">The range follows from the heat balance, so it is exact. How far the tower’s water-out temperature moves when the flow changes depends on the tower’s fill, size and fan, which are not known here, so the sheet does not predict it. It holds the temperature you pick (the average by default) and splits the new range about it. As a check, for an example tower with the flow raised from 100 to 120 L/s at the same load, the average-held figures were 0.24 K above the Merkel-method result for both water in and water out. Treat the water temperatures as a first estimate, and use the maker’s performance curve at the new flow for a firm figure.</div>
 <div class="warn" id="scWarn" role="status"></div>
 <div class="table-scroll"><table class="cmp" id="scTable"></table></div>
-<p class="si" id="scSpread"></p>
-
-<h3 class="sub3">Flow sweep, with the same setting</h3>
-<svg id="sweepChart" class="chart" viewBox="0 0 700 280" role="img" aria-label="Water in and water out against water flow"></svg>
+<h3 class="sub3">Other flows, same setting</h3>
 <div class="table-scroll"><table class="cmp" id="sweepTable"></table></div>
 
-<h3 class="sub3">Optional: ASHRAE 90.1 Table 6.8.1-7 fan check</h3>
-<div class="fields three">
-  <div class="field"><label for="ttype">Tower type</label>
-    <select id="ttype"><option value="3.56">Open circuit, propeller or axial fan</option><option value="1.7">Open circuit, centrifugal fan</option></select></div>
-  <div class="field"><label for="fankw">Fan motor nameplate power (all fans)</label>
-    <div class="pair"><input id="fankw" type="number" inputmode="decimal" step="any" /><span>kW</span></div></div>
-  <div class="field"><label for="rateflow">Maker’s rated flow at 35.0 / 29.4 °C, 23.9 °C wb (optional)</label>
-    <div class="pair"><input id="rateflow" type="number" inputmode="decimal" step="any" /><span>L/s</span></div>
-    <div class="hint">If blank, the sheet estimates it from the characteristic above.</div></div>
-</div>
-<div class="results" id="fanRes"></div>
-
 <!-- ============ WATER ============ -->
-<h2 id="s4">4. Water use: evaporation, bleed-off and make-up</h2>
-<p class="lead">Estimates the water a tower evaporates, bleeds off and loses as drift, and the make-up that replaces it. It uses the flow and range of section 1 (first case) and, when section 3 is solved, the new case. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button></p>
+<h2 id="s3">3. Water use: evaporation, bleed-off and make-up</h2>
+<p class="lead">Estimates the water a tower evaporates, bleeds off and loses as drift, and the make-up that replaces it. It uses the flow and range of section 1 (first case) and, when you enter a new flow in section 2, the new case. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button></p>
 <div class="fields three">
   <div class="field wide"><label for="emeth">Evaporation estimate used</label>
     <select id="emeth">
@@ -591,7 +384,7 @@ ol.steps li { margin:4px 0; }
 <div id="fxW2" role="math"></div>
 <ul id="fxWDefs2"></ul>
 
-<footer>Preliminary checking only. Sections 1 to 4 use the Merkel method and the tower characteristic line of PDH course M374 (Primo), with psychrometrics from psychro.js. The 90.1 tower rating (Table 6.8.1-7) is recorded for reference. Formulae, working, the recorded table and the notes are in the Notes and formulae bar.</footer>
+<footer>Preliminary checking only. Range, approach, evaporation, blow-down and make-up follow PDH course M374 (Primo). The 90.1 tower rating (Table 6.8.1-7) is recorded for reference. Formulae, working and notes are in the Notes and formulae bar.</footer>
 <div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Table values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI), © ASHRAE, and are shown for reference only; confirm against a licensed copy of the standard. Standards and handbooks cited are the copyright of their publishers.</div>
 </article>
 
@@ -600,7 +393,8 @@ ol.steps li { margin:4px 0; }
 <aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
   <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
   <div class="mx-tabs" role="tablist" aria-label="Sections">
-    <button role="tab" type="button" id="mxt-tower" data-tab="tower" aria-controls="mxtab-tower">Tower</button>
+    <button role="tab" type="button" id="mxt-tower" data-tab="tower" aria-controls="mxtab-tower">Formulae</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
     <button role="tab" type="button" id="mxt-rating" data-tab="rating" aria-controls="mxtab-rating">90.1 tower rating</button>
     <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
   </div>
@@ -608,18 +402,16 @@ ol.steps li { margin:4px 0; }
     <div role="tabpanel" id="mxtab-tower" aria-labelledby="mxt-tower">
       <h3>Relations</h3>
       <div id="fxT1" role="math"></div>
-      <h3>Merkel integral and tower characteristic</h3>
-      <div id="fxT2" role="math"></div>
-      <ul id="fxTDefs"></ul>
-      <h3>Air flow, L/G and the fit of C and m</h3>
-      <div id="fxT3" role="math"></div>
-      <ul id="fxT3Defs"></ul>
+      <h3>Change of flow or load</h3>
+      <div id="fxT4" role="math"></div>
+      <ul id="fxT4Defs"></ul>
       <h3>Water use: evaporation, bleed-off, drift and make-up</h3>
       <div id="fxW" role="math"></div>
       <ul id="fxWDefs"></ul>
       <p class="tn">Empirical form from M374 §8 (after Perry’s Handbook): about 1.8 m³ evaporates for every 10 000 000 kcal rejected, which is 0.00153 m³ per m³ circulated per K of range. The rule of thumb in §20 is 0.1 % of the circulating flow per °F of range (0.18 % per K). The heat balance uses the share of the heat that leaves as vapour, 60 to 95 % (§20), divided by the latent heat of water (about 2430 kJ/kg near 30 °C). Blow-down, drift and make-up: M374 §8, §10 and example 15-1.</p>
-      <h3>Worked with the values on the sheet</h3>
-      <p>The figures update as you type.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
       <div id="workT"></div>
     </div>
     <div role="tabpanel" id="mxtab-rating" aria-labelledby="mxt-rating" hidden>
@@ -632,26 +424,10 @@ ol.steps li { margin:4px 0; }
       <p class="tn">Open-circuit tower performance is the rated water flow at the thermal rating condition divided by the fan motor nameplate power (note a). Closed-circuit includes the spray pump (note b). The requirement does not apply to field-erected towers (note e).</p>
     </div>
     <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
-    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
-      <h3>Tower method</h3>
-      <p>Range, approach, effectiveness, evaporation and blow-down are as in PDH course M374 (Primo), sections 6 to 8, 15 and 20. The tower characteristic is the Merkel equation evaluated with four points at 10, 40, 60 and 90 % of the range (the usual Cooling Technology Institute four-point integration). Air leaving the fill is taken at an enthalpy rise of (L/G)·c<sub>w</sub>·ΔT, as in the handbook, which neglects the small evaporation term. The figures were checked against the handbook’s worked examples 15-2 to 15-7 and agree within 0.02 °F.</p>
-      <h3>Existing tower in section 1</h3>
-<p>With the box ticked, section 1 treats the tower as a fixed machine. Its characteristic (section 2) is frozen, with its air flow, at the operating point present when the box was ticked or the characteristic last changed. Only three boxes are then free inputs, because the tower itself decides the approach: approach = <i>f</i>(range, flow, wet-bulb). Change the flow while holding wet-bulb and heat rejected, and the approach, range and both water temperatures all move, matching the result of section 3. Untick the box for plain arithmetic between the boxes (<i>R</i> = <i>H</i> − <i>C</i>, <i>A</i> = <i>C</i> − <i>W</i>, <i>Q</i> = 4.186·flow·<i>R</i>), where holding the wet-bulb, approach and load fixes everything except range and flow.</p>
-      <h3>How C is found: the four options</h3>
-<p>The line <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup> is a sample for an open-circuit tower with fill. The slope and constant differ between film and splash fill, counterflow and crossflow, and between makers, so the sheet offers four ways to find them.</p>
-<ul class="tn" style="margin-left:18px;font-size:14px">
-<li><b>1. Maker’s constants.</b> Type <i>C</i> and <i>m</i>, or two points (<i>L/G</i>, <i>KaV/L</i>) read from the maker’s curve. The sheet then finds the <i>L/G</i> at which section 1 lies on the curve. No air flow is needed.</li>
-<li><b>2. Two or more of the maker’s selection points.</b> Ask the maker for the same tower selected at two or three different water flows. For each, enter the water flow, water in, water out and wet-bulb, and give the fan air flow once. The sheet finds <i>KaV/L</i> at each point with the Merkel integral, takes <i>L/G</i> = water flow ÷ dry-air flow, and fits the line through the points. Two points give <i>C</i> and <i>m</i> exactly; three or four give a least-squares line and show how far each point is from it. The fan is assumed to be at the same speed at every point.</li>
-<li><b>3. Test or site measurement</b> (CTI ATC-105 style). The same fit, but the dry-bulb and fan air flow are entered for each point, so fan speed can differ between tests. A single test gives <i>KaV/L</i> at one <i>L/G</i>, and <i>m</i> must then be assumed. Measurement error moves the result: the fit should use readings at steady load, with the wet-bulb measured at the tower inlet.</li>
-<li><b>4. One design point and an assumed slope</b> (the default). The sheet takes section 1 as the design point, finds <i>L/G</i> from the air flow (or uses an assumed <i>L/G</i> if you have no air data), and calculates <i>KaV/L</i> there. <i>C</i> follows from the assumed <i>m</i>. It is an estimate, and the further the new case is from the design point, the more the assumed slope matters.</li>
-</ul>
-<p>Closed-circuit towers, dry and hybrid coolers and evaporative condensers have other physics and are not covered by this sheet.</p>
-<h3>Air flow and L/G</h3>
-<p>In options 2 and 4 the air flow is entered at the fan speed of the operating point, in one of three ways: the maker’s air volume; the number of fans, the fan diameter and the average air velocity; or the fan shaft power, total pressure and total efficiency. The last is rough and is best used as a check on the first. The sheet takes the dry-air density from the entering dry-bulb and the wet-bulb, works out the dry-air mass flow <i>G</i>, and sets <i>L/G</i> = water flow ÷ <i>G</i>. It also shows the enthalpy of the air leaving the fill and the saturated temperature that equals; this should be a few kelvin below the water coming in. The air flow is entered once, at the design point. For another fan speed, use the fan percentage in section 3: the air is scaled in proportion to speed.</p>
-<h3>What is assumed</h3>
-<p>The characteristic keeps the same constant and slope at other flows. The air flow of the first case is fixed unless the fan percentage is changed; it is not recalculated for the higher fill pressure drop at a higher flow, which the handbook example also ignores. Water is 1 kg per litre with c<sub>w</sub> = 4.186 kJ/(kg·K). Hot-air recirculation, wet-bulb rise at the tower inlet and bypass wall water (handbook section 16) are not modelled.</p>
-<h3>How much does the assumed L/G or slope matter? (option 4)</h3>
-<p>Little for a flow change at constant load. Varying the assumed L/G from 0.7 to 1.8 moves the new water-out temperature by about 0.1 to 0.3 K; the slope m matters about as much. The sheet prints the spread under the result: for L/G 0.7 to 1.6 and m 0.5 to 0.8 when L/G is assumed, or for m 0.5 to 0.8 when L/G comes from the air flow. For a firm answer use the maker’s characteristic or performance curve at the new flow.</p>
+      <h3>Method</h3>
+<p>Heat rejected = water flow × 4.186 × range, with water at 1 kg per litre. Range = water in − water out; approach = water out − wet-bulb; effectiveness = range ÷ (range + approach). Evaporation, blow-down, drift and make-up follow PDH course M374 (Primo), sections 6 to 8, 10 and 20. When the flow or load changes, the new range follows from the heat balance. The new water temperatures are not predicted from the tower: they come from the rule you choose.</p>
+      <h3>What this sheet does not do</h3>
+<p>It does not model the tower’s own response (the Merkel method), so it cannot say how much water out rises when the flow rises, how the approach changes with the wet-bulb, or what the air flow does. That needs the tower characteristic (KaV/L against L/G) from the maker, or the maker’s performance curve. Closed-circuit towers, dry coolers and evaporative condensers are not covered.</p>
 <h3>Approach limit</h3>
       <p>The handbook notes that makers rarely guarantee less than about 2.8 K approach. The sheet marks anything below that.</p>
       <h3>Water use</h3>
@@ -666,12 +442,11 @@ ol.steps li { margin:4px 0; }
       </ul>
       <p>Drift matters for water loss (small) and for Legionella control and nearby plant, where the droplets can carry bacteria and chemicals off the site. The figure is a maker’s guarantee, tested to a standard such as CTI ATC-140 or the Eurovent programme, and holds only while the eliminators are clean and undamaged and the tower runs near its rated air velocity. The sheet marks anything above 0.01 % as high. Check the limit in your project specification or local code: the Hong Kong EMSD code of practice for water-cooled air-conditioning systems gives no numeric drift limit, but requires eliminators to be maintained, and sets a minimum of 6 cycles of concentration for fresh water and 2 for sea water (section 2.4.2).</p>
       <h3>Sources</h3>
-      <p>PDH Online course M374, <i>Cooling Towers – Basic Calculations</i>, J. Primo, 2026. ANSI/ASHRAE/IES Standard 90.1-2025 (SI), Table 6.8.1-7. Psychrometric properties from the shared file psychro.js (ASHRAE Fundamentals, Chapter 1). Check results against the licensed standard.</p>
+      <p>PDH Online course M374, <i>Cooling Towers – Basic Calculations</i>, J. Primo, 2026. ANSI/ASHRAE/IES Standard 90.1-2025 (SI), Table 6.8.1-7. Check results against the licensed standard.</p>
     </div>
   </div>
 </aside>
 
-<script src="psychro.js"></script>
 <script src="formula.js"></script>
 <script>
 (function () {
@@ -685,27 +460,6 @@ const esc = s => String(s).replace(/[&<>]/g, c => c === "&" ? "&amp;" : c === "<
 const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
 function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
 
-/* ---------- psychrometrics and the Merkel integral ---------- */
-function hsat(t, P) { const w = PSY.Wsat(t, P); return w == null ? NaN : PSY.enthalpy(t, w); }
-/* four-point Merkel integral. Returns Infinity when the air line meets the saturation line (no tower can do it). */
-function merkel(H, C, W, LG, P) {
-  const R = H - C; if (!(R > 0)) return NaN;
-  const ha0 = hsat(W, P); let s = 0;
-  for (const f of [0.1, 0.4, 0.6, 0.9]) {
-    const d = hsat(C + f * R, P) - (ha0 + LG * K * f * R);
-    if (!(d > 1e-6)) return Infinity;
-    s += 1 / d;
-  }
-  return K * R / 4 * s;
-}
-/* water-out temperature that makes the Merkel integral equal ntu (it falls as the water gets warmer) */
-function solveCWT(R, W, LG, ntu, P) {
-  let lo = W + 0.001, hi = W + 60;
-  if (!(merkel(hi + R, hi, W, LG, P) < ntu)) return null;
-  for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (merkel(m + R, m, W, LG, P) > ntu) lo = m; else hi = m; }
-  return (lo + hi) / 2;
-}
-
 /* ---------- units ---------- */
 const FU = { lps: { f: 1, n: "L/s", d: 2 }, m3h: { f: 1 / 3.6, n: "m³/h", d: 1 }, gpm: { f: 0.0630902, n: "US gpm", d: 0 } };
 const toLps = x => x * FU[$("flowU").value].f;
@@ -713,7 +467,7 @@ const fromLps = x => x / FU[$("flowU").value].f;
 const flowStr = x => fmt(fromLps(x), FU[$("flowU").value].d);
 
 /* ============================================================
-   PART 1. Linked operating point
+   1. Linked heat balance: water in, water out, wet-bulb, range, approach, flow, heat rejected
    ============================================================ */
 const VARS = ["H", "C", "W", "R", "A", "F", "Q"];
 const ID = { H: "hwt", C: "cwt", W: "wbt", R: "rng", A: "apr", F: "flow", Q: "qkw" };
@@ -744,90 +498,11 @@ function propagate(k) {
   }
   return k;
 }
-/* try an edit; returns {ok, msg} and applies it only if it is consistent */
-/* ---- existing tower: the tower's characteristic decides the approach ---- */
-let tw = null, twKey = "";
-const SSC = [10, 100, 5], SCALE = { H: 10, C: 10, W: 10, R: 5, A: 5, F: 100, Q: 1000 };
-function Tfun(R, F, W) {
-  if (!(R > 0 && F > 0)) return NaN;
-  const LG = F / tw.G, ntu = tw.Cc * Math.pow(LG, -tw.m), c = solveCWT(R, W, LG, ntu, tw.P);
-  return c == null ? NaN : c - W;
-}
-function fxs(s) { const A = Tfun(s[2], s[1], s[0]); if (!isFinite(A)) return null; const C = s[0] + A; return { H: C + s[2], C: C, W: s[0], R: s[2], A: A, F: s[1], Q: K * s[1] * s[2] }; }
-const sNow = () => [val.W, val.F, val.R];
-function jacRows(s) {
-  const b = fxs(s); if (!b) return null; const rows = {}; VARS.forEach(v => rows[v] = [0, 0, 0]);
-  for (let j = 0; j < 3; j++) {
-    const h = Math.max(1e-4 * Math.abs(s[j]), 1e-5), sp = s.slice(); sp[j] += h; const f = fxs(sp); if (!f) return null;
-    VARS.forEach(v => rows[v][j] = (f[v] - b[v]) / h);
-  }
-  return rows;
-}
-function twDrivers(order) {
-  const rows = jacRows(sNow()); if (!rows) return null; const chosen = [], basis = [];
-  for (const v of order) {
-    if (chosen.indexOf(v) >= 0) continue;
-    let r = rows[v].map((x, j) => x * SSC[j] / SCALE[v]); const n0 = Math.hypot(r[0], r[1], r[2]); if (n0 < 1e-9) continue; r = r.map(x => x / n0);
-    basis.forEach(b => { const d = r[0] * b[0] + r[1] * b[1] + r[2] * b[2]; r = r.map((x, j) => x - d * b[j]); });
-    const n = Math.hypot(r[0], r[1], r[2]);
-    if (n > 0.05) { basis.push(r.map(x => x / n)); chosen.push(v); }
-    if (chosen.length === 3) break;
-  }
-  return chosen.length === 3 ? chosen : null;
-}
-function computeDrivers(order) { if (tw) { const d = twDrivers(order); if (d) return d; } return pickDrivers(order); }
-function solve3(J, b) {
-  const M = J.map((r, i) => r.concat([b[i]]));
-  for (let i = 0; i < 3; i++) {
-    let p = i; for (let k = i + 1; k < 3; k++) if (Math.abs(M[k][i]) > Math.abs(M[p][i])) p = k;
-    if (Math.abs(M[p][i]) < 1e-12) return null;
-    const t = M[i]; M[i] = M[p]; M[p] = t;
-    for (let k = i + 1; k < 3; k++) { const m = M[k][i] / M[i][i]; for (let j = i; j < 4; j++) M[k][j] -= m * M[i][j]; }
-  }
-  const x = [0, 0, 0];
-  for (let i = 2; i >= 0; i--) { let t = M[i][3]; for (let j = i + 1; j < 3; j++) t -= M[i][j] * x[j]; x[i] = t / M[i][i]; }
-  return x;
-}
-function twSolve(drv, targets) {
-  let s = sNow(), f = fxs(s); if (!f) return null;
-  const res = g => drv.map(v => (g[v] - targets[v]) / SCALE[v]);
-  let r = res(f), nr = Math.max.apply(null, r.map(Math.abs));
-  for (let it = 0; it < 60 && nr > 1e-9; it++) {
-    const rows = jacRows(s); if (!rows) return null;
-    const d = solve3(drv.map(v => rows[v].map(x => x / SCALE[v])), r); if (!d) return null;
-    let a = 1, ok = false;
-    for (let k = 0; k < 30; k++, a /= 2) {
-      const sn = s.map((x, j) => x - a * d[j]);
-      if (sn[1] > 0 && sn[2] > 0) { const fn = fxs(sn); if (fn) { const rn = res(fn), nn = Math.max.apply(null, rn.map(Math.abs)); if (nn < nr) { s = sn; f = fn; r = rn; nr = nn; ok = true; break; } } }
-    }
-    if (!ok) break;
-  }
-  return nr < 1e-6 ? f : null;
-}
-function freezeTower() {
-  const d0 = designModelRaw();
-  if (!d0 || d0.bad) return d0 || { bad: "Complete the operating point and the characteristic first." };
-  tw = { Cc: d0.Cc, m: d0.m, G: d0.G, P: d0.P }; twKey = charKey(); return d0;
-}
+
 const HNAME = { H: "water in", C: "water out", W: "wet-bulb", R: "range", A: "approach", F: "flow", Q: "heat rejected" };
 const heldMsg = () => "That box is fixed by the values you are holding" + (pins.length ? " (" + pins.map(v => HNAME[v]).join(", ") + ")" : "") + ". Untick one of those Holds to change it.";
-/* with the existing-tower rule on, the tower decides the approach, so hold wet-bulb and heat rejected and leave the approach free */
-function defaultHolds() {
-  pins = tw ? ["W", "Q"] : [];
-  document.querySelectorAll("[data-hold]").forEach(c => { c.checked = pins.indexOf(c.dataset.hold) >= 0; if (c.dataset.hold === "A") { c.disabled = !!tw; c.title = tw ? "The tower decides the approach" : ""; } });
-}
 function tryEdit(v, x) {
   const nh = [v].concat(hist.filter(a => a !== v));
-  if (tw) {
-    const drvT = twDrivers(pins.concat(nh, VARS));
-    if (!drvT) return { ok: false, msg: "The tower cannot be solved from the present values. Reset to example values." };
-    if (drvT.indexOf(v) < 0) return { ok: false, msg: heldMsg() };
-    const targets = {}; drvT.forEach(d => targets[d] = d === v ? x : val[d]);
-    const f = twSolve(drvT, targets);
-    if (!f) return { ok: false, msg: "This tower cannot do that: no water temperature satisfies its characteristic. Try a smaller change, or untick the existing-tower box." };
-    hist = nh; drivers = drvT; VARS.forEach(a => val[a] = f[a]);
-    return { ok: true };
-  }
   const drv = pickDrivers(pins.concat(nh, VARS));
   if (drv.indexOf(v) < 0) return { ok: false, msg: heldMsg() };
   const known = {}; drv.forEach(d => known[d] = d === v ? x : val[d]); propagate(known);
@@ -839,7 +514,7 @@ function writeFields(skip) {
   VARS.forEach(v => {
     const el = $(ID[v]), calc = drivers.indexOf(v) < 0;
     const f = el.closest(".field"); f.classList.toggle("calc", calc);
-    f.querySelector(".tg").textContent = calc ? (tw && v === "A" ? "calculated by the tower" : "calculated") : (pins.indexOf(v) >= 0 ? "held" : "input");
+    f.querySelector(".tg").textContent = calc ? "calculated" : (pins.indexOf(v) >= 0 ? "held" : "input");
     if (v === skip) return;
     el.value = v === "F" ? fromLps(val.F).toFixed(FU[$("flowU").value].d) : v === "Q" ? val.Q.toFixed(1) : val[v].toFixed(2);
   });
@@ -866,177 +541,40 @@ $("flowU").addEventListener("change", () => { writeFields(null); $("scflowU").te
 document.querySelectorAll("[data-hold]").forEach(cb => cb.addEventListener("change", () => {
   const v = cb.dataset.hold;
   if (cb.checked) {
-    const drv = computeDrivers(pins.concat([v], hist, VARS));
+    const drv = pickDrivers(pins.concat([v], hist, VARS));
     if (drv.indexOf(v) < 0) { cb.checked = false; warnBox("ptWarn", ["That value is already fixed by the values you are holding."]); return; }
     pins.push(v);
   } else pins = pins.filter(x => x !== v);
-  drivers = computeDrivers(pins.concat(hist, VARS));
+  drivers = pickDrivers(pins.concat(hist, VARS));
   writeFields(null); recalc();
 }));
 $("ptReset").addEventListener("click", () => {
   pins = []; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
-  hist = tw ? TW_HIST.slice() : ["W", "F", "C", "H"];
-  defaultHolds();
+  hist = ["W", "F", "C", "H"];
   val.H = 35; val.C = 30; val.W = 25.5; val.F = 100; val.R = 5; val.A = 4.5; val.Q = K * 100 * 5;
-  scWbLinked = true; $("scpct").value = 125; $("lg1").value = 1.2; $("mslope").value = 0.65; $("scfan").value = 100; $("scmode").value = "q";
-  if (tw) freezeTower();
-  drivers = computeDrivers(pins.concat(hist, VARS));
+  scWbLinked = true; $("scpct").value = 120; $("scmode").value = "q"; $("schold").value = "mean";
+  drivers = pickDrivers(pins.concat(hist, VARS));
   writeFields(null); syncScFlow(); recalc();
 });
-const TW_HIST = ["W", "F", "Q", "R", "C", "H"];
-$("twFix").addEventListener("change", () => {
-  pins = []; tw = null; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
-  if ($("twFix").checked) {
-    const d0 = freezeTower();
-    if (!d0 || d0.bad) { tw = null; $("twFix").checked = false; warnBox("ptWarn", [d0 && d0.bad ? d0.bad : "Complete the operating point and the characteristic first."]); return; }
-    hist = TW_HIST.slice();
-  } else { tw = null; hist = ["W", "F", "C", "H"]; }
-  defaultHolds();
-  drivers = computeDrivers(pins.concat(hist, VARS));
-  writeFields(null); recalc();
-});
 
-/* ---------- tower model ---------- */
+/* ============================================================
+   2. A new flow or load: the heat balance gives the range; the water temperatures follow the rule chosen
+   ============================================================ */
 let scWbLinked = true, scqSet = false;
-const pressure = () => PSY.pressurePa(isFinite(num("elev")) ? num("elev") : 0);
-
-/* ---------- how C is found ---------- */
-const AIRU = { ms: 1, mh: 1 / 3600, cfm: 0.000471947 };
-/* the engine mode behind the four options on the page */
-const cmodeEff = () => { const m = $("cmode").value; return m === "est" ? ($("lgsrc").value === "assume" ? "point" : "air") : m === "cm" ? ($("c1form").value === "two" ? "two" : "cm") : "fit"; };
-/* air volume at the tower inlet, m3/s, at the fan speed of this operating point */
-function airVolume() {
-  const r = $("lgsrc").value; let v;
-  if (r === "typed") v = num("afl") * AIRU[$("afU").value];
-  else if (r === "fans") v = num("nfan") * Math.PI / 4 * Math.pow(num("fdia"), 2) * num("fvel");
-  else v = num("pkw") * 1000 * (num("peff") / 100) / num("pdp");
-  const sp = num("fspd");
-  return sp > 0 ? v * sp / 100 : NaN;
-}
-/* temperature at which saturated air has enthalpy h */
-function tOfH(h, P) { let lo = 0, hi = 90; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (hsat(m, P) < h) lo = m; else hi = m; } return (lo + hi) / 2; }
-const FITIDS = []; for (let i = 1; i <= 4; i++) ["flow", "in", "out", "wb", "db", "air"].forEach(k => FITIDS.push("f" + i + "_" + k));
-let lastFit = null;
-/* options 2 and 3: KaV/L at each point by the Merkel integral, then C and m by a straight line through ln(KaV/L) against ln(L/G) */
-function fitModel(P, opt) {
-  const ts = opt === "ts", U = FU[$("fitU").value].f, rows = [];
-  for (let i = 1; i <= 4; i++) {
-    const g = k => { const e = $("f" + i + "_" + k); return e.value.trim() === "" ? NaN : parseFloat(e.value); };
-    const any = ["flow", "in", "out", "wb"].some(k => isFinite(g(k))) || (ts && (isFinite(g("db")) || isFinite(g("air"))));
-    if (!any) continue;
-    const F = g("flow") * U, H = g("in"), C = g("out"), W = g("wb");
-    if (!(F > 0 && isFinite(H) && isFinite(C) && isFinite(W))) return { bad: "Point " + i + " is incomplete. It needs the water flow, water in, water out and wet-bulb." };
-    if (!(H > C && C > W)) return { bad: "Point " + i + ": water in must be above water out, and water out above the wet-bulb." };
-    let db, vol;
-    if (ts) {
-      const d0 = rows[0];
-      db = isFinite(g("db")) ? g("db") : d0 ? d0.db : NaN;
-      vol = isFinite(g("air")) ? g("air") * AIRU[$("fitAU").value] : d0 ? d0.vol : NaN;
-      if (!(vol > 0) || !isFinite(db)) return { bad: "Point " + i + " needs the air flow and the entering dry-bulb (point 1 must have both)." };
-    } else { db = num("adb"); vol = airVolume(); if (!(vol > 0) || !isFinite(db)) return { bad: "Enter the fan air flow and entering dry-bulb below the table." }; }
-    if (db < W) return { bad: "Point " + i + ": the dry-bulb is below the wet-bulb." };
-    const wi = PSY.WfromTdbTwb(db, W, P); if (wi == null) return { bad: "Point " + i + ": the entering air state cannot be calculated." };
-    const rho = PSY.density(db, wi, P), G = vol * rho, LG = F / G, ntu = merkel(H, C, W, LG, P);
-    if (!isFinite(ntu)) return { bad: "Point " + i + " cannot be reached by any tower at L/G " + fmt(LG, 2) + ": the air line meets the saturation line. Check the air flow and the temperatures." };
-    rows.push({ i, F, H, C, W, db, vol, rho, G, LG, ntu });
-  }
-  if (!rows.length) return null;
-  if (opt === "mk" && rows.length < 2) return { bad: "Option 2 needs at least two of the maker’s selections, at different water flows." };
-  const n = rows.length; let m, Cc, maxdev = 0;
-  if (n === 1) { m = num("mfit"); if (!(m > 0)) return { bad: "Enter the slope m." }; Cc = rows[0].ntu * Math.pow(rows[0].LG, m); }
-  else {
-    const xs = rows.map(r => Math.log(r.LG)), ys = rows.map(r => Math.log(r.ntu));
-    if (Math.max(...xs) - Math.min(...xs) < 0.03) return { bad: "The points have almost the same L/G, so they cannot give the slope. Use points at clearly different water flows or fan speeds." };
-    const xb = xs.reduce((a, x) => a + x, 0) / n, yb = ys.reduce((a, x) => a + x, 0) / n;
-    let sxy = 0, sxx = 0; xs.forEach((x, k) => { sxy += (x - xb) * (ys[k] - yb); sxx += (x - xb) * (x - xb); });
-    const b = sxy / sxx; m = -b; Cc = Math.exp(yb - b * xb);
-    if (!(m > 0)) return { bad: "KaV/L should fall as L/G rises, but these points do not. Check the temperatures and the air flow." };
-  }
-  rows.forEach(r => { r.fit = Cc * Math.pow(r.LG, -m); r.dev = (r.fit / r.ntu - 1) * 100; maxdev = Math.max(maxdev, Math.abs(r.dev)); });
-  return { Cc, m, rows, n, maxdev, assumedM: n === 1 };
-}
-
-function solveLG(Cc, m, P) {            /* L/G at which the operating point lies on the characteristic */
-  const g = lg => merkel(val.H, val.C, val.W, lg, P) - Cc * Math.pow(lg, -m);
-  let lo = 0.02, hi = 8;
-  if (!(g(lo) < 0 && g(hi) > 0)) return null;
-  for (let i = 0; i < 70; i++) { const mid = (lo + hi) / 2; if (g(mid) < 0) lo = mid; else hi = mid; }
-  return (lo + hi) / 2;
-}
-function designModelRaw() {
-  const mode = cmodeEff(), P = pressure();
-  if (!(val.R > 0 && val.A > 0 && val.F > 0)) return null;
-  if (mode === "point") {
-    const LG1 = num("lg1"), m = num("mslope");
-    if (!(LG1 > 0 && m > 0)) return null;
-    const ntu = merkel(val.H, val.C, val.W, LG1, P);
-    if (!isFinite(ntu)) return { bad: "With L/G = " + LG1 + " this approach and range cannot be reached by any tower: the air line meets the saturation line. Lower the L/G or raise the approach.", LG1, m, P };
-    return { mode, LG1, m, P, ntu, Cc: ntu * Math.pow(LG1, m), G: val.F / LG1 };
-  }
-  if (mode === "air") {
-    const m = num("mslope"), db = num("adb"), v = airVolume();
-    if (!(m > 0 && v > 0 && isFinite(db))) return null;
-    if (db < val.W) return { bad: "The entering dry-bulb is below the wet-bulb of section 1. Check both.", P };
-    const wi = PSY.WfromTdbTwb(db, val.W, P); if (wi == null) return { bad: "The entering air state cannot be calculated.", P };
-    const rho = PSY.density(db, wi, P), G = v * rho, LG1 = val.F / G;
-    const ntu = merkel(val.H, val.C, val.W, LG1, P);
-    if (!isFinite(ntu)) return { bad: "With this air flow (L/G = " + fmt(LG1, 2) + ") this approach and range cannot be reached by any tower. Check the air flow or the approach.", LG1, m, P };
-    return { mode, LG1, m, P, ntu, Cc: ntu * Math.pow(LG1, m), G, derivedLG: true, rho, vol: v };
-  }
-  if (mode === "fit") {
-    const f = fitModel(P, $("cmode").value); lastFit = f && !f.bad ? f : null;
-    if (!f) return null;
-    if (f.bad) return { bad: f.bad, P };
-    const LGf = solveLG(f.Cc, f.m, P);
-    if (LGf == null) return { bad: "The operating point in section 1 does not lie on the fitted characteristic for any air flow. Make section 1 one of your points, or check the data.", P };
-    return { mode, LG1: LGf, m: f.m, P, ntu: f.Cc * Math.pow(LGf, -f.m), Cc: f.Cc, G: val.F / LGf, derivedLG: true, fit: f };
-  }
-  let Cc, m;
-  if (mode === "cm") { Cc = num("cc"); m = num("cm"); }
-  else {
-    const a = num("p1lg"), ka = num("p1k"), b = num("p2lg"), kb = num("p2k");
-    if (!(a > 0 && b > 0 && ka > 0 && kb > 0) || Math.abs(a - b) < 1e-6) return null;
-    m = Math.log(ka / kb) / Math.log(b / a); Cc = ka * Math.pow(a, m);
-  }
-  if (!(Cc > 0 && m > 0)) return { bad: "The two points must give a falling curve (KaV/L lower at the higher L/G), and C must be above zero.", P };
-  const LG1 = solveLG(Cc, m, P);
-  if (LG1 == null) return { bad: "The operating point in section 1 does not lie on this characteristic for any air flow. Check the maker’s data, the range, approach and wet-bulb.", P };
-  return { mode, LG1, m, P, ntu: Cc * Math.pow(LG1, -m), Cc, G: val.F / LG1, derivedLG: true };
-}
-function charKey() { return ["cmode", "lgsrc", "c1form", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev", "afl", "afU", "adb", "fspd", "nfan", "fdia", "fvel", "pkw", "pdp", "peff", "fitU", "fitAU", "mfit"].concat(FITIDS).map(i => $(i).value).join("|"); }
-function designModel() {
-  const raw = designModelRaw();
-  if (!tw || !raw || raw.bad) return raw;
-  const LG1 = val.F / tw.G;
-  return { mode: raw.mode, LG1, m: tw.m, P: tw.P, ntu: tw.Cc * Math.pow(LG1, -tw.m), Cc: tw.Cc, G: tw.G, rho: raw.rho, vol: raw.vol, fit: raw.fit, derivedLG: cmodeEff() !== "point" };
-}
-function scenario(d, o) {
-  const R1 = val.R;
-  const R2 = o.mode === "r" ? R1 : o.mode === "newq" ? o.Q2 / (K * o.F2) : R1 * val.F / o.F2;
-  const G2 = d.G * o.fan / 100, LG2 = o.F2 / G2, ntu2 = d.Cc * Math.pow(LG2, -d.m);
-  if (!(R2 > 0) || !(G2 > 0)) return { ok: false };
-  const c2 = solveCWT(R2, o.W2, LG2, ntu2, d.P);
-  if (c2 == null) return { ok: false };
-  return { ok: true, R: R2, C: c2, H: c2 + R2, A: c2 - o.W2, Q: K * o.F2 * R2, LG: LG2, ntu: ntu2, W: o.W2, F: o.F2, G: G2 };
+function scenario(o) {
+  const R1 = val.R, F2 = o.F2;
+  const R2 = o.mode === "r" ? R1 : o.mode === "newq" ? o.Q2 / (K * F2) : R1 * val.F / F2;
+  if (!(R2 > 0) || !(F2 > 0)) return { ok: false };
+  let C2, H2;
+  if (o.hold === "out") { C2 = val.C; H2 = C2 + R2; }
+  else if (o.hold === "in") { H2 = val.H; C2 = H2 - R2; }
+  else { const mid = (val.H + val.C) / 2; H2 = mid + R2 / 2; C2 = mid - R2 / 2; }
+  return { ok: true, R: R2, H: H2, C: C2, A: C2 - o.W2, Q: K * F2 * R2, W: o.W2, F: F2 };
 }
 function readScenario() {
-  const F2 = toLps(num("scflow")), W2 = num("scwb"), fan = num("scfan"), mode = $("scmode").value, Q2 = num("scq");
-  return { F2, W2, fan, mode, Q2 };
+  return { F2: toLps(num("scflow")), W2: num("scwb"), mode: $("scmode").value, Q2: num("scq"), hold: $("schold").value };
 }
-function scValid(o) { return o.F2 > 0 && isFinite(o.W2) && o.fan > 0 && (o.mode !== "newq" || o.Q2 > 0); }
-function spread(o, d) {
-  const md = cmodeEff();
-  if (md !== "point" && md !== "air") return [];
-  const P = pressure(), m0 = num("mslope"), lg0 = md === "point" ? num("lg1") : d.LG1;
-  const ms = [0.5, m0, 0.8], lgs = md === "point" ? [0.7, 1.0, 1.3, 1.6, lg0] : [lg0];
-  const out = [];
-  ms.forEach(mv => lgs.forEach(lv => {
-    const ntu = merkel(val.H, val.C, val.W, lv, P); if (!isFinite(ntu)) return;
-    const s = scenario({ LG1: lv, m: mv, P, ntu, Cc: ntu * Math.pow(lv, mv), G: val.F / lv }, o);
-    if (s.ok) out.push(s);
-  }));
-  return out;
-}
+const scValid = o => o.F2 > 0 && isFinite(o.W2) && (o.mode !== "newq" || o.Q2 > 0);
 function syncScFlow() {
   const p = num("scpct"); if (isFinite(p) && val.F > 0) $("scflow").value = fromLps(val.F * p / 100).toFixed(FU[$("flowU").value].d);
   $("scflowU").textContent = FU[$("flowU").value].n;
@@ -1049,116 +587,34 @@ $("scmode").addEventListener("change", () => {
   if (nq && !scqSet) { $("scq").value = val.Q.toFixed(1); scqSet = true; }
   recalc();
 });
-["cmode", "lgsrc", "c1form", "fspd", "nfan", "fdia", "fvel", "pkw", "pdp", "peff", "fitU", "fitAU", "mfit", "scq", "scfan", "afl", "afU", "adb", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev", "coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount", "ttype", "fankw", "rateflow"].concat(FITIDS).forEach(id => $(id).addEventListener("input", recalc));
-
-/* ---------- section 1 output ---------- */
-function drawSweep(d, o) {
-  const svg = $("sweepChart"); const pctNow = num("scpct");
-  const pts = []; const x0 = Math.min(50, Math.floor((isFinite(pctNow) ? pctNow : 100) / 10) * 10), x1 = Math.max(150, Math.ceil((isFinite(pctNow) ? pctNow : 100) / 10) * 10);
-  const rows = [];
-  for (let p = x0; p <= x1; p += 10) {
-    const s = scenario(d, Object.assign({}, o, { F2: val.F * p / 100 })); rows.push({ p, s });
-  }
-  const ok = rows.filter(r => r.s.ok);
-  if (!ok.length) { svg.innerHTML = ""; return rows; }
-  const W = 700, H = 280, L = 52, R = 70, T = 14, B = 44, pw = W - L - R, ph = H - T - B;
-  let ymin = Math.min(o.W2, ...ok.map(r => r.s.C)) - 1, ymax = Math.max(...ok.map(r => r.s.H)) + 1;
-  ymin = Math.floor(ymin); ymax = Math.ceil(ymax);
-  const X = p => L + (p - x0) / (x1 - x0) * pw, Y = t => T + (ymax - t) / (ymax - ymin) * ph;
-  let g = "";
-  const yt = Math.max(1, Math.round((ymax - ymin) / 6));
-  for (let t = ymin; t <= ymax; t += yt) g += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + Y(t) + '" y2="' + Y(t) + '" stroke="var(--faint)"/><text x="' + (L - 6) + '" y="' + (Y(t) + 4) + '" text-anchor="end" font-size="11" fill="var(--muted)">' + t + "</text>";
-  for (let p = x0; p <= x1; p += 10) g += '<text x="' + X(p) + '" y="' + (T + ph + 16) + '" text-anchor="middle" font-size="11" fill="var(--muted)">' + p + "</text>";
-  g += '<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="var(--rule)"/>';
-  const line = (key, dash, w) => { const pp = ok.map(r => X(r.p).toFixed(1) + "," + Y(r.s[key]).toFixed(1)); return '<polyline fill="none" stroke="var(--ink)" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : "") + ' points="' + pp.join(" ") + '"/>'; };
-  g += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + Y(o.W2) + '" y2="' + Y(o.W2) + '" stroke="var(--muted)" stroke-dasharray="2 4"/>';
-  g += line("H", "", 2) + line("C", "6 4", 2);
-  const last = ok[ok.length - 1];
-  g += '<text x="' + (L + pw + 6) + '" y="' + (Y(last.s.H) + 4) + '" font-size="11.5">Water in</text><text x="' + (L + pw + 6) + '" y="' + (Y(last.s.C) + 4) + '" font-size="11.5">Water out</text><text x="' + (L + pw + 6) + '" y="' + (Y(o.W2) - 4) + '" font-size="11" fill="var(--muted)">Wet-bulb</text>';
-  if (isFinite(pctNow) && pctNow >= x0 && pctNow <= x1) g += '<line x1="' + X(pctNow) + '" x2="' + X(pctNow) + '" y1="' + T + '" y2="' + (T + ph) + '" stroke="var(--ink)" stroke-dasharray="1 3"/><text x="' + X(pctNow) + '" y="' + (T + 11) + '" text-anchor="middle" font-size="10.5" fill="var(--ink)" stroke="var(--panel)" stroke-width="3" paint-order="stroke">new case</text>';
-  g += '<line x1="' + X(100) + '" x2="' + X(100) + '" y1="' + (T + ph - 4) + '" y2="' + (T + ph) + '" stroke="var(--ink)" stroke-width="2"/>';
-  g += '<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12">Water flow, % of the first case (100 = the operating point)</text><text transform="translate(13 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="12">Temperature, °C</text>';
-  svg.innerHTML = g; return rows;
-}
+["scq", "schold", "coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount"].forEach(id => $(id).addEventListener("input", recalc));
 
 function recalc() {
-  if (tw && charKey() !== twKey) { const d0 = freezeTower(); if (!d0 || d0.bad) { tw = null; $("twFix").checked = false; } drivers = computeDrivers(pins.concat(hist, VARS)); writeFields(null); }
-  $("twHint").textContent = tw ? "The tower is held to its characteristic (section 2) through the operating point it had when this box was ticked or the characteristic last changed. Three boxes are inputs. The rest, including the approach and both water temperatures, are calculated by the tower. Untick for plain arithmetic between the boxes." : "Plain arithmetic between the boxes: the approach does not respond to the flow. Tick the box above to let the tower’s characteristic decide it.";
   if (scWbLinked && isFinite(val.W)) $("scwb").value = val.W.toFixed(2);
   if (val.F > 0 && isFinite(num("scpct")) && document.activeElement !== $("scflow")) $("scflow").value = fromLps(val.F * num("scpct") / 100).toFixed(FU[$("flowU").value].d);
-  const w = ptWarnings(); warnBox("ptWarn", w);
+  warnBox("ptWarn", ptWarnings());
   const okPt = val.R > 0 && val.A > 0 && val.F > 0;
   const eff = val.R / (val.R + val.A);
   $("ptRes").innerHTML = okPt ? [
-    box("Effectiveness", fmt(eff * 100, 1) + " %", "Range ÷ (range + approach)"),
+    box("Heat rejected", fmt(val.Q, 0) + " kW", fmt(val.Q / 1000, 3) + " MW · " + fmt(val.Q / 3.517, 0) + " RT"),
+    box("Range", fmt(val.R, 2) + " K", "approach " + fmt(val.A, 2) + " K"),
     box("Flow", fmt(val.F, 2) + " L/s", fmt(val.F * 3.6, 1) + " m³/h · " + fmt(val.F / 0.0630902, 0) + " US gpm"),
-    box("Heat rejected", fmt(val.Q, 0) + " kW", fmt(val.Q / 1000, 3) + " MW · " + fmt(val.Q / 3.517, 0) + " RT")
+    box("Effectiveness", fmt(eff * 100, 1) + " %", "Range ÷ (range + approach)")
   ].join("") : "";
+  { const a = $("toChiller"); if (a && okPt) a.href = "chiller-efficiency.html?cin=" + val.C.toFixed(2) + "&cout=" + val.H.toFixed(2) + "&wb=" + val.W.toFixed(2) + "&app=" + val.A.toFixed(2); }
 
-  const d = okPt ? designModel() : null;
-  const cw = [];
-  const cmo = $("cmode").value, md = cmodeEff();
-  /* which blocks show */
-  if (cmo === "mk" && $("lgsrc").value === "assume") $("lgsrc").value = "typed";
-  $("lgsrc").options[3].disabled = cmo === "mk";
-  const lsrc = $("lgsrc").value, asm = lsrc === "assume";
-  $("cmCM").hidden = cmo !== "cm"; $("cmCMa").hidden = !(cmo === "cm" && $("c1form").value === "cm"); $("cmTwo").hidden = !(cmo === "cm" && $("c1form").value === "two");
-  $("cmFit").hidden = !(cmo === "mk" || cmo === "ts"); $("fitAUw").hidden = cmo !== "ts";
-  document.querySelectorAll("#fitIn .ts").forEach(e => e.hidden = cmo !== "ts");
-  $("airBlock").hidden = !(cmo === "est" || cmo === "mk");
-  $("airTyped").hidden = lsrc !== "typed"; $("airFans").hidden = lsrc !== "fans"; $("airPower").hidden = lsrc !== "power";
-  $("airCommon").hidden = asm; $("airAssume").hidden = !asm; $("airSlope").hidden = cmo === "mk";
-  $("airHead").textContent = cmo === "mk" ? "Fan air flow of the maker’s selections" : "Air flow and L/G";
-  $("cmGuide").innerHTML = {
-    cm: "<b>You need:</b> <i>C</i> and <i>m</i> from the maker’s submittal, or two points (<i>L/G</i>, <i>KaV/L</i>) read from the maker’s curve. The air flow is not needed: the sheet finds the <i>L/G</i> at which section 1 sits on the curve.",
-    mk: "<b>You need:</b> two or more selections the maker has made for this tower at different water flows (ask for two or three): water flow, water in, water out and wet-bulb for each, and the fan air flow (fixed speed). The sheet finds <i>KaV/L</i> at each point with the Merkel integral, then fits <i>C</i> and <i>m</i>. This is the best method when the maker will not give <i>C</i>.",
-    ts: "<b>You need:</b> measurements taken together at two or more water flows or fan speeds: water flow, water in, water out, wet-bulb, dry-bulb and fan air flow. The sheet fits <i>C</i> and <i>m</i> in the same way. One test gives <i>KaV/L</i> at one <i>L/G</i> only, so <i>m</i> has to be assumed. Leave dry-bulb or air flow blank on a row to repeat point 1.",
-    est: "<b>You need:</b> the operating point of section 1 and the air flow (typed, from the fans, or from the fan power), or an assumed <i>L/G</i> if you have none. The slope <i>m</i> is assumed. This is an estimate; the further you move from this point, the more the assumed slope matters."
-  }[cmo];
-  if (!okPt) { $("chRes").innerHTML = ""; }
-  else if (!d) { $("chRes").innerHTML = ""; cw.push(cmo === "est" ? "Enter the air flow data (or an L/G) and a slope m above 0." : cmo === "cm" ? "Enter C and m (or two points) above 0." : "Fill in at least " + (cmo === "mk" ? "two points" : "one point") + " of the table."); }
-  else if (d.bad) { $("chRes").innerHTML = ""; cw.push(d.bad); }
-  else {
-    let ha0 = hsat(val.W, d.P), hOut = ha0 + d.LG1 * K * val.R, tOut = tOfH(hOut, d.P);
-    $("chRes").innerHTML = [
-      box("Tower characteristic, KaV/L", fmt(d.ntu, 3), "at L/G = " + fmt(d.LG1, 2)),
-      box("Constant C (at L/G = 1)", fmt(d.Cc, 3), "KaV/L = C·(L/G)<sup>−" + fmt(d.m, 3) + "</sup>" + (d.fit ? (d.fit.assumedM ? ", slope assumed" : ", fitted from " + d.fit.n + " points") : "")),
-      box("Air flow, dry air", fmt(d.G, 1) + " kg/s", d.mode === "air" ? "L/G = " + fmt(d.LG1, 3) + ", from the air flow" : d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found from the " + (d.fit ? "fitted" : "maker’s") + " curve" : "= flow ÷ (L/G)"),
-      box("Air leaving the fill", fmt(hOut, 1) + " kJ/kg", "saturated-air equivalent " + fmt(tOut, 1) + " °C, water in " + fmt(val.H, 1) + " °C")
-    ].join("");
-    if (d.LG1 < 0.5 || d.LG1 > 2.5) cw.push("L/G of " + fmt(d.LG1, 2) + " is outside the usual 0.75 to 1.5. Check the air flow and the water flow, or confirm with the maker.");
-    if (tOut > val.H - 0.5) cw.push("The leaving air is as warm as the water coming in (" + fmt(tOut, 1) + " °C against " + fmt(val.H, 1) + " °C). The air flow looks too small for this range.");
-    if ((d.mode === "point" || d.mode === "air") && (d.m < 0.5 || d.m > 0.8)) cw.push("The handbook samples a slope of 0.5 to 0.8; confirm it for this fill with the maker.");
-    if (d.fit && !d.fit.assumedM && (d.fit.m < 0.3 || d.fit.m > 1.2)) cw.push("The fitted slope m of " + fmt(d.fit.m, 2) + " is unusual (typically 0.5 to 0.8). Check the points.");
-    if (d.fit && d.fit.n > 2 && d.fit.maxdev > 5) cw.push("The points scatter by up to " + fmt(d.fit.maxdev, 1) + " % about the fitted line. Check the readings.");
-  }
-  warnBox("chWarn", cw);
-  /* air-side read-outs */
-  { const air = cmo === "est" && !asm || cmo === "mk"; const v = air ? airVolume() : NaN;
-    $("aVol").value = isFinite(v) ? fmt(v, 2) : "";
-    $("aVolHint").textContent = isFinite(v) ? fmt(v * 3600, 0) + " m³/h · " + fmt(v / 0.000471947, 0) + " cfm" : "";
-    const dd = d && !d.bad && air ? (d.mode === "air" ? d : d.fit ? { LG1: d.fit.rows[0].LG, G: d.fit.rows[0].G, rho: d.fit.rows[0].rho } : null) : null;
-    $("aLG").value = dd ? fmt(dd.LG1, 3) : ""; $("aGhint").textContent = dd ? "Dry air " + fmt(dd.G, 1) + " kg/s at " + fmt(dd.rho, 3) + " kg/m³" + (cmo === "mk" ? " (point 1)" : "") : ""; }
-  /* fit table */
-  if (lastFit && d && !d.bad && d.fit) {
-    const f = d.fit, fu = FU[$("fitU").value];
-    $("fitOut").innerHTML = "<thead><tr><th>Point</th><th>L/G</th><th>KaV/L from the Merkel integral</th><th>On the fitted line</th><th>Difference, %</th></tr></thead><tbody>" +
-      f.rows.map(r => "<tr><th>" + r.i + "</th><td>" + fmt(r.LG, 3) + "</td><td>" + fmt(r.ntu, 3) + "</td><td>" + fmt(r.fit, 3) + "</td><td>" + sg(r.dev, 1) + "</td></tr>").join("") + "</tbody>";
-    $("fitHint").innerHTML = "Fitted line: <i>KaV/L</i> = " + fmt(f.Cc, 3) + " · (<i>L/G</i>)<sup>−" + fmt(f.m, 3) + "</sup>" + (f.assumedM ? " (one point only, so the slope is the one you assumed)." : " (" + (f.n === 2 ? "through the two points" : "least squares through " + f.n + " points") + ").");
-  } else { $("fitOut").innerHTML = ""; $("fitHint").textContent = cmo === "mk" || cmo === "ts" ? "Fill in the points above." : ""; }
-  $("cmHint").textContent = cmo === "est" ? (asm ? "Estimate only: the characteristic is made to pass through the operating point at the L/G you assume, with an assumed slope. Fills differ, so confirm with the maker’s curve." : "L/G = water flow ÷ (air flow × dry-air density). The characteristic is made to pass through the operating point at that L/G, with an assumed slope, so it is an estimate until you have the maker’s slope (options 1 to 3).") : cmo === "cm" ? "The characteristic is the maker’s. The air flow is found so that the operating point in section 1 sits on this curve." : "The characteristic is fitted to the points above. The air flow of section 1 is then found so that the operating point there sits on the fitted curve; make section 1 equal to point 1 to see the same L/G.";
-
-  /* scenario */
-  const o = readScenario(); const sw = [];
-  let sc = null, rows = [];
-  if (d && !d.bad && scValid(o)) {
-    sc = scenario(d, o);
-    if (!sc.ok) sw.push("The tower cannot do this duty with these inputs. Check the flow, the heat rejected and the fan percentage.");
-  } else if (!okPt) sw.push("Complete the operating point in section 1 first.");
-  else if (d && !d.bad) sw.push("Enter a new flow, wet-bulb and fan percentage.");
-  const T = $("scTable"), SW = $("sweepTable"), WT = $("waterTable");
+  const o = readScenario(), sw = [];
+  let sc = null;
+  $("scholdHint").textContent = { mean: "Water in rises or falls by half the change of range, water out by the other half.", out: "Water in moves by the whole change of range.", in: "Water out moves by the whole change of range." }[$("schold").value];
+  if (!okPt) sw.push("Complete section 1 first.");
+  else if (scValid(o)) {
+    sc = scenario(o);
+    if (!sc.ok) sw.push("These inputs give no positive range. Check the flow and the heat rejected.");
+  } else sw.push("Enter a new flow and a wet-bulb.");
+  const T = $("scTable"), SW = $("sweepTable");
   if (sc && sc.ok) {
-    if (sc.A < 2.8) sw.push("The new approach is below about 2.8 K. A tower this size is working at its limit; expect the maker not to guarantee it.");
+    if (!(sc.A > 0)) sw.push("The new water out is at or below the wet-bulb. A tower cannot do that: raise the water out, or lower the load or flow.");
+    else if (sc.A < 2.8) sw.push("The new approach is below about 2.8 K. Makers rarely guarantee less, so check with the maker.");
     if (sc.A > 15) sw.push("A new approach above 15 K means the tower is badly under-sized for this case.");
     const row = (nm, a, b, dd, u) => "<tr><th>" + nm + "</th><td>" + a + "</td><td><b>" + b + "</b></td><td>" + dd + "</td><td>" + u + "</td></tr>";
     T.innerHTML = "<thead><tr><th></th><th>First case</th><th>New case</th><th>Change</th><th></th></tr></thead><tbody>" +
@@ -1168,31 +624,17 @@ function recalc() {
       row("Range", fmt(val.R, 2), fmt(sc.R, 2), sg(sc.R - val.R, 2), "K") +
       row("Wet-bulb", fmt(val.W, 2), fmt(sc.W, 2), sg(sc.W - val.W, 2), "°C") +
       row("Water flow", flowStr(val.F), flowStr(sc.F), sg(fromLps(sc.F - val.F), FU[$("flowU").value].d), FU[$("flowU").value].n) +
-      row("Heat rejected", fmt(val.Q, 0), fmt(sc.Q, 0), sg(sc.Q - val.Q, 0), "kW") +
-      row("L/G", fmt(d.LG1, 3), fmt(sc.LG, 3), sg(sc.LG - d.LG1, 3), "kg/kg") +
-      row("Tower KaV/L", fmt(d.ntu, 3), fmt(sc.ntu, 3), sg(sc.ntu - d.ntu, 3), "") + "</tbody>";
-    const sp = spread(o, d);
-    if (sp.length > 1) {
-      const cs = sp.map(s => s.C), hs = sp.map(s => s.H);
-      $("scSpread").innerHTML = "Spread of the estimate if the assumed " + (cmodeEff() === "point" ? "L/G (0.7 to 1.6) and slope m (0.5 to 0.8) are" : "slope m (0.5 to 0.8) is") + " varied: water out " + fmt(Math.min(...cs), 2) + " to " + fmt(Math.max(...cs), 2) + " °C, water in " + fmt(Math.min(...hs), 2) + " to " + fmt(Math.max(...hs), 2) + " °C.";
-    } else $("scSpread").textContent = "";
-    rows = drawSweep(d, o);
+      row("Heat rejected", fmt(val.Q, 0), fmt(sc.Q, 0), sg(sc.Q - val.Q, 0), "kW") + "</tbody>";
     const dispD = FU[$("flowU").value].d, pnow = num("scpct");
+    const rows = []; for (let p = 50; p <= 150; p += 10) rows.push({ p, s: scenario(Object.assign({}, o, { F2: val.F * p / 100 })) });
     const near = rows.reduce((b, r) => Math.abs(r.p - pnow) < Math.abs(b.p - pnow) ? r : b, rows[0]);
     SW.innerHTML = "<thead><tr><th>Flow, %</th><th>Flow, " + FU[$("flowU").value].n + "</th><th>Water in, °C</th><th>Water out, °C</th><th>Approach, K</th><th>Range, K</th><th>Heat, kW</th></tr></thead><tbody>" +
-      rows.map(r => r.s.ok ? '<tr' + (r === near ? ' class="on"' : "") + "><td>" + r.p + "</td><td>" + fmt(fromLps(r.s.F), dispD) + "</td><td>" + fmt(r.s.H, 2) + "</td><td>" + fmt(r.s.C, 2) + "</td><td>" + fmt(r.s.A, 2) + "</td><td>" + fmt(r.s.R, 2) + "</td><td>" + fmt(r.s.Q, 0) + "</td></tr>" : "<tr><td>" + r.p + '</td><td colspan="6">not solvable</td></tr>').join("") + "</tbody>";
-  } else { T.innerHTML = ""; SW.innerHTML = ""; $("sweepChart").innerHTML = ""; $("scSpread").textContent = ""; }
+      rows.map(r => r.s.ok ? "<tr" + (r === near ? ' class="on"' : "") + "><td>" + r.p + "</td><td>" + fmt(fromLps(r.s.F), dispD) + "</td><td>" + fmt(r.s.H, 2) + "</td><td>" + fmt(r.s.C, 2) + "</td><td>" + fmt(r.s.A, 2) + "</td><td>" + fmt(r.s.R, 2) + "</td><td>" + fmt(r.s.Q, 0) + "</td></tr>" : "<tr><td>" + r.p + '</td><td colspan="6">no positive range</td></tr>').join("") + "</tbody>";
+  } else { T.innerHTML = ""; SW.innerHTML = ""; }
   warnBox("scWarn", sw);
-  { const base = "100 % for a fixed-speed fan. Use the speed ratio for a variable-speed fan: air flow is proportional to speed.";
-    const fp = num("scfan");
-    $("scfanHint").textContent = d && !d.bad && fp > 0 ? base + " Air at this setting: " + fmt(d.G * fp / 100, 1) + " kg/s dry air" + (d.rho ? " ≈ " + fmt(d.G * fp / 100 / d.rho, 1) + " m³/s" : "") + "." : base; }
-  { const a = $("toChiller"); if (a && okPt) a.href = "chiller-efficiency.html?cin=" + val.C.toFixed(2) + "&cout=" + val.H.toFixed(2) + "&wb=" + val.W.toFixed(2) + "&app=" + val.A.toFixed(2); }
-  $("scwbHint").textContent = scWbLinked ? "Same as the operating point." : "Changed from the operating point.";
-
-  waterUse(okPt, val, sc);
-
-  fanCheck(d);
-  working(d, sc, o);
+  $("scwbHint").textContent = scWbLinked ? "Same as the first case." : "Changed from the first case.";
+  waterUse(okPt, val, sc && sc.ok ? sc : null);
+  working(sc && sc.ok ? sc : null, o);
 }
 
 
@@ -1255,21 +697,7 @@ function waterUse(okPt, v, sc) {
   $("evNote").textContent = "First case: heat rejected " + fmt(K * v.F * v.R, 0) + " kW. Evaporating all of it would take " + fmt(K * v.F * v.R / HFG * 3.6 * u.f, u.d) + " " + u.n + " (100 % share). Make-up per kWh rejected: " + fmt(coc > 1 ? r0.M * 1000 / (K * v.F * v.R) : NaN, 2) + " L/kWh.";
 }
 
-/* ---------- 90.1 Table 6.8.1-7 fan check ---------- */
-function fanCheck(d) {
-  const req = parseFloat($("ttype").value), kw = num("fankw"), mk = num("rateflow");
-  let Fr = null, src = "";
-  if (mk > 0) { Fr = mk; src = "maker’s figure"; }
-  else if (d && !d.bad) {
-    const P = d.P; let lo = 0.02, hi = 8; const g = lg => merkel(35.0, 29.4, 23.9, lg, P) - d.Cc * Math.pow(lg, -d.m);
-    if (g(lo) < 0 && g(hi) > 0) { for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (g(m) < 0) lo = m; else hi = m; } Fr = (lo + hi) / 2 * d.G; src = "estimated from the tower characteristic"; }
-  }
-  const el = $("fanRes");
-  if (Fr == null) { el.innerHTML = box("Required", fmt(req, 2) + " L/(s·kW)", "Table 6.8.1-7, at 35.0 °C in, 29.4 °C out, 23.9 °C wb"); return; }
-  let h = box("Required", fmt(req, 2) + " L/(s·kW)", "Table 6.8.1-7, at 35.0 / 29.4 °C, 23.9 °C wb") + box("Rated flow at that condition", fmt(Fr, 1) + " L/s", src) + box("Largest fan power that meets it", fmt(Fr / req, 1) + " kW", "= rated flow ÷ required");
-  if (kw > 0) { const a = Fr / kw; h += box("Fan power entered", fmt(a, 2) + " L/(s·kW)", a >= req ? "meets the table" : "does not meet the table", a >= req ? "ok" : "bad"); }
-  el.innerHTML = h;
-}
+
 (function buildRating() {
   const th = a => "<thead><tr>" + a.map(x => "<th>" + x + "</th>").join("") + "</tr></thead>";
   const body = rows => "<tbody>" + rows.map(r => "<tr>" + r.map(x => "<td>" + x + "</td>").join("") + "</tr>").join("") + "</tbody>";
@@ -1299,14 +727,9 @@ function buildTables() {
   ];
   $("tb7").innerHTML = "<thead><tr><th>Equipment type</th><th>Rating condition, °C (all capacities)</th><th>Performance required</th><th>Test procedure</th></tr></thead><tbody>" + t7.map((r, i) => '<tr data-t7="' + i + '"><td>' + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td></tr>").join("") + "</tbody>";
 }
-function markTables() {
-  document.querySelectorAll("#tb7 tr.on").forEach(e => e.classList.remove("on"));
-  const t = $("ttype").value === "3.56" ? 0 : 1; const e7 = document.querySelector('tr[data-t7="' + t + '"]'); if (e7) e7.classList.add("on");
-}
 
-/* ============================================================
-   Notes and formulae: formulae and worked steps
-   ============================================================ */
+function markTables() { /* nothing to mark: the tower type is not chosen on this sheet */ }
+
 MX.formula($("fxT1"), [
   "$R$ = $T$_{in} − $T$_{out}",
   "$A$ = $T$_{out} − $T$_{wb}",
@@ -1315,43 +738,20 @@ MX.formula($("fxT1"), [
   "$E$ = 0.00085 · 1.8 · $V$ · $R$",
   "$B$ = @frac{$E$}{$N$ − 1}"
 ]);
-MX.formula($("fxT2"), [
-  "@frac{$KaV$}{$L$} = @frac{$c$_{w} · $R$}{4} · ( @frac{1}{Δ$h$_{1}} + @frac{1}{Δ$h$_{2}} + @frac{1}{Δ$h$_{3}} + @frac{1}{Δ$h$_{4}} )",
-  "Δ$h$_{i} = $h$_{w,i} − $h$_{a,i}",
-  "$h$_{a,i} = $h$_{a,wb} + @frac{$L$}{$G$} · $c$_{w} · ($T$_{i} − $T$_{out})",
-  "@frac{$KaV$}{$L$} = $C$ · (@frac{$L$}{$G$})^{−$m$}",
-  "$C$ = (@frac{$KaV$}{$L$})_{1} · (@frac{$L$}{$G$})_{1}^{$m$}"
+
+MX.formula($("fxT4"), [
+  "$R$_{2} = $R$_{1} · @frac{$ṁ$_{1}}{$ṁ$_{2}}     (heat rejected held)",
+  "$Q$_{2} = $ṁ$_{2} · $c$_{w} · $R$_{2}",
+  "$T$_{mean} = @frac{$T$_{in} + $T$_{out}}{2}",
+  "$T$_{in,2} = $T$_{mean} + @frac{$R$_{2}}{2},   $T$_{out,2} = $T$_{mean} − @frac{$R$_{2}}{2}"
 ]);
-MX.defs($("fxTDefs"), [
-  ["$T$_{in}, $T$_{out}", "water in and out of the tower, °C"],
-  ["$T$_{wb}", "entering air wet-bulb, °C"],
-  ["$ṁ$, $V$", "water flow, kg/s (= L/s) and m³/h"],
-  ["$c$_{w}", "water, 4.186 kJ/(kg·K)"],
-  ["$KaV/L$", "tower characteristic (Merkel number)"],
-  ["$h$_{w,i}", "saturated air enthalpy at water temperature $T$_{i}, kJ/kg"],
-  ["$h$_{a,i}", "air enthalpy at that point in the fill, kJ/kg"],
-  ["$T$_{i}", "$T$_{out} + 0.1$R$, 0.4$R$, 0.6$R$, 0.9$R$, °C"],
-  ["$L/G$", "water to dry air mass ratio, kg/kg"],
-  ["$C$, $m$", "tower constant and slope of its line"],
-  ["$E$, $B$, $N$", "evaporation, blow-down (m³/h) and cycles of concentration"]
+MX.defs($("fxT4Defs"), [
+  ["$ṁ$_{1}, $ṁ$_{2}", "water flow in the first and the new case, kg/s (= L/s)"],
+  ["$R$_{1}, $R$_{2}", "range in the first and the new case, K"],
+  ["$T$_{mean}", "average of water in and water out; or hold $T$_{out} or $T$_{in} instead"]
 ]);
-MX.formula($("fxT3"), [
-  "$G$ = $V$_{air} · $ρ$_{da}",
-  "@frac{$L$}{$G$} = @frac{$ṁ$}{$G$}",
-  "$V$_{air} = $n$ · @frac{π $D$^{2}}{4} · $v$",
-  "$V$_{air} = @frac{$P$_{fan} · $η$_{fan}}{Δ$p$}",
-  "ln($KaV/L$_{i}) = ln $C$ − $m$ · ln($L/G$_{i})",
-  "$m$ = @frac{ln($K$_{1}) − ln($K$_{2})}{ln($L/G$_{2}) − ln($L/G$_{1})}",
-  "$C$ = $K$_{1} · ($L/G$_{1})^{$m$}"
-]);
-MX.defs($("fxT3Defs"), [
-  ["$V$_{air}", "air volume of all fans at the tower inlet, m³/s; proportional to fan speed"],
-  ["$ρ$_{da}", "dry-air density at the entering dry-bulb and wet-bulb, kg/m³"],
-  ["$G$", "dry-air mass flow, kg/s"],
-  ["$n$, $D$, $v$", "number of fans, fan diameter (m), average air velocity (m/s)"],
-  ["$P$_{fan}, $η$_{fan}, Δ$p$", "shaft power (W), total efficiency, total pressure (Pa)"],
-  ["$K$_{i}", "KaV/L at point i from the Merkel integral; with three or more points, a least-squares line"]
-]);
+
+
 MX.formula($("fxW"), [
   "$E$ = 0.00085 · 1.8 · $V$ · $R$",
   "$E$ = 0.0018 · $V$ · $R$",
@@ -1383,119 +783,32 @@ MX.defs($("fxWDefs2"), [
   ["$E$, $B$, $D$, $M$", "evaporation, bleed-off, drift, make-up, m³/h"],
   ["$N$, $δ$", "cycles of concentration; drift, % of flow"]
 ]);
-function working(d, sc, o) {
+
+function working(sc, o) {
   const sT = [];
   if (val.R > 0 && val.A > 0 && val.F > 0) {
-    sT.push({ t: "Operating point", m: ["$R$ = " + fmt(val.H, 2) + " − " + fmt(val.C, 2) + " = **" + fmt(val.R, 2) + " K**", "$A$ = " + fmt(val.C, 2) + " − " + fmt(val.W, 2) + " = **" + fmt(val.A, 2) + " K**", "$Q$ = " + fmt(val.F, 2) + " × 4.186 × " + fmt(val.R, 2) + " = **" + fmt(val.Q, 1) + " kW**"], n: "Water at 1 kg per litre." });
-    if (d && !d.bad) {
-      const ha0 = hsat(val.W, d.P), kk = [0.1, 0.4, 0.6, 0.9].map(f => { const t = val.C + f * val.R; return { t, hw: hsat(t, d.P), ha: ha0 + d.LG1 * K * f * val.R }; });
-      sT.push({ t: "Air at the wet-bulb", m: ["$P$ = " + fmt(d.P / 1000, 2) + " kPa", "$h$_{a,wb} = **" + fmt(ha0, 2) + " kJ/kg**"], n: "Saturated air at " + fmt(val.W, 2) + " °C." });
-      sT.push({ t: "Merkel integral at the first case", m: kk.map((k, i) => "$T$_{" + (i + 1) + "} = " + fmt(k.t, 2) + " °C: $h$_{w} = " + fmt(k.hw, 1) + ", $h$_{a} = " + fmt(k.ha, 1) + ", 1/Δ$h$ = " + fmt(1 / (k.hw - k.ha), 4)).concat(["$KaV/L$ = 4.186 × " + fmt(val.R, 2) + " ÷ 4 × " + fmt(kk.reduce((a, k) => a + 1 / (k.hw - k.ha), 0), 4) + " = **" + fmt(d.ntu, 3) + "**"]), n: d.mode === "air" ? "L/G = " + fmt(d.LG1, 3) + " from the air flow." : d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found so that the operating point lies on the " + (d.fit ? "fitted" : "maker’s") + " characteristic." : "L/G = " + fmt(d.LG1, 2) + " as assumed." });
-      if (d.fit) {
-        sT.push({ t: "Fit of C and m from the points", m: d.fit.rows.map(r => "Point " + r.i + ": L/G = " + fmt(r.F, 2) + " ÷ (" + fmt(r.vol, 2) + " × " + fmt(r.rho, 3) + ") = " + fmt(r.LG, 3) + ", KaV/L = " + fmt(r.ntu, 3)).concat([d.fit.assumedM ? "One point: $m$ = " + fmt(d.fit.m, 2) + " as assumed" : "$m$ = **" + fmt(d.fit.m, 3) + "**, $C$ = **" + fmt(d.fit.Cc, 3) + "** (" + (d.fit.n === 2 ? "two points" : "least squares") + ")"]), n: "KaV/L at each point comes from the four-point Merkel integral with that point’s temperatures and L/G." });
-      } else if (d.mode === "air") {
-        sT.push({ t: "Air flow and L/G", m: ["$V$_{air} = **" + fmt(d.vol, 2) + " m³/s**", "$ρ$_{da} = **" + fmt(d.rho, 3) + " kg/m³** at " + fmt(num("adb"), 1) + " / " + fmt(val.W, 1) + " °C", "$G$ = " + fmt(d.vol, 2) + " × " + fmt(d.rho, 3) + " = **" + fmt(d.G, 2) + " kg/s**", "$L/G$ = " + fmt(val.F, 2) + " ÷ " + fmt(d.G, 2) + " = **" + fmt(d.LG1, 3) + "**"] });
-      }
-      sT.push({ t: "Constant of the characteristic", m: ["$C$ = " + fmt(d.ntu, 3) + " × " + fmt(d.LG1, 2) + "^{" + fmt(d.m, 2) + "} = **" + fmt(d.Cc, 3) + "**", "$G$ = " + fmt(val.F, 2) + " ÷ " + fmt(d.LG1, 2) + " = **" + fmt(d.G, 2) + " kg/s**"] });
-      if (sc && sc.ok) {
-        sT.push({ t: "New case: range and L/G", m: ["$R$_{2} = **" + fmt(sc.R, 3) + " K**" + (o.mode === "q" ? " (= " + fmt(val.R, 2) + " × " + fmt(val.F, 2) + " ÷ " + fmt(sc.F, 2) + ")" : o.mode === "r" ? " (range held)" : " (= " + fmt(o.Q2, 0) + " ÷ (4.186 × " + fmt(sc.F, 2) + "))"), "$L/G$_{2} = " + fmt(sc.F, 2) + " ÷ (" + fmt(d.G, 2) + " × " + fmt(o.fan / 100, 2) + ") = **" + fmt(sc.LG, 3) + "**"] });
-        sT.push({ t: "Characteristic at the new L/G", m: ["$KaV/L$ = " + fmt(d.Cc, 3) + " × " + fmt(sc.LG, 3) + "^{−" + fmt(d.m, 2) + "} = **" + fmt(sc.ntu, 3) + "**"], n: "The tower is the same, so this is what it can do at the new L/G." });
-        sT.push({ t: "Water out that satisfies the Merkel integral", m: ["Find $T$_{out} so that the four-point integral at $R$_{2}, wet-bulb " + fmt(sc.W, 2) + " °C and L/G " + fmt(sc.LG, 3) + " equals " + fmt(sc.ntu, 3), "$T$_{out} = **" + fmt(sc.C, 2) + " °C**, approach **" + fmt(sc.A, 2) + " K**", "$T$_{in} = " + fmt(sc.C, 2) + " + " + fmt(sc.R, 2) + " = **" + fmt(sc.H, 2) + " °C**"], n: "Found by bisection; the Merkel integral falls as the water gets warmer." });
-      }
+    sT.push({ t: "First case", m: ["$R$ = " + fmt(val.H, 2) + " − " + fmt(val.C, 2) + " = **" + fmt(val.R, 2) + " K**", "$A$ = " + fmt(val.C, 2) + " − " + fmt(val.W, 2) + " = **" + fmt(val.A, 2) + " K**", "$Q$ = " + fmt(val.F, 2) + " × 4.186 × " + fmt(val.R, 2) + " = **" + fmt(val.Q, 1) + " kW**"], n: "Water at 1 kg per litre." });
+    if (sc) {
+      sT.push({ t: "New case: range", m: ["$R$_{2} = **" + fmt(sc.R, 3) + " K**" + (o.mode === "q" ? " (= " + fmt(val.R, 2) + " × " + fmt(val.F, 2) + " ÷ " + fmt(sc.F, 2) + ")" : o.mode === "r" ? " (range held)" : " (= " + fmt(o.Q2, 0) + " ÷ (4.186 × " + fmt(sc.F, 2) + "))"), "$Q$_{2} = " + fmt(sc.F, 2) + " × 4.186 × " + fmt(sc.R, 3) + " = **" + fmt(sc.Q, 1) + " kW**"] });
+      const mid = (val.H + val.C) / 2;
+      sT.push({ t: "New case: water temperatures", m: o.hold === "out" ? ["$T$_{out,2} = **" + fmt(sc.C, 2) + " °C** (held)", "$T$_{in,2} = " + fmt(sc.C, 2) + " + " + fmt(sc.R, 2) + " = **" + fmt(sc.H, 2) + " °C**"] : o.hold === "in" ? ["$T$_{in,2} = **" + fmt(sc.H, 2) + " °C** (held)", "$T$_{out,2} = " + fmt(sc.H, 2) + " − " + fmt(sc.R, 2) + " = **" + fmt(sc.C, 2) + " °C**"] : ["$T$_{mean} = (" + fmt(val.H, 2) + " + " + fmt(val.C, 2) + ") ÷ 2 = " + fmt(mid, 2) + " °C", "$T$_{in,2} = " + fmt(mid, 2) + " + " + fmt(sc.R, 2) + " ÷ 2 = **" + fmt(sc.H, 2) + " °C**", "$T$_{out,2} = " + fmt(mid, 2) + " − " + fmt(sc.R, 2) + " ÷ 2 = **" + fmt(sc.C, 2) + " °C**"], n: "The sheet holds this rule; it does not predict the tower’s own response." });
     }
   }
   if (lastWater) {
-    const W0 = lastWater, r = W0.res[0], uu = WU[$("wunit").value];
-    const Em = { emp: "0.00085 × 1.8 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), thumb: "0.0018 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), lat: fmt(W0.fe, 0) + " % × " + fmt(K * r.c.F * r.c.R, 0) + " kW ÷ 2430 × 3600 ÷ 1000" }[W0.meth];
-    sT.push({ t: "Water use, first case", m: ["$V$ = " + fmt(r.c.F, 2) + " L/s × 3.6 = **" + fmt(r.V, 2) + " m³/h**", "$E$ = " + Em + " = **" + fmt(r.E, 3) + " m³/h**", "$D$ = " + fmt(r.V, 2) + " × " + fmt(W0.dr, 4) + " ÷ 100 = **" + fmt(r.D, 4) + " m³/h**"].concat(W0.coc > 1 ? ["$B$ = " + fmt(r.E, 3) + " ÷ (" + fmt(W0.coc, 2) + " − 1)" + (W0.dc ? " − " + fmt(r.D, 4) : "") + " = **" + fmt(r.B, 3) + " m³/h**", "$M$ = " + fmt(r.E, 3) + " + " + fmt(r.B, 3) + " + " + fmt(r.D, 4) + " = **" + fmt(r.M, 3) + " m³/h**" + (uu.f !== 1 ? " = " + fmt(r.M * uu.f, uu.d) + " " + uu.n : "")] : []), n: W0.dc ? "Drift counted as part of the bleed-off." : "Bleed-off from the handbook relation; drift added to the make-up." });
+    const W0 = lastWater, uu = WU[$("wunit").value];
+    W0.res.forEach(r => {
+      const Em = { emp: "0.00085 × 1.8 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), thumb: "0.0018 × " + fmt(r.V, 2) + " × " + fmt(r.c.R, 2), lat: fmt(W0.fe, 0) + " % × " + fmt(K * r.c.F * r.c.R, 0) + " kW ÷ 2430 × 3600 ÷ 1000" }[W0.meth];
+      sT.push({ t: "Water use, " + r.c.n.toLowerCase(), m: ["$V$ = " + fmt(r.c.F, 2) + " L/s × 3.6 = **" + fmt(r.V, 2) + " m³/h**", "$E$ = " + Em + " = **" + fmt(r.E, 3) + " m³/h**", "$D$ = " + fmt(r.V, 2) + " × " + fmt(W0.dr, 4) + " ÷ 100 = **" + fmt(r.D, 4) + " m³/h**"].concat(W0.coc > 1 ? ["$B$ = " + fmt(r.E, 3) + " ÷ (" + fmt(W0.coc, 2) + " − 1)" + (W0.dc ? " − " + fmt(r.D, 4) : "") + " = **" + fmt(r.B, 3) + " m³/h**", "$M$ = " + fmt(r.E, 3) + " + " + fmt(r.B, 3) + " + " + fmt(r.D, 4) + " = **" + fmt(r.M, 3) + " m³/h**" + (uu.f !== 1 ? " = " + fmt(r.M * uu.f, uu.d) + " " + uu.n : "")] : []), n: W0.dc ? "Drift counted as part of the bleed-off." : "Bleed-off from the handbook relation; drift added to the make-up." });
+    });
   }
-  MX.steps($("workT"), sT, "Enter a valid operating point in section 1 to see the working.");
-
+  MX.steps($("workT"), sT, "Enter a valid heat balance in section 1 to see the working.");
 }
 
 /* ---------- start ---------- */
 buildTables();
 writeFields(null);
-$("twFix").dispatchEvent(new Event("change"));
 syncScFlow();
 $("scflowU").textContent = FU[$("flowU").value].n;
-recalc();
-})();
-(function () {
-"use strict";
-const $ = id => document.getElementById(id), K = 4.186, num = id => parseFloat($(id).value);
-const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
-const sg = (x, d) => !isFinite(x) ? "—" : (x < -0.5 * Math.pow(10, -d) ? "−" : "+") + Math.abs(x).toFixed(d);
-const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
-function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
-const FU = { lps: { f: 1, n: "L/s", d: 2 }, m3h: { f: 1 / 3.6, n: "m³/h", d: 1 }, gpm: { f: 0.0630902, n: "US gpm", d: 0 } };
-const toLps = x => x * FU[$("q_flowU").value].f, fromLps = x => x / FU[$("q_flowU").value].f;
-const hsat = (t, P) => { const w = PSY.Wsat(t, P); return w == null ? NaN : PSY.enthalpy(t, w); };
-function merkel(H, C, W, LG, P) {
-  const R = H - C; if (!(R > 0)) return NaN; const ha0 = hsat(W, P); let s = 0;
-  for (const f of [0.1, 0.4, 0.6, 0.9]) { const d = hsat(C + f * R, P) - (ha0 + LG * K * f * R); if (!(d > 1e-6)) return Infinity; s += 1 / d; }
-  return K * R / 4 * s;
-}
-function solveCWT(R, W, LG, ntu, P) {
-  let lo = W + 0.001, hi = W + 60;
-  if (!(merkel(hi + R, hi, W, LG, P) < ntu)) return null;
-  for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (merkel(m + R, m, W, LG, P) > ntu) lo = m; else hi = m; }
-  return (lo + hi) / 2;
-}
-let pctDrv = true;
-function model() {
-  const F = toLps(num("q_flow")), H = num("q_hwt"), C = num("q_cwt"), W = num("q_wbt"), R = H - C, A = C - W;
-  return { F, H, C, W, R, A, Q: K * F * R };
-}
-function sizing(b) {
-  const LG1 = num("q_lg1"), m = num("q_slope"), P = PSY.pressurePa(isFinite(num("q_elev")) ? num("q_elev") : 0);
-  if (!(LG1 > 0 && m > 0)) return { bad: "Enter a water to air ratio and a slope above 0." };
-  const ntu = merkel(b.H, b.C, b.W, LG1, P);
-  if (!isFinite(ntu)) return { bad: "With L/G = " + LG1 + " this approach and range cannot be reached by any tower. Lower the L/G or raise the approach." };
-  return { P, m, Cc: ntu * Math.pow(LG1, m), G: b.F / LG1, ntu, LG1 };
-}
-function atFlow(b, s, F2) {
-  const R2 = b.R * b.F / F2, LG2 = F2 / s.G, ntu2 = s.Cc * Math.pow(LG2, -s.m), c = solveCWT(R2, b.W, LG2, ntu2, s.P);
-  if (c == null || !(R2 > 0)) return null;
-  return { F: F2, R: R2, C: c, H: c + R2, A: c - b.W, Q: b.Q };
-}
-function recalc() {
-  const b = model(), w = [];
-  $("q_flow2U").textContent = FU[$("q_flowU").value].n;
-  const ok = b.F > 0 && isFinite(b.H) && isFinite(b.C) && isFinite(b.W);
-  if (!ok) { $("q_res1").innerHTML = ""; warnBox("q_warn1", ["Enter the flow and all three temperatures."]); $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
-  if (!(b.R > 0)) w.push("Water in must be warmer than water out.");
-  if (!(b.A > 0)) w.push("Water out must be above the wet-bulb. A tower cannot cool below it.");
-  else if (b.A < 2.8) w.push("An approach under about 2.8 K is rarely guaranteed by tower makers.");
-  warnBox("q_warn1", w);
-  if (!(b.R > 0 && b.A > 0)) { $("q_res1").innerHTML = ""; $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
-  $("q_res1").innerHTML = box("Heat rejected", fmt(b.Q, 0) + " kW", fmt(b.Q / 3.517, 0) + " refrigeration tons · " + fmt(b.Q * 3.412, 0) + " kBtu/h", "ok") + box("Range", fmt(b.R, 2) + " K", "water in − water out") + box("Approach", fmt(b.A, 2) + " K", "water out − wet-bulb");
-  if (!$("q_chg").checked) return;
-  /* new flow */
-  if (pctDrv) { const p = num("q_pct"); if (p > 0) $("q_flow2").value = fromLps(b.F * p / 100).toFixed(FU[$("q_flowU").value].d); }
-  else { const f2 = toLps(num("q_flow2")); if (f2 > 0) $("q_pct").value = (f2 / b.F * 100).toFixed(1); }
-  const F2 = toLps(num("q_flow2")), s = sizing(b), w2 = [];
-  if (s.bad) { warnBox("q_warn2", [s.bad]); $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
-  const n = F2 > 0 ? atFlow(b, s, F2) : null;
-  if (!(F2 > 0)) w2.push("Enter the new water flow."); else if (!n) w2.push("The tower cannot do this duty at that flow with this assumption.");
-  else if (n.A < 2.8) w2.push("The new approach is under about 2.8 K, which makers rarely guarantee.");
-  warnBox("q_warn2", w2);
-  const fd = FU[$("q_flowU").value];
-  if (n) {
-    const row = (k, a, c, d, u) => "<tr><th>" + k + "</th><td>" + fmt(a, d) + "</td><td>" + fmt(c, d) + "</td><td>" + sg(c - a, d) + "</td><td>" + u + "</td></tr>";
-    $("q_cmp").innerHTML = "<thead><tr><th></th><th>Now</th><th>New flow</th><th>Change</th><th></th></tr></thead><tbody>" +
-      row("Water flow", fromLps(b.F), fromLps(n.F), fd.d, fd.n) + row("Water in", b.H, n.H, 2, "°C") + row("Water out", b.C, n.C, 2, "°C") + row("Approach", b.A, n.A, 2, "K") + row("Range", b.R, n.R, 2, "K") +
-      row("Heat rejected", b.Q, n.Q, 0, "kW") + "</tbody>";
-  } else $("q_cmp").innerHTML = "";
-  const pcts = [60, 70, 80, 90, 100, 110, 120, 130, 140], near = pcts.reduce((a, p) => Math.abs(p - num("q_pct")) < Math.abs(a - num("q_pct")) ? p : a, 100);
-  $("q_sweep").innerHTML = "<thead><tr><th>Flow, %</th><th>Flow, " + fd.n + "</th><th>Water in, °C</th><th>Water out, °C</th><th>Approach, K</th><th>Range, K</th></tr></thead><tbody>" +
-    pcts.map(p => { const r = atFlow(b, s, b.F * p / 100); return r ? "<tr" + (p === near ? ' class="on"' : "") + "><td>" + p + "</td><td>" + fmt(fromLps(r.F), fd.d) + "</td><td>" + fmt(r.H, 2) + "</td><td>" + fmt(r.C, 2) + "</td><td>" + fmt(r.A, 2) + "</td><td>" + fmt(r.R, 2) + "</td></tr>" : "<tr><td>" + p + '</td><td colspan="5">not solvable</td></tr>'; }).join("") + "</tbody>";
-}
-["q_flow", "q_flowU", "q_hwt", "q_cwt", "q_wbt", "q_lg1", "q_slope", "q_elev"].forEach(id => $(id).addEventListener("input", recalc));
-$("q_flowU").addEventListener("change", () => { pctDrv = true; recalc(); });
-$("q_pct").addEventListener("input", () => { pctDrv = true; recalc(); });
-$("q_flow2").addEventListener("input", () => { pctDrv = false; recalc(); });
-$("q_chg").addEventListener("change", () => { $("q_chgBox").hidden = !$("q_chg").checked; pctDrv = true; recalc(); });
 recalc();
 })();
 </script>

@@ -276,7 +276,7 @@ ol.steps li { margin:4px 0; }
   <a class="on" href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   </nav>
 
-<p class="lead">Looks up the 90.1 minimum chiller COP and IPLV.SI for the chiller type and size, adjusts a centrifugal chiller for the evaporator and condenser water temperatures with Kadj, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. The cooling tower is on <a href="cooling-tower-chiller.html">sheet XV</a>; its water temperatures can be passed here with the link under its operating point. <button class="mx-open" type="button" data-mxopen="chiller">How the COP is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
+<p class="lead">Looks up the 90.1 minimum chiller COP and IPLV.SI for the chiller type and size, adjusts a centrifugal chiller for the evaporator and condenser water temperatures with Kadj, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. The cooling tower is on <a href="cooling-tower-chiller.html">sheet XV</a>; its water temperatures can be passed here with the link under its operating point. <button class="mx-open" type="button" data-mxopen="chiller">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
 <nav class="toc" aria-label="On this page"><a href="#s1">1 Minimum COP and IPLV</a><a href="#s2">2 Maker’s selection</a></nav>
 
 <h2 id="s1">1. Minimum chiller efficiency, ASHRAE 90.1 Section 6</h2>
@@ -389,7 +389,8 @@ ol.steps li { margin:4px 0; }
 <aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
   <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
   <div class="mx-tabs" role="tablist" aria-label="Sections">
-    <button role="tab" type="button" id="mxt-chiller" data-tab="chiller" aria-controls="mxtab-chiller">Chiller COP</button>
+    <button role="tab" type="button" id="mxt-chiller" data-tab="chiller" aria-controls="mxtab-chiller">Formulae</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
     <button role="tab" type="button" id="mxt-rating" data-tab="rating" aria-controls="mxtab-rating">Rating conditions</button>
     <button role="tab" type="button" id="mxt-tables" data-tab="tables" aria-controls="mxtab-tables">Tables</button>
     <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
@@ -403,7 +404,9 @@ ol.steps li { margin:4px 0; }
       <div id="fxC2" role="math"></div>
       <ul id="fxCDefs2"></ul>
       <p class="tn">Section 2 scales the maker’s COP and IPLV by the ratio of the 90.1 factors at your conditions and at the maker’s conditions. 90.1 applies <i>K</i><sub>adj</sub> to the IPLV requirement in the same way, so an adjusted IPLV is the standard’s NPLV. The factor is a curve for the minimum requirement; it is not the maker’s data for the unit, and it ignores any change in capacity, flow or compressor limits. Ask the maker for a selection at the new conditions and enter it in step 3 to see the difference.</p>
-      <h3>Worked with the values on the sheet</h3>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
       <div id="workC"></div>
     </div>
     <div role="tabpanel" id="mxtab-rating" aria-labelledby="mxt-rating" hidden>
