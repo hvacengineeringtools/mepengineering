@@ -23,8 +23,9 @@ A static site of fifteen calculation sheets. Open `index.html` in a browser, or 
 | XIV | `envelope.html` | Building envelope U- and R-value requirements by climate zone: city search, then Section 5 tables (ASHRAE/IES 90.1-2025 SI, ASHRAE 169-2025) |
 | XV | `cooling-tower-chiller.html` | Cooling tower heat rejection and water use: linked water in/out, range, approach, wet-bulb, flow and heat rejected; the new range and water temperatures when the flow or load changes (heat balance only, no tower characteristic); evaporation, bleed-off, drift and make-up water; recorded Table 6.8.1-7 |
 | XVI | `chiller-efficiency.html` | Chiller efficiency: minimum COP and IPLV.SI from ASHRAE/IES 90.1-2025 (SI) Tables 6.8.1-3 and 6.8.1-16 with the Kadj adjustment of §6.4.1.2.1, a manufacturer’s selection (COP, IPLV.SI) adjusted to new evaporator and condenser water temperatures, the rating conditions of the 90.1 and AHRI 551/591 tables, and the recorded Tables 6.8.1-3 and 6.8.1-16. Takes the condenser water temperatures from sheet XV through a link |
+| XVII | `feed-expansion-tank.html` | Feed and expansion tank: open tank with an air-water interface, total system water volume with a safety factor, water expansion between two temperatures (specific volume calculated or entered) less the pipe growth, tank at twice the expansion and the next standard size |
 
-`psychro.js` must stay beside sheets IV and V. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX, XV and XVI: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
+`psychro.js` must stay beside sheets IV and V. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX, XV, XVI and XVII: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
 
 ## Browsers and devices
 
