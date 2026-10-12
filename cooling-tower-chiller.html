@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#f7f1e4" />
 <meta name="format-detection" content="telephone=no" />
 <meta name="color-scheme" content="only light" />
-<meta name="description" content="Cooling tower approach, range and flow with the Merkel method, and ASHRAE/IES 90.1-2025 Section 6 minimum chiller COP with the Kadj adjustment." />
+<meta name="description" content="Cooling tower approach, range and flow with the Merkel method, tower characteristic from maker or test data, and water use: evaporation, bleed-off and make-up." />
 <meta name="author" content="Dennis Luk" />
 <meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
-<title>Sheet XV — Cooling tower and chiller efficiency</title>
+<title>Sheet XV — Cooling tower performance and water use</title>
 <link rel="stylesheet" href="formula.css" />
 <style>
 :root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
@@ -236,14 +236,25 @@ table.cmp tr.on th { background:var(--ink); color:var(--paper); }
 h2[id], h3[id] { scroll-margin-top:14px; }
 .mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
 .mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets XV and XVI additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
 </style>
 </head>
 <body>
 <article class="book">
 <header>
   <div class="kicker">Sheet XV</div>
-  <h1>Cooling tower and chiller efficiency</h1>
-  <div class="sub">Tower approach, range and flow · ASHRAE/IES 90.1-2025 Section 6 chiller COP and Kadj</div>
+  <h1>Cooling tower performance and water use</h1>
+  <div class="sub">Tower approach, range and flow · Merkel method · evaporation, bleed-off and make-up</div>
 </header>
 <nav class="pages">
     <a href="index.html"><span>—</span>Contents</a>
@@ -261,14 +272,15 @@ h2[id], h3[id] { scroll-margin-top:14px; }
     <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
     <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
     <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
-    <a class="on" href="cooling-tower-chiller.html"><span>XV</span>Cooling tower and chiller</a>
+    <a class="on" href="cooling-tower-chiller.html"><span>XV</span>Cooling tower</a>
+  <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   </nav>
 
-<p class="lead">The quick check gives the heat rejected and what a change of water flow does. Sections 1 to 4 then work out a cooling tower in full: its operating point, what it does when the water flow, wet-bulb or load changes, and how much water it uses. Section 5 looks up the 90.1 minimum chiller COP, adjusts it for the evaporator and condenser water temperatures, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. <button class="mx-open" type="button" data-mxopen="tower">How the tower is worked out</button> · <button class="mx-open" type="button" data-mxopen="chiller">How the COP is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
-<nav class="toc" aria-label="On this page"><a href="#sq">Quick check</a><a href="#s1">1 Operating point</a><a href="#s2">2 Characteristic</a><a href="#s3">3 Existing tower</a><a href="#s4">4 Water use</a><a href="#s5">5 Chiller</a><a href="#s5b">5.2 Maker’s data</a></nav>
+<p class="lead">The quick check gives the heat rejected and what a change of water flow does. Sections 1 to 4 then work out a cooling tower in full: its operating point, how its characteristic is found, what it does when the water flow, wet-bulb, fan speed or load changes, and how much water it uses. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">How the tower is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
+<nav class="toc" aria-label="On this page"><a href="#sq">Quick check</a><a href="#s1">1 Operating point</a><a href="#s2">2 Characteristic</a><a href="#s3">3 Existing tower</a><a href="#s4">4 Water use</a></nav>
 
 <h2 id="sq">Quick check: heat rejected, and what a change of water flow does</h2>
-<p class="lead">The short version. Enter the water flow, the water temperatures in and out and the wet-bulb to get the heat the tower rejects, the range and the approach. Tick the box under it to change the flow and see the effect. This block stands on its own and uses a typical tower. Sections 1 to 5 below are the full method, with the tower’s own characteristic, water use and the chiller.</p>
+<p class="lead">The short version. Enter the water flow, the water temperatures in and out and the wet-bulb to get the heat the tower rejects, the range and the approach. Tick the box under it to change the flow and see the effect. This block stands on its own and uses a typical tower. Sections 1 to 4 below are the full method, with the tower’s own characteristic and water use.</p>
 <h3 class="sub3">Heat rejected by the tower</h3>
 <div class="fields four">
   <div class="field"><label for="q_flow">Water flow</label>
@@ -316,7 +328,7 @@ h2[id], h3[id] { scroll-margin-top:14px; }
 <hr class="soft" />
 <!-- ============ PART 1 ============ -->
 <h2 id="s1">1. Cooling tower operating point</h2>
-<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded); tick <i>Hold</i> to keep a value fixed. With <i>Existing tower</i> ticked, the tower’s own characteristic (section 2) decides the approach, so changing the flow moves the approach and both water temperatures. Wet-bulb and heat rejected are held to start with; the approach cannot be held, because the tower sets it. Without it the boxes are tied by arithmetic only.</p>
+<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded); tick <i>Hold</i> to keep a value fixed. With <i>Existing tower</i> ticked, the tower’s own characteristic (section 2, set once at the design point) decides the approach, so changing the flow moves the approach and both water temperatures. Wet-bulb and heat rejected are held to start with; the approach cannot be held, because the tower sets it. Without it the boxes are tied by arithmetic only.</p>
 
 <div class="fields three" id="ptFields">
   <div class="field" data-v="H"><label for="hwt">Water in (hot), T<sub>in</sub></label>
@@ -348,39 +360,150 @@ h2[id], h3[id] { scroll-margin-top:14px; }
 <div class="btnrow"><button type="button" id="ptReset" class="ghost">Reset to example values</button></div>
 
 <div class="results" id="ptRes"></div>
+<p class="si">Chiller: <a id="toChiller" href="chiller-efficiency.html">open sheet XVI with these water temperatures</a> (water out → chiller entering, water in ← chiller leaving).</p>
 
-<h2 id="s2">2. Tower characteristic</h2>
-<p class="lead">How a tower’s performance changes with flow depends on its characteristic <i>KaV/L</i> against <i>L/G</i>. That is a property of the fill, the tower type and its size, and it is not on any nameplate. The handbook line <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup> is a worked sample for an open-circuit tower with fill; it is not general. Choose how to give the characteristic, preferably from the maker’s data. Closed-circuit towers, dry or hybrid coolers and evaporative condensers do not follow the Merkel method and are not covered.</p>
+<h2 id="s2">2. Tower characteristic: how C is found</h2>
+<p class="lead">How a tower’s performance changes with flow depends on its characteristic <i>KaV/L</i> against <i>L/G</i>, written <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup>. It belongs to the fill, the tower type and its size, and it is not on any nameplate. Choose how to find <i>C</i> and <i>m</i>. Options 1 to 3 use the maker’s or measured data and are better. Option 4 is an estimate from one design point and is the default. Set this section once, at the design point; the tower rule in section 1 then keeps <i>C</i> and the air flow fixed while you change the load, flow or wet-bulb. Closed-circuit towers, dry or hybrid coolers and evaporative condensers do not follow the Merkel method and are not covered.</p>
 <div class="fields three">
-  <div class="field"><label for="cmode">Characteristic taken from</label>
+  <div class="field wide"><label for="cmode">How is C found?</label>
     <select id="cmode">
-      <option value="point">This operating point, with an assumed L/G and slope (estimate)</option>
-      <option value="cm">The maker’s constants C and m</option>
-      <option value="two">Two points from the maker’s curve (L/G, KaV/L)</option>
+      <option value="cm">1. The maker’s constants C and m, or two points of the maker’s curve</option>
+      <option value="mk">2. Two or more of the maker’s selection points (flow, temperatures, wet-bulb)</option>
+      <option value="ts">3. Test or site measurements (CTI ATC-105 style)</option>
+      <option value="est" selected>4. One design point and an assumed slope m (estimate, default)</option>
     </select></div>
   <div class="field"><label for="elev">Site elevation</label>
     <div class="pair"><input id="elev" type="number" inputmode="decimal" step="any" value="0" /><span>m</span></div>
-    <div class="hint">Sets the air pressure for the air-side enthalpy.</div></div>
+    <div class="hint">Sets the air pressure for the air-side enthalpy and density.</div></div>
 </div>
-<div class="fields three" id="cmPoint" style="margin-top:12px">
-  <div class="field"><label for="lg1">Water-to-air ratio at this point, L/G</label>
-    <div class="pair"><input id="lg1" type="number" inputmode="decimal" step="any" value="1.2" min="0.1" /><span>kg/kg</span></div>
-    <div class="hint">Typical towers sit around 0.75 to 1.5. Ask the maker for the design value.</div></div>
-  <div class="field"><label for="mslope">Slope of the characteristic, m</label>
-    <div class="pair"><input id="mslope" type="number" inputmode="decimal" step="any" value="0.65" min="0.3" max="1" /><span>–</span></div>
-    <div class="hint">The handbook samples −0.5 to −0.8. Fills differ; use the maker’s slope if you have it.</div></div>
+<div class="box-note" id="cmGuide"></div>
+
+<!-- option 1 -->
+<div id="cmCM" hidden>
+  <div class="fields three" style="margin-top:12px">
+    <div class="field"><label for="c1form">The maker gives</label>
+      <select id="c1form"><option value="cm">C and m</option><option value="two">Two points of the KaV/L curve</option></select></div>
+  </div>
+  <div class="fields three" id="cmCMa" style="margin-top:12px">
+    <div class="field"><label for="cc">Constant C (KaV/L at L/G = 1)</label>
+      <div class="pair"><input id="cc" type="number" inputmode="decimal" step="any" value="1.03" min="0.01" /><span>–</span></div></div>
+    <div class="field"><label for="cm">Slope m</label>
+      <div class="pair"><input id="cm" type="number" inputmode="decimal" step="any" value="0.65" min="0.1" max="1.5" /><span>–</span></div></div>
+  </div>
+  <div class="fields four" id="cmTwo" style="margin-top:12px" hidden>
+    <div class="field"><label for="p1lg">Point 1, L/G</label><input id="p1lg" type="number" inputmode="decimal" step="any" value="0.9" /></div>
+    <div class="field"><label for="p1k">Point 1, KaV/L</label><input id="p1k" type="number" inputmode="decimal" step="any" value="1.11" /></div>
+    <div class="field"><label for="p2lg">Point 2, L/G</label><input id="p2lg" type="number" inputmode="decimal" step="any" value="1.5" /></div>
+    <div class="field"><label for="p2k">Point 2, KaV/L</label><input id="p2k" type="number" inputmode="decimal" step="any" value="0.79" /></div>
+  </div>
 </div>
-<div class="fields three" id="cmCM" style="margin-top:12px" hidden>
-  <div class="field"><label for="cc">Constant C (KaV/L at L/G = 1)</label>
-    <div class="pair"><input id="cc" type="number" inputmode="decimal" step="any" value="1.03" min="0.01" /><span>–</span></div></div>
-  <div class="field"><label for="cm">Slope m</label>
-    <div class="pair"><input id="cm" type="number" inputmode="decimal" step="any" value="0.65" min="0.1" max="1.5" /><span>–</span></div></div>
+
+<!-- options 2 and 3 -->
+<div id="cmFit" hidden>
+  <div class="fields four" style="margin-top:12px">
+    <div class="field"><label for="fitU">Water flow unit</label>
+      <select id="fitU"><option value="lps">L/s</option><option value="m3h">m³/h</option><option value="gpm">US gpm</option></select></div>
+    <div class="field" id="fitAUw" hidden><label for="fitAU">Air flow unit</label>
+      <select id="fitAU"><option value="ms">m³/s</option><option value="mh">m³/h</option><option value="cfm">cfm</option></select></div>
+    <div class="field"><label for="mfit">Slope m, if only one point is given</label>
+      <div class="pair"><input id="mfit" type="number" inputmode="decimal" step="any" value="0.65" min="0.3" max="1" /><span>–</span></div>
+      <div class="hint">Not used when two or more points are filled in: the points give m.</div></div>
+  </div>
+  <div class="table-scroll"><table class="cmp fit" id="fitIn">
+    <thead><tr><th>Point</th><th>Water flow</th><th>Water in, °C</th><th>Water out, °C</th><th>Wet-bulb, °C</th><th class="ts">Dry-bulb, °C</th><th class="ts">Air flow</th></tr></thead>
+    <tbody>
+      <tr><th>1</th><td><input id="f1_flow" type="number" inputmode="decimal" step="any" value="100" /></td><td><input id="f1_in" type="number" inputmode="decimal" step="any" value="35" /></td><td><input id="f1_out" type="number" inputmode="decimal" step="any" value="30" /></td><td><input id="f1_wb" type="number" inputmode="decimal" step="any" value="25.5" /></td><td class="ts"><input id="f1_db" type="number" inputmode="decimal" step="any" value="32" /></td><td class="ts"><input id="f1_air" type="number" inputmode="decimal" step="any" value="75" /></td></tr>
+      <tr><th>2</th><td><input id="f2_flow" type="number" inputmode="decimal" step="any" value="120" /></td><td><input id="f2_in" type="number" inputmode="decimal" step="any" value="34.34" /></td><td><input id="f2_out" type="number" inputmode="decimal" step="any" value="30.18" /></td><td><input id="f2_wb" type="number" inputmode="decimal" step="any" value="25.5" /></td><td class="ts"><input id="f2_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f2_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
+      <tr><th>3</th><td><input id="f3_flow" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_in" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_out" type="number" inputmode="decimal" step="any" /></td><td><input id="f3_wb" type="number" inputmode="decimal" step="any" /></td><td class="ts"><input id="f3_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f3_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
+      <tr><th>4</th><td><input id="f4_flow" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_in" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_out" type="number" inputmode="decimal" step="any" /></td><td><input id="f4_wb" type="number" inputmode="decimal" step="any" /></td><td class="ts"><input id="f4_db" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td><td class="ts"><input id="f4_air" type="number" inputmode="decimal" step="any" placeholder="as 1" /></td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint" id="fitHint"></p>
+  <div class="table-scroll"><table class="cmp" id="fitOut"></table></div>
 </div>
-<div class="fields four" id="cmTwo" style="margin-top:12px" hidden>
-  <div class="field"><label for="p1lg">Point 1, L/G</label><input id="p1lg" type="number" inputmode="decimal" step="any" value="0.9" /></div>
-  <div class="field"><label for="p1k">Point 1, KaV/L</label><input id="p1k" type="number" inputmode="decimal" step="any" value="1.11" /></div>
-  <div class="field"><label for="p2lg">Point 2, L/G</label><input id="p2lg" type="number" inputmode="decimal" step="any" value="1.5" /></div>
-  <div class="field"><label for="p2k">Point 2, KaV/L</label><input id="p2k" type="number" inputmode="decimal" step="any" value="0.79" /></div>
+
+<!-- air flow: options 2 and 4 -->
+<div id="airBlock" hidden>
+  <h3 class="sub3" id="airHead">Air flow and L/G</h3>
+  <div class="fields three">
+    <div class="field wide"><label for="lgsrc">How is the air flow known?</label>
+      <select id="lgsrc">
+        <option value="typed">From the maker’s fan air flow (m³/s, m³/h or cfm)</option>
+        <option value="fans">From the number of fans, the fan diameter and the air velocity</option>
+        <option value="power">From the fan power, pressure and efficiency (rough)</option>
+        <option value="assume">I have no air data: assume an L/G</option>
+      </select></div>
+  </div>
+  <div class="fields four" id="airTyped" style="margin-top:12px">
+    <div class="field"><label for="afl">Fan air flow (all fans, at the tower inlet)</label>
+      <div class="pair"><input id="afl" type="number" inputmode="decimal" step="any" value="75" min="0.1" />
+        <select id="afU" aria-label="Air flow unit"><option value="ms">m³/s</option><option value="mh">m³/h</option><option value="cfm">cfm</option></select></div>
+      <div class="hint">From the maker’s data sheet or submittal, at the speed of this operating point.</div></div>
+  </div>
+  <div class="fields four" id="airFans" style="margin-top:12px" hidden>
+    <div class="field"><label for="nfan">Number of fans (cells)</label>
+      <div class="pair"><input id="nfan" type="number" inputmode="decimal" step="1" value="2" min="1" /><span>–</span></div></div>
+    <div class="field"><label for="fdia">Fan diameter</label>
+      <div class="pair"><input id="fdia" type="number" inputmode="decimal" step="any" value="3.0" min="0.1" /><span>m</span></div></div>
+    <div class="field"><label for="fvel">Average air velocity through the fan</label>
+      <div class="pair"><input id="fvel" type="number" inputmode="decimal" step="any" value="5.3" min="0.1" /><span>m/s</span></div>
+      <div class="hint">Velocity traverse, or the maker’s figure. Typically 5 to 9 m/s. Velocity measured at the fan outlet, where the air is warmer, overstates the inlet air mass by about 3 to 6 %.</div></div>
+  </div>
+  <div class="fields four" id="airPower" style="margin-top:12px" hidden>
+    <div class="field"><label for="pkw">Fan shaft power (all fans) at this duty</label>
+      <div class="pair"><input id="pkw" type="number" inputmode="decimal" step="any" value="30" min="0.1" /><span>kW</span></div>
+      <div class="hint">Motor reading, or nameplate × load. Not the nameplate alone.</div></div>
+    <div class="field"><label for="pdp">Fan total pressure</label>
+      <div class="pair"><input id="pdp" type="number" inputmode="decimal" step="any" value="250" min="1" /><span>Pa</span></div>
+      <div class="hint">From the fan curve. Typically 100 to 300 Pa for tower fans.</div></div>
+    <div class="field"><label for="peff">Fan total efficiency</label>
+      <div class="pair"><input id="peff" type="number" inputmode="decimal" step="any" value="65" min="10" max="95" /><span>%</span></div>
+      <div class="hint">Typically 55 to 75 %. Air flow = power × efficiency ÷ pressure.</div></div>
+  </div>
+  <div class="fields four" id="airCommon" style="margin-top:12px">
+    <div class="field"><label for="adb">Dry-bulb of the entering air</label>
+      <div class="pair"><input id="adb" type="number" inputmode="decimal" step="any" value="32" /><span>°C</span></div>
+      <div class="hint">With the wet-bulb this gives the air density. Must be at or above the wet-bulb.</div></div>
+    <div class="field"><label for="fspd">Fan speed, % of the speed the air data is for</label>
+      <div class="pair"><input id="fspd" type="number" inputmode="decimal" step="any" value="100" min="10" max="150" /><span>%</span></div>
+      <div class="hint">100 % for a fixed-speed fan, or when the data is at this operating point. Air flow is proportional to speed.</div></div>
+    <div class="field"><label>Air volume used</label>
+      <div class="pair"><input id="aVol" type="text" readonly /><span>m³/s</span></div>
+      <div class="hint" id="aVolHint"></div></div>
+    <div class="field"><label>Water-to-air ratio, L/G</label>
+      <div class="pair"><input id="aLG" type="text" readonly /><span>kg/kg</span></div>
+      <div class="hint" id="aGhint"></div></div>
+  </div>
+  <div class="fields three" id="airAssume" style="margin-top:12px" hidden>
+    <div class="field"><label for="lg1">Water-to-air ratio at this point, L/G</label>
+      <div class="pair"><input id="lg1" type="number" inputmode="decimal" step="any" value="1.2" min="0.1" /><span>kg/kg</span></div>
+      <div class="hint">Typical towers sit around 0.75 to 1.5. Ask the maker for the design value.</div></div>
+  </div>
+  <div class="fields three" id="airSlope" style="margin-top:12px">
+    <div class="field"><label for="mslope">Slope of the characteristic, m</label>
+      <div class="pair"><input id="mslope" type="number" inputmode="decimal" step="any" value="0.65" min="0.3" max="1" /><span>–</span></div>
+      <div class="hint">Assumed: 0.5 to 0.8, about 0.6 to 0.7 for film fill. Use the maker’s slope if you have it (option 1).</div></div>
+  </div>
+  <details class="more" id="airGuide" open>
+    <summary>What to enter to get the air flow and L/G</summary>
+    <p class="hint">L/G is the water flow divided by the mass flow of dry air through the tower. The air side needs four things, all at the operating point you are describing.</p>
+    <div class="table-scroll"><table class="cmp guide">
+      <thead><tr><th>Route</th><th>You enter</th><th>Where to find it</th><th>How good</th></tr></thead>
+      <tbody>
+        <tr><th>Fan air flow</th><td>Air volume of all fans, at the tower inlet</td><td>Maker’s data sheet or submittal; fan curve at the design duty; a test report</td><td>Best, about ±5 %</td></tr>
+        <tr><th>Fans and velocity</th><td>Number of fans, fan diameter, average air velocity</td><td>Drawings, then a velocity traverse or the maker’s fan data</td><td>About ±10 %</td></tr>
+        <tr><th>Fan power</th><td>Shaft power, total pressure, total efficiency</td><td>Motor reading, fan curve and data sheet</td><td>Rough, about ±20 %. A sanity check only</td></tr>
+        <tr><th>None</th><td>An assumed L/G</td><td>Typically 0.75 to 1.5, the maker’s design value if known</td><td>Estimate. The spread is shown in section 3</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps">
+      <li><b>Air volume.</b> Take it for the fan speed of the operating point. A fan at 80 % speed moves about 80 % of the air; multiply by the fan speed box.</li>
+      <li><b>Dry-air density.</b> The entering dry-bulb and the wet-bulb of section 1 fix the density (about 1.12 kg/m³ at 32 / 25.5 °C at sea level). Mass flow <i>G</i> = air volume × density.</li>
+      <li><b>L/G</b> = water flow ÷ <i>G</i>. A usual tower is 0.75 to 1.5. The sheet flags a value below 0.5 or above 2.5.</li>
+      <li><b>Check the air leaving.</b> The sheet gives the leaving air enthalpy and the saturated temperature it equals. It should be a few kelvin below the water in; a value at or above it means the air flow is too small for the range.</li>
+      <li><b>Do this once, at the design point.</b> Do not re-enter a new air flow for a different load. Change the load, flow or wet-bulb in section 1 or 3, and the fan speed in section 3, and the sheet scales the air for you.</li>
+    </ol>
+  </details>
 </div>
 <p class="hint" id="cmHint" style="margin-top:8px"></p>
 <div class="results" id="chRes"></div>
@@ -406,7 +529,7 @@ h2[id], h3[id] { scroll-margin-top:14px; }
     <div class="hint" id="scwbHint">Same as the operating point.</div></div>
   <div class="field"><label for="scfan">Fan air flow, % of the first case</label>
     <div class="pair"><input id="scfan" type="number" inputmode="decimal" step="any" value="100" min="10" max="150" /><span>%</span></div>
-    <div class="hint">100 % for a fixed-speed fan. Use the speed ratio for a VSD fan (airflow ∝ speed).</div></div>
+    <div class="hint" id="scfanHint">100 % for a fixed-speed fan. Use the speed ratio for a variable-speed fan: air flow is proportional to speed.</div></div>
 </div>
 <div class="warn" id="scWarn" role="status"></div>
 <div class="table-scroll"><table class="cmp" id="scTable"></table></div>
@@ -468,109 +591,7 @@ h2[id], h3[id] { scroll-margin-top:14px; }
 <div id="fxW2" role="math"></div>
 <ul id="fxWDefs2"></ul>
 
-<!-- ============ PART 2 ============ -->
-<h2 id="s5">5. Chiller efficiency, ASHRAE 90.1 Section 6</h2>
-<p class="lead">Finds the minimum full-load COP and IPLV.SI in Table 6.8.1-3 or 6.8.1-16 for the chiller type and size. For a liquid-cooled centrifugal chiller the table values are adjusted by <i>K</i><sub>adj</sub> = <i>A</i>·<i>B</i> (§6.4.1.2.1) for the lift between the leaving condenser and leaving evaporator water.</p>
-<div class="fields three">
-  <div class="field wide"><label for="ctype">Chiller type</label>
-    <select id="ctype"></select></div>
-  <div class="field"><label for="ccap">Cooling capacity (full load, net)</label>
-    <div class="pair"><input id="ccap" type="number" inputmode="decimal" step="any" value="1500" min="1" /><span>kW</span></div>
-    <div class="hint" id="ccapHint"></div></div>
-  <div class="field"><label for="cpath">Compliance path</label>
-    <select id="cpath"><option value="A">Path A</option><option value="B">Path B</option></select>
-    <div class="hint" id="cpathHint"></div></div>
-</div>
-<div class="fields three">
-  <div class="field"><label for="cevin">Chilled water entering the evaporator</label>
-    <div class="pair"><input id="cevin" type="number" inputmode="decimal" step="any" value="12" /><span>°C</span></div>
-    <div class="hint">AHRI 551/591 standard: 12.00 °C.</div></div>
-  <div class="field"><label for="cevap">Chilled water leaving the evaporator</label>
-    <div class="pair"><input id="cevap" type="number" inputmode="decimal" step="any" value="7" /><span>°C</span></div>
-    <div class="hint">AHRI standard: 7.00 °C. This sets <i>B</i> and the lift.</div></div>
-  <div class="field"><label for="cevdt">Evaporator temperature difference</label>
-    <div class="pair"><input id="cevdt" type="number" inputmode="decimal" step="any" /><span>K</span></div>
-    <div class="hint" id="cevflow"></div></div>
-  <div class="field"><label for="ccin">Condenser water entering the chiller</label>
-    <div class="pair"><input id="ccin" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div>
-    <div class="hint">AHRI standard: 30.00 °C. The cold water from the tower.</div></div>
-  <div class="field"><label for="ccond">Condenser water leaving the chiller</label>
-    <div class="pair"><input id="ccond" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div>
-    <div class="hint">AHRI standard: 35.00 °C. The hot water to the tower. This sets the lift.</div></div>
-  <div class="field"><label for="ccdt">Condenser temperature difference</label>
-    <div class="pair"><input id="ccdt" type="number" inputmode="decimal" step="any" /><span>K</span></div></div>
-</div>
-<label class="chk" style="margin:12px 0"><input type="checkbox" id="clink" checked /> Take the condenser water temperatures from the tower in section 1 (tower water out → chiller entering, chiller leaving → tower water in)</label>
-<div class="fields three">
-  <div class="field"><label>Lift</label>
-    <div class="pair"><input id="clift" type="text" readonly /><span>K</span></div>
-    <div class="hint">Leaving condenser − leaving evaporator.</div></div>
-</div>
-<div class="warn" id="cWarn" role="status"></div>
-<div class="results" id="cRes"></div>
-<svg id="kChart" class="chart" viewBox="0 0 700 260" role="img" aria-label="Kadj against lift"></svg>
-
-<h3 class="sub3" id="s5b">5.2 Optional: the manufacturer’s selection data</h3>
-<label class="chk"><input type="checkbox" id="uOn" /> I have a manufacturer’s selection and want to see how the water temperatures above change its COP and IPLV</label>
-<div id="uBox" hidden>
-  <p class="lead" style="margin-top:14px"><b>Step 1.</b> Enter what the maker selected the unit at. The values shown are examples; replace them. The conditions of section 5 above are “your conditions”.</p>
-  <div class="fields four">
-    <div class="field"><label for="mevin">Maker: chilled water in</label>
-      <div class="pair"><input id="mevin" type="number" inputmode="decimal" step="any" value="12" /><span>°C</span></div></div>
-    <div class="field"><label for="mevout">Maker: chilled water out</label>
-      <div class="pair"><input id="mevout" type="number" inputmode="decimal" step="any" value="7" /><span>°C</span></div></div>
-    <div class="field"><label for="mcin">Maker: condenser water in</label>
-      <div class="pair"><input id="mcin" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div></div>
-    <div class="field"><label for="mcout">Maker: condenser water out</label>
-      <div class="pair"><input id="mcout" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div></div>
-  </div>
-  <div class="fields three" style="margin-top:12px">
-    <div class="field"><label for="mcap">Maker: cooling capacity</label>
-      <div class="pair"><input id="mcap" type="number" inputmode="decimal" step="any" /><span>kW</span></div>
-      <div class="hint">Blank = the capacity in section 5.</div></div>
-    <div class="field"><label for="mcop">Maker: full-load COP</label>
-      <div class="pair"><input id="mcop" type="number" inputmode="decimal" step="any" value="6.4" /><span>W/W</span></div></div>
-    <div class="field"><label for="mkw">or: full-load input power</label>
-      <div class="pair"><input id="mkw" type="number" inputmode="decimal" step="any" /><span>kW</span></div>
-      <div class="hint">COP = capacity ÷ input power. Either box; the other follows.</div></div>
-  </div>
-  <p class="lead" style="margin-top:16px"><b>Step 2.</b> IPLV.SI of the unit.</p>
-  <div class="fields three">
-    <div class="field"><label for="miplv">Maker: IPLV.SI</label>
-      <div class="pair"><input id="miplv" type="number" inputmode="decimal" step="any" value="9.8" /><span>W/W</span></div>
-      <div class="hint" id="miplvHint"></div></div>
-    <div class="field wide"><label class="chk"><input type="checkbox" id="mpl" /> I have the four part-load COPs. Work out the IPLV.SI from them</label>
-      <div class="hint" id="mplCond"></div></div>
-  </div>
-  <div id="mplBox" hidden>
-    <div class="fields four">
-      <div class="field"><label for="mpa">100 % load, <i>A</i></label><div class="pair"><input id="mpa" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpaH"></div></div>
-      <div class="field"><label for="mpb">75 % load, <i>B</i></label><div class="pair"><input id="mpb" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpbH"></div></div>
-      <div class="field"><label for="mpc">50 % load, <i>C</i></label><div class="pair"><input id="mpc" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpcH"></div></div>
-      <div class="field"><label for="mpd">25 % load, <i>D</i></label><div class="pair"><input id="mpd" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpdH"></div></div>
-    </div>
-    <p class="hint">IPLV.SI = 0.01<i>A</i> + 0.42<i>B</i> + 0.45<i>C</i> + 0.12<i>D</i> (AHRI 551/591 SI). Use the maker’s COP at each load, rated at the part-load conditions listed.</p>
-  </div>
-  <p class="lead" style="margin-top:16px"><b>Step 3 (optional).</b> The maker’s own figures at your conditions, if you have asked for them. The sheet then compares them with the 90.1 curve.</p>
-  <div class="fields three">
-    <div class="field"><label for="ncop">Maker at your conditions: full-load COP</label>
-      <div class="pair"><input id="ncop" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
-    <div class="field"><label for="niplv">Maker at your conditions: IPLV.SI</label>
-      <div class="pair"><input id="niplv" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
-  </div>
-  <div class="warn" id="uWarn" role="status"></div>
-  <h3 class="sub3">What changes</h3>
-  <div class="results" id="uRes"></div>
-  <h3 class="sub3">Try other water temperatures</h3>
-  <div class="fields three">
-    <div class="field"><label for="umat">Show</label>
-      <select id="umat"><option value="cop">Estimated full-load COP, W/W</option><option value="pct">Change in COP from the maker’s selection, %</option><option value="k">Kadj of the new conditions ÷ Kadj of the maker’s</option><option value="kw">Estimated full-load input power, kW</option></select></div>
-  </div>
-  <div class="table-scroll"><table class="cmp" id="uMat"></table></div>
-  <p class="si" id="uMatNote"></p>
-</div>
-
-<footer>Preliminary checking only. Sections 1 to 4 use the Merkel method and the tower characteristic line of PDH course M374 (Primo), with psychrometrics from psychro.js. Section 5 uses ANSI/ASHRAE/IES Standard 90.1-2025 (SI), §6.4.1.2 and Tables 6.8.1-3, 6.8.1-7 and 6.8.1-16. Formulae, working, the recorded tables and the notes are in the Notes and formulae bar.</footer>
+<footer>Preliminary checking only. Sections 1 to 4 use the Merkel method and the tower characteristic line of PDH course M374 (Primo), with psychrometrics from psychro.js. The 90.1 tower rating (Table 6.8.1-7) is recorded for reference. Formulae, working, the recorded table and the notes are in the Notes and formulae bar.</footer>
 <div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Table values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI), © ASHRAE, and are shown for reference only; confirm against a licensed copy of the standard. Standards and handbooks cited are the copyright of their publishers.</div>
 </article>
 
@@ -580,9 +601,7 @@ h2[id], h3[id] { scroll-margin-top:14px; }
   <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
   <div class="mx-tabs" role="tablist" aria-label="Sections">
     <button role="tab" type="button" id="mxt-tower" data-tab="tower" aria-controls="mxtab-tower">Tower</button>
-    <button role="tab" type="button" id="mxt-chiller" data-tab="chiller" aria-controls="mxtab-chiller">Chiller COP</button>
-    <button role="tab" type="button" id="mxt-rating" data-tab="rating" aria-controls="mxtab-rating">Rating conditions</button>
-    <button role="tab" type="button" id="mxt-tables" data-tab="tables" aria-controls="mxtab-tables">Tables</button>
+    <button role="tab" type="button" id="mxt-rating" data-tab="rating" aria-controls="mxtab-rating">90.1 tower rating</button>
     <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
   </div>
   <div class="mx-body">
@@ -592,6 +611,9 @@ h2[id], h3[id] { scroll-margin-top:14px; }
       <h3>Merkel integral and tower characteristic</h3>
       <div id="fxT2" role="math"></div>
       <ul id="fxTDefs"></ul>
+      <h3>Air flow, L/G and the fit of C and m</h3>
+      <div id="fxT3" role="math"></div>
+      <ul id="fxT3Defs"></ul>
       <h3>Water use: evaporation, bleed-off, drift and make-up</h3>
       <div id="fxW" role="math"></div>
       <ul id="fxWDefs"></ul>
@@ -600,67 +622,38 @@ h2[id], h3[id] { scroll-margin-top:14px; }
       <p>The figures update as you type.</p>
       <div id="workT"></div>
     </div>
-    <div role="tabpanel" id="mxtab-chiller" aria-labelledby="mxt-chiller" hidden>
-      <h3>Adjustment, §6.4.1.2.1</h3>
-      <div id="fxC1" role="math"></div>
-      <ul id="fxCDefs"></ul>
-      <h3>Part-load value and the maker’s selection</h3>
-      <div id="fxC2" role="math"></div>
-      <ul id="fxCDefs2"></ul>
-      <p class="tn">Section 5.2 scales the maker’s COP and IPLV by the ratio of the 90.1 factors at your conditions and at the maker’s conditions. 90.1 applies <i>K</i><sub>adj</sub> to the IPLV requirement in the same way, so an adjusted IPLV is the standard’s NPLV. The factor is a curve for the minimum requirement; it is not the maker’s data for the unit, and it ignores any change in capacity, flow or compressor limits. Ask the maker for a selection at the new conditions and enter it in step 3 to see the difference.</p>
-      <h3>Worked with the values on the sheet</h3>
-      <div id="workC"></div>
-    </div>
     <div role="tabpanel" id="mxtab-rating" aria-labelledby="mxt-rating" hidden>
-      <p>What each 90.1-2025 (SI) table assumes when it states a minimum efficiency: the chilled water, the heat-rejection side, the outdoor air and the part-load points. “Standard” conditions are those of AHRI 551/591 (SI), which Table 6.8.1-3 and 6.8.1-16 refer to. The tables in 90.1 give the requirement; the conditions behind IPLV.SI are in AHRI 551/591 (SI) Tables 4 and 6, not in 90.1 itself.</p>
-      <div id="rtNow" class="box-note"></div>
-      <h3>Chillers, Tables 6.8.1-3 and 6.8.1-16</h3>
-      <div class="scroll"><table class="ref" id="rtChill"></table></div>
-      <p class="tn">Full-load rating: 7.00 °C leaving and 12.00 °C entering chilled water (§6.4.1.2.1). Water-cooled condenser: 30.00 °C entering and 35.00 °C leaving. Air-cooled: 35.0 °C entering dry-bulb. IPLV.SI = 0.01<i>A</i> + 0.42<i>B</i> + 0.45<i>C</i> + 0.12<i>D</i>, where <i>A</i>, <i>B</i>, <i>C</i>, <i>D</i> are the COPs at 100, 75, 50 and 25 % load. In AHRI 551/591 the condenser water flow is held at its full-load value at every part-load point, and the chilled water leaves at 7.00 °C throughout.</p>
-      <h3>Part-load points of the IPLV.SI rating</h3>
-      <div class="scroll"><table class="ref" id="rtPL"></table></div>
-      <p class="tn">At part load the heat-rejection temperature falls with the load, which is why IPLV.SI is higher than the full-load COP. Water-cooled units are rated with condenser water falling from 30.0 to 19.0 °C (it stops falling at 19.0 °C between 50 and 25 % load); air-cooled units with ambient falling from 35.0 to 13.0 °C. A plant whose tower or ambient does not follow that pattern will not see the IPLV.SI in service.</p>
+      <p>The rating conditions of heat-rejection equipment in ANSI/ASHRAE/IES Standard 90.1-2025 (SI), Table 6.8.1-7, and the table of minimum performance. For the chiller’s rating conditions see <a href="chiller-efficiency.html">sheet XVI</a>.</p>
       <h3>Heat-rejection equipment, Table 6.8.1-7</h3>
       <div class="scroll"><table class="ref" id="rtTower"></table></div>
       <p class="tn">These describe the tower, not the chiller. An open-circuit tower is rated at 35.0 °C water in, 29.4 °C water out and 23.9 °C entering wet-bulb: a range of 5.6 K and an approach of 5.5 K. The chiller standard condition of 30.00 / 35.00 °C is a range of 5.0 K, and its 30.00 °C entering water is 0.6 K warmer than the tower’s rating outlet. The two ratings are separate. Your site’s wet-bulb, tower approach and chiller lift decide the real conditions.</p>
-      <h3>What distinguishes the unit types</h3>
-      <ul class="tn" style="margin-left:18px">
-        <li><b>Air-cooled:</b> rated on outdoor dry-bulb (35.0 °C). The condenser leaving temperature does not exist as a water condition, so no <i>K</i><sub>adj</sub> applies. Ambient is the variable that changes performance.</li>
-        <li><b>Liquid-cooled, positive displacement and absorption:</b> rated at 30.00 / 35.00 °C condenser water. No <i>K</i><sub>adj</sub>; other water temperatures need the maker’s data.</li>
-        <li><b>Liquid-cooled centrifugal:</b> the same standard point, but 90.1 allows the requirement to be adjusted by <i>K</i><sub>adj</sub> for a design outside it, between 2.20 and 21.10 °C leaving evaporator water, 15.56 to 57.00 °C leaving condenser water and a lift of 11.00 to 44.00 K.</li>
-        <li><b>Heat pumps and heat recovery (Table 6.8.1-16):</b> the cooling rating is the same as above. Heating has its own rating points: air-source 8.00 °C db / 6.00 °C wb and −8.00 °C db / −9.00 °C wb; liquid-source with the source water leaving at 7.00 °C (19.00 °C for the boost point), and heating water at 35/40, 42/50, 50/60 °C (low, medium, high) or 50/60 °C (boost).</li>
-        <li><b>Evaporatively cooled chillers:</b> AHRI 551/591 rates them on 24.00 °C entering wet-bulb (part load 24.0, 20.5, 17.0, 13.5 °C). They are not a row in Table 6.8.1-3.</li>
-      </ul>
-      <p class="tn">Sources: ANSI/ASHRAE/IES Standard 90.1-2025 (SI) §6.4.1.2.1 and Tables 6.8.1-3, 6.8.1-7 and 6.8.1-16; AHRI Standard 551/591 (SI) 2020, Tables 4 and 6 and Equation 18 (published by AHRI; not in the standard PDF supplied). Confirm against your licensed copies.</p>
-    </div>
-    <div role="tabpanel" id="mxtab-tables" aria-labelledby="mxt-tables" hidden>
-      <p>The row for the chiller type and capacity chosen is marked. Values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI). COP is in W/W. FL is full load. Both FL and IPLV.SI must be met (Table 6.8.1-3 note b), by Path A or by Path B.</p>
-      <h3>Table 6.8.1-3 Liquid-chilling packages, minimum efficiency</h3>
-      <div class="scroll"><table class="ref" id="tb3"></table></div>
-      <p class="tn">Note a: centrifugal requirements are adjusted for nonstandard rating conditions by §6.4.1.2.1 and apply only within the ranges listed there. Air-cooled, liquid-cooled positive displacement and absorption are at the standard rating conditions of the test procedure. Note d: NA means only Path A can be used. Air-cooled chillers without condenser must be rated with matching condensers and meet the air-cooled chiller requirements.</p>
-      <h3>Table 6.8.1-16 Heat pump and heat recovery water-chilling packages, cooling operation</h3>
-      <div class="scroll"><table class="ref" id="tb16"></table></div>
-      <p class="tn">Only the cooling-operation columns are recorded. The heating columns (COP<sub>H</sub>, COP<sub>SHC</sub>, COP<sub>HR</sub>) are not on this sheet. Liquid-source rows are at 7.00 °C leaving evaporator water and use <i>K</i><sub>adj</sub> if centrifugal. Size is the net refrigerating capacity (note n).</p>
       <h3>Table 6.8.1-7 Heat rejection equipment, minimum efficiency</h3>
       <div class="scroll"><table class="ref" id="tb7"></table></div>
       <p class="tn">Open-circuit tower performance is the rated water flow at the thermal rating condition divided by the fan motor nameplate power (note a). Closed-circuit includes the spray pump (note b). The requirement does not apply to field-erected towers (note e).</p>
     </div>
     <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
       <h3>Tower method</h3>
       <p>Range, approach, effectiveness, evaporation and blow-down are as in PDH course M374 (Primo), sections 6 to 8, 15 and 20. The tower characteristic is the Merkel equation evaluated with four points at 10, 40, 60 and 90 % of the range (the usual Cooling Technology Institute four-point integration). Air leaving the fill is taken at an enthalpy rise of (L/G)·c<sub>w</sub>·ΔT, as in the handbook, which neglects the small evaporation term. The figures were checked against the handbook’s worked examples 15-2 to 15-7 and agree within 0.02 °F.</p>
-      <h3>Existing tower in part 1</h3>
-<p>With the box ticked, part 1 treats the tower as a fixed machine. Its characteristic (part 2) is frozen at the operating point present when the box was ticked or the characteristic last changed. Only three boxes are then free inputs, because the tower itself decides the approach: approach = <i>f</i>(range, flow, wet-bulb). Change the flow while holding wet-bulb and heat rejected, and the approach, range and both water temperatures all move, matching the result of part 3. Untick the box for plain arithmetic between the boxes (<i>R</i> = <i>H</i> − <i>C</i>, <i>A</i> = <i>C</i> − <i>W</i>, <i>Q</i> = 4.186·flow·<i>R</i>), where holding the wet-bulb, approach and load fixes everything except range and flow.</p>
-      <h3>The characteristic is not universal</h3>
-<p>The line <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup> in the handbook is a worked sample for an open-circuit tower with fill; the slope and constant differ between film and splash fill, counterflow and crossflow, and between makers. Use the maker’s constants, or two points read from the maker’s curve, whenever you have them. The sheet then finds the air flow that puts the operating point on that curve. Without them the sheet gives an estimate: it passes the line through the operating point with an assumed L/G and slope. Closed-circuit towers, dry and hybrid coolers and evaporative condensers have other physics and are not covered by this sheet.</p>
+      <h3>Existing tower in section 1</h3>
+<p>With the box ticked, section 1 treats the tower as a fixed machine. Its characteristic (section 2) is frozen, with its air flow, at the operating point present when the box was ticked or the characteristic last changed. Only three boxes are then free inputs, because the tower itself decides the approach: approach = <i>f</i>(range, flow, wet-bulb). Change the flow while holding wet-bulb and heat rejected, and the approach, range and both water temperatures all move, matching the result of section 3. Untick the box for plain arithmetic between the boxes (<i>R</i> = <i>H</i> − <i>C</i>, <i>A</i> = <i>C</i> − <i>W</i>, <i>Q</i> = 4.186·flow·<i>R</i>), where holding the wet-bulb, approach and load fixes everything except range and flow.</p>
+      <h3>How C is found: the four options</h3>
+<p>The line <i>KaV/L</i> = <i>C</i>·(<i>L/G</i>)<sup>−m</sup> is a sample for an open-circuit tower with fill. The slope and constant differ between film and splash fill, counterflow and crossflow, and between makers, so the sheet offers four ways to find them.</p>
+<ul class="tn" style="margin-left:18px;font-size:14px">
+<li><b>1. Maker’s constants.</b> Type <i>C</i> and <i>m</i>, or two points (<i>L/G</i>, <i>KaV/L</i>) read from the maker’s curve. The sheet then finds the <i>L/G</i> at which section 1 lies on the curve. No air flow is needed.</li>
+<li><b>2. Two or more of the maker’s selection points.</b> Ask the maker for the same tower selected at two or three different water flows. For each, enter the water flow, water in, water out and wet-bulb, and give the fan air flow once. The sheet finds <i>KaV/L</i> at each point with the Merkel integral, takes <i>L/G</i> = water flow ÷ dry-air flow, and fits the line through the points. Two points give <i>C</i> and <i>m</i> exactly; three or four give a least-squares line and show how far each point is from it. The fan is assumed to be at the same speed at every point.</li>
+<li><b>3. Test or site measurement</b> (CTI ATC-105 style). The same fit, but the dry-bulb and fan air flow are entered for each point, so fan speed can differ between tests. A single test gives <i>KaV/L</i> at one <i>L/G</i>, and <i>m</i> must then be assumed. Measurement error moves the result: the fit should use readings at steady load, with the wet-bulb measured at the tower inlet.</li>
+<li><b>4. One design point and an assumed slope</b> (the default). The sheet takes section 1 as the design point, finds <i>L/G</i> from the air flow (or uses an assumed <i>L/G</i> if you have no air data), and calculates <i>KaV/L</i> there. <i>C</i> follows from the assumed <i>m</i>. It is an estimate, and the further the new case is from the design point, the more the assumed slope matters.</li>
+</ul>
+<p>Closed-circuit towers, dry and hybrid coolers and evaporative condensers have other physics and are not covered by this sheet.</p>
+<h3>Air flow and L/G</h3>
+<p>In options 2 and 4 the air flow is entered at the fan speed of the operating point, in one of three ways: the maker’s air volume; the number of fans, the fan diameter and the average air velocity; or the fan shaft power, total pressure and total efficiency. The last is rough and is best used as a check on the first. The sheet takes the dry-air density from the entering dry-bulb and the wet-bulb, works out the dry-air mass flow <i>G</i>, and sets <i>L/G</i> = water flow ÷ <i>G</i>. It also shows the enthalpy of the air leaving the fill and the saturated temperature that equals; this should be a few kelvin below the water coming in. The air flow is entered once, at the design point. For another fan speed, use the fan percentage in section 3: the air is scaled in proportion to speed.</p>
 <h3>What is assumed</h3>
 <p>The characteristic keeps the same constant and slope at other flows. The air flow of the first case is fixed unless the fan percentage is changed; it is not recalculated for the higher fill pressure drop at a higher flow, which the handbook example also ignores. Water is 1 kg per litre with c<sub>w</sub> = 4.186 kJ/(kg·K). Hot-air recirculation, wet-bulb rise at the tower inlet and bypass wall water (handbook section 16) are not modelled.</p>
-<h3>How much does the unknown L/G matter? (estimate mode)</h3>
-<p>Little for a flow change at constant load. Varying the assumed L/G from 0.7 to 1.8 moves the new water-out temperature by about 0.1 to 0.3 K; the slope m matters about as much. The sheet prints the spread for L/G 0.7 to 1.6 and m 0.5 to 0.8 under the result. For a firm answer use the maker’s characteristic or performance curve at the new flow.</p>
+<h3>How much does the assumed L/G or slope matter? (option 4)</h3>
+<p>Little for a flow change at constant load. Varying the assumed L/G from 0.7 to 1.8 moves the new water-out temperature by about 0.1 to 0.3 K; the slope m matters about as much. The sheet prints the spread under the result: for L/G 0.7 to 1.6 and m 0.5 to 0.8 when L/G is assumed, or for m 0.5 to 0.8 when L/G comes from the air flow. For a firm answer use the maker’s characteristic or performance curve at the new flow.</p>
 <h3>Approach limit</h3>
       <p>The handbook notes that makers rarely guarantee less than about 2.8 K approach. The sheet marks anything below that.</p>
-      <h3>Chiller</h3>
-      <p>§6.4.1.2.1: <i>K</i><sub>adj</sub> applies to liquid-cooled centrifugal chillers not designed for the AHRI 551/591 standard conditions (7.00 °C leaving and 12.00 °C entering evaporator water, 30.00 °C entering and 35.00 °C leaving condenser water). At exactly 7.00 and 35.00 °C the sheet applies no adjustment; the formula gives 0.9995. The adjusted values are valid only for LvgEvap 2.20 to 21.10 °C, LvgCond 15.56 to 57.00 °C and lift 11.00 to 44.00 K; outside them the standard does not cover the chiller. Other types in Table 6.8.1-3 have no adjustment: they are rated at the test standard’s conditions.</p>
-      <p>The standard’s text calls the adjusted figures “maximum”; they are minimum COP values.</p>
       <h3>Water use</h3>
       <p>Three evaporation estimates are shown side by side. They normally agree within about 15 %. The empirical formula and the heat balance (at about 89 % evaporative share) are the same line; the rule of thumb of 0.1 % per °F is the more conservative. Bleed-off is set by the cycles of concentration: <i>B</i> = <i>E</i>/(<i>N</i> − 1). Make-up is evaporation plus bleed-off plus drift. Cycles of concentration depend on the make-up water quality and treatment, and the conductivity ratio gives it directly where you can measure both waters. The sheet does not model the variation of evaporation with the dry-bulb temperature and humidity of the air, nor water used for filter backwash or basin overflow.</p>
       <h3>Drift loss: what is acceptable</h3>
@@ -672,14 +665,8 @@ h2[id], h3[id] { scroll-margin-top:14px; }
         <li><b>0.02 %</b>: the older specification quoted in M374 §10, now regarded as poor. Modern eliminators reach 0.001 to 0.003 %.</li>
       </ul>
       <p>Drift matters for water loss (small) and for Legionella control and nearby plant, where the droplets can carry bacteria and chemicals off the site. The figure is a maker’s guarantee, tested to a standard such as CTI ATC-140 or the Eurovent programme, and holds only while the eliminators are clean and undamaged and the tower runs near its rated air velocity. The sheet marks anything above 0.01 % as high. Check the limit in your project specification or local code: the Hong Kong EMSD code of practice for water-cooled air-conditioning systems gives no numeric drift limit, but requires eliminators to be maintained, and sets a minimum of 6 cycles of concentration for fresh water and 2 for sea water (section 2.4.2).</p>
-      <h3>Manufacturer’s selection (section 5.2)</h3>
-      <p>Enter the maker’s selection at its rated water temperatures and change “your conditions” in section 5. The sheet estimates the COP, input power and IPLV at your conditions from the 90.1 factor, shows the change, and checks both the maker’s figures and the estimate against the 90.1 minimum at the corresponding conditions. The matrix underneath gives the estimated COP for a range of condenser and evaporator leaving temperatures. Only the leaving temperatures enter <i>K</i><sub>adj</sub>; the entering temperatures give the temperature differences and the chilled-water flow. The factor applies to liquid-cooled centrifugal units; for other types, enter the maker’s own figures at your conditions in step 3.</p>
-      <h3>Unit already selected</h3>
-      <p>If the maker’s COP is quoted at the same water temperatures as the new conditions, compare it directly with the adjusted requirement. If the conditions changed after the unit was rated, the sheet estimates the unit’s new COP as COP × <i>K</i><sub>adj</sub>(new) ÷ <i>K</i><sub>adj</sub>(rated). <i>K</i><sub>adj</sub> is a curve for the minimum requirement and is not the maker’s data for the unit, so treat that as a guide.</p>
-      <h3>Points to check in the standard’s tables</h3>
-      <p>Table 6.8.1-3 gives the last positive-displacement size as “≥2100 kW” while the row above ends at 2110 kW; the sheet uses 2110 kW. Table 6.8.1-16 prints the IPLV.SI for liquid-source positive displacement, 1055 to 2110 kW, as “≤6.432” and “≤8.157”; every other row is “≥”, so the sheet treats them as minimums. The first liquid-source centrifugal row prints “&lt;39.57 and &lt;528”; the sheet reads it as 39.57 to 528 kW (note q).</p>
       <h3>Sources</h3>
-      <p>PDH Online course M374, <i>Cooling Towers – Basic Calculations</i>, J. Primo, 2026. ANSI/ASHRAE/IES Standard 90.1-2025 (SI), §6.4.1.2 and Tables 6.8.1-3, 6.8.1-7, 6.8.1-16. Psychrometric properties from the shared file psychro.js (ASHRAE Fundamentals, Chapter 1). Check results against the licensed standard.</p>
+      <p>PDH Online course M374, <i>Cooling Towers – Basic Calculations</i>, J. Primo, 2026. ANSI/ASHRAE/IES Standard 90.1-2025 (SI), Table 6.8.1-7. Psychrometric properties from the shared file psychro.js (ASHRAE Fundamentals, Chapter 1). Check results against the licensed standard.</p>
     </div>
   </div>
 </aside>
@@ -913,6 +900,62 @@ $("twFix").addEventListener("change", () => {
 let scWbLinked = true, scqSet = false;
 const pressure = () => PSY.pressurePa(isFinite(num("elev")) ? num("elev") : 0);
 
+/* ---------- how C is found ---------- */
+const AIRU = { ms: 1, mh: 1 / 3600, cfm: 0.000471947 };
+/* the engine mode behind the four options on the page */
+const cmodeEff = () => { const m = $("cmode").value; return m === "est" ? ($("lgsrc").value === "assume" ? "point" : "air") : m === "cm" ? ($("c1form").value === "two" ? "two" : "cm") : "fit"; };
+/* air volume at the tower inlet, m3/s, at the fan speed of this operating point */
+function airVolume() {
+  const r = $("lgsrc").value; let v;
+  if (r === "typed") v = num("afl") * AIRU[$("afU").value];
+  else if (r === "fans") v = num("nfan") * Math.PI / 4 * Math.pow(num("fdia"), 2) * num("fvel");
+  else v = num("pkw") * 1000 * (num("peff") / 100) / num("pdp");
+  const sp = num("fspd");
+  return sp > 0 ? v * sp / 100 : NaN;
+}
+/* temperature at which saturated air has enthalpy h */
+function tOfH(h, P) { let lo = 0, hi = 90; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (hsat(m, P) < h) lo = m; else hi = m; } return (lo + hi) / 2; }
+const FITIDS = []; for (let i = 1; i <= 4; i++) ["flow", "in", "out", "wb", "db", "air"].forEach(k => FITIDS.push("f" + i + "_" + k));
+let lastFit = null;
+/* options 2 and 3: KaV/L at each point by the Merkel integral, then C and m by a straight line through ln(KaV/L) against ln(L/G) */
+function fitModel(P, opt) {
+  const ts = opt === "ts", U = FU[$("fitU").value].f, rows = [];
+  for (let i = 1; i <= 4; i++) {
+    const g = k => { const e = $("f" + i + "_" + k); return e.value.trim() === "" ? NaN : parseFloat(e.value); };
+    const any = ["flow", "in", "out", "wb"].some(k => isFinite(g(k))) || (ts && (isFinite(g("db")) || isFinite(g("air"))));
+    if (!any) continue;
+    const F = g("flow") * U, H = g("in"), C = g("out"), W = g("wb");
+    if (!(F > 0 && isFinite(H) && isFinite(C) && isFinite(W))) return { bad: "Point " + i + " is incomplete. It needs the water flow, water in, water out and wet-bulb." };
+    if (!(H > C && C > W)) return { bad: "Point " + i + ": water in must be above water out, and water out above the wet-bulb." };
+    let db, vol;
+    if (ts) {
+      const d0 = rows[0];
+      db = isFinite(g("db")) ? g("db") : d0 ? d0.db : NaN;
+      vol = isFinite(g("air")) ? g("air") * AIRU[$("fitAU").value] : d0 ? d0.vol : NaN;
+      if (!(vol > 0) || !isFinite(db)) return { bad: "Point " + i + " needs the air flow and the entering dry-bulb (point 1 must have both)." };
+    } else { db = num("adb"); vol = airVolume(); if (!(vol > 0) || !isFinite(db)) return { bad: "Enter the fan air flow and entering dry-bulb below the table." }; }
+    if (db < W) return { bad: "Point " + i + ": the dry-bulb is below the wet-bulb." };
+    const wi = PSY.WfromTdbTwb(db, W, P); if (wi == null) return { bad: "Point " + i + ": the entering air state cannot be calculated." };
+    const rho = PSY.density(db, wi, P), G = vol * rho, LG = F / G, ntu = merkel(H, C, W, LG, P);
+    if (!isFinite(ntu)) return { bad: "Point " + i + " cannot be reached by any tower at L/G " + fmt(LG, 2) + ": the air line meets the saturation line. Check the air flow and the temperatures." };
+    rows.push({ i, F, H, C, W, db, vol, rho, G, LG, ntu });
+  }
+  if (!rows.length) return null;
+  if (opt === "mk" && rows.length < 2) return { bad: "Option 2 needs at least two of the maker’s selections, at different water flows." };
+  const n = rows.length; let m, Cc, maxdev = 0;
+  if (n === 1) { m = num("mfit"); if (!(m > 0)) return { bad: "Enter the slope m." }; Cc = rows[0].ntu * Math.pow(rows[0].LG, m); }
+  else {
+    const xs = rows.map(r => Math.log(r.LG)), ys = rows.map(r => Math.log(r.ntu));
+    if (Math.max(...xs) - Math.min(...xs) < 0.03) return { bad: "The points have almost the same L/G, so they cannot give the slope. Use points at clearly different water flows or fan speeds." };
+    const xb = xs.reduce((a, x) => a + x, 0) / n, yb = ys.reduce((a, x) => a + x, 0) / n;
+    let sxy = 0, sxx = 0; xs.forEach((x, k) => { sxy += (x - xb) * (ys[k] - yb); sxx += (x - xb) * (x - xb); });
+    const b = sxy / sxx; m = -b; Cc = Math.exp(yb - b * xb);
+    if (!(m > 0)) return { bad: "KaV/L should fall as L/G rises, but these points do not. Check the temperatures and the air flow." };
+  }
+  rows.forEach(r => { r.fit = Cc * Math.pow(r.LG, -m); r.dev = (r.fit / r.ntu - 1) * 100; maxdev = Math.max(maxdev, Math.abs(r.dev)); });
+  return { Cc, m, rows, n, maxdev, assumedM: n === 1 };
+}
+
 function solveLG(Cc, m, P) {            /* L/G at which the operating point lies on the characteristic */
   const g = lg => merkel(val.H, val.C, val.W, lg, P) - Cc * Math.pow(lg, -m);
   let lo = 0.02, hi = 8;
@@ -921,7 +964,7 @@ function solveLG(Cc, m, P) {            /* L/G at which the operating point lies
   return (lo + hi) / 2;
 }
 function designModelRaw() {
-  const mode = $("cmode").value, P = pressure();
+  const mode = cmodeEff(), P = pressure();
   if (!(val.R > 0 && val.A > 0 && val.F > 0)) return null;
   if (mode === "point") {
     const LG1 = num("lg1"), m = num("mslope");
@@ -929,6 +972,24 @@ function designModelRaw() {
     const ntu = merkel(val.H, val.C, val.W, LG1, P);
     if (!isFinite(ntu)) return { bad: "With L/G = " + LG1 + " this approach and range cannot be reached by any tower: the air line meets the saturation line. Lower the L/G or raise the approach.", LG1, m, P };
     return { mode, LG1, m, P, ntu, Cc: ntu * Math.pow(LG1, m), G: val.F / LG1 };
+  }
+  if (mode === "air") {
+    const m = num("mslope"), db = num("adb"), v = airVolume();
+    if (!(m > 0 && v > 0 && isFinite(db))) return null;
+    if (db < val.W) return { bad: "The entering dry-bulb is below the wet-bulb of section 1. Check both.", P };
+    const wi = PSY.WfromTdbTwb(db, val.W, P); if (wi == null) return { bad: "The entering air state cannot be calculated.", P };
+    const rho = PSY.density(db, wi, P), G = v * rho, LG1 = val.F / G;
+    const ntu = merkel(val.H, val.C, val.W, LG1, P);
+    if (!isFinite(ntu)) return { bad: "With this air flow (L/G = " + fmt(LG1, 2) + ") this approach and range cannot be reached by any tower. Check the air flow or the approach.", LG1, m, P };
+    return { mode, LG1, m, P, ntu, Cc: ntu * Math.pow(LG1, m), G, derivedLG: true, rho, vol: v };
+  }
+  if (mode === "fit") {
+    const f = fitModel(P, $("cmode").value); lastFit = f && !f.bad ? f : null;
+    if (!f) return null;
+    if (f.bad) return { bad: f.bad, P };
+    const LGf = solveLG(f.Cc, f.m, P);
+    if (LGf == null) return { bad: "The operating point in section 1 does not lie on the fitted characteristic for any air flow. Make section 1 one of your points, or check the data.", P };
+    return { mode, LG1: LGf, m: f.m, P, ntu: f.Cc * Math.pow(LGf, -f.m), Cc: f.Cc, G: val.F / LGf, derivedLG: true, fit: f };
   }
   let Cc, m;
   if (mode === "cm") { Cc = num("cc"); m = num("cm"); }
@@ -939,15 +1000,15 @@ function designModelRaw() {
   }
   if (!(Cc > 0 && m > 0)) return { bad: "The two points must give a falling curve (KaV/L lower at the higher L/G), and C must be above zero.", P };
   const LG1 = solveLG(Cc, m, P);
-  if (LG1 == null) return { bad: "The operating point in part 1 does not lie on this characteristic for any air flow. Check the maker’s data, the range, approach and wet-bulb.", P };
+  if (LG1 == null) return { bad: "The operating point in section 1 does not lie on this characteristic for any air flow. Check the maker’s data, the range, approach and wet-bulb.", P };
   return { mode, LG1, m, P, ntu: Cc * Math.pow(LG1, -m), Cc, G: val.F / LG1, derivedLG: true };
 }
-function charKey() { return ["cmode", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev"].map(i => $(i).value).join("|"); }
+function charKey() { return ["cmode", "lgsrc", "c1form", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev", "afl", "afU", "adb", "fspd", "nfan", "fdia", "fvel", "pkw", "pdp", "peff", "fitU", "fitAU", "mfit"].concat(FITIDS).map(i => $(i).value).join("|"); }
 function designModel() {
   const raw = designModelRaw();
   if (!tw || !raw || raw.bad) return raw;
   const LG1 = val.F / tw.G;
-  return { mode: raw.mode, LG1, m: tw.m, P: tw.P, ntu: tw.Cc * Math.pow(LG1, -tw.m), Cc: tw.Cc, G: tw.G, derivedLG: $("cmode").value !== "point" };
+  return { mode: raw.mode, LG1, m: tw.m, P: tw.P, ntu: tw.Cc * Math.pow(LG1, -tw.m), Cc: tw.Cc, G: tw.G, rho: raw.rho, vol: raw.vol, fit: raw.fit, derivedLG: cmodeEff() !== "point" };
 }
 function scenario(d, o) {
   const R1 = val.R;
@@ -963,10 +1024,11 @@ function readScenario() {
   return { F2, W2, fan, mode, Q2 };
 }
 function scValid(o) { return o.F2 > 0 && isFinite(o.W2) && o.fan > 0 && (o.mode !== "newq" || o.Q2 > 0); }
-function spread(o) {
-  if ($("cmode").value !== "point") return [];
-  const lo = [], P = pressure(), m0 = num("mslope"), lg0 = num("lg1");
-  const ms = [0.5, m0, 0.8], lgs = [0.7, 1.0, 1.3, 1.6, lg0];
+function spread(o, d) {
+  const md = cmodeEff();
+  if (md !== "point" && md !== "air") return [];
+  const P = pressure(), m0 = num("mslope"), lg0 = md === "point" ? num("lg1") : d.LG1;
+  const ms = [0.5, m0, 0.8], lgs = md === "point" ? [0.7, 1.0, 1.3, 1.6, lg0] : [lg0];
   const out = [];
   ms.forEach(mv => lgs.forEach(lv => {
     const ntu = merkel(val.H, val.C, val.W, lv, P); if (!isFinite(ntu)) return;
@@ -987,9 +1049,9 @@ $("scmode").addEventListener("change", () => {
   if (nq && !scqSet) { $("scq").value = val.Q.toFixed(1); scqSet = true; }
   recalc();
 });
-["cmode", "scq", "scfan", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev", "coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount", "ttype", "fankw", "rateflow"].forEach(id => $(id).addEventListener("input", recalc));
+["cmode", "lgsrc", "c1form", "fspd", "nfan", "fdia", "fvel", "pkw", "pdp", "peff", "fitU", "fitAU", "mfit", "scq", "scfan", "afl", "afU", "adb", "lg1", "mslope", "cc", "cm", "p1lg", "p1k", "p2lg", "p2k", "elev", "coc", "drift", "emeth", "fev", "wunit", "condC", "condM", "dcount", "ttype", "fankw", "rateflow"].concat(FITIDS).forEach(id => $(id).addEventListener("input", recalc));
 
-/* ---------- part 1 output ---------- */
+/* ---------- section 1 output ---------- */
 function drawSweep(d, o) {
   const svg = $("sweepChart"); const pctNow = num("scpct");
   const pts = []; const x0 = Math.min(50, Math.floor((isFinite(pctNow) ? pctNow : 100) / 10) * 10), x1 = Math.max(150, Math.ceil((isFinite(pctNow) ? pctNow : 100) / 10) * 10);
@@ -1021,7 +1083,7 @@ function drawSweep(d, o) {
 
 function recalc() {
   if (tw && charKey() !== twKey) { const d0 = freezeTower(); if (!d0 || d0.bad) { tw = null; $("twFix").checked = false; } drivers = computeDrivers(pins.concat(hist, VARS)); writeFields(null); }
-  $("twHint").textContent = tw ? "The tower is held to its characteristic (part 2) through the operating point it had when this box was ticked or the characteristic last changed. Three boxes are inputs. The rest, including the approach and both water temperatures, are calculated by the tower. Untick for plain arithmetic between the boxes." : "Plain arithmetic between the boxes: the approach does not respond to the flow. Tick the box above to let the tower’s characteristic decide it.";
+  $("twHint").textContent = tw ? "The tower is held to its characteristic (section 2) through the operating point it had when this box was ticked or the characteristic last changed. Three boxes are inputs. The rest, including the approach and both water temperatures, are calculated by the tower. Untick for plain arithmetic between the boxes." : "Plain arithmetic between the boxes: the approach does not respond to the flow. Tick the box above to let the tower’s characteristic decide it.";
   if (scWbLinked && isFinite(val.W)) $("scwb").value = val.W.toFixed(2);
   if (val.F > 0 && isFinite(num("scpct")) && document.activeElement !== $("scflow")) $("scflow").value = fromLps(val.F * num("scpct") / 100).toFixed(FU[$("flowU").value].d);
   const w = ptWarnings(); warnBox("ptWarn", w);
@@ -1035,21 +1097,56 @@ function recalc() {
 
   const d = okPt ? designModel() : null;
   const cw = [];
+  const cmo = $("cmode").value, md = cmodeEff();
+  /* which blocks show */
+  if (cmo === "mk" && $("lgsrc").value === "assume") $("lgsrc").value = "typed";
+  $("lgsrc").options[3].disabled = cmo === "mk";
+  const lsrc = $("lgsrc").value, asm = lsrc === "assume";
+  $("cmCM").hidden = cmo !== "cm"; $("cmCMa").hidden = !(cmo === "cm" && $("c1form").value === "cm"); $("cmTwo").hidden = !(cmo === "cm" && $("c1form").value === "two");
+  $("cmFit").hidden = !(cmo === "mk" || cmo === "ts"); $("fitAUw").hidden = cmo !== "ts";
+  document.querySelectorAll("#fitIn .ts").forEach(e => e.hidden = cmo !== "ts");
+  $("airBlock").hidden = !(cmo === "est" || cmo === "mk");
+  $("airTyped").hidden = lsrc !== "typed"; $("airFans").hidden = lsrc !== "fans"; $("airPower").hidden = lsrc !== "power";
+  $("airCommon").hidden = asm; $("airAssume").hidden = !asm; $("airSlope").hidden = cmo === "mk";
+  $("airHead").textContent = cmo === "mk" ? "Fan air flow of the maker’s selections" : "Air flow and L/G";
+  $("cmGuide").innerHTML = {
+    cm: "<b>You need:</b> <i>C</i> and <i>m</i> from the maker’s submittal, or two points (<i>L/G</i>, <i>KaV/L</i>) read from the maker’s curve. The air flow is not needed: the sheet finds the <i>L/G</i> at which section 1 sits on the curve.",
+    mk: "<b>You need:</b> two or more selections the maker has made for this tower at different water flows (ask for two or three): water flow, water in, water out and wet-bulb for each, and the fan air flow (fixed speed). The sheet finds <i>KaV/L</i> at each point with the Merkel integral, then fits <i>C</i> and <i>m</i>. This is the best method when the maker will not give <i>C</i>.",
+    ts: "<b>You need:</b> measurements taken together at two or more water flows or fan speeds: water flow, water in, water out, wet-bulb, dry-bulb and fan air flow. The sheet fits <i>C</i> and <i>m</i> in the same way. One test gives <i>KaV/L</i> at one <i>L/G</i> only, so <i>m</i> has to be assumed. Leave dry-bulb or air flow blank on a row to repeat point 1.",
+    est: "<b>You need:</b> the operating point of section 1 and the air flow (typed, from the fans, or from the fan power), or an assumed <i>L/G</i> if you have none. The slope <i>m</i> is assumed. This is an estimate; the further you move from this point, the more the assumed slope matters."
+  }[cmo];
   if (!okPt) { $("chRes").innerHTML = ""; }
-  else if (!d) { $("chRes").innerHTML = ""; cw.push("Enter an L/G above 0 and a slope m above 0."); }
+  else if (!d) { $("chRes").innerHTML = ""; cw.push(cmo === "est" ? "Enter the air flow data (or an L/G) and a slope m above 0." : cmo === "cm" ? "Enter C and m (or two points) above 0." : "Fill in at least " + (cmo === "mk" ? "two points" : "one point") + " of the table."); }
   else if (d.bad) { $("chRes").innerHTML = ""; cw.push(d.bad); }
   else {
+    let ha0 = hsat(val.W, d.P), hOut = ha0 + d.LG1 * K * val.R, tOut = tOfH(hOut, d.P);
     $("chRes").innerHTML = [
       box("Tower characteristic, KaV/L", fmt(d.ntu, 3), "at L/G = " + fmt(d.LG1, 2)),
-      box("Constant C (at L/G = 1)", fmt(d.Cc, 3), "KaV/L = C·(L/G)<sup>−" + fmt(d.m, 3) + "</sup>"),
-      box("Air flow, dry air", fmt(d.G, 1) + " kg/s", d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found from the maker’s curve" : "= flow ÷ (L/G)")
+      box("Constant C (at L/G = 1)", fmt(d.Cc, 3), "KaV/L = C·(L/G)<sup>−" + fmt(d.m, 3) + "</sup>" + (d.fit ? (d.fit.assumedM ? ", slope assumed" : ", fitted from " + d.fit.n + " points") : "")),
+      box("Air flow, dry air", fmt(d.G, 1) + " kg/s", d.mode === "air" ? "L/G = " + fmt(d.LG1, 3) + ", from the air flow" : d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found from the " + (d.fit ? "fitted" : "maker’s") + " curve" : "= flow ÷ (L/G)"),
+      box("Air leaving the fill", fmt(hOut, 1) + " kJ/kg", "saturated-air equivalent " + fmt(tOut, 1) + " °C, water in " + fmt(val.H, 1) + " °C")
     ].join("");
-    if (d.LG1 < 0.5 || d.LG1 > 2.5) cw.push("L/G of " + fmt(d.LG1, 2) + " is outside the usual 0.75 to 1.5. Check it with the maker.");
-    if (d.mode === "point" && (d.m < 0.5 || d.m > 0.8)) cw.push("The handbook samples a slope of 0.5 to 0.8; confirm it for this fill with the maker.");
+    if (d.LG1 < 0.5 || d.LG1 > 2.5) cw.push("L/G of " + fmt(d.LG1, 2) + " is outside the usual 0.75 to 1.5. Check the air flow and the water flow, or confirm with the maker.");
+    if (tOut > val.H - 0.5) cw.push("The leaving air is as warm as the water coming in (" + fmt(tOut, 1) + " °C against " + fmt(val.H, 1) + " °C). The air flow looks too small for this range.");
+    if ((d.mode === "point" || d.mode === "air") && (d.m < 0.5 || d.m > 0.8)) cw.push("The handbook samples a slope of 0.5 to 0.8; confirm it for this fill with the maker.");
+    if (d.fit && !d.fit.assumedM && (d.fit.m < 0.3 || d.fit.m > 1.2)) cw.push("The fitted slope m of " + fmt(d.fit.m, 2) + " is unusual (typically 0.5 to 0.8). Check the points.");
+    if (d.fit && d.fit.n > 2 && d.fit.maxdev > 5) cw.push("The points scatter by up to " + fmt(d.fit.maxdev, 1) + " % about the fitted line. Check the readings.");
   }
   warnBox("chWarn", cw);
-  const mo = $("cmode").value; $("cmPoint").hidden = mo !== "point"; $("cmCM").hidden = mo !== "cm"; $("cmTwo").hidden = mo !== "two";
-  $("cmHint").textContent = mo === "point" ? "Estimate only: the characteristic is made to pass through the operating point, and the slope is assumed. Fills differ, so confirm with the maker’s curve." : "The characteristic is the maker’s. The air flow is found so that the operating point in part 1 sits on this curve.";
+  /* air-side read-outs */
+  { const air = cmo === "est" && !asm || cmo === "mk"; const v = air ? airVolume() : NaN;
+    $("aVol").value = isFinite(v) ? fmt(v, 2) : "";
+    $("aVolHint").textContent = isFinite(v) ? fmt(v * 3600, 0) + " m³/h · " + fmt(v / 0.000471947, 0) + " cfm" : "";
+    const dd = d && !d.bad && air ? (d.mode === "air" ? d : d.fit ? { LG1: d.fit.rows[0].LG, G: d.fit.rows[0].G, rho: d.fit.rows[0].rho } : null) : null;
+    $("aLG").value = dd ? fmt(dd.LG1, 3) : ""; $("aGhint").textContent = dd ? "Dry air " + fmt(dd.G, 1) + " kg/s at " + fmt(dd.rho, 3) + " kg/m³" + (cmo === "mk" ? " (point 1)" : "") : ""; }
+  /* fit table */
+  if (lastFit && d && !d.bad && d.fit) {
+    const f = d.fit, fu = FU[$("fitU").value];
+    $("fitOut").innerHTML = "<thead><tr><th>Point</th><th>L/G</th><th>KaV/L from the Merkel integral</th><th>On the fitted line</th><th>Difference, %</th></tr></thead><tbody>" +
+      f.rows.map(r => "<tr><th>" + r.i + "</th><td>" + fmt(r.LG, 3) + "</td><td>" + fmt(r.ntu, 3) + "</td><td>" + fmt(r.fit, 3) + "</td><td>" + sg(r.dev, 1) + "</td></tr>").join("") + "</tbody>";
+    $("fitHint").innerHTML = "Fitted line: <i>KaV/L</i> = " + fmt(f.Cc, 3) + " · (<i>L/G</i>)<sup>−" + fmt(f.m, 3) + "</sup>" + (f.assumedM ? " (one point only, so the slope is the one you assumed)." : " (" + (f.n === 2 ? "through the two points" : "least squares through " + f.n + " points") + ").");
+  } else { $("fitOut").innerHTML = ""; $("fitHint").textContent = cmo === "mk" || cmo === "ts" ? "Fill in the points above." : ""; }
+  $("cmHint").textContent = cmo === "est" ? (asm ? "Estimate only: the characteristic is made to pass through the operating point at the L/G you assume, with an assumed slope. Fills differ, so confirm with the maker’s curve." : "L/G = water flow ÷ (air flow × dry-air density). The characteristic is made to pass through the operating point at that L/G, with an assumed slope, so it is an estimate until you have the maker’s slope (options 1 to 3).") : cmo === "cm" ? "The characteristic is the maker’s. The air flow is found so that the operating point in section 1 sits on this curve." : "The characteristic is fitted to the points above. The air flow of section 1 is then found so that the operating point there sits on the fitted curve; make section 1 equal to point 1 to see the same L/G.";
 
   /* scenario */
   const o = readScenario(); const sw = [];
@@ -1057,7 +1154,7 @@ function recalc() {
   if (d && !d.bad && scValid(o)) {
     sc = scenario(d, o);
     if (!sc.ok) sw.push("The tower cannot do this duty with these inputs. Check the flow, the heat rejected and the fan percentage.");
-  } else if (!okPt) sw.push("Complete the operating point in part 1 first.");
+  } else if (!okPt) sw.push("Complete the operating point in section 1 first.");
   else if (d && !d.bad) sw.push("Enter a new flow, wet-bulb and fan percentage.");
   const T = $("scTable"), SW = $("sweepTable"), WT = $("waterTable");
   if (sc && sc.ok) {
@@ -1074,10 +1171,10 @@ function recalc() {
       row("Heat rejected", fmt(val.Q, 0), fmt(sc.Q, 0), sg(sc.Q - val.Q, 0), "kW") +
       row("L/G", fmt(d.LG1, 3), fmt(sc.LG, 3), sg(sc.LG - d.LG1, 3), "kg/kg") +
       row("Tower KaV/L", fmt(d.ntu, 3), fmt(sc.ntu, 3), sg(sc.ntu - d.ntu, 3), "") + "</tbody>";
-    const sp = spread(o);
+    const sp = spread(o, d);
     if (sp.length > 1) {
       const cs = sp.map(s => s.C), hs = sp.map(s => s.H);
-      $("scSpread").innerHTML = "Spread of the estimate if the assumed L/G (0.7 to 1.6) and slope m (0.5 to 0.8) are varied: water out " + fmt(Math.min(...cs), 2) + " to " + fmt(Math.max(...cs), 2) + " °C, water in " + fmt(Math.min(...hs), 2) + " to " + fmt(Math.max(...hs), 2) + " °C.";
+      $("scSpread").innerHTML = "Spread of the estimate if the assumed " + (cmodeEff() === "point" ? "L/G (0.7 to 1.6) and slope m (0.5 to 0.8) are" : "slope m (0.5 to 0.8) is") + " varied: water out " + fmt(Math.min(...cs), 2) + " to " + fmt(Math.max(...cs), 2) + " °C, water in " + fmt(Math.min(...hs), 2) + " to " + fmt(Math.max(...hs), 2) + " °C.";
     } else $("scSpread").textContent = "";
     rows = drawSweep(d, o);
     const dispD = FU[$("flowU").value].d, pnow = num("scpct");
@@ -1086,12 +1183,15 @@ function recalc() {
       rows.map(r => r.s.ok ? '<tr' + (r === near ? ' class="on"' : "") + "><td>" + r.p + "</td><td>" + fmt(fromLps(r.s.F), dispD) + "</td><td>" + fmt(r.s.H, 2) + "</td><td>" + fmt(r.s.C, 2) + "</td><td>" + fmt(r.s.A, 2) + "</td><td>" + fmt(r.s.R, 2) + "</td><td>" + fmt(r.s.Q, 0) + "</td></tr>" : "<tr><td>" + r.p + '</td><td colspan="6">not solvable</td></tr>').join("") + "</tbody>";
   } else { T.innerHTML = ""; SW.innerHTML = ""; $("sweepChart").innerHTML = ""; $("scSpread").textContent = ""; }
   warnBox("scWarn", sw);
+  { const base = "100 % for a fixed-speed fan. Use the speed ratio for a variable-speed fan: air flow is proportional to speed.";
+    const fp = num("scfan");
+    $("scfanHint").textContent = d && !d.bad && fp > 0 ? base + " Air at this setting: " + fmt(d.G * fp / 100, 1) + " kg/s dry air" + (d.rho ? " ≈ " + fmt(d.G * fp / 100 / d.rho, 1) + " m³/s" : "") + "." : base; }
+  { const a = $("toChiller"); if (a && okPt) a.href = "chiller-efficiency.html?cin=" + val.C.toFixed(2) + "&cout=" + val.H.toFixed(2) + "&wb=" + val.W.toFixed(2) + "&app=" + val.A.toFixed(2); }
   $("scwbHint").textContent = scWbLinked ? "Same as the operating point." : "Changed from the operating point.";
 
   waterUse(okPt, val, sc);
 
   fanCheck(d);
-  chiller();
   working(d, sc, o);
 }
 
@@ -1170,259 +1270,9 @@ function fanCheck(d) {
   if (kw > 0) { const a = Fr / kw; h += box("Fan power entered", fmt(a, 2) + " L/(s·kW)", a >= req ? "meets the table" : "does not meet the table", a >= req ? "ok" : "bad"); }
   el.innerHTML = h;
 }
-
-/* ============================================================
-   PART 2. Chiller, ASHRAE 90.1 Section 6
-   ============================================================ */
-const INF = Infinity;
-/* row: [lo, hi, A_FL, A_IPLV, B_FL, B_IPLV]  (kW) */
-const CT = {
-  air:  { g: "3", name: "Air-cooled, electrically operated", adj: false, rows: [[0, 528, 2.985, 4.048, 2.866, 4.669], [528, INF, 2.985, 4.137, 2.866, 4.758]] },
-  pd:   { g: "3", name: "Liquid-cooled, electrically operated, positive displacement", adj: false, rows: [[0, 264, 4.694, 5.867, 4.513, 7.041], [264, 528, 4.889, 6.286, 4.694, 7.184], [528, 1055, 5.334, 6.519, 5.177, 8.001], [1055, 2110, 5.771, 6.770, 5.633, 8.586], [2110, INF, 6.286, 7.041, 6.018, 9.264]] },
-  cent: { g: "3", name: "Liquid-cooled, electrically operated, centrifugal", adj: true, rows: [[0, 528, 5.771, 6.401, 5.065, 8.001], [528, 1055, 5.771, 6.401, 5.544, 8.801], [1055, 1407, 6.286, 6.770, 5.917, 9.027], [1407, 2110, 6.286, 7.041, 6.018, 9.264], [2110, INF, 6.286, 7.041, 6.018, 9.264]] },
-  ab1a: { g: "3", name: "Air-cooled absorption, single effect", adj: false, rows: [[0, INF, 0.600, null, null, null]] },
-  ab1l: { g: "3", name: "Liquid-cooled absorption, single effect", adj: false, rows: [[0, INF, 0.700, null, null, null]] },
-  ab2i: { g: "3", name: "Absorption double effect, indirect-fired", adj: false, rows: [[0, INF, 1.000, 1.050, null, null]] },
-  ab2d: { g: "3", name: "Absorption double effect, direct-fired", adj: false, rows: [[0, INF, 1.000, 1.000, null, null]] },
-  hpa:  { g: "16", name: "Heat pump / heat recovery, air-source (cooling operation)", adj: false, rows: [[0, 527, 2.836, 3.846, 2.723, 4.436], [527, INF, 2.836, 3.930, 2.723, 4.520]] },
-  hpp:  { g: "16", name: "Heat pump / heat recovery, liquid-source, positive displacement (cooling operation)", adj: false, rows: [[39.57, 264, 4.459, 5.574, 4.287, 6.689], [264, 528, 4.645, 5.972, 4.459, 6.825], [528, 1055, 5.067, 6.193, 4.918, 7.601], [1055, 2110, 5.482, 6.432, 5.351, 8.157], [2110, INF, 5.972, 6.689, 5.717, 8.801]] },
-  hpc:  { g: "16", name: "Heat pump / heat recovery, liquid-source, centrifugal (cooling operation)", adj: true, rows: [[39.57, 528, 5.482, 6.081, 4.812, 7.601], [528, 1055, 5.482, 6.081, 5.267, 8.361], [1055, 1407, 5.972, 6.432, 5.621, 8.576], [1407, 2110, 5.972, 6.689, 5.717, 8.801], [2110, INF, 5.972, 6.689, 5.717, 8.801]] }
-};
-const sizeLbl = r => r[0] <= 0 && r[1] === INF ? "All capacities" : r[0] <= 0 ? "<" + r[1] : r[1] === INF ? "≥" + r[0] : "≥" + r[0] + " and <" + r[1];
-(function fillTypes() {
-  const s = $("ctype");
-  const g3 = document.createElement("optgroup"); g3.label = "Table 6.8.1-3, liquid-chilling packages";
-  const g16 = document.createElement("optgroup"); g16.label = "Table 6.8.1-16, heat pump and heat recovery";
-  Object.keys(CT).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = CT[k].name; (CT[k].g === "3" ? g3 : g16).appendChild(o); });
-  s.appendChild(g3); s.appendChild(g16); s.value = "cent";
-})();
-function kadjOf(le, lc) {
-  const L = lc - le;
-  const A = 0.00000153181 * Math.pow(L, 4) - 0.000202076 * Math.pow(L, 3) + 0.0101800 * L * L - 0.264958 * L + 3.93073;
-  const B = 0.0027 * le + 0.982;
-  return { L, A, B, K: A * B };
-}
-const isStd = (le, lc) => Math.abs(le - 7) < 1e-9 && Math.abs(lc - 35) < 1e-9;
-const kUse = (le, lc) => { const k = kadjOf(le, lc); k.used = isStd(le, lc) ? 1 : k.K; k.std = isStd(le, lc); return k; };
-function rangeMsgs(le, lc) {
-  const L = lc - le, m = [];
-  if (le < 2.2 || le > 21.1) m.push("Evaporator leaving water " + fmt(le, 2) + " °C is outside 2.20 to 21.10 °C. §6.4.1.2.1 does not cover a centrifugal chiller designed outside these ranges.");
-  if (lc < 15.56 || lc > 57) m.push("Condenser leaving water " + fmt(lc, 2) + " °C is outside 15.56 to 57.00 °C.");
-  if (L < 11 || L > 44) m.push("Lift " + fmt(L, 2) + " K is outside 11.00 to 44.00 K.");
-  return m;
-}
-const coolOf = k => ["air", "ab1a", "hpa"].indexOf(k) >= 0 ? "air" : "water";
-function curRow() {
-  const t = CT[$("ctype").value], cap = num("ccap");
-  if (!(cap > 0)) return { t, idx: -1 };
-  let idx = t.rows.findIndex(r => cap >= r[0] && cap < r[1]);
-  return { t, idx, cap };
-}
-function clinkSync() {
-  const on = $("clink").checked;
-  ["ccond", "ccin", "ccdt"].forEach(id => $(id).readOnly = on);
-  if (on) { if (isFinite(val.H)) $("ccond").value = val.H.toFixed(2); if (isFinite(val.C)) $("ccin").value = val.C.toFixed(2); }
-}
-/* temperature differences are tied to the entering and leaving boxes */
-function dtSync(from) {
-  const act = document.activeElement && document.activeElement.id;
-  const ev = num("cevap"), ei = num("cevin"), cl = num("ccond"), ci = num("ccin");
-  if (from === "cevdt") { const d = num("cevdt"); if (isFinite(d) && isFinite(ev)) $("cevin").value = (ev + d).toFixed(2); }
-  else if (act !== "cevdt" && isFinite(ev) && isFinite(ei)) $("cevdt").value = (ei - ev).toFixed(2);
-  if (from === "ccdt") { const d = num("ccdt"); if (isFinite(d) && isFinite(cl)) $("ccin").value = (cl - d).toFixed(2); }
-  else if (act !== "ccdt" && isFinite(cl) && isFinite(ci)) $("ccdt").value = (cl - ci).toFixed(2);
-}
-const CHIN = ["ctype", "ccap", "cpath", "cevap", "cevin", "ccond", "ccin", "uOn", "mevin", "mevout", "mcin", "mcout", "mcap", "miplv", "mpl", "mpa", "mpb", "mpc", "mpd", "ncop", "niplv", "umat"];
-CHIN.forEach(id => $(id).addEventListener("input", () => { if (id === "ccap" || id === "mcap") syncPow(); dtSync(); chiller(); working(...lastW); }));
-["ctype", "cpath", "uOn", "mpl"].forEach(id => $(id).addEventListener("change", () => { $("uBox").hidden = !$("uOn").checked; $("mplBox").hidden = !$("mpl").checked; $("miplv").readOnly = $("mpl").checked; chiller(); working(...lastW); }));
-$("cevdt").addEventListener("input", () => { dtSync("cevdt"); chiller(); working(...lastW); });
-$("ccdt").addEventListener("input", () => { dtSync("ccdt"); chiller(); working(...lastW); });
-$("clink").addEventListener("change", () => { clinkSync(); dtSync(); chiller(); working(...lastW); });
-let uDrv = "cop";
-$("mcop").addEventListener("input", () => { uDrv = "cop"; syncPow(); chiller(); working(...lastW); });
-$("mkw").addEventListener("input", () => { uDrv = "pow"; syncPow(); chiller(); working(...lastW); });
-function makerCap() { const c = num("mcap"); return c > 0 ? c : num("ccap"); }
-function syncPow() {
-  const cap = makerCap();
-  if (!(cap > 0)) return;
-  if (uDrv === "cop") { const c = num("mcop"); if (c > 0 && document.activeElement !== $("mkw")) $("mkw").value = (cap / c).toFixed(1); }
-  else { const p = num("mkw"); if (p > 0 && document.activeElement !== $("mcop")) $("mcop").value = (cap / p).toFixed(3); }
-}
-let lastC = null, lastW = [null, null, null];
-
-function chiller() {
-  clinkSync();
-  const { t, idx, cap } = curRow(), le = num("cevap"), lc = num("ccond");
-  const cw = [];
-  const sel = $("ctype").value;
-  const hasB = idx >= 0 && t.rows[idx][4] != null;
-  const pathSel = $("cpath"); pathSel.options[1].disabled = !hasB;
-  if (!hasB && pathSel.value === "B") pathSel.value = "A";
-  $("cpathHint").textContent = hasB ? "Either path may be used, but both FL and IPLV.SI must be met." : (idx >= 0 ? "No Path B for this type; only Path A applies (note d)." : "");
-  $("clift").value = isFinite(le) && isFinite(lc) ? fmt(lc - le, 2) : "";
-  dtSync();
-  { const dt = num("cevdt"), q = num("ccap"); $("cevflow").textContent = dt > 0 && q > 0 ? "Chilled-water flow at this capacity: " + fmt(q / (K * dt), 1) + " L/s" : ""; }
-  ratingNow();
-  if (!(cap > 0)) { $("ccapHint").textContent = ""; $("cRes").innerHTML = ""; $("kChart").innerHTML = ""; warnBox("cWarn", ["Enter a cooling capacity above 0 kW."]); lastC = null; return; }
-  if (idx < 0) { $("cRes").innerHTML = ""; $("kChart").innerHTML = ""; warnBox("cWarn", ["This capacity is below the table: water-to-water heat pumps under 39.57 kW are in Table 6.8.1-15."]); lastC = null; return; }
-  const r = t.rows[idx], P = $("cpath").value === "B" && hasB;
-  const FL = P ? r[4] : r[2], IP = P ? r[5] : r[3];
-  $("ccapHint").textContent = "Size category: " + sizeLbl(r) + (r[0] <= 0 && r[1] === INF ? "" : " kW");
-  const useAdj = t.adj && isFinite(le) && isFinite(lc);
-  const k = useAdj ? kUse(le, lc) : null;
-  const f = k ? k.used : 1;
-  const FLa = FL * f, IPa = IP != null ? IP * f : null;
-  if (t.adj && useAdj) rangeMsgs(le, lc).forEach(m => cw.push(m));
-  if (!t.adj && isFinite(le) && isFinite(lc)) cw.push("No Kadj applies to this type. Table 6.8.1-3 and 6.8.1-16 give its requirement at the standard rating conditions of the test procedure (AHRI 551/591 or 560).");
-  if (k && k.std) cw.push("Conditions are the AHRI standard 7.00 / 35.00 °C. No adjustment applies (the formula would give " + fmt(k.K, 4) + ").");
-  warnBox("cWarn", cw);
-  const maxP = cap / FLa;
-  let h = box("Table value, full load", fmt(FL, 3) + " W/W", "Path " + (P ? "B" : "A") + ", standard conditions") +
-    (IP != null ? box("Table value, IPLV.SI", fmt(IP, 3) + " W/W", "Path " + (P ? "B" : "A")) : "");
-  if (k) h += box("Kadj = A × B", fmt(k.used, 4), "A " + fmt(k.A, 4) + " · B " + fmt(k.B, 4) + " · lift " + fmt(k.L, 2) + " K");
-  h += box("Minimum full-load COP", fmt(FLa, 3) + " W/W", k ? "adjusted for the water temperatures" : "") +
-    (IPa != null ? box("Minimum IPLV.SI", fmt(IPa, 3) + " W/W", k ? "adjusted (NPLV.SI)" : "") : "") +
-    box("Largest input power at full load", fmt(maxP, 0) + " kW", "= " + fmt(cap, 0) + " kW ÷ " + fmt(FLa, 3) + " · " + fmt(1 / FLa, 3) + " kW/kW · " + fmt(3.517 / FLa, 3) + " kW/RT");
-  $("cRes").innerHTML = h;
-  lastC = { t, idx, r, P, FL, IP, FLa, IPa, k, le, lc, cap };
-  drawK(k, le, lc);
-  unitCheck();
-  markTables();
-}
-function drawK(k, le, lc) {
-  const svg = $("kChart"); if (!k) { svg.innerHTML = '<text x="350" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">Kadj applies to liquid-cooled centrifugal chillers only.</text>'; return; }
-  const W = 700, H = 260, L = 52, R = 18, T = 14, B = 44, pw = W - L - R, ph = H - T - B, x0 = 8, x1 = 48;
-  const ycv = l => kadjOf(le, le + l).K;
-  let ymin = 0.4, ymax = 2.4;
-  const X = x => L + (x - x0) / (x1 - x0) * pw, Y = y => T + (ymax - y) / (ymax - ymin) * ph;
-  let g = '<rect x="' + X(11) + '" y="' + T + '" width="' + (X(44) - X(11)) + '" height="' + ph + '" fill="var(--tint)" opacity=".6"/>';
-  for (let y = 0.5; y <= 2.4; y += 0.25) g += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + Y(y) + '" y2="' + Y(y) + '" stroke="var(--faint)"/><text x="' + (L - 6) + '" y="' + (Y(y) + 4) + '" text-anchor="end" font-size="11" fill="var(--muted)">' + y.toFixed(2) + "</text>";
-  for (let x = 10; x <= 45; x += 5) g += '<text x="' + X(x) + '" y="' + (T + ph + 16) + '" text-anchor="middle" font-size="11" fill="var(--muted)">' + x + "</text>";
-  g += '<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="var(--rule)"/>';
-  const pts = []; for (let l = x0; l <= x1; l += 0.5) { const y = ycv(l); if (y >= ymin && y <= ymax) pts.push(X(l).toFixed(1) + "," + Y(y).toFixed(1)); }
-  g += '<polyline fill="none" stroke="var(--ink)" stroke-width="2" points="' + pts.join(" ") + '"/>';
-  const mark = (l, y, lab, filled, dy) => '<circle cx="' + X(l) + '" cy="' + Y(y) + '" r="5" fill="' + (filled ? "var(--ink)" : "var(--panel)") + '" stroke="var(--ink)" stroke-width="1.6"/><text x="' + (X(l) + 9) + '" y="' + (Y(y) + dy) + '" font-size="11.5" stroke="var(--paper)" stroke-width="3" paint-order="stroke">' + lab + "</text>";
-  if (k.L >= x0 && k.L <= x1) g += mark(k.L, k.K, "this case, Kadj " + fmt(k.used, 3), true, -8);
-  if (lastUnitRated && lastUnitRated.L >= x0 && lastUnitRated.L <= x1) g += mark(lastUnitRated.L, lastUnitRated.K, "maker, " + fmt(lastUnitRated.used, 3), false, 16);
-  g += '<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12">Lift, leaving condenser − leaving evaporator water, K (shaded: valid range 11 to 44)</text><text transform="translate(13 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="12">Kadj at evaporator leaving ' + fmt(le, 1) + ' °C</text>';
-  svg.innerHTML = g;
-}
-let lastUnitRated = null;
-
-let lastU = null;
-const PLPTS = { water: { lab: "°C entering condenser water", v: [30, 24.5, 19, 19] }, air: { lab: "°C entering air, dry-bulb", v: [35, 27, 19, 13] } };
-const IPLV_W = [0.01, 0.42, 0.45, 0.12];
-function unitCheck() {
-  const el = $("uRes"), mat = $("uMat"); lastUnitRated = null; lastU = null;
-  const clearAll = () => { el.innerHTML = ""; mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); };
-  /* part-load condition labels follow the chiller type */
-  if (lastC) {
-    const pc = PLPTS[coolOf($("ctype").value)];
-    ["mpa", "mpb", "mpc", "mpd"].forEach((id, i) => $(id + "H").textContent = fmt(pc.v[i], 1) + " " + pc.lab);
-    $("mplCond").textContent = "Rated at: " + pc.v.map((x, i) => ["100", "75", "50", "25"][i] + " % load at " + fmt(x, 1)).join(", ") + " " + pc.lab.split(" ")[0] + ". AHRI 551/591 (SI) Table 6.";
-  }
-  if (!$("uOn").checked || !lastC) { clearAll(); return; }
-  const c = lastC, w = [];
-  const cap = makerCap(), cop = num("mcop");
-  syncPow();
-  if (!(cop > 0) || !(cap > 0)) { mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); el.innerHTML = '<p class="hint">Enter the maker’s COP or input power.</p>'; return; }
-  /* IPLV of the unit */
-  let iplv = num("miplv"), iplvFrom = "entered";
-  if ($("mpl").checked) {
-    const p = ["mpa", "mpb", "mpc", "mpd"].map(num);
-    if (p.every(x => x > 0)) { iplv = p.reduce((a, x, i) => a + x * IPLV_W[i], 0); $("miplv").value = iplv.toFixed(3); iplvFrom = "from the four part-load COPs"; }
-    else { iplv = NaN; iplvFrom = "waiting for all four part-load COPs"; }
-  }
-  $("miplvHint").textContent = $("mpl").checked ? "Calculated: " + iplvFrom + "." : "Leave blank if the maker does not give it.";
-  const me = num("mevout"), mc = num("mcout"), le = c.le, lc = c.lc;
-  const adj = c.t.adj && isFinite(me) && isFinite(mc) && isFinite(le) && isFinite(lc);
-  const mk = adj ? kUse(me, mc) : null, yk = adj ? c.k : null;
-  const ratio = adj ? yk.used / mk.used : null;
-  if (adj) { rangeMsgs(me, mc).forEach(m => w.push("Maker’s conditions: " + m)); lastUnitRated = mk; }
-  if (!c.t.adj) w.push("No adjustment factor exists in 90.1 for this chiller type (§6.4.1.2.1 covers liquid-cooled centrifugal only). The unit’s COP at other temperatures has to come from the maker: enter it in step 3.");
-  if (adj && Math.abs(me - num("cevap")) < 1e-9 && Math.abs(mc - num("ccond")) < 1e-9) w.push("Your conditions are the same as the maker’s selection, so nothing changes. Change the water temperatures in section 5 above.");
-  warnBox("uWarn", w);
-  const duty = c.cap, powM = cap / cop;
-  const est = adj ? cop * ratio : null, estPow = est ? duty / est : null, estI = adj && iplv > 0 ? iplv * ratio : NaN;
-  const pct = x => sg((x - 1) * 100, 1) + " %";
-  const chk = (val_, req, lab) => { const ok = val_ >= req - 1e-9; return box(lab, sg(val_ - req, 3) + " W/W", (ok ? "meets " : "below ") + fmt(req, 3) + " minimum", ok ? "ok" : "bad"); };
-  let h = "";
-  if (adj) {
-    h += box("Kadj, maker’s conditions", fmt(mk.used, 4), "lift " + fmt(mk.L, 2) + " K · A " + fmt(mk.A, 3) + " · B " + fmt(mk.B, 3) + (mk.std ? " · standard, none applied" : ""));
-    h += box("Kadj, your conditions", fmt(yk.used, 4), "lift " + fmt(yk.L, 2) + " K · A " + fmt(yk.A, 3) + " · B " + fmt(yk.B, 3) + (yk.std ? " · standard, none applied" : ""));
-    h += box("Factor on COP and IPLV", fmt(ratio, 4), pct(ratio) + " from the maker’s selection", ratio >= 1 ? "ok" : "");
-    h += box("Full-load COP, maker → yours", fmt(cop, 3) + " → " + fmt(est, 3), "estimate · " + pct(ratio));
-    h += box("Input power at " + fmt(duty, 0) + " kW", fmt(powM * duty / cap, 0) + " → " + fmt(estPow, 0) + " kW", "estimate · " + sg(estPow - powM * duty / cap, 0) + " kW");
-    if (iplv > 0) h += box("IPLV.SI, maker → yours", fmt(iplv, 3) + " → " + fmt(estI, 3), "estimate (NPLV.SI) · " + pct(ratio));
-  } else h += box("Maker’s full-load COP", fmt(cop, 3) + " W/W", "input power " + fmt(powM, 0) + " kW at " + fmt(cap, 0) + " kW");
-  /* 90.1 checks */
-  const reqM = adj ? c.FL * mk.used : c.FL, reqMI = c.IP != null ? (adj ? c.IP * mk.used : c.IP) : null;
-  h += chk(cop, reqM, "Maker’s COP against 90.1" + (adj ? " at the maker’s conditions" : ""));
-  if (iplv > 0 && reqMI != null) h += chk(iplv, reqMI, "Maker’s IPLV.SI against 90.1" + (adj ? " at the maker’s conditions" : ""));
-  if (adj) {
-    h += chk(est, c.FLa, "Estimated COP against 90.1 at your conditions");
-    if (estI > 0 && c.IPa != null) h += chk(estI, c.IPa, "Estimated IPLV.SI against 90.1 at your conditions");
-  }
-  /* maker's own figure at the new conditions */
-  const ncop = num("ncop"), niplv = num("niplv");
-  if (ncop > 0) {
-    h += box("Maker’s COP at your conditions", fmt(ncop, 3), pct(ncop / cop) + " from the maker’s selection", "");
-    if (adj) h += box("90.1 curve against the maker", sg(est - ncop, 3) + " W/W", "curve gives " + fmt(est, 3) + " (" + pct(ratio) + ") against the maker’s " + pct(ncop / cop));
-    if (c.FLa) h += chk(ncop, adj ? c.FLa : c.FL, "Maker’s COP at your conditions against 90.1");
-  }
-  if (niplv > 0) {
-    h += box("Maker’s IPLV.SI at your conditions", fmt(niplv, 3), iplv > 0 ? pct(niplv / iplv) + " from the maker’s selection" : "");
-    if (c.IPa != null && adj) h += chk(niplv, c.IPa, "Maker’s IPLV.SI at your conditions against 90.1");
-  }
-  el.innerHTML = h;
-  lastU = { adj, mk, yk, ratio, cop, est, iplv, estI, cap, duty, powM, estPow, me, mc };
-  drawK(c.k, c.le, c.lc);
-  unitMatrix(adj, c, cop, mk, me, mc, le, lc);
-}
-function unitMatrix(adj, c, cop, mk, me, mc, le, lc) {
-  const mat = $("uMat"), note = $("uMatNote");
-  if (!adj) { mat.innerHTML = ""; note.textContent = "The matrix needs the 90.1 factor, which applies to liquid-cooled centrifugal chillers only."; return; }
-  const uniq = (arr) => { const o = []; arr.filter(isFinite).map(x => Math.round(x * 100) / 100).sort((a, b) => a - b).forEach(x => { if (!o.length || Math.abs(o[o.length - 1] - x) > 1e-9) o.push(x); }); return o; };
-  const cs = uniq([28, 30, 32, 34, 36, 38, 40, 42].concat([lc, mc])), es = uniq([5, 6, 7, 8, 9, 10].concat([le, me]));
-  const mode = $("umat").value, duty = c.cap;
-  const same = (a, b) => Math.abs(a - b) < 0.005;
-  const rows = cs.map(cv => "<tr><th>" + fmt(cv, 2) + "</th>" + es.map(ev => {
-    const L = cv - ev;
-    if (ev < 2.2 || ev > 21.1 || cv < 15.56 || cv > 57 || L < 11 || L > 44) return '<td class="na">–</td>';
-    const r = kUse(ev, cv).used / mk.used, e = cop * r;
-    const t = mode === "cop" ? fmt(e, 3) : mode === "pct" ? sg((r - 1) * 100, 1) : mode === "k" ? fmt(r, 4) : fmt(duty / e, 0);
-    const cls = same(cv, lc) && same(ev, le) ? "on" : same(cv, mc) && same(ev, me) ? "mk" : "";
-    return "<td" + (cls ? ' class="' + cls + '"' : "") + ">" + t + "</td>";
-  }).join("") + "</tr>").join("");
-  mat.innerHTML = "<thead><tr><th>Condenser leaving ↓<br>Evaporator leaving →</th>" + es.map(e => "<th>" + fmt(e, 2) + " °C</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody>";
-  note.textContent = "Condenser leaving water down the side, °C; evaporator leaving water across the top, °C. Shaded: your conditions. Outlined: the maker’s selection. A dash is outside the 90.1 range (evaporator 2.20 to 21.10 °C, condenser 15.56 to 57.00 °C, lift 11.00 to 44.00 K). Estimates from Kadj(new) ÷ Kadj(maker); capacity is taken as unchanged.";
-}
-
-/* ---------- rating conditions (drawer) ---------- */
-function ratingNow() {
-  const el = $("rtNow"); if (!el) return;
-  const le = num("cevap"), lc = num("ccond"), ei = num("cevin"), ci = num("ccin");
-  if (![le, lc, ei, ci].every(isFinite)) { el.textContent = ""; return; }
-  const L = lc - le, d = L - 28;
-  el.innerHTML = "<b>Your conditions (section 5):</b> chilled water " + fmt(ei, 1) + " → " + fmt(le, 1) + " °C, condenser water " + fmt(ci, 1) + " → " + fmt(lc, 1) + " °C, lift " + fmt(L, 1) + " K. The AHRI standard is 12.0 → 7.0 and 30.0 → 35.0 °C, a lift of 28.0 K. Yours is " + fmt(Math.abs(d), 1) + " K " + (d >= 0 ? "higher" : "lower") + (d >= 0 ? ", so a centrifugal unit is expected to have a lower COP." : ", so a centrifugal unit is expected to have a higher COP.") +
-    (isFinite(val.W) && isFinite(val.A) ? " Tower in section 1: wet-bulb " + fmt(val.W, 1) + " °C, approach " + fmt(val.A, 1) + " K (the Table 6.8.1-7 rating is 23.9 °C and 5.5 K)." : "");
-}
 (function buildRating() {
   const th = a => "<thead><tr>" + a.map(x => "<th>" + x + "</th>").join("") + "</tr></thead>";
   const body = rows => "<tbody>" + rows.map(r => "<tr>" + r.map(x => "<td>" + x + "</td>").join("") + "</tr>").join("") + "</tbody>";
-  $("rtChill").innerHTML = th(["Unit type", "90.1 table", "Chilled water, in → out, °C", "Heat rejection, °C", "Adjustment"]) + body([
-    ["Air-cooled, electrically operated", "6.8.1-3", "12.00 → 7.00", "35.0 db entering air", "None. Rated at the standard conditions."],
-    ["Liquid-cooled, positive displacement", "6.8.1-3", "12.00 → 7.00", "Condenser water 30.00 in → 35.00 out", "None. Other temperatures need the maker’s data."],
-    ["Liquid-cooled, centrifugal", "6.8.1-3", "12.00 → 7.00 (standard)", "Condenser water 30.00 in → 35.00 out (standard)", "<i>K</i><sub>adj</sub> = <i>A</i>·<i>B</i> when designed outside the standard. Leaving evaporator 2.20 to 21.10, leaving condenser 15.56 to 57.00 °C, lift 11.00 to 44.00 K."],
-    ["Absorption, single and double effect", "6.8.1-3", "AHRI 560 rating conditions", "Air-cooled or liquid-cooled per AHRI 560", "None. Full-load COP; double effect also has IPLV.SI."],
-    ["Heat pump and heat recovery, air-source (cooling operation)", "6.8.1-16", "12.00 → 7.00", "35.0 db entering air. Heating rated at 8.00 db / 6.00 wb and −8.00 db / −9.00 wb outdoor air", "None."],
-    ["Heat pump and heat recovery, liquid-source, positive displacement (cooling operation)", "6.8.1-16", "12.00 → 7.00", "Condenser water 30.00 → 35.00 for cooling. Heating source water leaves at 7.00 °C (19.00 °C for boost; 24/19 °C at 2110 kW and above)", "None."],
-    ["Heat pump and heat recovery, liquid-source, centrifugal (cooling operation)", "6.8.1-16", "12.00 → 7.00 (standard)", "As above", "<i>K</i><sub>adj</sub> for cooling operation."],
-    ["Evaporatively cooled chillers", "Not in 6.8.1-3", "12.00 → 7.00", "24.00 entering wet-bulb (AHRI 551/591)", "—"]
-  ]);
-  $("rtPL").innerHTML = th(["Load", "IPLV.SI weight", "Water-cooled, entering condenser water, °C", "Air-cooled, entering air db, °C", "Evaporatively cooled, entering wb, °C"]) + body([
-    ["100 % (A)", "0.01", "30.0", "35.0", "24.0"], ["75 % (B)", "0.42", "24.5", "27.0", "20.5"], ["50 % (C)", "0.45", "19.0", "19.0", "17.0"], ["25 % (D)", "0.12", "19.0", "13.0", "13.5"]
-  ]);
   $("rtTower").innerHTML = th(["Equipment", "Water in, °C", "Water out, °C", "Air entering, °C", "Range, K", "Approach, K", "Required, L/(s·kW)"]) + body([
     ["Open-circuit tower, propeller or axial fan", "35.0", "29.4", "23.9 wb", "5.6", "5.5", "3.56"],
     ["Open-circuit tower, centrifugal fan", "35.0", "29.4", "23.9 wb", "5.6", "5.5", "1.7"],
@@ -1433,19 +1283,7 @@ function ratingNow() {
   ]);
 })();
 
-/* ---------- recorded tables ---------- */
 function buildTables() {
-  const rowsHTML = (keys, hasTest) => keys.map(key => {
-    const t = CT[key];
-    return t.rows.map((r, i) => {
-      const cells = [r[2], r[3], r[4], r[5]].map(v => v == null ? '<td class="na">NA</td>' : "<td>" + v.toFixed(3) + "</td>");
-      const f = (a, b) => a == null ? '<td class="na">—</td>' : "<td>" + a.toFixed(3) + "</td>";
-      return '<tr data-k="' + key + ":" + i + '">' + (i === 0 ? '<th rowspan="' + t.rows.length + '" class="nm">' + t.name + "</th>" : "") + "<td>" + sizeLbl(r) + "</td>" + "<td>" + r[2].toFixed(3) + "</td><td>" + (r[3] == null ? '<span class="na">—</span>' : r[3].toFixed(3)) + "</td><td>" + (r[4] == null ? '<span class="na">NA</span>' : r[4].toFixed(3)) + "</td><td>" + (r[5] == null ? '<span class="na">—</span>' : r[5].toFixed(3)) + "</td></tr>";
-    }).join("");
-  }).join("");
-  const head = "<thead><tr><th>Equipment type</th><th>Size, kW</th><th>Path A, FL</th><th>Path A, IPLV.SI</th><th>Path B, FL</th><th>Path B, IPLV.SI</th></tr></thead>";
-  $("tb3").innerHTML = head + "<tbody>" + rowsHTML(["air", "pd", "cent", "ab1a", "ab1l", "ab2i", "ab2d"]) + '<tr><td colspan="6" class="tn2">Air-cooled without condenser: all capacities, rated with matching condensers and held to the air-cooled chiller requirements.</td></tr></tbody>';
-  $("tb16").innerHTML = head + "<tbody>" + rowsHTML(["hpa", "hpp", "hpc"]) + "</tbody>";
   const t7 = [
     ["Propeller or axial fan open-circuit cooling towers", "35.0 in, 29.4 out, 23.9 wb", "3.56 L/(s·kW)", "CTI ATC-105 and STD-201 RS"],
     ["Centrifugal fan open-circuit cooling towers", "35.0 in, 29.4 out, 23.9 wb", "1.7 L/(s·kW)", "CTI ATC-105 and STD-201 RS"],
@@ -1462,8 +1300,7 @@ function buildTables() {
   $("tb7").innerHTML = "<thead><tr><th>Equipment type</th><th>Rating condition, °C (all capacities)</th><th>Performance required</th><th>Test procedure</th></tr></thead><tbody>" + t7.map((r, i) => '<tr data-t7="' + i + '"><td>' + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td></tr>").join("") + "</tbody>";
 }
 function markTables() {
-  document.querySelectorAll("#tb3 tr.on, #tb16 tr.on, #tb7 tr.on").forEach(e => e.classList.remove("on"));
-  if (lastC) { const e = document.querySelector('tr[data-k="' + $("ctype").value + ":" + lastC.idx + '"]'); if (e) e.classList.add("on"); }
+  document.querySelectorAll("#tb7 tr.on").forEach(e => e.classList.remove("on"));
   const t = $("ttype").value === "3.56" ? 0 : 1; const e7 = document.querySelector('tr[data-t7="' + t + '"]'); if (e7) e7.classList.add("on");
 }
 
@@ -1498,6 +1335,23 @@ MX.defs($("fxTDefs"), [
   ["$C$, $m$", "tower constant and slope of its line"],
   ["$E$, $B$, $N$", "evaporation, blow-down (m³/h) and cycles of concentration"]
 ]);
+MX.formula($("fxT3"), [
+  "$G$ = $V$_{air} · $ρ$_{da}",
+  "@frac{$L$}{$G$} = @frac{$ṁ$}{$G$}",
+  "$V$_{air} = $n$ · @frac{π $D$^{2}}{4} · $v$",
+  "$V$_{air} = @frac{$P$_{fan} · $η$_{fan}}{Δ$p$}",
+  "ln($KaV/L$_{i}) = ln $C$ − $m$ · ln($L/G$_{i})",
+  "$m$ = @frac{ln($K$_{1}) − ln($K$_{2})}{ln($L/G$_{2}) − ln($L/G$_{1})}",
+  "$C$ = $K$_{1} · ($L/G$_{1})^{$m$}"
+]);
+MX.defs($("fxT3Defs"), [
+  ["$V$_{air}", "air volume of all fans at the tower inlet, m³/s; proportional to fan speed"],
+  ["$ρ$_{da}", "dry-air density at the entering dry-bulb and wet-bulb, kg/m³"],
+  ["$G$", "dry-air mass flow, kg/s"],
+  ["$n$, $D$, $v$", "number of fans, fan diameter (m), average air velocity (m/s)"],
+  ["$P$_{fan}, $η$_{fan}, Δ$p$", "shaft power (W), total efficiency, total pressure (Pa)"],
+  ["$K$_{i}", "KaV/L at point i from the Merkel integral; with three or more points, a least-squares line"]
+]);
 MX.formula($("fxW"), [
   "$E$ = 0.00085 · 1.8 · $V$ · $R$",
   "$E$ = 0.0018 · $V$ · $R$",
@@ -1529,42 +1383,19 @@ MX.defs($("fxWDefs2"), [
   ["$E$, $B$, $D$, $M$", "evaporation, bleed-off, drift, make-up, m³/h"],
   ["$N$, $δ$", "cycles of concentration; drift, % of flow"]
 ]);
-MX.formula($("fxC2"), [
-  "$IPLV$ = 0.01 $COP$_{100} + 0.42 $COP$_{75} + 0.45 $COP$_{50} + 0.12 $COP$_{25}",
-  "$COP$_{yours} = $COP$_{maker} · @frac{$K$_{adj,yours}}{$K$_{adj,maker}}",
-  "$P$_{yours} = @frac{$Q$}{$COP$_{yours}}"
-]);
-MX.defs($("fxCDefs2"), [
-  ["$COP$_{100…25}", "COP at 100, 75, 50 and 25 % load, at the part-load conditions of AHRI 551/591"],
-  ["$K$_{adj,maker}", "factor at the maker’s leaving evaporator and condenser temperatures"],
-  ["$K$_{adj,yours}", "factor at your leaving temperatures"]
-]);
-MX.formula($("fxC1"), [
-  "$FL$_{adj} = $FL$ · $K$_{adj}",
-  "$IPLV$_{adj} = $IPLV$.SI · $K$_{adj}",
-  "$K$_{adj} = $A$ · $B$",
-  "$A$ = 1.53181×10^{−6} $L$^{4} − 2.02076×10^{−4} $L$^{3} + 0.0101800 $L$^{2} − 0.264958 $L$ + 3.93073",
-  "$B$ = 0.0027 · $T$_{evap} + 0.982",
-  "$L$ = $T$_{cond} − $T$_{evap}",
-  "COP = @frac{$Q$_{evap}}{$P$_{in}}"
-]);
-MX.defs($("fxCDefs"), [
-  ["$FL$, $IPLV$", "table values at standard conditions (W/W)"],
-  ["$T$_{evap}", "full-load evaporator leaving liquid, °C"],
-  ["$T$_{cond}", "full-load condenser leaving liquid, °C"],
-  ["$L$", "lift, K"],
-  ["$Q$_{evap}, $P$_{in}", "net cooling capacity and electrical input, kW"]
-]);
-
 function working(d, sc, o) {
-  lastW = [d, sc, o];
   const sT = [];
   if (val.R > 0 && val.A > 0 && val.F > 0) {
     sT.push({ t: "Operating point", m: ["$R$ = " + fmt(val.H, 2) + " − " + fmt(val.C, 2) + " = **" + fmt(val.R, 2) + " K**", "$A$ = " + fmt(val.C, 2) + " − " + fmt(val.W, 2) + " = **" + fmt(val.A, 2) + " K**", "$Q$ = " + fmt(val.F, 2) + " × 4.186 × " + fmt(val.R, 2) + " = **" + fmt(val.Q, 1) + " kW**"], n: "Water at 1 kg per litre." });
     if (d && !d.bad) {
       const ha0 = hsat(val.W, d.P), kk = [0.1, 0.4, 0.6, 0.9].map(f => { const t = val.C + f * val.R; return { t, hw: hsat(t, d.P), ha: ha0 + d.LG1 * K * f * val.R }; });
       sT.push({ t: "Air at the wet-bulb", m: ["$P$ = " + fmt(d.P / 1000, 2) + " kPa", "$h$_{a,wb} = **" + fmt(ha0, 2) + " kJ/kg**"], n: "Saturated air at " + fmt(val.W, 2) + " °C." });
-      sT.push({ t: "Merkel integral at the first case", m: kk.map((k, i) => "$T$_{" + (i + 1) + "} = " + fmt(k.t, 2) + " °C: $h$_{w} = " + fmt(k.hw, 1) + ", $h$_{a} = " + fmt(k.ha, 1) + ", 1/Δ$h$ = " + fmt(1 / (k.hw - k.ha), 4)).concat(["$KaV/L$ = 4.186 × " + fmt(val.R, 2) + " ÷ 4 × " + fmt(kk.reduce((a, k) => a + 1 / (k.hw - k.ha), 0), 4) + " = **" + fmt(d.ntu, 3) + "**"]), n: d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found so that the operating point lies on the maker’s characteristic." : "L/G = " + fmt(d.LG1, 2) + " as entered." });
+      sT.push({ t: "Merkel integral at the first case", m: kk.map((k, i) => "$T$_{" + (i + 1) + "} = " + fmt(k.t, 2) + " °C: $h$_{w} = " + fmt(k.hw, 1) + ", $h$_{a} = " + fmt(k.ha, 1) + ", 1/Δ$h$ = " + fmt(1 / (k.hw - k.ha), 4)).concat(["$KaV/L$ = 4.186 × " + fmt(val.R, 2) + " ÷ 4 × " + fmt(kk.reduce((a, k) => a + 1 / (k.hw - k.ha), 0), 4) + " = **" + fmt(d.ntu, 3) + "**"]), n: d.mode === "air" ? "L/G = " + fmt(d.LG1, 3) + " from the air flow." : d.derivedLG ? "L/G = " + fmt(d.LG1, 3) + ", found so that the operating point lies on the " + (d.fit ? "fitted" : "maker’s") + " characteristic." : "L/G = " + fmt(d.LG1, 2) + " as assumed." });
+      if (d.fit) {
+        sT.push({ t: "Fit of C and m from the points", m: d.fit.rows.map(r => "Point " + r.i + ": L/G = " + fmt(r.F, 2) + " ÷ (" + fmt(r.vol, 2) + " × " + fmt(r.rho, 3) + ") = " + fmt(r.LG, 3) + ", KaV/L = " + fmt(r.ntu, 3)).concat([d.fit.assumedM ? "One point: $m$ = " + fmt(d.fit.m, 2) + " as assumed" : "$m$ = **" + fmt(d.fit.m, 3) + "**, $C$ = **" + fmt(d.fit.Cc, 3) + "** (" + (d.fit.n === 2 ? "two points" : "least squares") + ")"]), n: "KaV/L at each point comes from the four-point Merkel integral with that point’s temperatures and L/G." });
+      } else if (d.mode === "air") {
+        sT.push({ t: "Air flow and L/G", m: ["$V$_{air} = **" + fmt(d.vol, 2) + " m³/s**", "$ρ$_{da} = **" + fmt(d.rho, 3) + " kg/m³** at " + fmt(num("adb"), 1) + " / " + fmt(val.W, 1) + " °C", "$G$ = " + fmt(d.vol, 2) + " × " + fmt(d.rho, 3) + " = **" + fmt(d.G, 2) + " kg/s**", "$L/G$ = " + fmt(val.F, 2) + " ÷ " + fmt(d.G, 2) + " = **" + fmt(d.LG1, 3) + "**"] });
+      }
       sT.push({ t: "Constant of the characteristic", m: ["$C$ = " + fmt(d.ntu, 3) + " × " + fmt(d.LG1, 2) + "^{" + fmt(d.m, 2) + "} = **" + fmt(d.Cc, 3) + "**", "$G$ = " + fmt(val.F, 2) + " ÷ " + fmt(d.LG1, 2) + " = **" + fmt(d.G, 2) + " kg/s**"] });
       if (sc && sc.ok) {
         sT.push({ t: "New case: range and L/G", m: ["$R$_{2} = **" + fmt(sc.R, 3) + " K**" + (o.mode === "q" ? " (= " + fmt(val.R, 2) + " × " + fmt(val.F, 2) + " ÷ " + fmt(sc.F, 2) + ")" : o.mode === "r" ? " (range held)" : " (= " + fmt(o.Q2, 0) + " ÷ (4.186 × " + fmt(sc.F, 2) + "))"), "$L/G$_{2} = " + fmt(sc.F, 2) + " ÷ (" + fmt(d.G, 2) + " × " + fmt(o.fan / 100, 2) + ") = **" + fmt(sc.LG, 3) + "**"] });
@@ -1580,21 +1411,6 @@ function working(d, sc, o) {
   }
   MX.steps($("workT"), sT, "Enter a valid operating point in section 1 to see the working.");
 
-  const sC = [], c = lastC;
-  if (c) {
-    sC.push({ t: "Table value", m: ["Type: " + c.t.name, "Size: " + sizeLbl(c.r) + " kW, capacity " + fmt(c.cap, 0) + " kW", "$FL$ = **" + fmt(c.FL, 3) + "**" + (c.IP != null ? ", $IPLV$.SI = **" + fmt(c.IP, 3) + "**" : "") + " (Path " + (c.P ? "B" : "A") + ")"] });
-    if (c.k) {
-      sC.push({ t: "Lift", m: ["$L$ = " + fmt(c.lc, 2) + " − " + fmt(c.le, 2) + " = **" + fmt(c.k.L, 2) + " K**"] });
-      sC.push({ t: "Factors A and B", m: ["$A$ = **" + fmt(c.k.A, 4) + "**", "$B$ = 0.0027 × " + fmt(c.le, 2) + " + 0.982 = **" + fmt(c.k.B, 4) + "**", "$K$_{adj} = " + fmt(c.k.A, 4) + " × " + fmt(c.k.B, 4) + " = **" + fmt(c.k.K, 4) + "**"], n: c.k.std ? "At the AHRI standard 7.00 / 35.00 °C no adjustment applies, so 1.0000 is used." : "Valid for 2.20 ≤ T_evap ≤ 21.10 °C, 15.56 ≤ T_cond ≤ 57.00 °C and 11.00 ≤ L ≤ 44.00 K." });
-      sC.push({ t: "Adjusted requirement", m: ["$FL$_{adj} = " + fmt(c.FL, 3) + " × " + fmt(c.k.used, 4) + " = **" + fmt(c.FLa, 3) + "**"].concat(c.IP != null ? ["$IPLV$_{adj} = " + fmt(c.IP, 3) + " × " + fmt(c.k.used, 4) + " = **" + fmt(c.IPa, 3) + "**"] : []) });
-    } else sC.push({ t: "Adjustment", m: [], n: "No Kadj for this type; the table value is the requirement." });
-    if (lastU && lastU.adj) {
-      const U = lastU;
-      sC.push({ t: "Maker’s selection and your conditions", m: ["$K$_{adj,maker} = **" + fmt(U.mk.used, 4) + "** at " + fmt(U.me, 2) + " / " + fmt(U.mc, 2) + " °C (lift " + fmt(U.mk.L, 2) + " K)", "$K$_{adj,yours} = **" + fmt(U.yk.used, 4) + "** at " + fmt(c.le, 2) + " / " + fmt(c.lc, 2) + " °C (lift " + fmt(U.yk.L, 2) + " K)", "$COP$_{yours} = " + fmt(U.cop, 3) + " × " + fmt(U.yk.used, 4) + " ÷ " + fmt(U.mk.used, 4) + " = **" + fmt(U.est, 3) + "**", "$P$_{yours} = " + fmt(U.duty, 0) + " ÷ " + fmt(U.est, 3) + " = **" + fmt(U.estPow, 0) + " kW**"].concat(U.iplv > 0 ? ["$IPLV$_{yours} = " + fmt(U.iplv, 3) + " × " + fmt(U.ratio, 4) + " = **" + fmt(U.estI, 3) + "**"] : []), n: "Estimate from the 90.1 curve; not the maker’s data." });
-    }
-    sC.push({ t: "Power at full load", m: ["$P$_{in} ≤ " + fmt(c.cap, 0) + " ÷ " + fmt(c.FLa, 3) + " = **" + fmt(c.cap / c.FLa, 0) + " kW**"] });
-  }
-  MX.steps($("workC"), sC, "Enter a capacity and type in section 5 to see the working.");
 }
 
 /* ---------- start ---------- */
@@ -1605,7 +1421,6 @@ syncScFlow();
 $("scflowU").textContent = FU[$("flowU").value].n;
 recalc();
 })();
-
 (function () {
 "use strict";
 const $ = id => document.getElementById(id), K = 4.186, num = id => parseFloat($(id).value);
