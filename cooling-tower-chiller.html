@@ -262,16 +262,61 @@ h2[id], h3[id] { scroll-margin-top:14px; }
     <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
     <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
     <a class="on" href="cooling-tower-chiller.html"><span>XV</span>Cooling tower and chiller</a>
-  <a href="cooling-tower-simple.html"><span>XVI</span>Cooling tower, simple</a>
   </nav>
 
-<p class="lead"><b>Short on time?</b> <a href="cooling-tower-simple.html">Sheet XVI</a> is a simpler version: heat rejected from the water flow and temperatures, and what a change of flow does to the approach. This sheet is the full method.</p>
-<p class="lead">Sections 1 to 4 work out a cooling tower: its operating point, what it does when the water flow, wet-bulb or load changes, and how much water it uses. Section 5 looks up the 90.1 minimum chiller COP, adjusts it for the evaporator and condenser water temperatures, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. <button class="mx-open" type="button" data-mxopen="tower">How the tower is worked out</button> · <button class="mx-open" type="button" data-mxopen="chiller">How the COP is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
-<nav class="toc" aria-label="On this page"><a href="#s1">1 Operating point</a><a href="#s2">2 Characteristic</a><a href="#s3">3 Existing tower</a><a href="#s4">4 Water use</a><a href="#s5">5 Chiller</a><a href="#s5b">5.2 Maker’s data</a></nav>
+<p class="lead">The quick check gives the heat rejected and what a change of water flow does. Sections 1 to 4 then work out a cooling tower in full: its operating point, what it does when the water flow, wet-bulb or load changes, and how much water it uses. Section 5 looks up the 90.1 minimum chiller COP, adjusts it for the evaporator and condenser water temperatures, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. <button class="mx-open" type="button" data-mxopen="tower">How the tower is worked out</button> · <button class="mx-open" type="button" data-mxopen="chiller">How the COP is worked out</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
+<nav class="toc" aria-label="On this page"><a href="#sq">Quick check</a><a href="#s1">1 Operating point</a><a href="#s2">2 Characteristic</a><a href="#s3">3 Existing tower</a><a href="#s4">4 Water use</a><a href="#s5">5 Chiller</a><a href="#s5b">5.2 Maker’s data</a></nav>
 
+<h2 id="sq">Quick check: heat rejected, and what a change of water flow does</h2>
+<p class="lead">The short version. Enter the water flow, the water temperatures in and out and the wet-bulb to get the heat the tower rejects, the range and the approach. Tick the box under it to change the flow and see the effect. This block stands on its own and uses a typical tower. Sections 1 to 5 below are the full method, with the tower’s own characteristic, water use and the chiller.</p>
+<h3 class="sub3">Heat rejected by the tower</h3>
+<div class="fields four">
+  <div class="field"><label for="q_flow">Water flow</label>
+    <div class="pair"><input id="q_flow" type="number" inputmode="decimal" step="any" value="100" />
+      <select id="q_flowU" aria-label="Flow unit"><option value="lps">L/s</option><option value="m3h">m³/h</option><option value="gpm">US gpm</option></select></div></div>
+  <div class="field"><label for="q_hwt">Water in (hot)</label>
+    <div class="pair"><input id="q_hwt" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div></div>
+  <div class="field"><label for="q_cwt">Water out (cold)</label>
+    <div class="pair"><input id="q_cwt" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div></div>
+  <div class="field"><label for="q_wbt">Wet-bulb of the air</label>
+    <div class="pair"><input id="q_wbt" type="number" inputmode="decimal" step="any" value="25.5" /><span>°C</span></div></div>
+</div>
+<div class="warn" id="q_warn1" role="status"></div>
+<div class="results" id="q_res1"></div>
+<p class="si">Heat rejected = water flow × 4.186 × (water in − water out). Range = in − out. Approach = out − wet-bulb.</p>
+
+<h3 class="sub3">What if the water flow changes?</h3>
+<label class="chk"><input type="checkbox" id="q_chg" /> Change the water flow and show the effect on the tower</label>
+<div id="q_chgBox" hidden>
+  <p class="lead" style="margin-top:12px">The same tower, the same heat rejected, the same wet-bulb and the same fan. Only the water flow changes.</p>
+  <div class="fields three">
+    <div class="field"><label for="q_flow2">New water flow</label>
+      <div class="pair"><input id="q_flow2" type="number" inputmode="decimal" step="any" /><span id="q_flow2U">L/s</span></div></div>
+    <div class="field"><label for="q_pct">or as % of the flow above</label>
+      <div class="pair"><input id="q_pct" type="number" inputmode="decimal" step="any" value="120" /><span>%</span></div></div>
+  </div>
+  <div class="warn" id="q_warn2" role="status"></div>
+  <div class="table-scroll"><table class="cmp" id="q_cmp"></table></div>
+  <h3 class="sub3">Other flows, same heat rejected</h3>
+  <div class="table-scroll"><table class="cmp" id="q_sweep"></table></div>
+  <details class="more">
+    <summary>Tower assumption (an estimate)</summary>
+    <p class="hint">The effect of flow depends on the tower’s fill and size, which are not known here. The sheet assumes a typical open-circuit tower: an air-to-water ratio of 1.2 at the first case and a characteristic slope of 0.65 (handbook value −0.5 to −0.8). A different slope changes the answer by a few tenths of a kelvin. For a particular tower, use the maker’s data in section 2 below.</p>
+    <div class="fields three">
+      <div class="field"><label for="q_lg1">Water to air ratio, L/G, first case</label>
+        <div class="pair"><input id="q_lg1" type="number" inputmode="decimal" step="any" value="1.2" /><span>kg/kg</span></div></div>
+      <div class="field"><label for="q_slope">Slope of the characteristic, m</label>
+        <div class="pair"><input id="q_slope" type="number" inputmode="decimal" step="any" value="0.65" /><span>–</span></div></div>
+      <div class="field"><label for="q_elev">Site elevation</label>
+        <div class="pair"><input id="q_elev" type="number" inputmode="decimal" step="any" value="0" /><span>m</span></div></div>
+    </div>
+  </details>
+</div>
+
+<hr class="soft" />
 <!-- ============ PART 1 ============ -->
 <h2 id="s1">1. Cooling tower operating point</h2>
-<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded); tick <i>Hold</i> to keep a value fixed. With <i>Existing tower</i> ticked, the tower’s own characteristic (part 2) decides the approach, so changing the flow moves water in and water out. Without it the boxes are tied by arithmetic only.</p>
+<p class="lead">Water in, water out, range, approach, wet-bulb, flow and heat rejected are tied together. Type in any box and the others follow. The boxes you changed last are the inputs and the rest are calculated (shaded); tick <i>Hold</i> to keep a value fixed. With <i>Existing tower</i> ticked, the tower’s own characteristic (section 2) decides the approach, so changing the flow moves the approach and both water temperatures. Wet-bulb and heat rejected are held to start with; the approach cannot be held, because the tower sets it. Without it the boxes are tied by arithmetic only.</p>
 
 <div class="fields three" id="ptFields">
   <div class="field" data-v="H"><label for="hwt">Water in (hot), T<sub>in</sub></label>
@@ -410,8 +455,8 @@ h2[id], h3[id] { scroll-margin-top:14px; }
   <div class="field"><label for="drift">Drift loss</label>
     <div class="pair"><input id="drift" type="number" inputmode="decimal" step="any" value="0.002" min="0" /><span>% of flow</span></div>
     <div class="hint">Normal design: 0.002 % (Eurovent-certified) to 0.005 %. Up to 0.01 % is acceptable; 0.02 % is an old specification. See Notes.</div></div>
-  <div class="field wide"><label class="chk" style="margin-top:26px"><input type="checkbox" id="dcount" checked /> Count the drift as part of the bleed-off, <i>B</i> = [<i>E</i> − (<i>N</i> − 1)·<i>D</i>]/(<i>N</i> − 1) = <i>E</i>/(<i>N</i> − 1) − <i>D</i></label>
-    <div class="hint">Ticked (recommended) is the exact mass balance: drift carries solids out, so the bleed-off only has to remove the rest. Unticked follows the M374 handbook, <i>B</i> = <i>E</i>/(<i>N</i> − 1), which ignores drift and slightly overstates the bleed-off.</div></div>
+  <div class="field wide"><label class="chk" style="margin-top:26px"><input type="checkbox" id="dcount" checked /> Count the drift as part of the bleed-off</label>
+    <div class="hint">Ticked (recommended): <i>B</i> = [<i>E</i> − (<i>N</i> − 1)·<i>D</i>] ÷ (<i>N</i> − 1). This is the exact mass balance: drift carries solids out, so the bleed-off only has to remove the rest. Unticked follows the M374 handbook, <i>B</i> = <i>E</i>/(<i>N</i> − 1), which ignores drift and slightly overstates the bleed-off.</div></div>
 </div>
 <div class="warn" id="wWarn" role="status"></div>
 <div class="table-scroll"><table class="cmp" id="waterTable"></table></div>
@@ -777,12 +822,19 @@ function freezeTower() {
   if (!d0 || d0.bad) return d0 || { bad: "Complete the operating point and the characteristic first." };
   tw = { Cc: d0.Cc, m: d0.m, G: d0.G, P: d0.P }; twKey = charKey(); return d0;
 }
+const HNAME = { H: "water in", C: "water out", W: "wet-bulb", R: "range", A: "approach", F: "flow", Q: "heat rejected" };
+const heldMsg = () => "That box is fixed by the values you are holding" + (pins.length ? " (" + pins.map(v => HNAME[v]).join(", ") + ")" : "") + ". Untick one of those Holds to change it.";
+/* with the existing-tower rule on, the tower decides the approach, so hold wet-bulb and heat rejected and leave the approach free */
+function defaultHolds() {
+  pins = tw ? ["W", "Q"] : [];
+  document.querySelectorAll("[data-hold]").forEach(c => { c.checked = pins.indexOf(c.dataset.hold) >= 0; if (c.dataset.hold === "A") { c.disabled = !!tw; c.title = tw ? "The tower decides the approach" : ""; } });
+}
 function tryEdit(v, x) {
   const nh = [v].concat(hist.filter(a => a !== v));
   if (tw) {
     const drvT = twDrivers(pins.concat(nh, VARS));
     if (!drvT) return { ok: false, msg: "The tower cannot be solved from the present values. Reset to example values." };
-    if (drvT.indexOf(v) < 0) return { ok: false, msg: "That box is fixed by the values you are holding. Untick a Hold to change it." };
+    if (drvT.indexOf(v) < 0) return { ok: false, msg: heldMsg() };
     const targets = {}; drvT.forEach(d => targets[d] = d === v ? x : val[d]);
     const f = twSolve(drvT, targets);
     if (!f) return { ok: false, msg: "This tower cannot do that: no water temperature satisfies its characteristic. Try a smaller change, or untick the existing-tower box." };
@@ -790,7 +842,7 @@ function tryEdit(v, x) {
     return { ok: true };
   }
   const drv = pickDrivers(pins.concat(nh, VARS));
-  if (drv.indexOf(v) < 0) return { ok: false, msg: "That box is fixed by the values you are holding. Untick a Hold to change it." };
+  if (drv.indexOf(v) < 0) return { ok: false, msg: heldMsg() };
   const known = {}; drv.forEach(d => known[d] = d === v ? x : val[d]); propagate(known);
   if (!VARS.every(a => isFinite(known[a]))) return { ok: false, msg: "That combination has no solution (a zero flow or range). Change another box first." };
   hist = nh; drivers = drv; VARS.forEach(a => val[a] = known[a]);
@@ -837,6 +889,7 @@ document.querySelectorAll("[data-hold]").forEach(cb => cb.addEventListener("chan
 $("ptReset").addEventListener("click", () => {
   pins = []; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
   hist = tw ? TW_HIST.slice() : ["W", "F", "C", "H"];
+  defaultHolds();
   val.H = 35; val.C = 30; val.W = 25.5; val.F = 100; val.R = 5; val.A = 4.5; val.Q = K * 100 * 5;
   scWbLinked = true; $("scpct").value = 125; $("lg1").value = 1.2; $("mslope").value = 0.65; $("scfan").value = 100; $("scmode").value = "q";
   if (tw) freezeTower();
@@ -845,12 +898,13 @@ $("ptReset").addEventListener("click", () => {
 });
 const TW_HIST = ["W", "F", "Q", "R", "C", "H"];
 $("twFix").addEventListener("change", () => {
-  pins = []; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
+  pins = []; tw = null; document.querySelectorAll("[data-hold]").forEach(c => c.checked = false);
   if ($("twFix").checked) {
     const d0 = freezeTower();
     if (!d0 || d0.bad) { tw = null; $("twFix").checked = false; warnBox("ptWarn", [d0 && d0.bad ? d0.bad : "Complete the operating point and the characteristic first."]); return; }
     hist = TW_HIST.slice();
   } else { tw = null; hist = ["W", "F", "C", "H"]; }
+  defaultHolds();
   drivers = computeDrivers(pins.concat(hist, VARS));
   writeFields(null); recalc();
 });
@@ -1549,6 +1603,84 @@ writeFields(null);
 $("twFix").dispatchEvent(new Event("change"));
 syncScFlow();
 $("scflowU").textContent = FU[$("flowU").value].n;
+recalc();
+})();
+
+(function () {
+"use strict";
+const $ = id => document.getElementById(id), K = 4.186, num = id => parseFloat($(id).value);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const sg = (x, d) => !isFinite(x) ? "—" : (x < -0.5 * Math.pow(10, -d) ? "−" : "+") + Math.abs(x).toFixed(d);
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
+const FU = { lps: { f: 1, n: "L/s", d: 2 }, m3h: { f: 1 / 3.6, n: "m³/h", d: 1 }, gpm: { f: 0.0630902, n: "US gpm", d: 0 } };
+const toLps = x => x * FU[$("q_flowU").value].f, fromLps = x => x / FU[$("q_flowU").value].f;
+const hsat = (t, P) => { const w = PSY.Wsat(t, P); return w == null ? NaN : PSY.enthalpy(t, w); };
+function merkel(H, C, W, LG, P) {
+  const R = H - C; if (!(R > 0)) return NaN; const ha0 = hsat(W, P); let s = 0;
+  for (const f of [0.1, 0.4, 0.6, 0.9]) { const d = hsat(C + f * R, P) - (ha0 + LG * K * f * R); if (!(d > 1e-6)) return Infinity; s += 1 / d; }
+  return K * R / 4 * s;
+}
+function solveCWT(R, W, LG, ntu, P) {
+  let lo = W + 0.001, hi = W + 60;
+  if (!(merkel(hi + R, hi, W, LG, P) < ntu)) return null;
+  for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (merkel(m + R, m, W, LG, P) > ntu) lo = m; else hi = m; }
+  return (lo + hi) / 2;
+}
+let pctDrv = true;
+function model() {
+  const F = toLps(num("q_flow")), H = num("q_hwt"), C = num("q_cwt"), W = num("q_wbt"), R = H - C, A = C - W;
+  return { F, H, C, W, R, A, Q: K * F * R };
+}
+function sizing(b) {
+  const LG1 = num("q_lg1"), m = num("q_slope"), P = PSY.pressurePa(isFinite(num("q_elev")) ? num("q_elev") : 0);
+  if (!(LG1 > 0 && m > 0)) return { bad: "Enter a water to air ratio and a slope above 0." };
+  const ntu = merkel(b.H, b.C, b.W, LG1, P);
+  if (!isFinite(ntu)) return { bad: "With L/G = " + LG1 + " this approach and range cannot be reached by any tower. Lower the L/G or raise the approach." };
+  return { P, m, Cc: ntu * Math.pow(LG1, m), G: b.F / LG1, ntu, LG1 };
+}
+function atFlow(b, s, F2) {
+  const R2 = b.R * b.F / F2, LG2 = F2 / s.G, ntu2 = s.Cc * Math.pow(LG2, -s.m), c = solveCWT(R2, b.W, LG2, ntu2, s.P);
+  if (c == null || !(R2 > 0)) return null;
+  return { F: F2, R: R2, C: c, H: c + R2, A: c - b.W, Q: b.Q };
+}
+function recalc() {
+  const b = model(), w = [];
+  $("q_flow2U").textContent = FU[$("q_flowU").value].n;
+  const ok = b.F > 0 && isFinite(b.H) && isFinite(b.C) && isFinite(b.W);
+  if (!ok) { $("q_res1").innerHTML = ""; warnBox("q_warn1", ["Enter the flow and all three temperatures."]); $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
+  if (!(b.R > 0)) w.push("Water in must be warmer than water out.");
+  if (!(b.A > 0)) w.push("Water out must be above the wet-bulb. A tower cannot cool below it.");
+  else if (b.A < 2.8) w.push("An approach under about 2.8 K is rarely guaranteed by tower makers.");
+  warnBox("q_warn1", w);
+  if (!(b.R > 0 && b.A > 0)) { $("q_res1").innerHTML = ""; $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
+  $("q_res1").innerHTML = box("Heat rejected", fmt(b.Q, 0) + " kW", fmt(b.Q / 3.517, 0) + " refrigeration tons · " + fmt(b.Q * 3.412, 0) + " kBtu/h", "ok") + box("Range", fmt(b.R, 2) + " K", "water in − water out") + box("Approach", fmt(b.A, 2) + " K", "water out − wet-bulb");
+  if (!$("q_chg").checked) return;
+  /* new flow */
+  if (pctDrv) { const p = num("q_pct"); if (p > 0) $("q_flow2").value = fromLps(b.F * p / 100).toFixed(FU[$("q_flowU").value].d); }
+  else { const f2 = toLps(num("q_flow2")); if (f2 > 0) $("q_pct").value = (f2 / b.F * 100).toFixed(1); }
+  const F2 = toLps(num("q_flow2")), s = sizing(b), w2 = [];
+  if (s.bad) { warnBox("q_warn2", [s.bad]); $("q_cmp").innerHTML = ""; $("q_sweep").innerHTML = ""; return; }
+  const n = F2 > 0 ? atFlow(b, s, F2) : null;
+  if (!(F2 > 0)) w2.push("Enter the new water flow."); else if (!n) w2.push("The tower cannot do this duty at that flow with this assumption.");
+  else if (n.A < 2.8) w2.push("The new approach is under about 2.8 K, which makers rarely guarantee.");
+  warnBox("q_warn2", w2);
+  const fd = FU[$("q_flowU").value];
+  if (n) {
+    const row = (k, a, c, d, u) => "<tr><th>" + k + "</th><td>" + fmt(a, d) + "</td><td>" + fmt(c, d) + "</td><td>" + sg(c - a, d) + "</td><td>" + u + "</td></tr>";
+    $("q_cmp").innerHTML = "<thead><tr><th></th><th>Now</th><th>New flow</th><th>Change</th><th></th></tr></thead><tbody>" +
+      row("Water flow", fromLps(b.F), fromLps(n.F), fd.d, fd.n) + row("Water in", b.H, n.H, 2, "°C") + row("Water out", b.C, n.C, 2, "°C") + row("Approach", b.A, n.A, 2, "K") + row("Range", b.R, n.R, 2, "K") +
+      row("Heat rejected", b.Q, n.Q, 0, "kW") + "</tbody>";
+  } else $("q_cmp").innerHTML = "";
+  const pcts = [60, 70, 80, 90, 100, 110, 120, 130, 140], near = pcts.reduce((a, p) => Math.abs(p - num("q_pct")) < Math.abs(a - num("q_pct")) ? p : a, 100);
+  $("q_sweep").innerHTML = "<thead><tr><th>Flow, %</th><th>Flow, " + fd.n + "</th><th>Water in, °C</th><th>Water out, °C</th><th>Approach, K</th><th>Range, K</th></tr></thead><tbody>" +
+    pcts.map(p => { const r = atFlow(b, s, b.F * p / 100); return r ? "<tr" + (p === near ? ' class="on"' : "") + "><td>" + p + "</td><td>" + fmt(fromLps(r.F), fd.d) + "</td><td>" + fmt(r.H, 2) + "</td><td>" + fmt(r.C, 2) + "</td><td>" + fmt(r.A, 2) + "</td><td>" + fmt(r.R, 2) + "</td></tr>" : "<tr><td>" + p + '</td><td colspan="5">not solvable</td></tr>'; }).join("") + "</tbody>";
+}
+["q_flow", "q_flowU", "q_hwt", "q_cwt", "q_wbt", "q_lg1", "q_slope", "q_elev"].forEach(id => $(id).addEventListener("input", recalc));
+$("q_flowU").addEventListener("change", () => { pctDrv = true; recalc(); });
+$("q_pct").addEventListener("input", () => { pctDrv = true; recalc(); });
+$("q_flow2").addEventListener("input", () => { pctDrv = false; recalc(); });
+$("q_chg").addEventListener("change", () => { $("q_chgBox").hidden = !$("q_chg").checked; pctDrv = true; recalc(); });
 recalc();
 })();
 </script>
