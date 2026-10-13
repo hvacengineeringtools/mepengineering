@@ -72,7 +72,8 @@ ul.checks li.warn { background:var(--warn); }
 .meshcalc .chk { display:flex; gap:8px; align-items:center; font-size:13px; font-weight:700; margin:0; cursor:pointer; }
 .meshcalc .chk input { width:18px; height:18px; min-height:0; margin:0; -webkit-appearance:checkbox; appearance:auto; }
 .meshcalc .fields { margin-top:10px; }
-.meshcalc .span3 { grid-column:1 / -1; }
+.meshcalc .span3, .fields > .span3 { grid-column:1 / -1; }
+[hidden] { display:none !important; }
 table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); }
 table.ref th, table.ref td { border:1px solid var(--faint); text-align:left; }
 table.ref .num { text-align:right; font-variant-numeric:tabular-nums; }
@@ -259,7 +260,7 @@ td button.rm { min-height:30px; min-width:30px; }
   <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
 </nav>
 
-<p class="lead">Enter the airflow and the face velocity, then the one side the building fixes. The sheet sizes the louvre, gives its pressure drop, and shows how the air will feel to someone standing in it.</p>
+<p class="lead">Two ways to use it. <b>Size a louvre:</b> enter the airflow and the face velocity, then the one side the building fixes, and the sheet sizes the louvre. <b>Check a louvre of known size:</b> enter its width and height, the free area and the airflow (or the face velocity), and the sheet gives the face velocity or airflow and the pressure drop. Either way it shows how the air will feel to someone standing in it.</p>
 
 <div class="layout">
 <section aria-labelledby="h-in">
@@ -280,13 +281,19 @@ td button.rm { min-height:30px; min-width:30px; }
 <fieldset>
   <legend>Airflow and size</legend>
   <div class="fields">
+    <div class="span3"><label for="mode">What do you want to do?</label>
+      <select id="mode"><option value="size">Size a louvre from airflow and face velocity</option><option value="check">Check a louvre of known size</option></select></div>
+    <div id="fk" hidden><label for="known">Known with the size<span class="hint">The other one is calculated.</span></label>
+      <select id="known"><option value="q">Airflow</option><option value="v">Face velocity</option></select></div>
+    <div id="fw" hidden><label for="cw">Louvre width (core)</label><div class="pair"><input id="cw" type="number" inputmode="decimal" min="0" step="10" value="1200" /><span>mm</span></div></div>
+    <div id="fh" hidden><label for="ch">Louvre height (core)</label><div class="pair"><input id="ch" type="number" inputmode="decimal" min="0" step="10" value="1000" /><span>mm</span></div></div>
     <div><label for="q">Airflow</label><div class="pair"><input id="q" type="number" inputmode="decimal" min="0" step="1" value="1330" /><span>l/s</span></div></div>
     <div><label for="vf">Face velocity</label><div class="pair"><input id="vf" type="number" inputmode="decimal" min="0" step="0.1" value="2.5" /><span>m/s</span></div></div>
     <div><label for="free">Free area<span class="hint">Share of the face that is open. Type 50 for 50%.</span></label><div class="pair"><input id="free" type="number" inputmode="decimal" min="0" max="100" step="1" value="50" /><span>%</span></div></div>
     <div><label for="cd" id="cdlabel">Discharge coefficient, Cd<span class="hint">From the maker’s BS EN 13030 test.</span></label><div class="pair"><input id="cd" type="number" inputmode="decimal" min="0" step="0.01" value="0.40" /><span>—</span></div></div>
-    <div><label for="side">Side the building fixes</label>
+    <div id="fs1"><label for="side">Side the building fixes</label>
       <select id="side"><option value="w">Width</option><option value="h">Height</option></select></div>
-    <div><label for="fixed" id="fixedlabel">Fixed width</label><div class="pair"><input id="fixed" type="number" inputmode="decimal" min="0" step="1" value="600" /><span>mm</span></div></div>
+    <div id="fs2"><label for="fixed" id="fixedlabel">Fixed width</label><div class="pair"><input id="fixed" type="number" inputmode="decimal" min="0" step="1" value="600" /><span>mm</span></div></div>
   </div>
   <details class="adv">
     <summary>Coefficient basis</summary>
@@ -658,7 +665,17 @@ function calc() {
   const coef = intake ? "Ce" : "Cd";
   $("fixedlabel").textContent = side === "w" ? "Fixed width" : "Fixed height";
   $("cdlabel").firstChild.textContent = intake ? "Entry coefficient, Ce" : "Discharge coefficient, Cd";
-  const qLs = num("q"), vf = num("vf"), free = num("free"), cd = num("cd"), fixed = num("fixed");
+  const mode = $("mode").value, chk = mode === "check", known = $("known").value;
+  ["fk", "fw", "fh"].forEach(i => $(i).hidden = !chk);
+  ["fs1", "fs2"].forEach(i => $(i).hidden = chk);
+  $("q").readOnly = chk && known === "v"; $("vf").readOnly = chk && known === "q";
+  const cw = num("cw"), ch = num("ch"), Ach = chk && cw > 0 && ch > 0 ? cw * ch / 1e6 : null;
+  let qLs = num("q"), vf = num("vf");
+  if (chk && Ach) {
+    if (known === "q") { vf = qLs > 0 ? qLs / 1000 / Ach : null; $("vf").value = vf ? f(vf, 3) : ""; }
+    else { qLs = vf > 0 ? vf * Ach * 1000 : null; $("q").value = qLs ? f(qLs, 1) : ""; }
+  }
+  const free = num("free"), cd = num("cd"), fixed = chk ? (Ach ? 1 : null) : num("fixed");
   // Air density: ASHRAE standard atmosphere for pressure, ideal gas for dry air
   const tair = num("tair") != null ? num("tair") : 20, elev = num("elev") != null ? num("elev") : 0;
   const pAtm = 101.325 * Math.pow(1 - 2.25577e-5 * elev, 5.2559);
@@ -668,7 +685,7 @@ function calc() {
   document.querySelectorAll("#cdtable tr[data-c]").forEach(tr => tr.classList.toggle("on", tr.dataset.c === n));
 
   if (!(qLs > 0) || !(vf > 0) || !(free > 0) || free > 100 || !(cd > 0) || !(rho > 0) || !(fixed > 0)) {
-    $("out").innerHTML = `<div class="answer"><div class="k">Minimum louvre size</div><div class="v">—</div><div class="u">Enter the airflow, face velocity, free area (up to 100%), coefficient and the fixed side to size the louvre.</div></div>`;
+    $("out").innerHTML = `<div class="answer"><div class="k">Minimum louvre size</div><div class="v">—</div><div class="u">${chk ? "Enter the louvre width and height, the airflow or face velocity, the free area (up to 100%) and the coefficient." : "Enter the airflow, face velocity, free area (up to 100%), coefficient and the fixed side to size the louvre."}</div></div>`;
     $("worked").innerHTML = "<p>Waiting for the inputs.</p>";
     drawFeel(vf > 0 ? vf : 0, 0);
     return;
@@ -677,7 +694,7 @@ function calc() {
   const A = Q / vf, Af = A * R;
   const otherMm = A / (fixed / 1000) * 1000;
   const nominal = Math.ceil(otherMm / 50 - 1e-9) * 50;
-  const W = side === "w" ? fixed : nominal, H = side === "w" ? nominal : fixed;
+  const W = chk ? cw : side === "w" ? fixed : nominal, H = chk ? ch : side === "w" ? nominal : fixed;
   const Acoef = basis === "gross" ? A : Af;
   const vb = Q / Af;
   const dPl = (rho / 2) * Math.pow(Q / (cd * Acoef), 2);
@@ -734,32 +751,35 @@ function calc() {
   const checks = [];
   if (dP > 150) checks.push(["warn", "Pressure drop is above 150 Pa. Consider a larger louvre or a better coefficient."]);
   if (vb >= 5) checks.push(["warn", "Air leaves the blades at 5 m/s or more. Check noise and the comfort drawing below."]);
-  if ($("weather").value === "Y") checks.push([vf > 3.5 ? "warn" : "", "Weather louvre: read the rain class from the maker’s BS EN 13030 results at " + vf + " m/s face velocity." + (vf > 3.5 ? " This is above 3.5 m/s, the highest test velocity, so no class applies." : "")]);
+  if ($("weather").value === "Y") checks.push([vf > 3.5 ? "warn" : "", "Weather louvre: read the rain class from the maker’s BS EN 13030 results at " + f(vf, 2) + " m/s face velocity." + (vf > 3.5 ? " This is above 3.5 m/s, the highest test velocity, so no class applies." : "")]);
   if ($("acoustic").value === "Y") checks.push(["", "Acoustic louvre: state the sound reduction needed separately. This sheet does not calculate it."]);
   checks.push(["", "Add the pressure drop to the fan duty."]);
 
   $("out").innerHTML =
+    (chk ? `<div class="answer good"><div class="k">Face velocity at ${f(Q * 1000, 0)} l/s</div><div class="v">${f(vf, 2)} m/s</div>` +
+      `<div class="u">Louvre ${W} × ${H} mm as given, face area ${f(A, 3)} m². ${$("place").value}, ${intake ? "intake" : "exhaust"}.</div></div>` :
     `<div class="answer good"><div class="k">Minimum louvre size, width × height</div><div class="v">${W} × ${H} mm</div>` +
-    `<div class="u">${other} calculated as ${Math.round(otherMm)} mm, rounded up to the next 50 mm. ${$("place").value}, ${intake ? "intake" : "exhaust"}.</div></div>` +
-    elevation(W, H, side) +
+    `<div class="u">${other} calculated as ${Math.round(otherMm)} mm, rounded up to the next 50 mm. ${$("place").value}, ${intake ? "intake" : "exhaust"}.</div></div>`) +
+    elevation(W, H, chk ? "" : side) +
     `<div class="pairs">` +
       `<div class="answer${dP > 150 ? " bad" : ""}"><div class="k">${items.length ? "Total pressure drop" : "Pressure drop"}</div><div class="v">${f(dP, 1)} Pa</div><div class="u">At the required face area, ρ ${f(rho, 2)} kg/m³.</div>` +
         (items.length ? `<ul class="breakdown"><li><span>Louvre</span><span>${f(dPl, 1)} Pa</span></li>${items.map(it => `<li><span>${it.name}</span><span>${f(it.val, 1)} Pa</span></li>`).join("")}</ul>` : "") + `</div>` +
       `<div class="answer${vb >= 5 ? " bad" : ""}"><div class="k">Air leaving the blades</div><div class="v">${f(vb, 2)} m/s</div><div class="u">Airflow ÷ free area.</div></div>` +
     `</div>` +
     `<dl class="facts">` +
-      `<dt>Face (core) area needed</dt><dd>${f(A, 3)} m²</dd>` +
+      `<dt>Face (core) area${chk ? "" : " needed"}</dt><dd>${f(A, 3)} m²</dd>` +
       `<dt>Free area, ${free}%</dt><dd>${f(Af, 3)} m²</dd>` +
       `<dt>Face velocity at the size chosen</dt><dd>${f(vAtSize, 2)} m/s</dd>` +
       `<dt>${coef} ${cd}</dt><dd>Class ${cls}, ${cname}</dd>` +
     `</dl>` +
     `<ul class="checks">${checks.map(([c, t]) => `<li${c ? ` class="${c}"` : ""}>${t}</li>`).join("")}</ul>`;
 
+  const wFace = chk
+    ? `<h3>Face area</h3><div class="eq">A = W × H = ${W / 1000} × ${H / 1000} = <b>${f(A, 3)} m²</b></div>` + (known === "q" ? `<div class="eq">V<sub>f</sub> = Q / A = ${f(Q, 3)} / ${f(A, 3)} = <b>${f(vf, 3)} m/s</b></div>` : `<div class="eq">Q = V<sub>f</sub> × A = ${vf} × ${f(A, 3)} = <b>${f(Q, 3)} m³/s</b> (${f(Q * 1000, 1)} l/s)</div>`) + `<h3>Free area</h3><div class="eq">A<sub>f</sub> = A × R = ${f(A, 3)} × ${R} = <b>${f(Af, 3)} m²</b></div>`
+    : `<h3>Face area</h3><div class="eq">A = Q / V<sub>f</sub> = ${f(Q, 3)} / ${vf} = <b>${f(A, 3)} m²</b></div>` + `<h3>Free area</h3><div class="eq">A<sub>f</sub> = A × R = ${f(A, 3)} × ${R} = <b>${f(Af, 3)} m²</b></div>` + `<h3>${other}</h3><div class="eq">${other} = A / fixed side = ${f(A, 3)} / ${fixed / 1000} = ${f(otherMm / 1000, 3)} m, so <b>${nominal} mm</b> rounded up to 50 mm</div>`;
   const areaWord = basis === "gross" ? "core area A" : "free area Af";
   $("worked").innerHTML =
-    `<h3>Face area</h3><div class="eq">A = Q / V<sub>f</sub> = ${f(Q, 3)} / ${vf} = <b>${f(A, 3)} m²</b></div>` +
-    `<h3>Free area</h3><div class="eq">A<sub>f</sub> = A × R = ${f(A, 3)} × ${R} = <b>${f(Af, 3)} m²</b></div>` +
-    `<h3>${other}</h3><div class="eq">${other} = A / fixed side = ${f(A, 3)} / ${fixed / 1000} = ${f(otherMm / 1000, 3)} m, so <b>${nominal} mm</b> rounded up to 50 mm</div>` +
+    wFace +
     `<h3>Air density</h3><div class="eq">p = 101.325 × (1 − 2.25577×10<sup>−5</sup> × ${elev})<sup>5.2559</sup> = ${f(pAtm, 2)} kPa</div>` +
     `<div class="eq">ρ = p / (R × T) = ${f(pAtm * 1000, 0)} / (287.055 × ${f(tair + 273.15, 2)}) = <b>${f(rho, 3)} kg/m³</b></div>` +
     `<h3>Louvre pressure drop</h3><div class="eq">ΔP = (ρ / 2) × [Q / (${coef} × ${areaWord})]² = (${f(rho, 3)} / 2) × [${f(Q, 3)} / (${cd} × ${f(Acoef, 3)})]² = <b>${f(dPl, 1)} Pa</b></div>` +
@@ -781,7 +801,7 @@ function calc() {
 $("meshTbl").innerHTML = [...$("mc_pre").options].filter(o => o.value).map(o => { const [a, d] = o.value.split("|").map(Number), fo = Math.pow(a / (a + d), 2), z = 1.3 * (1 - fo) + Math.pow(1 / fo - 1, 2); return `<tr><td>${o.textContent.split(":")[0]}</td><td class="num">${a}</td><td class="num">${d}</td><td class="num">${fo.toFixed(2)}</td><td class="num">${z.toFixed(2)}</td></tr>`; }).join("");
 $("mc_pre").addEventListener("change", () => { const v = $("mc_pre").value; if (v) { const [a, d] = v.split("|"); $("mc_a").value = a; $("mc_d").value = d; $("mc_f").value = ""; } calc(); });
 ["mc_a", "mc_d"].forEach(id => $(id).addEventListener("input", () => { const v = $("mc_pre").value; if (v && v !== $("mc_a").value + "|" + $("mc_d").value) $("mc_pre").value = ""; }));
-["duty","place","weather","acoustic","q","vf","free","cd","side","fixed","basis","tair","elev","m_dp","m_v","d_dp","d_v","o_dp","o_v","o_name","d_w","d_h","o_w","o_h","mc_use","mc_a","mc_d","mc_f"].forEach(id => $(id).addEventListener("input", calc));
+["duty","place","weather","acoustic","q","vf","free","cd","side","fixed","mode","known","cw","ch","basis","tair","elev","m_dp","m_v","d_dp","d_v","o_dp","o_v","o_name","d_w","d_h","o_w","o_h","mc_use","mc_a","mc_d","mc_f"].forEach(id => $(id).addEventListener("input", calc));
 $("mc_use").addEventListener("change", () => { if (!$("mc_use").checked) { $("m_dp").value = ""; $("m_v").value = ""; } calc(); });
 calc();
 </script>

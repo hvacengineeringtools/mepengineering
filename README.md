@@ -17,7 +17,7 @@ A static site of fifteen calculation sheets. Open `index.html` in a browser, or 
 | VIII | `intake-separation.html` | Intake and exhaust separation, Figure C.1 (BS EN 16798-3:2025), with a drawing of what h and L are |
 | IX | `dilution-distance.html` | Dilution distance, Table C.3 (BS EN 16798-3:2025) |
 | X | `ahu-separation.html` | Roof-unit intake and exhaust, Table E.3, then heat-recovery classification (BS EN 16798-3:2025) |
-| XI | `louvre.html` | Louvre face velocity analysis: face area and pressure drop, with editable bird, vermin and insect mesh presets |
+| XI | `louvre.html` | Louvre face velocity analysis: size a louvre from airflow and face velocity, or check one of known size (airflow or face velocity, free area, pressure drop), with editable bird, vermin and insect mesh presets |
 | XII | `refrigerant.html` | Refrigerant discharge design: machinery-room ventilation, BS EN 378 and ASHRAE 15 |
 | XIII | `jet-fan.html` | Jet fans estimation: throw and coverage method compared with the pressure-loss (obstruction) method; preliminary design, verify with CFD; editable entrainment constant C and a tab on the accuracy of K, Kv, η and C |
 | XIV | `envelope.html` | Building envelope U- and R-value requirements by climate zone: city search, then Section 5 tables (ASHRAE/IES 90.1-2025 SI, ASHRAE 169-2025) |
