@@ -247,6 +247,46 @@ table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; fo
 ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
 ol.steps li { margin:4px 0; }
 .lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -273,9 +313,11 @@ ol.steps li { margin:4px 0; }
     <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
     <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
     <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
+    <a href="layer-stack-u-factor.html"><span>XVIII</span>Assembly U-factor</a>
     <a href="cooling-tower-chiller.html"><span>XV</span>Cooling tower</a>
   <a class="on" href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
+  <a href="layer-stack-u-factor.html"><span>XVIII</span>Assembly U-factor</a>
   </nav>
 
 <p class="lead">Looks up the 90.1 minimum chiller COP and IPLV.SI for the chiller type and size, adjusts a centrifugal chiller for the evaporator and condenser water temperatures with Kadj, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. The cooling tower is on <a href="cooling-tower-chiller.html">sheet XV</a>; its water temperatures can be passed here with the link under its operating point. <button class="mx-open" type="button" data-mxopen="chiller">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>

@@ -85,6 +85,7 @@ footer { margin-top:24px; border-top:1px solid var(--faint); padding-top:10px; f
     <a href="cooling-tower-chiller.html"><span>XV</span>Cooling tower</a>
     <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
     <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
+    <a href="layer-stack-u-factor.html"><span>XVIII</span>Assembly U-factor</a>
   </nav>
 
   <h2>1. Find climate zone</h2>
@@ -265,7 +266,7 @@ const envelope = {
     floors: [["Mass","U-1.825 / NR","U-1.825 / NR","U-1.825 / NR"],["Steel joist","U-0.390 / R-2.3","U-0.390 / R-2.3","U-1.986 / NR"],["Wood-framed and other","U-0.380 / R-2.3","U-0.380 / R-2.3","U-1.599 / NR"]],
     slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
-    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.21","U-2.72 / SHGC 0.21","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.19","U-3.52 / SHGC 0.19","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.19","U-4.71 / SHGC 0.19","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.21","U-2.72 / SHGC 0.21","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.19","U-3.52 / SHGC 0.19","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.19","U-4.71 / SHGC 0.19","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "1": {
     roofs: [["Insulation entirely above deck","U-0.273 / R-3.5 c.i.","U-0.220 / R-4.4 c.i.","U-1.240 / R-0.7 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.653 / R-1.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.459 / R-2.3"]],
@@ -274,7 +275,7 @@ const envelope = {
     floors: [["Mass","U-1.825 / NR","U-1.825 / NR","U-1.825 / NR"],["Steel joist","U-0.390 / R-2.3","U-0.390 / R-2.3","U-1.986 / NR"],["Wood-framed and other","U-0.380 / R-2.3","U-0.380 / R-2.3","U-1.599 / NR"]],
     slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm","F-1.766 / R-1.3 for 300 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
-    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.23","U-2.72 / SHGC 0.23","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.21","U-3.52 / SHGC 0.21","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.21","U-4.71 / SHGC 0.21","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-2.72 / SHGC 0.23","U-2.72 / SHGC 0.23","U-6.81 / NR"],["Operable","U-3.52 / SHGC 0.21","U-3.52 / SHGC 0.21","U-6.81 / NR"],["Entrance door","U-4.71 / SHGC 0.21","U-4.71 / SHGC 0.21","U-6.25 / NR"],["Skylight (0–3% roof)","U-3.86 / SHGC 0.30","U-3.86 / SHGC 0.30","U-10.22 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "2": {
     roofs: [["Insulation entirely above deck","U-0.220 / R-4.4 c.i.","U-0.220 / R-4.4 c.i.","U-0.982 / R-0.9 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.300 / R-3.3"]],
@@ -283,7 +284,7 @@ const envelope = {
     floors: [["Mass","U-0.606 / R-1.9 c.i.","U-0.496 / R-1.5 c.i.","U-1.825 / NR"],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.390 / R-2.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.376 / R-2.3"]],
     slab: [["Unheated","F-1.264 / NR","F-1.264 / NR","F-1.264 / NR"],["Heated","F-1.558 / R-1.8 for 600 mm","F-1.489 / R-2.6 for 600 mm","F-1.766 / R-1.3 for 300 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-3.975"],["Nonswinging","U-1.760","U-1.760","U-6.81"]],
-    fen: [["Fixed (0–40% wall)","U-2.56 / SHGC 0.23","U-2.56 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.41 / SHGC 0.21","U-3.41 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-4.37 / SHGC 0.21","U-4.37 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.69 / SHGC 0.30","U-3.69 / SHGC 0.30","U-4.26 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-2.56 / SHGC 0.23","U-2.56 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.41 / SHGC 0.21","U-3.41 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-4.37 / SHGC 0.21","U-4.37 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.69 / SHGC 0.30","U-3.69 / SHGC 0.30","U-4.26 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "3": {
     roofs: [["Insulation entirely above deck","U-0.180 / R-5.3 c.i.","U-0.180 / R-5.3 c.i.","U-0.677 / R-1.3 c.i."],["Metal building","U-0.233 / R-1.8 + R-3.3 FC","U-0.233 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.300 / R-3.3"]],
@@ -292,43 +293,43 @@ const envelope = {
     floors: [["Mass","U-0.420 / R-1.8 c.i.","U-0.420 / R-1.8 c.i.","U-0.780 / R-0.7 c.i."],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.296 / R-3.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.288 / R-3.3"]],
     slab: [["Unheated","F-1.264 / NR","F-0.935 / R-1.8 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.489 / R-2.6 for 600 mm","F-1.766 / R-1.3 for 300 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
-    fen: [["Fixed (0–40% wall)","U-2.16 / SHGC 0.25","U-2.16 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.07 / SHGC 0.23","U-3.07 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-3.86 / SHGC 0.23","U-3.86 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.12 / SHGC 0.30","U-3.12 / SHGC 0.30","U-4.26 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-2.16 / SHGC 0.25","U-2.16 / SHGC 0.25","U-2.72 / NR"],["Operable","U-3.07 / SHGC 0.23","U-3.07 / SHGC 0.23","U-3.52 / NR"],["Entrance door","U-3.86 / SHGC 0.23","U-3.86 / SHGC 0.23","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.12 / SHGC 0.30","U-3.12 / SHGC 0.30","U-4.26 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "4": {
-    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.677 / R-1.3 c.i."],["Metal building","U-0.190 / R-1.8 + R-3.3 FC","U-0.190 / R-1.8 + R-3.3 FC","U-0.545 / R-2.8"],["Attic and other","U-0.120 / R-8.6","U-0.120 / R-8.6","U-0.300 / R-3.3"]],
-    walls: [["Mass","U-0.513 / R-2.0 c.i.","U-0.513 / R-2.0 c.i.","U-0.857 / R-1.0 c.i."],["Metal building","U-0.352 / R-0 + R-2.8 c.i.","U-0.341 / R-0 + R-2.8 c.i.","U-0.705 / R-1.9"],["Steel-framed","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.504 / R-2.3"]],
-    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.678 / R-1.3 c.i.","C-6.473 / NR"]],
-    floors: [["Mass","U-0.363 / R-2.2 c.i.","U-0.363 / R-2.2 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
-    slab: [["Unheated","F-0.935 / R-1.8 for 600 mm","F-0.935 / R-1.8 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.162 / R-4.4 for 1200 mm","F-1.766 / R-1.3 for 300 mm"]],
+    roofs: [["Insulation entirely above deck","U-0.184 / R-5.3 c.i.","U-0.184 / R-5.3 c.i.","U-0.480 / R-1.9 c.i."],["Metal building","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R-1.4 Ls","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R-1.4 Ls","U-0.466 / R-3.3"],["Attic and other","U-0.119 / R-8.6","U-0.119 / R-8.6","U-0.192 / R-5.3"]],
+    walls: [["Mass","U-0.592 / R-1.7 c.i.","U-0.505 / R-2.2 c.i.","U-3.293 / NR"],["Metal building","U-0.341 / R-0 + R-2.8 c.i.","U-0.286 / R-0 + R-3.3 c.i.","U-0.920 / R-2.3"],["Steel-framed","U-0.358 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.358 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.670 / R-2.6"],["Wood-framed and other","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.470 / R-2.6"]],
+    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.522 / R-1.8 c.i.","C-6.473 / NR"]],
+    floors: [["Mass","U-0.321 / R-2.6 c.i.","U-0.287 / R-2.9 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.296 / R-3.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.900 / R-2.6 for 600 mm","F-0.900 / R-2.6 for 600 mm","F-1.264 / NR"],["Heated","F-1.459 / R-3.5 for 600 mm","F-1.191 / R-3.5 for 1200 mm","F-1.558 / R-1.8 for 600 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
-    fen: [["Fixed (0–40% wall)","U-1.82 / SHGC 0.36","U-1.82 / SHGC 0.36","U-2.72 / NR"],["Operable","U-2.56 / SHGC 0.33","U-2.56 / SHGC 0.33","U-3.52 / NR"],["Entrance door","U-3.58 / SHGC 0.33","U-3.58 / SHGC 0.33","U-4.37 / NR"],["Skylight (0–3% roof)","U-3.12 / SHGC 0.40","U-3.12 / SHGC 0.40","U-4.26 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-1.99 / SHGC 0.34","U-1.99 / SHGC 0.34","U-2.55 / NR"],["Operable","U-2.44 / SHGC 0.31","U-2.44 / SHGC 0.31","U-3.41 / NR"],["Entrance door","U-3.58 / SHGC 0.31","U-3.58 / SHGC 0.31","U-4.37 / NR"],["Skylight (0–3% roof)","U-2.61 / SHGC 0.40","U-2.72 / SHGC 0.40","U-3.69 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "5": {
-    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.527 / R-1.8 c.i."],["Metal building","U-0.190 / R-1.8 + R-3.3 FC","U-0.190 / R-1.8 + R-3.3 FC","U-0.409 / R-3.3"],["Attic and other","U-0.120 / R-8.6","U-0.120 / R-8.6","U-0.230 / R-4.4"]],
-    walls: [["Mass","U-0.453 / R-2.3 c.i.","U-0.453 / R-2.3 c.i.","U-0.857 / R-1.0 c.i."],["Metal building","U-0.341 / R-0 + R-2.8 c.i.","U-0.341 / R-0 + R-2.8 c.i.","U-0.705 / R-1.9"],["Steel-framed","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7","U-0.504 / R-2.3"]],
-    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.678 / R-1.3 c.i.","C-6.473 / NR"]],
-    floors: [["Mass","U-0.363 / R-2.2 c.i.","U-0.363 / R-2.2 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
-    slab: [["Unheated","F-0.935 / R-1.8 for 600 mm","F-0.882 / R-3.5 for 600 mm","F-1.264 / NR"],["Heated","F-1.489 / R-2.6 for 600 mm","F-1.162 / R-4.4 for 1200 mm","F-1.766 / R-1.3 for 300 mm"]],
-    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
-    fen: [["Fixed (0–40% wall)","U-1.82 / SHGC 0.38","U-1.82 / SHGC 0.38","U-2.16 / NR"],["Operable","U-2.56 / SHGC 0.36","U-2.56 / SHGC 0.36","U-2.72 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.86 / NR"],["Skylight (0–3% roof)","U-3.12 / NR","U-3.12 / NR","U-3.69 / NR"]]
+    roofs: [["Insulation entirely above deck","U-0.184 / R-5.3 c.i.","U-0.184 / R-5.3 c.i.","U-0.300 / R-3.2 c.i."],["Metal building","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R1.4 Ls","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R1.4 Ls","U-0.466 / R-3.3"],["Attic and other","U-0.119 / R-8.6","U-0.119 / R-8.6","U-0.192 / R-5.3"]],
+    walls: [["Mass","U-0.505 / R-2.2 c.i.","U-0.432 / R-2.6 c.i.","U-0.744 / R-1.3 c.i."],["Metal building","U-0.286 / R-0 + R-3.3 c.i.","U-0.286 / R-0 + R-3.3 c.i.","U-0.533 / R-0 + R-1.7 c.i."],["Steel-framed","U-0.301 / R-2.6 + R-1.8 c.i. or R-3.7 + R-1.6 c.i.","U-0.301 / R-2.6 + R-1.8 c.i. or R-3.7 + R-1.6 c.i.","U-0.460 / R-2.6+ R-0.7 c.i."],["Wood-framed and other","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.470 / R-2.6"]],
+    below: [["Below-grade wall","C-0.678 / R-1.3 c.i.","C-0.522 / R-1.8 c.i.","C-6.473 / NR"]],
+    floors: [["Mass","U-0.321 / R-2.6 c.i.","U-0.287 / R-2.9 c.i.","U-0.606 / R-1.1 c.i."],["Steel joist","U-0.214 / R-5.3","U-0.214 / R-5.3","U-0.296 / R-3.3"],["Wood-framed and other","U-0.188 / R-5.3","U-0.188 / R-5.3","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.900 / R-2.6 for 600 mm","F-0.882 / R-3.5 for 600 mm","F-1.264 / NR"],["Heated","F-1.191 / R-3.5 for 1200 mm","F-1.191 / R-3.5 for 1200 mm","F-1.558 / R-1.8 for 600 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
+    fen: [["Fixed (0–40% wall)","U-1.82 / SHGC 0.38","U-1.82 / SHGC 0.38","U-2.38 / NR"],["Operable","U-2.21 / SHGC 0.33","U-2.21 / SHGC 0.33","U-3.06 / NR"],["Entrance door","U-3.58 / SHGC 0.33","U-3.58 / SHGC 0.33","U-4.37 / NR"],["Skylight (0–3% roof)","U-2.72 / SHGC 0.40","U-2.72 / SHGC 0.40","U-3.69 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "6": {
-    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.420 / R-2.2 c.i."],["Metal building","U-0.162 / R-3.3 + R-1.9 Ls","U-0.162 / R-3.3 + R-1.9 Ls","U-0.409 / R-3.3"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.230 / R-4.4"]],
-    walls: [["Mass","U-0.379 / R-3.0 c.i.","U-0.379 / R-3.0 c.i.","U-0.592 / R-1.7 c.i."],["Metal building","U-0.273 / R-0 + R-3.5 c.i.","U-0.273 / R-0 + R-3.5 c.i.","U-0.533 / R-1.7"],["Steel-framed","U-0.273 / R-2.6 + R-2.2 c.i. or R-3.7 + R-1.3 c.i.","U-0.273 / R-2.6 + R-2.2 c.i. or R-3.7 + R-1.3 c.i.","U-0.705 / R-2.3"],["Wood-framed and other","U-0.273 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.273 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.504 / R-2.3"]],
-    below: [["Below-grade wall","C-0.522 / R-1.8 c.i.","C-0.522 / R-1.8 c.i.","C-6.473 / NR"]],
-    floors: [["Mass","U-0.288 / R-2.9 c.i.","U-0.288 / R-2.9 c.i.","U-0.496 / R-1.5 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
-    slab: [["Unheated","F-0.882 / R-3.5 for 600 mm","F-0.882 / R-3.5 for 600 mm","F-1.264 / NR"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-1.162 / R-4.4 for 1200 mm","F-1.489 / R-2.6 for 600 mm"]],
-    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
-    fen: [["Fixed (0–40% wall)","U-1.59 / SHGC 0.40","U-1.59 / SHGC 0.40","U-1.82 / NR"],["Operable","U-1.99 / SHGC 0.36","U-1.99 / SHGC 0.36","U-2.21 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.50 / NR","U-2.50 / NR","U-3.12 / NR"]]
+    roofs: [["Insulation entirely above deck","U-0.184 / R-5.3 c.i.","U-0.184 / R-5.3 c.i.","U-0.300 / R-3.2 c.i."],["Metal building","U-0.175 / R-4.4 + R-1.9 Ls","U-0.163 / R-5.3 + R-1.9 Ls","U-0.341 / R-3.3 + R-3.3"],["Attic and other","U-0.119 / R-8.6","U-0.119 / R-8.6","U-0.192 / R-5.3"]],
+    walls: [["Mass","U-0.432 / R-2.6 c.i.","U-0.380 / R-3.1 c.i.","U-0.744 / R-1.3 c.i."],["Metal building","U-0.286 / R-0 + R-3.3 c.i.","U-0.286 / R-0 + R-3.3 c.i.","U-0.533 / R-0 + R-1.7 c.i."],["Steel-framed","U-0.273 / R-2.6 + R-2.2 c.i.","U-0.273 / R-2.6 + R-2.2 c.i.","U-0.460 / R-2.6 + R-0.7 c.i."],["Wood-framed and other","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.470 / R-2.6"]],
+    below: [["Below-grade wall","C-0.522 / R-1.8 c.i.","C-0.358 / R-2.6 c.i.","C-0.678 / R-1.3 c.i."]],
+    floors: [["Mass","U-0.287 / R-2.9 c.i.","U-0.287 / R-2.9 c.i.","U-0.496 / R-1.5 c.i."],["Steel-joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
+    slab: [["Unheated","F-0.882 / R-3.5 for 600 mm","F-0.750 / R-3.5 for 1200 mm","F-1.264 / NR"],["Heated","F-1.191 / R-3.5 for 1200 mm","F-1.162 / R-4.4 for 1200 mm","F-1.489 / R-2.6 for 600 mm"]],
+    doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-2.044"]],
+    fen: [["Fixed (0–40% wall)","U-1.76 / SHGC 0.38","U-1.76 / SHGC 0.38","U-1.99 / NR"],["Operable","U-2.16 / SHGC 0.34","U-2.16 / SHGC 0.34","U-2.44 / NR"],["Entrance door","U-3.58 / SHGC 0.34","U-3.58 / SHGC 0.34","U-3.86 / NR"],["Skylight (0–3% roof)","U-2.61 / SHGC 0.40","U-2.61 / SHGC 0.40","U-3.69 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "7": {
-    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.360 / R-2.6 c.i."],["Metal building","U-0.162 / R-3.3 + R-1.9 Ls","U-0.162 / R-3.3 + R-1.9 Ls","U-0.409 / R-3.3"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.189 / R-5.3"]],
-    walls: [["Mass","U-0.330 / R-3.5 c.i.","U-0.330 / R-3.5 c.i.","U-0.513 / R-2.0 c.i."],["Metal building","U-0.220 / R-0 + R-4.4 c.i.","U-0.220 / R-0 + R-4.4 c.i.","U-0.449 / R-2.3"],["Steel-framed","U-0.236 / R-2.6 + R-2.8 c.i. or R-3.7 + R-2.0 c.i.","U-0.236 / R-2.6 + R-2.8 c.i. or R-3.7 + R-2.0 c.i.","U-0.470 / R-2.6"],["Wood-framed and other","U-0.236 / R-2.6 + R-1.9 c.i. or R-3.7 + R-1.3 c.i.","U-0.236 / R-2.6 + R-1.9 c.i. or R-3.7 + R-1.3 c.i.","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7"]],
+    roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.220 / R-4.4 c.i."],["Metal building","U-0.163 / R-5.3 + R-1.9 Ls","U-0.163 / R-5.3 + R-1.9 Ls","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4. + R-1.4 Ls"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.153 / R-6.7 c.i."]],
+    walls: [["Mass","U-0.380 / R-3.1 c.i.","U-0.380 / R-3.1 c.i.","U-0.592 / R-1.7 c.i."],["Metal building","U-0.248 / R-0 + R-3.9 c.i.","U-0.248 / R-0 + R-3.9 c.i.","U-0.410 / R-0 + R-2.3 c.i."],["Steel-framed","U-0.273 / R-2.6 + R-2.2 c.i.","U-0.233 / R-2.6 + R-2.9 c.i. or R-3.3 + R-2.6 c.i.","U-0.352 / R-2.6 + R-1.3 c.i. or R-0 + R-2.3 c.i."],["Wood-framed and other","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.278 / R-2.6 + R-1.3 c.i. or R-3.7 + R-0.9 c.i.","U-0.358 / R-2.6 + R-0.7 c.i. or R-3.7"]],
     below: [["Below-grade wall","C-0.358 / R-2.6 c.i.","C-0.358 / R-2.6 c.i.","C-0.678 / R-1.3 c.i."]],
     floors: [["Mass","U-0.236 / R-3.7 c.i.","U-0.236 / R-3.7 c.i.","U-0.420 / R-1.8 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.288 / R-3.3"]],
     slab: [["Unheated","F-0.882 / R-3.5 for 600 mm","F-0.750 / R-3.5 for 1200 mm","F-1.264 / NR"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-1.162 / R-4.4 for 1200 mm","F-1.489 / R-2.6 for 600 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
-    fen: [["Fixed (0–40% wall)","U-1.59 / SHGC 0.40","U-1.59 / SHGC 0.40","U-1.82 / NR"],["Operable","U-1.99 / SHGC 0.36","U-1.99 / SHGC 0.36","U-2.21 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.50 / NR","U-2.50 / NR","U-3.12 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-1.59 / SHGC 0.40","U-1.59 / SHGC 0.40","U-1.82 / NR"],["Operable","U-1.99 / SHGC 0.36","U-1.99 / SHGC 0.36","U-2.21 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.50 / NR","U-2.50 / NR","U-3.12 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   },
   "8": {
     roofs: [["Insulation entirely above deck","U-0.158 / R-6.2 c.i.","U-0.158 / R-6.2 c.i.","U-0.220 / R-4.4 c.i."],["Metal building","U-0.147 / R-4.4 + R-1.9 + R-1.9 Ls","U-0.147 / R-4.4 + R-1.9 + R-1.9 Ls","U-0.210 / R-3.3 + R-1.9 Ls or R-4.4 + R-1.4 Ls"],["Attic and other","U-0.098 / R-10.6","U-0.098 / R-10.6","U-0.153 / R-6.7 c.i."]],
@@ -337,7 +338,7 @@ const envelope = {
     floors: [["Mass","U-0.217 / R-4.1 c.i.","U-0.217 / R-4.1 c.i.","U-0.363 / R-2.2 c.i."],["Steel joist","U-0.183 / R-6.7","U-0.183 / R-6.7","U-0.296 / R-3.3"],["Wood-framed and other","U-0.153 / R-6.7","U-0.153 / R-6.7","U-0.188 / R-5.3"]],
     slab: [["Unheated","F-0.750 / R-3.5 for 1200 mm","F-0.734 / R-4.4 for 1200 mm","F-0.935 / R-1.8 for 600 mm"],["Heated","F-1.162 / R-4.4 for 1200 mm","F-0.646 / R-3.5 full slab","F-1.489 / R-2.6 for 600 mm"]],
     doors: [["Swinging","U-2.101","U-2.101","U-2.101"],["Nonswinging","U-1.760","U-1.760","U-1.760"]],
-    fen: [["Fixed (0–40% wall)","U-1.36 / NR","U-1.36 / NR","U-1.59 / NR"],["Operable","U-1.82 / NR","U-1.82 / NR","U-1.99 / NR"],["Entrance door","U-3.58 / NR","U-3.58 / NR","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.27 / NR","U-2.27 / NR","U-2.50 / NR"]]
+    fen: [["Fixed (0–40% wall)","U-1.42 / SHGC 0.40","U-1.42 / SHGC 0.40","U-1.76 / NR"],["Operable","U-1.76 / SHGC 0.36","U-1.76 / SHGC 0.36","U-2.16 / NR"],["Entrance door","U-3.58 / SHGC 0.36","U-3.58 / SHGC 0.36","U-3.58 / NR"],["Skylight (0–3% roof)","U-2.27 / NR","U-2.27 / NR","U-3.12 / NR"],["Min. VT/SHGC, vertical","1.10","1.10","NR"]]
   }
 };
 
@@ -427,7 +428,12 @@ function renderTable() {
   let html = `<table><thead><tr><th>Element</th><th>Nonresidential</th><th>Residential</th><th>Semiheated</th></tr></thead><tbody>`;
   rows.forEach(r => { html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`; });
   html += "</tbody></table>";
-  tableWrap.innerHTML = html;
+  const nt = [];
+  if (currentSection === "roofs") nt.push("Metal building roofs: when the R-value method is used, a thermal spacer block is required (A2.3.2). c.i. = continuous insulation, Ls = liner system, FC = filled cavity, NR = no requirement.");
+  if (currentSection === "walls" && ["0","1","2"].includes(currentZone)) nt.push("Residential mass walls, zones 0 to 2: an exception to Section 5.5.3.2 applies (table note b).");
+  if (currentSection === "fen" && ["5","6","7"].includes(currentZone)) nt.push("Table note b: at sites 1200 m or more above sea level, the assembly maximum fenestration U-factor (nonresidential and residential columns) may be increased by 0.11 W/(m²·K).");
+  if (currentSection === "fen") nt.push("The minimum VT/SHGC applies to vertical fenestration of all types, 0 to 40 % of the wall. Skylights, 0 to 3 % of the roof, have no VT/SHGC requirement. SHGC is shown as NR where the standard gives no limit.");
+  tableWrap.innerHTML = html + nt.map(t => `<p style="font-size:13px;color:var(--muted);margin:8px 0 0">${t}</p>`).join("");
 }
 
 document.getElementById("go").onclick = search;
