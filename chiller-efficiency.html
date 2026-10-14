@@ -330,6 +330,8 @@ button.lbtn, .lca button { width:auto !important; display:inline-block; }
 .lca button { flex:0 1 auto; }
 .h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
 .lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
 </style>
 </head>
 <body>
@@ -446,16 +448,16 @@ button.lbtn, .lca button { width:auto !important; display:inline-block; }
     </div>
     <p class="hint">IPLV.SI = 0.01<i>A</i> + 0.42<i>B</i> + 0.45<i>C</i> + 0.12<i>D</i> (AHRI 551/591 SI). Use the maker’s COP at each load, rated at the part-load conditions listed.</p>
   </div>
-  <p class="lead" style="margin-top:16px"><b>Step 3 (optional).</b> The maker’s own figures at your conditions, if you have asked for them. The sheet then compares them with the 90.1 curve.</p>
+  <div class="warn" id="uWarn" role="status"></div>
+  <div id="uRes"></div>
+  <p class="lead" style="margin-top:16px"><b>Step 3 (optional).</b> The maker’s own figures at your conditions, if you have asked for them. The sheet then compares them with the 90.1 curve. Leave blank if you do not have them.</p>
   <div class="fields three">
     <div class="field"><label for="ncop">Maker at your conditions: full-load COP</label>
       <div class="pair"><input id="ncop" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
     <div class="field"><label for="niplv">Maker at your conditions: IPLV.SI</label>
       <div class="pair"><input id="niplv" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
   </div>
-  <div class="warn" id="uWarn" role="status"></div>
-  <h3 class="sub3">What changes</h3>
-  <div class="results" id="uRes"></div>
+  <div id="uRes3"></div>
   <h3 class="sub3">Try other water temperatures</h3>
   <div class="fields three">
     <div class="field"><label for="umat">Show</label>
@@ -697,7 +699,7 @@ const PLPTS = { water: { lab: "°C entering condenser water", v: [30, 24.5, 19, 
 const IPLV_W = [0.01, 0.42, 0.45, 0.12];
 function unitCheck() {
   const el = $("uRes"), mat = $("uMat"); lastUnitRated = null; lastU = null;
-  const clearAll = () => { el.innerHTML = ""; mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); };
+  const clearAll = () => { el.innerHTML = ""; $("uRes3").innerHTML = ""; mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); };
   /* part-load condition labels follow the chiller type */
   if (lastC) {
     const pc = PLPTS[coolOf($("ctype").value)];
@@ -708,7 +710,7 @@ function unitCheck() {
   const c = lastC, w = [];
   const cap = makerCap(), cop = num("mcop");
   syncPow();
-  if (!(cop > 0) || !(cap > 0)) { mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); el.innerHTML = '<p class="hint">Enter the maker’s COP or input power.</p>'; return; }
+  if (!(cop > 0) || !(cap > 0)) { mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); el.innerHTML = '<p class="hint">Enter the maker’s COP or input power.</p>'; $("uRes3").innerHTML = ""; return; }
   /* IPLV of the unit */
   let iplv = num("miplv"), iplvFrom = "entered";
   if ($("mpl").checked) {
@@ -729,34 +731,40 @@ function unitCheck() {
   const est = adj ? cop * ratio : null, estPow = est ? duty / est : null, estI = adj && iplv > 0 ? iplv * ratio : NaN;
   const pct = x => sg((x - 1) * 100, 1) + " %";
   const chk = (val_, req, lab) => { const ok = val_ >= req - 1e-9; return box(lab, sg(val_ - req, 3) + " W/W", (ok ? "meets " : "below ") + fmt(req, 3) + " minimum", ok ? "ok" : "bad"); };
-  let h = "";
-  if (adj) {
-    h += box("Kadj, maker’s conditions", fmt(mk.used, 4), "lift " + fmt(mk.L, 2) + " K · A " + fmt(mk.A, 3) + " · B " + fmt(mk.B, 3) + (mk.std ? " · standard, none applied" : ""));
-    h += box("Kadj, your conditions", fmt(yk.used, 4), "lift " + fmt(yk.L, 2) + " K · A " + fmt(yk.A, 3) + " · B " + fmt(yk.B, 3) + (yk.std ? " · standard, none applied" : ""));
-    h += box("Factor on COP and IPLV", fmt(ratio, 4), pct(ratio) + " from the maker’s selection", ratio >= 1 ? "ok" : "");
-    h += box("Full-load COP, maker → yours", fmt(cop, 3) + " → " + fmt(est, 3), "estimate · " + pct(ratio));
-    h += box("Input power at " + fmt(duty, 0) + " kW", fmt(powM * duty / cap, 0) + " → " + fmt(estPow, 0) + " kW", "estimate · " + sg(estPow - powM * duty / cap, 0) + " kW");
-    if (iplv > 0) h += box("IPLV.SI, maker → yours", fmt(iplv, 3) + " → " + fmt(estI, 3), "estimate (NPLV.SI) · " + pct(ratio));
-  } else h += box("Maker’s full-load COP", fmt(cop, 3) + " W/W", "input power " + fmt(powM, 0) + " kW at " + fmt(cap, 0) + " kW");
-  /* 90.1 checks */
+  /* three groups, in the order of the steps */
+  let hA = "", hB = "", hC = "";
   const reqM = adj ? c.FL * mk.used : c.FL, reqMI = c.IP != null ? (adj ? c.IP * mk.used : c.IP) : null;
-  h += chk(cop, reqM, "Maker’s COP against 90.1" + (adj ? " at the maker’s conditions" : ""));
-  if (iplv > 0 && reqMI != null) h += chk(iplv, reqMI, "Maker’s IPLV.SI against 90.1" + (adj ? " at the maker’s conditions" : ""));
+  /* steps 1 and 2: the maker's selection, at the maker's own conditions */
+  hA += box("Maker’s full-load COP", fmt(cop, 3) + " W/W", "input power " + fmt(powM, 0) + " kW at " + fmt(cap, 0) + " kW");
+  if (iplv > 0) hA += box("Maker’s IPLV.SI", fmt(iplv, 3) + " W/W", iplvFrom);
+  hA += chk(cop, reqM, "COP against the 90.1 minimum" + (adj ? " at the maker’s conditions" : ""));
+  if (iplv > 0 && reqMI != null) hA += chk(iplv, reqMI, "IPLV.SI against the 90.1 minimum" + (adj ? " at the maker’s conditions" : ""));
+  /* steps 1 and 2: carried to your conditions with the 90.1 factor */
   if (adj) {
-    h += chk(est, c.FLa, "Estimated COP against 90.1 at your conditions");
-    if (estI > 0 && c.IPa != null) h += chk(estI, c.IPa, "Estimated IPLV.SI against 90.1 at your conditions");
+    hB += box("Kadj, maker’s conditions", fmt(mk.used, 4), "lift " + fmt(mk.L, 2) + " K · A " + fmt(mk.A, 3) + " · B " + fmt(mk.B, 3) + (mk.std ? " · standard, none applied" : ""));
+    hB += box("Kadj, your conditions", fmt(yk.used, 4), "lift " + fmt(yk.L, 2) + " K · A " + fmt(yk.A, 3) + " · B " + fmt(yk.B, 3) + (yk.std ? " · standard, none applied" : ""));
+    hB += box("Factor on COP and IPLV", fmt(ratio, 4), pct(ratio) + " from the maker’s selection", ratio >= 1 ? "ok" : "");
+    hB += box("Full-load COP, maker → yours", fmt(cop, 3) + " → " + fmt(est, 3), "estimate · " + pct(ratio));
+    hB += box("Input power at " + fmt(duty, 0) + " kW", fmt(powM * duty / cap, 0) + " → " + fmt(estPow, 0) + " kW", "estimate · " + sg(estPow - powM * duty / cap, 0) + " kW");
+    if (iplv > 0) hB += box("IPLV.SI, maker → yours", fmt(iplv, 3) + " → " + fmt(estI, 3), "estimate (NPLV.SI) · " + pct(ratio));
+    hB += chk(est, c.FLa, "Estimated COP against the 90.1 minimum at your conditions");
+    if (estI > 0 && c.IPa != null) hB += chk(estI, c.IPa, "Estimated IPLV.SI against the 90.1 minimum at your conditions");
   }
-  /* maker's own figure at the new conditions */
+  /* step 3: the maker's own figures at your conditions */
   const ncop = num("ncop"), niplv = num("niplv");
   if (ncop > 0) {
-    h += box("Maker’s COP at your conditions", fmt(ncop, 3), pct(ncop / cop) + " from the maker’s selection", "");
-    if (adj) h += box("90.1 curve against the maker", sg(est - ncop, 3) + " W/W", "curve gives " + fmt(est, 3) + " (" + pct(ratio) + ") against the maker’s " + pct(ncop / cop));
-    if (c.FLa) h += chk(ncop, adj ? c.FLa : c.FL, "Maker’s COP at your conditions against 90.1");
+    hC += box("Maker’s COP at your conditions", fmt(ncop, 3), pct(ncop / cop) + " from the maker’s selection", "");
+    if (adj) hC += box("90.1 curve against the maker", sg(est - ncop, 3) + " W/W", "curve gives " + fmt(est, 3) + " (" + pct(ratio) + ") against the maker’s " + pct(ncop / cop));
+    if (c.FLa) hC += chk(ncop, adj ? c.FLa : c.FL, "Maker’s COP against the 90.1 minimum at your conditions");
   }
   if (niplv > 0) {
-    h += box("Maker’s IPLV.SI at your conditions", fmt(niplv, 3), iplv > 0 ? pct(niplv / iplv) + " from the maker’s selection" : "");
-    if (c.IPa != null && adj) h += chk(niplv, c.IPa, "Maker’s IPLV.SI at your conditions against 90.1");
+    hC += box("Maker’s IPLV.SI at your conditions", fmt(niplv, 3), iplv > 0 ? pct(niplv / iplv) + " from the maker’s selection" : "");
+    if (c.IPa != null && adj) hC += chk(niplv, c.IPa, "Maker’s IPLV.SI against the 90.1 minimum at your conditions");
   }
+  const grp = (t, sub, body) => '<h4 class="grp">' + t + '</h4><p class="hint grpsub">' + sub + '</p><div class="results">' + body + "</div>";
+  const h = grp("Result of steps 1 and 2: the maker’s selection", "As the maker rated it, at the maker’s own water temperatures, checked against the 90.1 minimum at those temperatures.", hA) +
+    (hB ? grp("Carried to your conditions with the 90.1 factor", "Still from steps 1 and 2. An estimate: the maker’s figures multiplied by Kadj(yours) ÷ Kadj(maker’s).", hB) : "");
+  $("uRes3").innerHTML = hC ? grp("Result of step 3: the maker’s own figures at your conditions", "Compared with the 90.1 minimum at your conditions and with the estimate above.", hC) : '<p class="hint">Enter the maker’s COP or IPLV.SI at your conditions above to see this comparison.</p>';
   el.innerHTML = h;
   lastU = { adj, mk, yk, ratio, cop, est, iplv, estI, cap, duty, powM, estPow, me, mc };
   drawK(c.k, c.le, c.lc);
