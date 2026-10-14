@@ -347,6 +347,23 @@ ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
 .fields .field.wide { grid-column:1 / -1; }
 #sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
 #sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
 </style>
 </head>
 <body>
@@ -380,117 +397,78 @@ ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
   <a class="on" href="smoke-extraction.html"><span>XX</span>Smoke extraction</a>
   </nav>
 
-<p class="lead">Summarises what BS 9991:2015 asks of smoke ventilation in residential buildings and sizes it two ways: by natural ventilation (vents, smoke shafts, basement outlets) and by mechanical extract (basement powered extract, and the lobby or corridor system with its door-force check). Section 4 draws the installation details and lists what to watch. The clauses are in the side bar. <button class="mx-open" type="button" data-mxopen="clauses">Clause summary</button> · <button class="mx-open" type="button" data-mxopen="formula">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button></p>
-<nav class="toc" aria-label="On this page"><a href="#s1">1 Rules at a glance</a><a href="#s2">2 Natural</a><a href="#s3">3 Mechanical</a><a href="#s4">4 Installation details</a></nav>
+<p class="lead">Summarises what BS 9991:2015 asks of smoke ventilation in residential buildings and sizes it in five calculators: stair and lobby vents, natural smoke shaft, basement natural outlets, basement powered extract, and the lobby or corridor mechanical system, whose extract rate it works out step by step. Section 3 draws the installation details and lists what to watch. The clauses are in the side bar. <button class="mx-open" type="button" data-mxopen="clauses">Clause summary</button> · <button class="mx-open" type="button" data-mxopen="formula">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button></p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Rules at a glance</a><a href="#s2">2 Calculators</a><a href="#s3">3 Installation details</a></nav>
 
 <h2 id="s1">1. The sizing rules at a glance</h2>
-<div class="box-note">BS 9991 sets <b>free areas and air change rates</b> for most cases. For a mechanical system serving a lobby or corridor it gives <b>no flow rate</b>: the rate is to be set by CFD analysis or calculation with a sensitivity study (Annex A.4). Section 3.2 therefore takes the flow as your input and checks the rest.</div>
+<div class="box-note">BS 9991 sets <b>free areas and air change rates</b> for most cases. For a mechanical system serving a lobby or corridor it gives <b>no flow rate</b>: the rate is to be set by CFD analysis or calculation with a sensitivity study (Annex A.4). The last calculator tab therefore works a starting rate out in four steps and checks the rest.</div>
 <div class="table-scroll"><table class="cmp" id="sumT"></table></div>
 
-<h2 id="s2">2. Natural smoke ventilation</h2>
-<h3 class="sub3">2.1 Stair and lobby or corridor vents</h3>
-<div class="fields three">
-  <div class="field wide"><label for="bcase">Building and escape arrangement</label>
-    <select id="bcase"></select>
-    <div class="hint" id="bcaseH"></div></div>
+<h2 id="s2">2. Calculators</h2>
+<p class="lead" style="margin-top:6px">Pick what you are sizing. Natural ventilation: the first three tabs. Mechanical: the last two. Inputs on the left, results on the right, updating as you type.</p>
+<div class="tabs ctabs" id="ctabs" role="tablist"><button type="button" data-p="p1" class="on">Stair and lobby vents</button><button type="button" data-p="p2">Smoke shaft</button><button type="button" data-p="p3">Basement: natural</button><button type="button" data-p="p4">Basement: powered extract</button><button type="button" data-p="p5">Lobby or corridor: MSVS</button></div>
+<div class="cpanel" id="p1">
+<div class="box-note"><b>What it checks:</b> the free area of the stair-head vent and of the lobby or corridor vent against BS 9991 clause 14.1 for the building you pick. Choose the building first; only the vents that apply are shown.</div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<div class="fields two"><div class="field wide"><label for="bcase">Building and escape arrangement</label><select id="bcase"></select><div class="hint" id="bcaseH"></div></div></div>
+<div class="fields two" id="stRow"><div class="field wide"><h5 class="vh">Stair vent</h5></div><div class="field wide"><label for="vtS">Stair vent: how entered</label><select id="vtS"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div><div class="field" id="vSa"><label for="vSar">Free area of one vent</label><div class="pair"><input id="vSar" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div><div class="field vSd"><label for="vSw">Vent width</label><div class="pair"><input id="vSw" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div><div class="field vSd"><label for="vSh">Vent height</label><div class="pair"><input id="vSh" type="number" inputmode="decimal" step="any" min="0" value="1.2" /><span>m</span></div></div><div class="field vSd"><label for="vSang">Opening angle</label><div class="pair"><input id="vSang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div><div class="field"><label for="vSn">Number of vents</label><div class="pair"><input id="vSn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div></div>
+<div class="fields two" id="lobRow"><div class="field wide"><h5 class="vh" id="lobH">Lobby or corridor vent</h5></div><div class="field wide"><label for="vtL">Lobby vent: how entered</label><select id="vtL"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div><div class="field" id="vLa"><label for="vLar">Free area of one vent</label><div class="pair"><input id="vLar" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div></div><div class="field vLd"><label for="vLw">Vent width</label><div class="pair"><input id="vLw" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div><div class="field vLd"><label for="vLh">Vent height</label><div class="pair"><input id="vLh" type="number" inputmode="decimal" step="any" min="0" value="1.2" /><span>m</span></div></div><div class="field vLd"><label for="vLang">Opening angle</label><div class="pair"><input id="vLang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div><div class="field"><label for="vLn">Number of vents</label><div class="pair"><input id="vLn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div></div>
+<div class="fields two" id="topRow"><div class="field"><label for="vtop">Top of the lobby vent above the floor</label><div class="pair"><input id="vtop" type="number" inputmode="decimal" step="any"  value="2.3" /><span>m</span></div></div><div class="field"><label for="dhead">Top of the stair door above the floor</label><div class="pair"><input id="dhead" type="number" inputmode="decimal" step="any"  value="2.1" /><span>m</span></div></div></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="warn" id="n1Warn" role="status"></div><div class="results" id="n1Res"></div>
+</div></div>
 </div>
-<div class="fields four" id="stRow">
-  <div class="field"><label for="vtS">Stair vent: how entered</label>
-    <select id="vtS"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div>
-  <div class="field" id="vSa"><label for="vSar">Free area of one vent</label><div class="pair"><input id="vSar" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
-  <div class="field vSd"><label for="vSw">Vent width</label><div class="pair"><input id="vSw" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div>
-  <div class="field vSd"><label for="vSh">Vent height</label><div class="pair"><input id="vSh" type="number" inputmode="decimal" step="any" min="0" value="1.2" /><span>m</span></div></div>
-  <div class="field vSd"><label for="vSang">Opening angle</label><div class="pair"><input id="vSang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div>
-  <div class="field"><label for="vSn">Number of vents</label><div class="pair"><input id="vSn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div>
+<div class="cpanel" id="p2" hidden>
+<div class="box-note"><b>What it checks:</b> a natural smoke shaft against clause 14.2.3.2 (items b to j), and gives an indicative stack flow. The stack flow is not a BS 9991 requirement.</div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<h5 class="vh">Shaft</h5><div class="fields two"><div class="field"><label for="sa">Shaft clear width</label><div class="pair"><input id="sa" type="number" inputmode="decimal" step="any"  value="1.0" /><span>m</span></div></div><div class="field"><label for="sb">Shaft clear depth</label><div class="pair"><input id="sb" type="number" inputmode="decimal" step="any"  value="1.5" /><span>m</span></div></div><div class="field"><label for="sh">Shaft top above the highest ceiling served</label><div class="pair"><input id="sh" type="number" inputmode="decimal" step="any"  value="2.5" /><span>m</span></div></div><div class="field"><label for="sst">Top above structures within 2 m radius</label><div class="pair"><input id="sst" type="number" inputmode="decimal" step="any"  value="0.5" /><span>m</span></div></div><div class="field"><label for="sinc">Length of shaft at an incline</label><div class="pair"><input id="sinc" type="number" inputmode="decimal" step="any"  value="0" /><span>m</span></div></div><div class="field"><label for="sang">Angle of the inclined part from vertical</label><div class="pair"><input id="sang" type="number" inputmode="decimal" step="any"  value="0" /><span>°</span></div></div></div><h5 class="vh">Free areas</h5><div class="fields two"><div class="field"><label for="sva">Lobby or corridor vent</label><div class="pair"><input id="sva" type="number" inputmode="decimal" step="any"  value="1" /><span>m²</span></div></div><div class="field"><label for="shd">Opening at the head of the shaft</label><div class="pair"><input id="shd" type="number" inputmode="decimal" step="any"  value="1.5" /><span>m²</span></div></div><div class="field"><label for="sgr">Smallest area inside the shaft (a safety grille, say)</label><div class="pair"><input id="sgr" type="number" inputmode="decimal" step="any"  value="1" /><span>m²</span></div></div></div><h5 class="vh">Indicative stack flow</h5><div class="fields two"><div class="field"><label for="sH">Height from the lobby vent to the shaft top</label><div class="pair"><input id="sH" type="number" inputmode="decimal" step="any"  value="12" /><span>m</span></div></div><div class="field"><label for="sTs">Smoke temperature</label><div class="pair"><input id="sTs" type="number" inputmode="decimal" step="any"  value="100" /><span>°C</span></div></div><div class="field"><label for="sTo">Outside air temperature</label><div class="pair"><input id="sTo" type="number" inputmode="decimal" step="any"  value="20" /><span>°C</span></div></div><div class="field"><label for="sCd">Discharge coefficient</label><div class="pair"><input id="sCd" type="number" inputmode="decimal" step="any"  value="0.6" /><span>–</span></div></div></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="warn" id="n2Warn" role="status"></div><div class="results" id="n2Res"></div>
+</div></div>
 </div>
-<div class="fields four" id="lobRow">
-  <div class="field"><label for="vtL">Lobby or corridor vent: how entered</label>
-    <select id="vtL"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div>
-  <div class="field" id="vLa"><label for="vLar">Free area of one vent</label><div class="pair"><input id="vLar" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div></div>
-  <div class="field vLd"><label for="vLw">Vent width</label><div class="pair"><input id="vLw" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m</span></div></div>
-  <div class="field vLd"><label for="vLh">Vent height</label><div class="pair"><input id="vLh" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div>
-  <div class="field vLd"><label for="vLang">Opening angle</label><div class="pair"><input id="vLang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div>
-  <div class="field"><label for="vLn">Number of vents</label><div class="pair"><input id="vLn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div>
+<div class="cpanel" id="p3" hidden>
+<div class="box-note"><b>What it checks:</b> smoke outlet area against 2.5 % of the floor area of each basement storey (14.2.1.3.2), and whether the basement is exempt.</div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<div class="fields two"><div class="field"><label for="bA">Floor area of the basement storey</label><div class="pair"><input id="bA" type="number" inputmode="decimal" step="any"  value="600" /><span>m²</span></div></div><div class="field"><label for="bD">Floor level below the adjacent ground</label><div class="pair"><input id="bD" type="number" inputmode="decimal" step="any"  value="4.5" /><span>m</span></div></div><div class="field"><label for="bO">Smoke outlet free area provided</label><div class="pair"><input id="bO" type="number" inputmode="decimal" step="any"  value="12" /><span>m²</span></div></div></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="warn" id="n3Warn" role="status"></div><div class="results" id="n3Res"></div>
+</div></div>
 </div>
-<div class="fields four" id="topRow">
-  <div class="field"><label for="vtop">Top of the lobby or corridor vent above the floor</label><div class="pair"><input id="vtop" type="number" inputmode="decimal" step="any" min="0" value="2.3" /><span>m</span></div></div>
-  <div class="field"><label for="dhead">Top of the stair door above the floor</label><div class="pair"><input id="dhead" type="number" inputmode="decimal" step="any" min="0" value="2.1" /><span>m</span></div></div>
+<div class="cpanel" id="p4" hidden>
+<div class="box-note"><b>What it does:</b> flow at ten air changes per hour (14.2.1.3.3), the same flow as volume at fire temperature, and the duct and replacement air openings. For each opening say which you know, the <b>velocity</b> or the <b>area</b>; the other is worked out.</div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<h5 class="vh">Basement</h5><div class="fields two"><div class="field"><label for="mA">Floor area of the basement storey</label><div class="pair"><input id="mA" type="number" inputmode="decimal" step="any"  value="600" /><span>m²</span></div></div><div class="field"><label for="mH">Clear height</label><div class="pair"><input id="mH" type="number" inputmode="decimal" step="any"  value="3" /><span>m</span></div></div><div class="field"><label for="mD">Floor level below the adjacent ground</label><div class="pair"><input id="mD" type="number" inputmode="decimal" step="any"  value="4.5" /><span>m</span></div></div><div class="field"><label for="mACH">Air changes per hour</label><div class="pair"><input id="mACH" type="number" inputmode="decimal" step="any"  value="10" /><span>ACH</span></div><div class="hint">BS 9991: ten.</div></div><div class="field"><label for="mTg">Gas temperature at the fan</label><div class="pair"><input id="mTg" type="number" inputmode="decimal" step="any"  value="300" /><span>°C</span></div><div class="hint">BS 9991: 300 °C for 60 min.</div></div><div class="field"><label for="mTa">Ambient temperature</label><div class="pair"><input id="mTa" type="number" inputmode="decimal" step="any"  value="20" /><span>°C</span></div></div></div><label class="chk" style="margin-top:10px"><input type="checkbox" id="mSpr" checked /> Sprinklers to BS EN 12845 (a condition of powered extract)</label><h5 class="vh">Extract duct, on the hot flow</h5><div class="fields two"><div class="field wide"><label for="mdG">Extract duct: I know the</label><select id="mdG"><option value="v">velocity, find the area</option><option value="a">area, find the velocity</option></select></div><div class="field" id="mdVF"><label for="mdV">Velocity</label><div class="pair"><input id="mdV" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>m/s</span></div></div><div class="field" id="mdAF"><label for="mdA">Free area</label><div class="pair"><input id="mdA" type="number" inputmode="decimal" step="any" min="0" value="" /><span>m²</span></div></div></div><h5 class="vh">Replacement air opening</h5><div class="fields two"><div class="field wide"><label for="miG">Replacement air opening: I know the</label><select id="miG"><option value="v">velocity, find the area</option><option value="a">area, find the velocity</option></select></div><div class="field" id="miVF"><label for="miV">Velocity</label><div class="pair"><input id="miV" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m/s</span></div></div><div class="field" id="miAF"><label for="miA">Free area</label><div class="pair"><input id="miA" type="number" inputmode="decimal" step="any" min="0" value="" /><span>m²</span></div></div></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="warn" id="m1Warn" role="status"></div><div class="results" id="m1Res"></div>
+</div></div>
 </div>
-<div class="warn" id="n1Warn" role="status"></div>
-<div class="results" id="n1Res"></div>
+<div class="cpanel" id="p5" hidden>
+<div class="box-note"><b>How the rate is worked out.</b> BS 9991 gives no figure; it asks for conditions at least as good as the natural system (14.2.4) and leaves the rate to CFD or calculation (A.4). This tab gives a starting rate in four steps: <b>A</b> the smoke the flat sends out, <b>B</b> what the natural system would do, <b>C</b> the good-practice minimum for small buildings, then <b>D</b> pick the rate. <b>E</b> to <b>G</b> check the air path, shaft and door force. The CFD confirms it.</div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<div class="steps5"><h5 class="vh"><span class="sn">A</span> Smoke the system must deal with</h5><div class="fields two"><div class="field wide"><label for="fsel">Design fire (SCA guidance, Oct 2015)</label><select id="fsel"><option value="f250">250 kW, early fire (Table 5.2)</option><option value="f1000t" selected>1000 kW at the open flat door, time-dependent (Table 5.4)</option><option value="f1000">1000 kW, developed fire (Table 5.2)</option><option value="f2500">2500 kW, before flashover (Table 5.2)</option><option value="own">My own</option></select></div><div class="field"><label for="fm">Smoke mass flow from the flat</label><div class="pair"><input id="fm" type="number" inputmode="decimal" step="any"  value="1.0" /><span>kg/s</span></div></div><div class="field"><label for="fT">Smoke temperature</label><div class="pair"><input id="fT" type="number" inputmode="decimal" step="any"  value="120" /><span>°C</span></div></div><div class="field"><label for="fTx">Gas temperature at the extract</label><div class="pair"><input id="fTx" type="number" inputmode="decimal" step="any"  value="120" /><span>°C</span></div><div class="hint">Lower than the smoke if it cools in the corridor.</div></div><div class="field"><label for="fdil">Allowance for entrained air</label><div class="pair"><input id="fdil" type="number" inputmode="decimal" step="any"  value="0" /><span>%</span></div><div class="hint">Extra air drawn in with the smoke.</div></div></div><h5 class="vh"><span class="sn">B</span> What the natural system would do</h5><div class="fields two"><div class="field"><label for="bAc">Corridor or lobby vent, free area</label><div class="pair"><input id="bAc" type="number" inputmode="decimal" step="any"  value="1.5" /><span>m²</span></div><div class="hint">BS 9991 and SCA: 1.5 m².</div></div><div class="field"><label for="bAs">Stair-head vent, free area</label><div class="pair"><input id="bAs" type="number" inputmode="decimal" step="any"  value="1.0" /><span>m²</span></div></div><div class="field"><label for="bH">Height between the two vents</label><div class="pair"><input id="bH" type="number" inputmode="decimal" step="any"  value="9" /><span>m</span></div></div><div class="field"><label for="bTs">Smoke temperature in the corridor</label><div class="pair"><input id="bTs" type="number" inputmode="decimal" step="any"  value="100" /><span>°C</span></div></div><div class="field"><label for="bTo">Outside air temperature</label><div class="pair"><input id="bTo" type="number" inputmode="decimal" step="any"  value="20" /><span>°C</span></div></div><div class="field"><label for="bCd">Discharge coefficient</label><div class="pair"><input id="bCd" type="number" inputmode="decimal" step="any"  value="0.6" /><span>–</span></div></div></div><h5 class="vh"><span class="sn">C</span> Good-practice minimum, small single-stair building</h5><label class="chk"><input type="checkbox" id="ssOn" /> The building is a small single-stair building (SCA 6.5.4)</label><div class="fields two" style="margin-top:8px"><div class="field"><label for="ssW">Stair clear width</label><div class="pair"><input id="ssW" type="number" inputmode="decimal" step="any"  value="2.4" /><span>m</span></div></div><div class="field"><label for="ssL">Stair clear length</label><div class="pair"><input id="ssL" type="number" inputmode="decimal" step="any"  value="5" /><span>m</span></div></div><div class="field"><label for="ssH">Stair clear height, ground to top</label><div class="pair"><input id="ssH" type="number" inputmode="decimal" step="any"  value="9" /><span>m</span></div></div></div><h5 class="vh"><span class="sn">D</span> Rate to design with</h5><div class="fields two"><div class="field wide"><label for="qSel">Extract rate</label><select id="qSel"><option value="max">The largest of A, B and C</option><option value="own">Enter my own, from the CFD</option></select></div><div class="field"><label for="qOwn">My extract rate</label><div class="pair"><input id="qOwn" type="number" inputmode="decimal" step="any"  value="2.5" /><span>m³/s</span></div></div></div><h5 class="vh"><span class="sn">E</span> Air to replace what is extracted</h5><div class="fields two"><div class="field wide"><label for="mrG">Replacement air opening: I know the</label><select id="mrG"><option value="a">opening area, find the pressure it causes</option><option value="p">pressure I can allow, find the area needed</option></select></div><div class="field" id="mrAF"><label for="mrA">Free area</label><div class="pair"><input id="mrA" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div><div class="hint">AOV, window or stair door route.</div></div><div class="field" id="mrPF"><label for="mrP">Pressure difference</label><div class="pair"><input id="mrP" type="number" inputmode="decimal" step="any" min="0" value="20" /><span>Pa</span></div><div class="hint">SCA: no more than 20 Pa across lobby doors.</div></div><div class="field"><label for="mrCd">Discharge coefficient of the opening</label><div class="pair"><input id="mrCd" type="number" inputmode="decimal" step="any"  value="0.6" /><span>–</span></div></div></div><h5 class="vh"><span class="sn">F</span> Extract shaft or duct</h5><div class="fields two"><div class="field wide"><label for="msG">Extract shaft: I know the</label><select id="msG"><option value="v">velocity, find the area</option><option value="a">area, find the velocity</option></select></div><div class="field" id="msVF"><label for="msV">Velocity</label><div class="pair"><input id="msV" type="number" inputmode="decimal" step="any" min="0" value="8" /><span>m/s</span></div></div><div class="field" id="msAF"><label for="msA">Free area</label><div class="pair"><input id="msA" type="number" inputmode="decimal" step="any" min="0" value="" /><span>m²</span></div></div></div><h5 class="vh"><span class="sn">G</span> Stair door force</h5><div class="fields two"><div class="field"><label for="dW">Door width</label><div class="pair"><input id="dW" type="number" inputmode="decimal" step="any"  value="0.9" /><span>m</span></div></div><div class="field"><label for="dH">Door height</label><div class="pair"><input id="dH" type="number" inputmode="decimal" step="any"  value="2.1" /><span>m</span></div></div><div class="field"><label for="dF">Closer force, no pressure</label><div class="pair"><input id="dF" type="number" inputmode="decimal" step="any"  value="30" /><span>N</span></div><div class="hint">At the handle.</div></div><div class="field"><label for="dd">Handle distance from the door edge</label><div class="pair"><input id="dd" type="number" inputmode="decimal" step="any"  value="0.1" /><span>m</span></div></div></div></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="warn" id="m2Warn" role="status"></div><div id="m2Basis"></div><div class="results" id="m2Res"></div>
+</div></div>
+</div>
 
-<h3 class="sub3">2.2 Natural smoke shaft</h3>
-<label class="chk"><input type="checkbox" id="shOn" /> Check a natural smoke shaft (clause 14.2.3.2)</label>
-<div id="shBox" hidden>
-  <div class="fields four" style="margin-top:12px">
-    <div class="field"><label for="sa">Shaft clear width</label><div class="pair"><input id="sa" type="number" inputmode="decimal" step="any" min="0" value="1.0" /><span>m</span></div></div>
-    <div class="field"><label for="sb">Shaft clear depth</label><div class="pair"><input id="sb" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m</span></div></div>
-    <div class="field"><label for="sh">Shaft top above the ceiling of the highest storey served</label><div class="pair"><input id="sh" type="number" inputmode="decimal" step="any" min="0" value="2.5" /><span>m</span></div></div>
-    <div class="field"><label for="sst">Shaft top above surrounding structures within 2 m radius</label><div class="pair"><input id="sst" type="number" inputmode="decimal" step="any" min="0" value="0.5" /><span>m</span></div></div>
-    <div class="field"><label for="sva">Lobby or corridor vent, free area</label><div class="pair"><input id="sva" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
-    <div class="field"><label for="shd">Opening at the head of the shaft, free area</label><div class="pair"><input id="shd" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div></div>
-    <div class="field"><label for="sgr">Smallest free area inside the shaft, such as a safety grille</label><div class="pair"><input id="sgr" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
-    <div class="field"><label for="sinc">Length of shaft at an incline</label><div class="pair"><input id="sinc" type="number" inputmode="decimal" step="any" min="0" value="0" /><span>m</span></div></div>
-    <div class="field"><label for="sang">Angle of the inclined part from vertical</label><div class="pair"><input id="sang" type="number" inputmode="decimal" step="any" min="0" max="90" value="0" /><span>°</span></div></div>
-  </div>
-  <p class="lead" style="margin-top:14px"><b>Indicative flow by stack effect.</b> Not a BS 9991 requirement; it shows the size of the draught that the shaft might give.</p>
-  <div class="fields four">
-    <div class="field"><label for="sH">Height from the lobby vent to the top of the shaft</label><div class="pair"><input id="sH" type="number" inputmode="decimal" step="any" min="0" value="12" /><span>m</span></div></div>
-    <div class="field"><label for="sTs">Smoke temperature</label><div class="pair"><input id="sTs" type="number" inputmode="decimal" step="any" value="100" /><span>°C</span></div></div>
-    <div class="field"><label for="sTo">Outside air temperature</label><div class="pair"><input id="sTo" type="number" inputmode="decimal" step="any" value="20" /><span>°C</span></div></div>
-    <div class="field"><label for="sCd">Discharge coefficient</label><div class="pair"><input id="sCd" type="number" inputmode="decimal" step="any" min="0" value="0.6" /><span>–</span></div></div>
-  </div>
-  <div class="warn" id="n2Warn" role="status"></div>
-  <div class="results" id="n2Res"></div>
-</div>
-
-<h3 class="sub3">2.3 Basement natural smoke outlets</h3>
-<div class="fields four">
-  <div class="field"><label for="bA">Floor area of the basement storey</label><div class="pair"><input id="bA" type="number" inputmode="decimal" step="any" min="0" value="600" /><span>m²</span></div></div>
-  <div class="field"><label for="bD">Floor level below the adjacent ground</label><div class="pair"><input id="bD" type="number" inputmode="decimal" step="any" min="0" value="4.5" /><span>m</span></div></div>
-  <div class="field"><label for="bO">Smoke outlet free area provided</label><div class="pair"><input id="bO" type="number" inputmode="decimal" step="any" min="0" value="12" /><span>m²</span></div></div>
-</div>
-<div class="warn" id="n3Warn" role="status"></div>
-<div class="results" id="n3Res"></div>
-
-<h2 id="s3">3. Mechanical smoke ventilation</h2>
-<h3 class="sub3">3.1 Basement powered extract (clause 14.2.1.3.3)</h3>
-<div class="fields four">
-  <div class="field"><label for="mA">Floor area of the basement storey</label><div class="pair"><input id="mA" type="number" inputmode="decimal" step="any" min="0" value="600" /><span>m²</span></div></div>
-  <div class="field"><label for="mH">Clear height</label><div class="pair"><input id="mH" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m</span></div></div>
-  <div class="field"><label for="mD">Floor level below the adjacent ground</label><div class="pair"><input id="mD" type="number" inputmode="decimal" step="any" min="0" value="4.5" /><span>m</span></div></div>
-  <div class="field"><label for="mACH">Air changes per hour</label><div class="pair"><input id="mACH" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>ACH</span></div><div class="hint">BS 9991: ten.</div></div>
-  <div class="field"><label for="mTg">Gas temperature at the fan</label><div class="pair"><input id="mTg" type="number" inputmode="decimal" step="any" value="300" /><span>°C</span></div><div class="hint">BS 9991 asks the fan to handle 300 °C for 60 minutes.</div></div>
-  <div class="field"><label for="mTa">Ambient temperature</label><div class="pair"><input id="mTa" type="number" inputmode="decimal" step="any" value="20" /><span>°C</span></div></div>
-  <div class="field"><label for="mVd">Velocity in the extract duct</label><div class="pair"><input id="mVd" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>m/s</span></div><div class="hint">Your choice. Not set by BS 9991.</div></div>
-  <div class="field"><label for="mVi">Velocity through the replacement air opening</label><div class="pair"><input id="mVi" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m/s</span></div><div class="hint">Your choice. Not set by BS 9991.</div></div>
-</div>
-<label class="chk"><input type="checkbox" id="mSpr" checked /> The basement is fitted with a sprinkler system to BS EN 12845 (a condition of powered extract)</label>
-<div class="warn" id="m1Warn" role="status"></div>
-<div class="results" id="m1Res"></div>
-
-<h3 class="sub3">3.2 Lobby or corridor system (MSVS) and door force</h3>
-<div class="fields four">
-  <div class="field"><label for="qM">Extract rate</label><div class="pair"><input id="qM" type="number" inputmode="decimal" step="any" min="0" value="1.0" /><select id="qMu" aria-label="Unit"><option value="1">m³/s</option><option value="0.001">L/s</option><option value="0.000277778">m³/h</option></select></div><div class="hint">From the CFD or calculation. 1.0 is an example; replace it.</div></div>
-  <div class="field"><label for="mvs">Velocity in the extract shaft or duct</label><div class="pair"><input id="mvs" type="number" inputmode="decimal" step="any" min="0" value="8" /><span>m/s</span></div></div>
-  <div class="field"><label for="mvr">Velocity through the replacement air opening</label><div class="pair"><input id="mvr" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m/s</span></div></div>
-  <div class="field"><label for="dW">Stair door width</label><div class="pair"><input id="dW" type="number" inputmode="decimal" step="any" min="0" value="0.9" /><span>m</span></div></div>
-  <div class="field"><label for="dH">Stair door height</label><div class="pair"><input id="dH" type="number" inputmode="decimal" step="any" min="0" value="2.1" /><span>m</span></div></div>
-  <div class="field"><label for="dF">Door closer force with no pressure</label><div class="pair"><input id="dF" type="number" inputmode="decimal" step="any" min="0" value="30" /><span>N</span></div><div class="hint">At the handle. From the closer data.</div></div>
-  <div class="field"><label for="dd">Handle distance from the door edge</label><div class="pair"><input id="dd" type="number" inputmode="decimal" step="any" min="0" value="0.1" /><span>m</span></div></div>
-  <div class="field"><label for="dP">Pressure difference across the door when running</label><div class="pair"><input id="dP" type="number" inputmode="decimal" step="any" value="50" /><span>Pa</span></div><div class="hint">From the CFD or the commissioning test.</div></div>
-</div>
-<div class="warn" id="m2Warn" role="status"></div>
-<div class="results" id="m2Res"></div>
-
-<h2 id="s4">4. Installation details</h2>
+<h2 id="s3">3. Installation details</h2>
 <p class="lead" style="margin-top:6px">Schematic sections, not to scale. Pick a system. The numbers on the drawing match the list of points under it, each with the clause it comes from.</p>
 <div class="tabs" id="gtabs"></div>
 <svg id="gsvg" class="chart gfig" viewBox="0 0 760 450" role="img" aria-label="Installation detail"></svg>
 <h3 class="sub3" id="gTitle">Points to watch</h3>
 <ol class="concerns" id="gList"></ol>
 
-<footer>Preliminary checking only. Source: BS 9991:2015 Fire safety in the design, management and use of residential buildings – Code of practice, clause 14 and Annex A, with clauses 7.5, 15 and 24.1.7. This sheet is not a smoke control design; a mechanical system needs CFD or calculation to BS 7346-8 and the SCA guidance, and approval by the fire authority. Formulae, the clause summary and the notes are in the side bar.</footer>
+<footer>Preliminary checking only. Sources: BS 9991:2015 Fire safety in the design, management and use of residential buildings – Code of practice, clause 14 and Annex A, with clauses 7.5, 15 and 24.1.7, and the SCA guidance (October 2015) for the lobby or corridor extract rate. This sheet is not a smoke control design; a mechanical system needs CFD or calculation to BS 7346-8 and the SCA guidance, and approval by the fire authority. Formulae, the clause summary and the notes are in the side bar.</footer>
 <div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards cited are the copyright of their publishers.</div>
 </article>
 
@@ -519,6 +497,12 @@ ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
       <h3>Opening areas and duct size</h3>
       <div id="fxS3" role="math"></div>
       <ul id="fxSD3"></ul>
+      <h3>Lobby or corridor system: extract rate</h3>
+      <div id="fxS6" role="math"></div>
+      <ul id="fxSD6"></ul>
+      <h3>Replacement air opening and pressure</h3>
+      <div id="fxS7" role="math"></div>
+      <ul id="fxSD7"></ul>
       <h3>Force to open a door against the pressure</h3>
       <div id="fxS4" role="math"></div>
       <ul id="fxSD4"></ul>
@@ -534,9 +518,19 @@ ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
       <h3>What is from BS 9991 and what is not</h3>
       <ul class="tn" style="margin-left:18px">
         <li><b>From BS 9991:2015:</b> the free areas of vents (1 m², 1.5 m², 0.4 m²), the natural shaft dimensions and heights, the basement outlet area of 2.5 % of the floor area, the ten air changes per hour, 300 °C for 60 minutes and 600 °C ductwork for powered basement extract, the 100 N door force limit, and the exemptions for small basements.</li>
-        <li><b>Not from BS 9991:</b> the hinged vent free area (a geometric estimate in the manner of Approved Document B, Diagram C.7, which the standard points to; use the tested aerodynamic free area of the vent to BS EN 12101-2 for design), the door force formula (the form used in BS EN 12101-6 and BS 5588-4), the stack flow, and the duct, shaft and opening velocities, which are your choices.</li>
-        <li>For a mechanical system serving a lobby or corridor, BS 9991 gives no flow. The rate comes from CFD or calculation with a sensitivity study (A.4), against the performance of the natural system it replaces (14.2.4). The Smoke Control Association guidance (SCA, 2015) is the usual starting point and is not reproduced here.</li>
+        <li><b>Not from BS 9991:</b> the SCA design fires and the 2 m³/s good-practice minimum, the hinged vent free area (a geometric estimate in the manner of Approved Document B, Diagram C.7, which the standard points to; use the tested aerodynamic free area of the vent to BS EN 12101-2 for design), the door force formula (the form used in BS EN 12101-6 and BS 5588-4), the stack flow, and the duct, shaft and opening velocities, which are your choices.</li>
+        <li>For a mechanical system serving a lobby or corridor, BS 9991 gives no flow. It asks for conditions at least equal to the natural system (14.2.4) and leaves the rate to CFD or calculation (A.4). The sheet therefore works out a <i>starting</i> rate; see “How the lobby or corridor rate is worked out” below.</li>
         <li>A mechanical lobby or corridor shaft follows 14.2.3.2 a), f), g), i) and j) only (14.2.4). The 1.5 m² shaft area and the 2.5 m height rule belong to the natural shaft and are not applied to it.</li>
+      </ul>
+      <h3>How the lobby or corridor rate is worked out</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>A, smoke from the flat.</b> The extract must at least keep pace with the smoke coming out of the flat. The SCA guidance (Oct 2015, section 5.3.4 and 5.3.5) gives design fires for the flat: 250 kW (0.2 kg/s of smoke at 210 °C), 1000 kW (0.9 kg/s at 360 °C) and 2500 kW (1.4 kg/s at 690 °C) in steady state, and 1000 kW at the open flat door in the time-dependent case (1.0 kg/s at 120 °C). The sheet divides the mass flow by the air density at the extract temperature (ρ = 353/(T + 273.15)) to get a volume flow.</li>
+        <li><b>B, natural system benchmark.</b> BS 9991 14.2.4 requires conditions at least equal to the natural system the mechanical one replaces. The sheet estimates the flow the compliant natural vents would give by stack effect (corridor vent 1.5 m² and stair-head vent 1.0 m² in series). It is a benchmark, not a compliance route: only CFD shows equivalence.</li>
+        <li><b>C, small single-stair building.</b> For mechanical ventilation in such buildings the SCA guidance (6.5.4) gives the higher of 10 air changes of the stair and 2 m³/s, as good practice, which the designer may change with the approval of the authority.</li>
+        <li><b>D.</b> The sheet takes the largest of A, B and C as a starting rate, or your own figure from the CFD.</li>
+        <li><b>E to G.</b> The extracted air has to be replaced. The pressure the replacement opening causes follows from the flow and its free area (ΔP = ½ρ(Q/CdA)²). The SCA guidance suggests no more than 20 Pa across lobby doors, and the pressure must keep the door opening force at the handle to 100 N or less (BS 9991 14.2.4, SCA 5.3.1).</li>
+        <li><b>Quoted figures not used.</b> A surveyor’s guide (Group SCS) quotes 2.5 m³/s for means of escape and 5.0 m³/s for fire-fighting. I could not find these in the SCA 2015 text, so they are shown as a reference only. Fire-fighting needs a boost rate above the escape rate.</li>
+        <li><b>The SCA figures</b> are as read from the October 2015 edition; the current edition is Revision 3.1 (2020). Check them against your copy.</li>
       </ul>
       <h3>Not covered</h3>
       <ul class="tn" style="margin-left:18px">
@@ -545,7 +539,7 @@ ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
         <li>Replacement air routes, fire dampers, fan curves and duct pressure drops.</li>
       </ul>
       <h3>Source</h3>
-      <p>BS 9991:2015+C1:2016, Fire safety in the design, management and use of residential buildings – Code of practice. Clause 7.5, clause 14, clause 15, 24.1.7 and Annex A. Also cited by it: BS EN 12101-2, BS EN 12101-6, BS 7346-7, BS 7346-8, BS 8519, BS EN 12845, BS 5839-1, Approved Document B and the Smoke Control Association guidance.</p>
+      <p>BS 9991:2015+C1:2016, Fire safety in the design, management and use of residential buildings – Code of practice. Clause 7.5, clause 14, clause 15, 24.1.7 and Annex A. Smoke Control Association, Guidance on smoke control to common escape routes in apartment buildings (flats and maisonettes), October 2015 (<a href="https://www.labc.co.uk/sites/default/files/EXT.SCA-Guidance-on-Smoke-Control-to-Common-Escape-Routes-Oct2015.LSt_.v2.151116.pdf" target="_blank" rel="noopener">copy hosted by LABC</a>), sections 5.3, 6.5.4 and 7.6. Group SCS, Guide to assessing high rise residential smoke control systems (quoted rates). Also cited by BS 9991: BS EN 12101-2, BS EN 12101-6, BS 7346-7, BS 7346-8, BS 8519, BS EN 12845, BS 5839-1, Approved Document B and the Smoke Control Association guidance.</p>
     </div>
   </div>
 </aside>
@@ -636,7 +630,7 @@ function nat1() {
   const c = CASES[parseInt($("bcase").value)], w = [];
   $("bcaseH").textContent = c.h;
   $("stRow").hidden = c.st == null; $("lobRow").hidden = c.lb == null; $("topRow").hidden = !(c.lb != null && c.st != null && c.lb >= 1);
-  $("lobRow").querySelector("label[for=vtL]").textContent = (c.lbn || "Lobby or corridor vent") + ": how entered";
+  $("lobH").textContent = c.lbn || "Lobby or corridor vent";
   const S = c.st != null ? ventArea("S") : null, Lb = c.lb != null ? ventArea("L") : null;
   let h = "";
   if (S) { const ok = S.tot >= c.st - 1e-9; h += chk("Stair vent free area", ok, fmt(S.tot, 2) + " m²", (ok ? "meets " : "below ") + fmt(c.st, 1) + " m² minimum"); if (S.t !== "area") h += box("One stair vent, as hinged", fmt(S.one, 2) + " m²", "of " + fmt(S.full, 2) + " m² frame area · estimate"); }
@@ -653,8 +647,7 @@ function nat1() {
 /* ---------- 2.2 smoke shaft ---------- */
 let N2 = null;
 function nat2() {
-  $("shBox").hidden = !$("shOn").checked; N2 = null;
-  if (!$("shOn").checked) { $("n2Res").innerHTML = ""; warnBox("n2Warn", []); return; }
+  N2 = null;
   const a = num("sa"), b = num("sb"), hh = num("sh"), st = num("sst"), va = num("sva"), hd = num("shd"), gr = num("sgr"), inc = num("sinc"), ang = num("sang");
   const area = a * b, mn = Math.min(a, b);
   let h = "";
@@ -702,50 +695,102 @@ function nat3() {
   N3 = { A, D, O, ex, req, pct, ok };
 }
 
+/* two-way opening: know the velocity, find the area; or know the area, find the velocity */
+function twoWay(p, Q) {
+  const g = $(p + "G").value, vEl = $(p + "V"), aEl = $(p + "A");
+  $(p + "VF").classList.toggle("calc", g === "a"); $(p + "AF").classList.toggle("calc", g === "v");
+  vEl.readOnly = g === "a"; aEl.readOnly = g === "v";
+  let v, a;
+  if (g === "v") { v = parseFloat(vEl.value); a = Q / v; aEl.value = (isFinite(a) && a > 0) ? a.toFixed(3) : ""; }
+  else { a = parseFloat(aEl.value); v = Q / a; vEl.value = (isFinite(v) && v > 0) ? v.toFixed(2) : ""; }
+  return { g, v, a, d: Math.sqrt(4 * a / Math.PI) };
+}
+const rho = T => 353 / (T + K0);   /* kg/m3 of air at T degC */
+
 /* ---------- 3.1 basement mechanical ---------- */
 let M1 = null;
 function mech1() {
-  const A = num("mA"), H = num("mH"), D = num("mD"), ach = num("mACH"), Tg = num("mTg"), Ta = num("mTa"), vd = num("mVd"), vi = num("mVi"), w = [];
+  const A = num("mA"), H = num("mH"), D = num("mD"), ach = num("mACH"), Tg = num("mTg"), Ta = num("mTa"), w = [];
   M1 = null;
   if (!(A > 0 && H > 0 && ach > 0)) { $("m1Res").innerHTML = ""; warnBox("m1Warn", ["Enter the floor area, clear height and air changes per hour."]); return; }
   const V = A * H, Q = ach * V, Qs = Q / 3600, hot = (Tg + K0) / (Ta + K0), Qh = Qs * hot;
-  const Ad = vd > 0 ? Qh / vd : NaN, dd = Math.sqrt(4 * Ad / Math.PI), Ai = vi > 0 ? Qs / vi : NaN;
+  const du = twoWay("md", Qh), inl = twoWay("mi", Qs);
   const ex = A <= 200 || D <= 3, spr = $("mSpr").checked;
   let h = box("Basement volume", grp(V, 0), "m³") + box("Extract flow", grp(Q, 0), "m³/h at " + fmt(ach, 1) + " ACH", "key") + box("Extract flow", fmt(Qs, 2), "m³/s · " + grp(Qs * 1000, 0) + " L/s") +
     box("Flow at the fan, hot", fmt(Qh, 2), "m³/s at " + fmt(Tg, 0) + " °C · × " + fmt(hot, 2) + " if the 10 ACH is at ambient");
-  if (Ad > 0) h += box("Extract duct area", fmt(Ad, 2), "m² at " + fmt(vd, 1) + " m/s on the hot flow · Ø " + fmt(dd * 1000, 0) + " mm round");
-  if (Ai > 0) h += box("Replacement air opening", fmt(Ai, 2), "m² free area at " + fmt(vi, 1) + " m/s");
+  if (du.a > 0) h += box("Extract duct", fmt(du.a, 2) + " m²", fmt(du.v, 1) + " m/s on the hot flow · Ø " + fmt(du.d * 1000, 0) + " mm round");
+  if (inl.a > 0) h += box("Replacement air opening", fmt(inl.a, 2) + " m²", fmt(inl.v, 1) + " m/s free area velocity");
   h += chk("Air changes per hour", ach >= 10 - 1e-9, fmt(ach, 1), ach >= 10 - 1e-9 ? "meets ten" : "below ten");
   h += chk("Sprinklers", spr, spr ? "fitted" : "not fitted", spr ? "BS EN 12845" : "powered extract is not allowed without them");
   if (ex) w.push("This basement is exempt from a smoke and heat ventilation system: " + (A <= 200 ? "its floor area is 200 m² or less" : "its floor is not more than 3 m below the adjacent ground") + " (14.2.1.3.1).");
   w.push("BS 9991 does not say whether the ten air changes are measured at ambient or at fire temperature. The hot figure shows the difference; confirm the basis with the fire engineer.");
   warnBox("m1Warn", w);
   $("m1Res").innerHTML = h;
-  M1 = { A, H, V, Q, Qs, Tg, Ta, hot, Qh, Ad, dd, Ai, vd, vi, ach, spr, ex };
+  M1 = { A, H, V, Q, Qs, Tg, Ta, hot, Qh, du, inl, ach, spr, ex };
 }
 
-/* ---------- 3.2 MSVS and door force ---------- */
+/* ---------- 3.2 MSVS: extract rate, air path, shaft, door ---------- */
+const FIRES = { f250: [0.2, 210], f1000t: [1.0, 120], f1000: [0.9, 360], f2500: [1.4, 690] };
+function fireFill() { const f = FIRES[$("fsel").value]; if (f) { $("fm").value = f[0]; $("fT").value = f[1]; $("fTx").value = f[1]; } }
 let M2 = null;
 function mech2() {
-  const q = num("qM") * parseFloat($("qMu").value), vs = num("mvs"), vr = num("mvr"), Wd = num("dW"), Hd = num("dH"), Fc = num("dF"), d = num("dd"), dP = num("dP"), w = [];
+  const w = [], rows = [];
   M2 = null;
-  if (!(q > 0)) { $("m2Res").innerHTML = ""; warnBox("m2Warn", ["Enter the extract rate from the CFD or calculation."]); return; }
-  const As = vs > 0 ? q / vs : NaN, Ar = vr > 0 ? q / vr : NaN;
-  let h = box("Extract rate", fmt(q, 2) + " m³/s", grp(q * 1000, 0) + " L/s · " + grp(q * 3600, 0) + " m³/h", "key");
-  if (As > 0) h += box("Shaft or duct area", fmt(As, 2) + " m²", "at " + fmt(vs, 1) + " m/s · Ø " + fmt(Math.sqrt(4 * As / Math.PI) * 1000, 0) + " mm round");
-  if (Ar > 0) h += box("Replacement air opening", fmt(Ar, 2) + " m²", "free area at " + fmt(vr, 1) + " m/s");
+  /* A smoke from the flat */
+  const fm = num("fm"), fTx = num("fTx"), dil = num("fdil") || 0;
+  const Qa = (fm > 0 && isFinite(fTx)) ? fm * (1 + dil / 100) / rho(fTx) : NaN;
+  /* B natural benchmark */
+  const Ac = num("bAc"), As = num("bAs"), bH = num("bH"), bTs = num("bTs"), bTo = num("bTo"), bCd = num("bCd");
+  let Qb = NaN, Ae = NaN;
+  if (Ac > 0 && As > 0 && bH > 0 && bTs > bTo && bCd > 0) { Ae = Ac * As / Math.sqrt(Ac * Ac + As * As); Qb = bCd * Ae * Math.sqrt(2 * G * bH * (bTs - bTo) / (bTo + K0)); }
+  /* C small single stair */
+  const ss = $("ssOn").checked, sW = num("ssW"), sL = num("ssL"), sHh = num("ssH");
+  const Vs = sW * sL * sHh, Qc1 = Vs * 10 / 3600, Qc = ss && Vs > 0 ? Math.max(Qc1, 2) : NaN;
+  /* D design rate */
+  const cands = [["A", Qa], ["B", Qb], ["C", Qc]].filter(x => x[1] > 0);
+  const gov = cands.length ? cands.reduce((m, x) => x[1] > m[1] ? x : m) : null;
+  const own = $("qSel").value === "own";
+  $("qOwn").closest(".field").hidden = !own;
+  const q = own ? num("qOwn") : (gov ? gov[1] : NaN);
+  const qSrc = own ? "your figure" : gov ? "basis " + gov[0] : "";
+  const rw = (k, n, v, st, g) => '<tr' + (g ? ' class="gov"' : "") + "><td>" + k + '<span class="st">' + st + '</span></td><td class="n">' + (v > 0 ? fmt(v, 2) : "—") + "</td></tr>";
+  const bt = '<table class="basis"><thead><tr><th>Basis for the extract rate</th><th>m³/s</th></tr></thead><tbody>' +
+    rw("A. Smoke from the flat", "A", Qa, "Smoke mass flow ÷ density at the extract temperature. SCA design fire.", !own && gov && gov[0] === "A") +
+    rw("B. Natural system benchmark", "B", Qb, "Indicative stack flow through the compliant natural vents. The mechanical system must do at least as well (14.2.4).", !own && gov && gov[0] === "B") +
+    rw("C. Small single-stair minimum", "C", Qc, ss ? "Higher of 10 air changes of the stair (" + fmt(Qc1, 2) + " m³/s) and 2 m³/s. SCA 6.5.4, good practice." : "Not selected.", !own && gov && gov[0] === "C") +
+    '<tr><td>Quoted in practice<span class="st">A surveyor’s guide quotes 2.5 m³/s for escape and 5.0 m³/s for fire-fighting. Not found in the SCA 2015 text; reference only, not used.</span></td><td class="n">2.5 / 5.0</td></tr>' +
+    '<tr class="gov"><td><b>Rate to design with</b><span class="st">' + qSrc + '. Confirm by CFD.</span></td><td class="n">' + (q > 0 ? fmt(q, 2) : "—") + "</td></tr></tbody></table>";
+  $("m2Basis").innerHTML = bt;
+  if (!(q > 0)) { $("m2Res").innerHTML = ""; warnBox("m2Warn", ["Enter the smoke flow and temperature, or your own extract rate."]); return; }
+  /* E replacement air opening */
+  const Cd = num("mrCd"), g = $("mrG").value, rhoA = 1.2;
+  $("mrAF").classList.toggle("calc", g === "p"); $("mrPF").classList.toggle("calc", g === "a");
+  $("mrA").readOnly = g === "p"; $("mrP").readOnly = g === "a";
+  let Ar, dP;
+  if (g === "a") { Ar = num("mrA"); dP = 0.5 * rhoA * Math.pow(q / (Cd * Ar), 2); $("mrP").value = isFinite(dP) ? dP.toFixed(1) : ""; }
+  else { dP = num("mrP"); Ar = q / (Cd * Math.sqrt(2 * dP / rhoA)); $("mrA").value = isFinite(Ar) && Ar > 0 ? Ar.toFixed(3) : ""; }
+  const vr = q / Ar;
+  /* F shaft */
+  const sh = twoWay("ms", q);
+  /* G door */
+  const Wd = num("dW"), Hd = num("dH"), Fc = num("dF"), d = num("dd");
   let F = null;
   if (Wd > 0 && Hd > 0 && Wd > d && isFinite(Fc) && isFinite(dP)) {
     const Ad = Wd * Hd, F_ = Fc + Wd * Ad * dP / (2 * (Wd - d)), dPmax = Fc < 100 ? 2 * (Wd - d) * (100 - Fc) / (Wd * Ad) : NaN;
     F = { Ad, F: F_, dPmax, Fc, Wd, Hd, d, dP };
-    h += chk("Force to open the stair door at " + fmt(dP, 0) + " Pa", F_ <= 100 + 1e-9, fmt(F_, 0) + " N", F_ <= 100 + 1e-9 ? "within the 100 N limit" : "over the 100 N limit");
-    h += box("Largest pressure difference for 100 N", isFinite(dPmax) ? fmt(dPmax, 0) + " Pa" : "—", "door " + fmt(Wd, 2) + " × " + fmt(Hd, 2) + " m, closer " + fmt(Fc, 0) + " N");
-    if (Fc >= 100) w.push("The closer force alone is 100 N or more.");
-  } else w.push("Enter the door width, height, closer force, handle distance and pressure difference. The width must exceed the handle distance.");
-  w.push("BS 9991 gives no flow rate for an MSVS. The flow is yours, from CFD or calculation (Annex A.4). This section sizes the shaft and inlet from it and checks the door force.");
+  }
+  let h = box("Design extract rate", fmt(q, 2) + " m³/s", grp(q * 1000, 0) + " L/s · " + grp(q * 3600, 0) + " m³/h", "key");
+  if (Ar > 0) h += box("Replacement air opening", fmt(Ar, 2) + " m²", fmt(vr, 1) + " m/s through it · pressure " + fmt(dP, 1) + " Pa");
+  if (isFinite(dP)) h += chk("Pressure across the opening", dP <= 20 + 1e-9, fmt(dP, 1) + " Pa", dP <= 20 + 1e-9 ? "within the SCA guide of 20 Pa" : "over the SCA guide of 20 Pa");
+  if (sh.a > 0) h += box("Extract shaft or duct", fmt(sh.a, 2) + " m²", fmt(sh.v, 1) + " m/s · Ø " + fmt(sh.d * 1000, 0) + " mm round");
+  if (F) { h += chk("Force to open the stair door", F.F <= 100 + 1e-9, fmt(F.F, 0) + " N", F.F <= 100 + 1e-9 ? "within the 100 N limit at " + fmt(dP, 1) + " Pa" : "over the 100 N limit at " + fmt(dP, 1) + " Pa");
+    h += box("Largest pressure for 100 N", isFinite(F.dPmax) ? fmt(F.dPmax, 0) + " Pa" : "—", "door " + fmt(Wd, 2) + " × " + fmt(Hd, 2) + " m, closer " + fmt(Fc, 0) + " N"); }
+  else w.push("Enter the door width, height, closer force and handle distance. The width must exceed the handle distance.");
+  if (fTx < 0) w.push("Check the extract temperature.");
+  w.push("A starting rate, not a design: BS 9991 and the SCA guidance require CFD or calculation, with a sensitivity study, to show conditions at least equal to the natural system. Fire-fighting needs a higher boost rate.");
   warnBox("m2Warn", w);
   $("m2Res").innerHTML = h;
-  M2 = { q, vs, vr, As, Ar, F };
+  M2 = { fm, fTx, dil, Qa, Ae, Qb, Ac, As, bH, bTs, bTo, bCd, ss, Vs, Qc1, Qc, gov, own, q, qSrc, Cd, g, Ar, dP, vr, sh, F };
 }
 
 /* ---------- formulae ---------- */
@@ -754,6 +799,10 @@ MX.defs($("fxSD1"), [["$L$", "length of the hinged edge, m (the width of a botto
 MX.formula($("fxS2"), ["$A$_{out} = 0.025 × $A$_{floor}", "$Q$ = $ACH$ × $A$_{floor} × $H$ / 3600", "$Q$_{hot} = $Q$ × @frac{$T$_{g} + 273.15}{$T$_{a} + 273.15}"]);
 MX.defs($("fxSD2"), [["$A$_{out}", "smoke outlet free area for natural venting, m²"], ["$ACH$", "air changes per hour, 10 for powered basement extract"], ["$Q$", "extract flow, m³/s"], ["$Q$_{hot}", "the same mass flow as volume at gas temperature $T$_{g}, if the ten changes are counted at ambient"]]);
 MX.formula($("fxS3"), ["$A$ = @frac{$Q$}{$v$}", "$d$ = √( @frac{4 $A$}{π} )"]);
+MX.formula($("fxS6"), ["ρ = @frac{353}{$T$ + 273.15}", "$Q$_{A} = @frac{ṁ ( 1 + $e$ )}{ρ_{x}}", "$Q$_{B} = $C$_{d} $A$_{e} √( @frac{2 $g$ $H$ ( $T$_{s} − $T$_{o} )}{$T$_{o}} )", "$Q$_{C} = max ( @frac{10 $V$_{stair}}{3600} , 2 )", "$Q$ = max ( $Q$_{A}, $Q$_{B}, $Q$_{C} )"]);
+MX.defs($("fxSD6"), [["ṁ", "smoke mass flow out of the flat, kg/s (SCA design fire: 0.2, 0.9, 1.0 or 1.4 kg/s)"], ["ρ_{x}", "air density at the extract temperature, kg/m³"], ["$e$", "allowance for entrained air, as a fraction"], ["$Q$_{A}", "extract to keep pace with the smoke, m³/s"], ["$Q$_{B}", "indicative stack flow of the compliant natural system, m³/s; $A$_{e} from the corridor vent and the stair-head vent in series"], ["$Q$_{C}", "good-practice minimum for small single-stair buildings, SCA 6.5.4, m³/s"]]);
+MX.formula($("fxS7"), ["Δ$P$ = @frac{ρ}{2} ( @frac{$Q$}{$C$_{d} $A$} )^{2}", "$A$ = @frac{$Q$}{$C$_{d} √( 2 Δ$P$ / ρ )}"]);
+MX.defs($("fxSD7"), [["Δ$P$", "pressure difference across the replacement air opening, Pa (ρ = 1.2 kg/m³)"], ["$A$", "free area of the opening, m²"], ["$C$_{d}", "discharge coefficient, about 0.6"]]);
 MX.defs($("fxSD3"), [["$A$", "duct, shaft or opening area, m²"], ["$v$", "velocity chosen by the designer, m/s"], ["$d$", "diameter of a round duct of that area, m"]]);
 MX.formula($("fxS4"), ["$F$ = $F$_{dc} + @frac{$W$ · $A$ · Δ$P$}{2 ( $W$ − $d$ )}", "Δ$P$_{max} = @frac{2 ( $W$ − $d$ ) ( 100 − $F$_{dc} )}{$W$ · $A$}"]);
 MX.defs($("fxSD4"), [["$F$", "force at the handle to open the door, N (BS 9991 limit 100 N)"], ["$F$_{dc}", "force to overcome the door closer with no pressure, N"], ["$W$, $A$", "door width, m, and door area, m²"], ["$d$", "distance from the handle to the edge of the door, m"], ["Δ$P$", "pressure difference across the door, Pa"]]);
@@ -768,9 +817,16 @@ function working() {
     if (N2.st_) s.push({ t: "Indicative stack flow", m: ["$A$_{e} = " + fmt(N2.st_.Ai, 2) + " × " + fmt(N2.st_.Ao, 2) + " / √(" + fmt(N2.st_.Ai, 2) + "² + " + fmt(N2.st_.Ao, 2) + "²) = " + fmt(N2.st_.Ae, 3) + " m²", "$Q$ = " + fmt(N2.st_.Cd, 2) + " × " + fmt(N2.st_.Ae, 3) + " × √(2 × 9.807 × " + fmt(N2.st_.H, 1) + " × " + fmt(N2.st_.Ts - N2.st_.To, 0) + " / " + fmt(N2.st_.To + K0, 1) + ") = **" + fmt(N2.st_.Q, 2) + " m³/s**"] }); }
   if (N3) s.push({ t: "Basement natural outlets", m: ["$A$_{out} = 0.025 × " + grp(N3.A, 0) + " = **" + fmt(N3.req, 2) + " m²**; provided " + fmt(N3.O, 2) + " m² = " + fmt(N3.pct, 2) + " %"] });
   if (M1) { s.push({ t: "Basement extract flow", m: ["$V$ = " + grp(M1.A, 0) + " × " + fmt(M1.H, 2) + " = " + grp(M1.V, 0) + " m³", "$Q$ = " + fmt(M1.ach, 1) + " × " + grp(M1.V, 0) + " / 3600 = **" + fmt(M1.Qs, 3) + " m³/s** = " + grp(M1.Q, 0) + " m³/h"] });
-    s.push({ t: "Hot flow and ducts", m: ["$Q$_{hot} = " + fmt(M1.Qs, 3) + " × (" + fmt(M1.Tg, 0) + " + 273.15)/(" + fmt(M1.Ta, 0) + " + 273.15) = **" + fmt(M1.Qh, 3) + " m³/s**", "Duct area = " + fmt(M1.Qh, 3) + " / " + fmt(M1.vd, 1) + " = " + fmt(M1.Ad, 2) + " m²; inlet = " + fmt(M1.Qs, 3) + " / " + fmt(M1.vi, 1) + " = " + fmt(M1.Ai, 2) + " m²"] }); }
-  if (M2) { s.push({ t: "MSVS shaft and inlet", m: ["Shaft area = " + fmt(M2.q, 3) + " / " + fmt(M2.vs, 1) + " = **" + fmt(M2.As, 2) + " m²**", "Inlet area = " + fmt(M2.q, 3) + " / " + fmt(M2.vr, 1) + " = **" + fmt(M2.Ar, 2) + " m²**"] });
-    if (M2.F) s.push({ t: "Door force", m: ["$A$ = " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Hd, 2) + " = " + fmt(M2.F.Ad, 2) + " m²", "$F$ = " + fmt(M2.F.Fc, 0) + " + " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Ad, 2) + " × " + fmt(M2.F.dP, 0) + " / (2 × (" + fmt(M2.F.Wd, 2) + " − " + fmt(M2.F.d, 2) + ")) = **" + fmt(M2.F.F, 0) + " N**", "Δ$P$_{max} = 2 × (" + fmt(M2.F.Wd, 2) + " − " + fmt(M2.F.d, 2) + ") × (100 − " + fmt(M2.F.Fc, 0) + ") / (" + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Ad, 2) + ") = **" + fmt(M2.F.dPmax, 0) + " Pa**"] }); }
+    s.push({ t: "Hot flow and openings", m: ["$Q$_{hot} = " + fmt(M1.Qs, 3) + " × (" + fmt(M1.Tg, 0) + " + 273.15)/(" + fmt(M1.Ta, 0) + " + 273.15) = **" + fmt(M1.Qh, 3) + " m³/s**", "Duct: " + fmt(M1.du.a, 3) + " m² at " + fmt(M1.du.v, 2) + " m/s", "Replacement air: " + fmt(M1.inl.a, 3) + " m² at " + fmt(M1.inl.v, 2) + " m/s"] }); }
+  if (M2) {
+    s.push({ t: "A. Smoke from the flat", m: ["ρ = 353 / (" + fmt(M2.fTx, 0) + " + 273.15) = " + fmt(rho(M2.fTx), 3) + " kg/m³", "$Q$_{A} = " + fmt(M2.fm, 2) + " × (1 + " + fmt(M2.dil, 0) + "/100) / " + fmt(rho(M2.fTx), 3) + " = **" + fmt(M2.Qa, 2) + " m³/s**"] });
+    if (M2.Qb > 0) s.push({ t: "B. Natural system benchmark", m: ["$A$_{e} = " + fmt(M2.Ac, 2) + " × " + fmt(M2.As, 2) + " / √(" + fmt(M2.Ac, 2) + "² + " + fmt(M2.As, 2) + "²) = " + fmt(M2.Ae, 3) + " m²", "$Q$_{B} = " + fmt(M2.bCd, 2) + " × " + fmt(M2.Ae, 3) + " × √(2 × 9.807 × " + fmt(M2.bH, 1) + " × " + fmt(M2.bTs - M2.bTo, 0) + " / " + fmt(M2.bTo + K0, 1) + ") = **" + fmt(M2.Qb, 2) + " m³/s**"] });
+    if (M2.Qc > 0) s.push({ t: "C. Small single-stair minimum", m: ["$V$ = " + fmt(M2.Vs, 1) + " m³; 10 air changes = " + fmt(M2.Qc1, 2) + " m³/s", "$Q$_{C} = max(" + fmt(M2.Qc1, 2) + ", 2) = **" + fmt(M2.Qc, 2) + " m³/s**"] });
+    s.push({ t: "D. Rate to design with", m: ["$Q$ = **" + fmt(M2.q, 2) + " m³/s** (" + M2.qSrc + ")"] });
+    s.push({ t: "E. Replacement air opening", m: M2.g === "a" ? ["Δ$P$ = ½ × 1.2 × (" + fmt(M2.q, 2) + " / (" + fmt(M2.Cd, 2) + " × " + fmt(M2.Ar, 2) + "))² = **" + fmt(M2.dP, 1) + " Pa**"] : ["$A$ = " + fmt(M2.q, 2) + " / (" + fmt(M2.Cd, 2) + " × √(2 × " + fmt(M2.dP, 1) + " / 1.2)) = **" + fmt(M2.Ar, 2) + " m²**"] });
+    if (M2.sh.a > 0) s.push({ t: "F. Extract shaft or duct", m: ["$A$ = " + fmt(M2.q, 2) + " / " + fmt(M2.sh.v, 2) + " = **" + fmt(M2.sh.a, 2) + " m²**"] });
+    if (M2.F) s.push({ t: "G. Stair door force", m: ["$A$ = " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Hd, 2) + " = " + fmt(M2.F.Ad, 2) + " m²", "$F$ = " + fmt(M2.F.Fc, 0) + " + " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Ad, 2) + " × " + fmt(M2.F.dP, 1) + " / (2 × (" + fmt(M2.F.Wd, 2) + " − " + fmt(M2.F.d, 2) + ")) = **" + fmt(M2.F.F, 0) + " N**", "Δ$P$_{max} = **" + fmt(M2.F.dPmax, 0) + " Pa** for 100 N"] });
+  }
   MX.steps($("workS"), s, "Enter values in sections 2 and 3 to see the working.");
 }
 
@@ -968,7 +1024,10 @@ $("gtabs").addEventListener("click", e => { const b = e.target.closest("button[d
 
 function all() { nat1(); nat2(); nat3(); mech1(); mech2(); working(); }
 document.querySelectorAll("input,select").forEach(e => { e.addEventListener("input", all); e.addEventListener("change", all); });
-drawFig(); all();
+$("fsel").addEventListener("change", () => { fireFill(); all(); });
+["fm", "fT"].forEach(id => $(id).addEventListener("input", () => { $("fsel").value = "own"; if (id === "fT") $("fTx").value = $("fT").value; all(); }));
+$("ctabs").addEventListener("click", e => { const b = e.target.closest("button[data-p]"); if (!b) return; document.querySelectorAll("#ctabs button").forEach(x => x.classList.toggle("on", x === b)); document.querySelectorAll(".cpanel").forEach(p => p.hidden = p.id !== b.dataset.p); });
+fireFill(); drawFig(); all();
 })();
 </script>
 </body>
