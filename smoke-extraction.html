@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Smoke ventilation sizing to BS 9991:2015 clause 14: natural vents, smoke shafts and basements, mechanical extract and door-force checks, with installation details drawn." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XX — Smoke extraction sizing</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet XV */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets XV and XVI additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet XX</div>
+  <h1>Smoke extraction sizing</h1>
+  <div class="sub">BS 9991:2015 clause 14 and Annex A · natural vents and shafts · mechanical extract · installation details</div>
+</header>
+<nav class="pages">
+    <a href="index.html"><span>—</span>Contents</a>
+    <a href="natural-ventilation-eink.html"><span>I</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>II</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>III</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>IV</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>V</span>Air-side equipment sizing</a>
+    <a href="hydrofort-tank.html"><span>VI</span>Pneumatic tank</a>
+    <a href="window-solar.html"><span>VII</span>Window radiation gain</a>
+    <a href="intake-separation.html"><span>VIII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>IX</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>X</span>AHU separation</a>
+    <a href="louvre.html"><span>XI</span>Louvre face velocity analysis</a>
+    <a href="refrigerant.html"><span>XII</span>Refrigerant discharge design</a>
+    <a href="jet-fan.html"><span>XIII</span>Jet fans estimation</a>
+    <a href="envelope.html"><span>XIV</span>Envelope by climate zone</a>
+    <a href="cooling-tower-chiller.html"><span>XV</span>Cooling tower</a>
+  <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
+  <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
+  <a href="layer-stack-u-factor.html"><span>XVIII</span>Assembly U-factor</a>
+  <a href="air-change-rate.html"><span>XIX</span>Air change rate</a>
+  <a class="on" href="smoke-extraction.html"><span>XX</span>Smoke extraction</a>
+  </nav>
+
+<p class="lead">Summarises what BS 9991:2015 asks of smoke ventilation in residential buildings and sizes it two ways: by natural ventilation (vents, smoke shafts, basement outlets) and by mechanical extract (basement powered extract, and the lobby or corridor system with its door-force check). Section 4 draws the installation details and lists what to watch. The clauses are in the side bar. <button class="mx-open" type="button" data-mxopen="clauses">Clause summary</button> · <button class="mx-open" type="button" data-mxopen="formula">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button></p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Rules at a glance</a><a href="#s2">2 Natural</a><a href="#s3">3 Mechanical</a><a href="#s4">4 Installation details</a></nav>
+
+<h2 id="s1">1. The sizing rules at a glance</h2>
+<div class="box-note">BS 9991 sets <b>free areas and air change rates</b> for most cases. For a mechanical system serving a lobby or corridor it gives <b>no flow rate</b>: the rate is to be set by CFD analysis or calculation with a sensitivity study (Annex A.4). Section 3.2 therefore takes the flow as your input and checks the rest.</div>
+<div class="table-scroll"><table class="cmp" id="sumT"></table></div>
+
+<h2 id="s2">2. Natural smoke ventilation</h2>
+<h3 class="sub3">2.1 Stair and lobby or corridor vents</h3>
+<div class="fields three">
+  <div class="field wide"><label for="bcase">Building and escape arrangement</label>
+    <select id="bcase"></select>
+    <div class="hint" id="bcaseH"></div></div>
+</div>
+<div class="fields four" id="stRow">
+  <div class="field"><label for="vtS">Stair vent: how entered</label>
+    <select id="vtS"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div>
+  <div class="field" id="vSa"><label for="vSar">Free area of one vent</label><div class="pair"><input id="vSar" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
+  <div class="field vSd"><label for="vSw">Vent width</label><div class="pair"><input id="vSw" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div>
+  <div class="field vSd"><label for="vSh">Vent height</label><div class="pair"><input id="vSh" type="number" inputmode="decimal" step="any" min="0" value="1.2" /><span>m</span></div></div>
+  <div class="field vSd"><label for="vSang">Opening angle</label><div class="pair"><input id="vSang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div>
+  <div class="field"><label for="vSn">Number of vents</label><div class="pair"><input id="vSn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div>
+</div>
+<div class="fields four" id="lobRow">
+  <div class="field"><label for="vtL">Lobby or corridor vent: how entered</label>
+    <select id="vtL"><option value="area">Free area known</option><option value="top">Hinged at top or bottom</option><option value="side">Hinged at the side</option></select></div>
+  <div class="field" id="vLa"><label for="vLar">Free area of one vent</label><div class="pair"><input id="vLar" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div></div>
+  <div class="field vLd"><label for="vLw">Vent width</label><div class="pair"><input id="vLw" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m</span></div></div>
+  <div class="field vLd"><label for="vLh">Vent height</label><div class="pair"><input id="vLh" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m</span></div></div>
+  <div class="field vLd"><label for="vLang">Opening angle</label><div class="pair"><input id="vLang" type="number" inputmode="decimal" step="any" min="0" max="90" value="90" /><span>°</span></div></div>
+  <div class="field"><label for="vLn">Number of vents</label><div class="pair"><input id="vLn" type="number" inputmode="decimal" step="1" min="1" value="1" /><span>no.</span></div></div>
+</div>
+<div class="fields four" id="topRow">
+  <div class="field"><label for="vtop">Top of the lobby or corridor vent above the floor</label><div class="pair"><input id="vtop" type="number" inputmode="decimal" step="any" min="0" value="2.3" /><span>m</span></div></div>
+  <div class="field"><label for="dhead">Top of the stair door above the floor</label><div class="pair"><input id="dhead" type="number" inputmode="decimal" step="any" min="0" value="2.1" /><span>m</span></div></div>
+</div>
+<div class="warn" id="n1Warn" role="status"></div>
+<div class="results" id="n1Res"></div>
+
+<h3 class="sub3">2.2 Natural smoke shaft</h3>
+<label class="chk"><input type="checkbox" id="shOn" /> Check a natural smoke shaft (clause 14.2.3.2)</label>
+<div id="shBox" hidden>
+  <div class="fields four" style="margin-top:12px">
+    <div class="field"><label for="sa">Shaft clear width</label><div class="pair"><input id="sa" type="number" inputmode="decimal" step="any" min="0" value="1.0" /><span>m</span></div></div>
+    <div class="field"><label for="sb">Shaft clear depth</label><div class="pair"><input id="sb" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m</span></div></div>
+    <div class="field"><label for="sh">Shaft top above the ceiling of the highest storey served</label><div class="pair"><input id="sh" type="number" inputmode="decimal" step="any" min="0" value="2.5" /><span>m</span></div></div>
+    <div class="field"><label for="sst">Shaft top above surrounding structures within 2 m radius</label><div class="pair"><input id="sst" type="number" inputmode="decimal" step="any" min="0" value="0.5" /><span>m</span></div></div>
+    <div class="field"><label for="sva">Lobby or corridor vent, free area</label><div class="pair"><input id="sva" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
+    <div class="field"><label for="shd">Opening at the head of the shaft, free area</label><div class="pair"><input id="shd" type="number" inputmode="decimal" step="any" min="0" value="1.5" /><span>m²</span></div></div>
+    <div class="field"><label for="sgr">Smallest free area inside the shaft, such as a safety grille</label><div class="pair"><input id="sgr" type="number" inputmode="decimal" step="any" min="0" value="1" /><span>m²</span></div></div>
+    <div class="field"><label for="sinc">Length of shaft at an incline</label><div class="pair"><input id="sinc" type="number" inputmode="decimal" step="any" min="0" value="0" /><span>m</span></div></div>
+    <div class="field"><label for="sang">Angle of the inclined part from vertical</label><div class="pair"><input id="sang" type="number" inputmode="decimal" step="any" min="0" max="90" value="0" /><span>°</span></div></div>
+  </div>
+  <p class="lead" style="margin-top:14px"><b>Indicative flow by stack effect.</b> Not a BS 9991 requirement; it shows the size of the draught that the shaft might give.</p>
+  <div class="fields four">
+    <div class="field"><label for="sH">Height from the lobby vent to the top of the shaft</label><div class="pair"><input id="sH" type="number" inputmode="decimal" step="any" min="0" value="12" /><span>m</span></div></div>
+    <div class="field"><label for="sTs">Smoke temperature</label><div class="pair"><input id="sTs" type="number" inputmode="decimal" step="any" value="100" /><span>°C</span></div></div>
+    <div class="field"><label for="sTo">Outside air temperature</label><div class="pair"><input id="sTo" type="number" inputmode="decimal" step="any" value="20" /><span>°C</span></div></div>
+    <div class="field"><label for="sCd">Discharge coefficient</label><div class="pair"><input id="sCd" type="number" inputmode="decimal" step="any" min="0" value="0.6" /><span>–</span></div></div>
+  </div>
+  <div class="warn" id="n2Warn" role="status"></div>
+  <div class="results" id="n2Res"></div>
+</div>
+
+<h3 class="sub3">2.3 Basement natural smoke outlets</h3>
+<div class="fields four">
+  <div class="field"><label for="bA">Floor area of the basement storey</label><div class="pair"><input id="bA" type="number" inputmode="decimal" step="any" min="0" value="600" /><span>m²</span></div></div>
+  <div class="field"><label for="bD">Floor level below the adjacent ground</label><div class="pair"><input id="bD" type="number" inputmode="decimal" step="any" min="0" value="4.5" /><span>m</span></div></div>
+  <div class="field"><label for="bO">Smoke outlet free area provided</label><div class="pair"><input id="bO" type="number" inputmode="decimal" step="any" min="0" value="12" /><span>m²</span></div></div>
+</div>
+<div class="warn" id="n3Warn" role="status"></div>
+<div class="results" id="n3Res"></div>
+
+<h2 id="s3">3. Mechanical smoke ventilation</h2>
+<h3 class="sub3">3.1 Basement powered extract (clause 14.2.1.3.3)</h3>
+<div class="fields four">
+  <div class="field"><label for="mA">Floor area of the basement storey</label><div class="pair"><input id="mA" type="number" inputmode="decimal" step="any" min="0" value="600" /><span>m²</span></div></div>
+  <div class="field"><label for="mH">Clear height</label><div class="pair"><input id="mH" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m</span></div></div>
+  <div class="field"><label for="mD">Floor level below the adjacent ground</label><div class="pair"><input id="mD" type="number" inputmode="decimal" step="any" min="0" value="4.5" /><span>m</span></div></div>
+  <div class="field"><label for="mACH">Air changes per hour</label><div class="pair"><input id="mACH" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>ACH</span></div><div class="hint">BS 9991: ten.</div></div>
+  <div class="field"><label for="mTg">Gas temperature at the fan</label><div class="pair"><input id="mTg" type="number" inputmode="decimal" step="any" value="300" /><span>°C</span></div><div class="hint">BS 9991 asks the fan to handle 300 °C for 60 minutes.</div></div>
+  <div class="field"><label for="mTa">Ambient temperature</label><div class="pair"><input id="mTa" type="number" inputmode="decimal" step="any" value="20" /><span>°C</span></div></div>
+  <div class="field"><label for="mVd">Velocity in the extract duct</label><div class="pair"><input id="mVd" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>m/s</span></div><div class="hint">Your choice. Not set by BS 9991.</div></div>
+  <div class="field"><label for="mVi">Velocity through the replacement air opening</label><div class="pair"><input id="mVi" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m/s</span></div><div class="hint">Your choice. Not set by BS 9991.</div></div>
+</div>
+<label class="chk"><input type="checkbox" id="mSpr" checked /> The basement is fitted with a sprinkler system to BS EN 12845 (a condition of powered extract)</label>
+<div class="warn" id="m1Warn" role="status"></div>
+<div class="results" id="m1Res"></div>
+
+<h3 class="sub3">3.2 Lobby or corridor system (MSVS) and door force</h3>
+<div class="fields four">
+  <div class="field"><label for="qM">Extract rate</label><div class="pair"><input id="qM" type="number" inputmode="decimal" step="any" min="0" value="1.0" /><select id="qMu" aria-label="Unit"><option value="1">m³/s</option><option value="0.001">L/s</option><option value="0.000277778">m³/h</option></select></div><div class="hint">From the CFD or calculation. 1.0 is an example; replace it.</div></div>
+  <div class="field"><label for="mvs">Velocity in the extract shaft or duct</label><div class="pair"><input id="mvs" type="number" inputmode="decimal" step="any" min="0" value="8" /><span>m/s</span></div></div>
+  <div class="field"><label for="mvr">Velocity through the replacement air opening</label><div class="pair"><input id="mvr" type="number" inputmode="decimal" step="any" min="0" value="3" /><span>m/s</span></div></div>
+  <div class="field"><label for="dW">Stair door width</label><div class="pair"><input id="dW" type="number" inputmode="decimal" step="any" min="0" value="0.9" /><span>m</span></div></div>
+  <div class="field"><label for="dH">Stair door height</label><div class="pair"><input id="dH" type="number" inputmode="decimal" step="any" min="0" value="2.1" /><span>m</span></div></div>
+  <div class="field"><label for="dF">Door closer force with no pressure</label><div class="pair"><input id="dF" type="number" inputmode="decimal" step="any" min="0" value="30" /><span>N</span></div><div class="hint">At the handle. From the closer data.</div></div>
+  <div class="field"><label for="dd">Handle distance from the door edge</label><div class="pair"><input id="dd" type="number" inputmode="decimal" step="any" min="0" value="0.1" /><span>m</span></div></div>
+  <div class="field"><label for="dP">Pressure difference across the door when running</label><div class="pair"><input id="dP" type="number" inputmode="decimal" step="any" value="50" /><span>Pa</span></div><div class="hint">From the CFD or the commissioning test.</div></div>
+</div>
+<div class="warn" id="m2Warn" role="status"></div>
+<div class="results" id="m2Res"></div>
+
+<h2 id="s4">4. Installation details</h2>
+<p class="lead" style="margin-top:6px">Schematic sections, not to scale. Pick a system. The numbers on the drawing match the list of points under it, each with the clause it comes from.</p>
+<div class="tabs" id="gtabs"></div>
+<svg id="gsvg" class="chart gfig" viewBox="0 0 760 450" role="img" aria-label="Installation detail"></svg>
+<h3 class="sub3" id="gTitle">Points to watch</h3>
+<ol class="concerns" id="gList"></ol>
+
+<footer>Preliminary checking only. Source: BS 9991:2015 Fire safety in the design, management and use of residential buildings – Code of practice, clause 14 and Annex A, with clauses 7.5, 15 and 24.1.7. This sheet is not a smoke control design; a mechanical system needs CFD or calculation to BS 7346-8 and the SCA guidance, and approval by the fire authority. Formulae, the clause summary and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-clauses" data-tab="clauses" aria-controls="mxtab-clauses">Clause summary</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-clauses" aria-labelledby="mxt-clauses" hidden>
+      <p>What BS 9991:2015 says about smoke ventilation, in short form with the clause numbers. Check the standard for the full wording.</p>
+      <div class="table-scroll"><table class="cmp" id="clT"></table></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>Free area of a hinged vent</h3>
+      <div id="fxS1" role="math"></div>
+      <ul id="fxSD1"></ul>
+      <h3>Basement outlets and extract flow</h3>
+      <div id="fxS2" role="math"></div>
+      <ul id="fxSD2"></ul>
+      <h3>Opening areas and duct size</h3>
+      <div id="fxS3" role="math"></div>
+      <ul id="fxSD3"></ul>
+      <h3>Force to open a door against the pressure</h3>
+      <div id="fxS4" role="math"></div>
+      <ul id="fxSD4"></ul>
+      <h3>Indicative stack flow through a shaft</h3>
+      <div id="fxS5" role="math"></div>
+      <ul id="fxSD5"></ul>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
+      <div id="workS"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>What is from BS 9991 and what is not</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>From BS 9991:2015:</b> the free areas of vents (1 m², 1.5 m², 0.4 m²), the natural shaft dimensions and heights, the basement outlet area of 2.5 % of the floor area, the ten air changes per hour, 300 °C for 60 minutes and 600 °C ductwork for powered basement extract, the 100 N door force limit, and the exemptions for small basements.</li>
+        <li><b>Not from BS 9991:</b> the hinged vent free area (a geometric estimate in the manner of Approved Document B, Diagram C.7, which the standard points to; use the tested aerodynamic free area of the vent to BS EN 12101-2 for design), the door force formula (the form used in BS EN 12101-6 and BS 5588-4), the stack flow, and the duct, shaft and opening velocities, which are your choices.</li>
+        <li>For a mechanical system serving a lobby or corridor, BS 9991 gives no flow. The rate comes from CFD or calculation with a sensitivity study (A.4), against the performance of the natural system it replaces (14.2.4). The Smoke Control Association guidance (SCA, 2015) is the usual starting point and is not reproduced here.</li>
+        <li>A mechanical lobby or corridor shaft follows 14.2.3.2 a), f), g), i) and j) only (14.2.4). The 1.5 m² shaft area and the 2.5 m height rule belong to the natural shaft and are not applied to it.</li>
+      </ul>
+      <h3>Not covered</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Pressure differential (pressurization) systems, BS EN 12101-6. Car park smoke ventilation (BS 7346-7 and Approved Document B). Atria (Annex C). Commercial buildings (BS 9999).</li>
+        <li>Wind effects on natural vents, fire-fighting shaft pressure, travel distances in extended corridors (Figures 6 and 7).</li>
+        <li>Replacement air routes, fire dampers, fan curves and duct pressure drops.</li>
+      </ul>
+      <h3>Source</h3>
+      <p>BS 9991:2015+C1:2016, Fire safety in the design, management and use of residential buildings – Code of practice. Clause 7.5, clause 14, clause 15, 24.1.7 and Annex A. Also cited by it: BS EN 12101-2, BS EN 12101-6, BS 7346-7, BS 7346-8, BS 8519, BS EN 12845, BS 5839-1, Approved Document B and the Smoke Control Association guidance.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const grp = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+const chk = (k, ok, v, u) => box(k, v, u, ok ? "ok" : "bad");
+function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
+const G = 9.80665, K0 = 273.15;
+const W = {};   /* working steps by section */
+
+/* ---------- summary of the rules ---------- */
+const SUM = [
+  ["Small building: no storey above 11 m, up to 3 storeys above ground, one stair; common lobby approach", "1 m² openable vent at high level at each floor in the stair, or one 1 m² vent at the stair head operated remotely from fire and rescue access level", "—", "7.5, 14.1.2a"],
+  ["Small building, one stair, no common lobby", "AOV 1 m² at the stair head, opening on smoke detected anywhere in the stair. Communal travel distance at most 4.5 m, otherwise treat as over 11 m", "—", "14.1.2b"],
+  ["Floor over 11 m, one stair, protected corridor or lobby access", "AOV 1.5 m² to outside in the corridor or lobby next to the stair, as high as practicable, plus AOV 1 m² at the top of the stair. Or a smoke shaft (vent, shaft head and internal parts 1 m²) plus the 1 m² stair AOV", "MSVS in the lobby or corridor next to the stair, plus the 1 m² stair AOV; or a pressure differential system", "14.1.3"],
+  ["Multiple stairs", "As above. Vents to the outside may also be manual; the stair head vent must open before or with the fire floor vent", "As above", "14.1.4"],
+  ["Balcony or deck approach", "Vent 1 m² at the top of any enclosed stair, remotely operated at fire and rescue access level", "—", "14.1.5"],
+  ["Stair serving a car park or higher fire risk, through a lobby or corridor", "Permanent ventilation of at least 0.4 m² in the lobby or corridor", "Or protect it by an MSVS", "14.1.6"],
+  ["Fire-fighting shaft above ground, flats only", "Natural smoke control system", "Over 30 m high: natural smoke shaft, MSVS or pressure differential only", "14.2.1.1, 14.2.1.2.1"],
+  ["Fire-fighting lobby at basement level", "Manually openable vent 1 m² at high level, direct to air or to a smoke shaft serving only that level. No permanent vents", "—", "14.2.1.2.1"],
+  ["Basement over 200 m² and more than 3 m below ground", "Smoke outlets at least 2.5 % of the floor area of each storey, high level, spread round the perimeter, to open air", "Powered extract: 10 air changes per hour, 300 °C for 60 min, sprinklered to BS EN 12845, automatic start, replacement air, own power, 600 °C ductwork", "14.2.1.3"],
+  ["Natural smoke shaft", "At least 1.5 m², no dimension under 0.85 m; vent, head and internal parts at least 1 m²; top 0.5 m above structures within 2 m; at least 2.5 m above the highest ceiling served; closed base; at the remote end of the corridor", "—", "14.2.3.2"],
+  ["Mechanical system in a lobby or corridor (MSVS)", "—", "At least as good as the natural system it replaces (CFD); door force at most 100 N; secondary power; standby fan; shaft to 14.2.3.2 a), f), g), i), j); rate by CFD or calculation", "14.2.4, A.4"]
+];
+$("sumT").innerHTML = "<thead><tr><th>Situation</th><th>Natural ventilation</th><th>Mechanical</th><th>Clause</th></tr></thead><tbody>" + SUM.map(r => "<tr>" + r.map(x => "<td>" + x + "</td>").join("") + "</tr>").join("") + "</tbody>";
+
+const CL = [
+  ["7.5", "Small buildings: no storey above 11 m, no more than three storeys above ground storey, single stair. Stair to car park only with 5 % permanent ventilation or BS 7346-7 mechanical, through a protected ventilated lobby. Stair vent by 1 m² high level vent at each floor, a remote vent at the head, or an AOV at the head."],
+  ["14.1", "Smoke control methods: natural smoke ventilation, mechanical smoke ventilation, pressurization. The system must be maintainable from the common parts. Stay-put buildings need smoke control for the stair."],
+  ["14.1.2", "Small single stair: a) common lobby: 1 m² vent at high level at each floor or at the top, remote; b) no lobby: AOV 1 m² at the top on smoke detection, communal travel at most 4.5 m. Not for open-plan flats."],
+  ["14.1.3", "Over 11 m, single stair: isolate wings with fire doors. Choose a) AOV 1.5 m² in the lobby or corridor next to the stair + AOV 1 m² at the top; b) smoke shaft + AOV 1 m²; c) MSVS + AOV 1 m²; d) pressure differential. Longer travel distances: an MSVS (A.3)."],
+  ["14.1.4", "Multiple stairs: as 14.1.3; outside vents may be manual; the stair head vent opens before or with the fire floor vent; with a shaft, the fire floor vent, shaft head vent and stair vent open together and the others stay closed."],
+  ["14.1.5 / 14.1.6", "Balcony or deck approach: 1 m² vent at the top of the enclosed stair. Lobby or corridor to a car park or higher risk: permanent vent at least 0.4 m² or an MSVS."],
+  ["14.2.1.1", "All fire-fighting shafts need smoke ventilation. Over 30 m: natural shaft, MSVS or pressure differential only. Natural is not suitable for a fire-fighting shaft serving a basement more than 10 m below ground."],
+  ["14.2.1.2", "Above-ground fire-fighting shafts serving flats only: natural. Basement lobbies: 1 m² manual high-level vent, no permanent vents, or an extension of the smoke shaft. Basement smoke shafts discharge at ground level, not by exits or fire and rescue access points, and are covered by a grille or a breakable cover."],
+  ["14.2.1.3.1", "Smoke and heat ventilation from every basement except one with a floor area of 200 m² or less, or a floor not more than 3 m below the adjacent ground. Natural or mechanical."],
+  ["14.2.1.3.2", "Natural outlets: at least 2.5 % of the floor area of each storey; high level in the ceiling or wall; evenly round the perimeter to open air; not prejudicing escape routes. Each compartment has direct access to vents. Grille or louvre if not accessible; breakable panel, stallboard or pavement light if accessible, marked. Separate outlets from places of special fire hazard."],
+  ["14.2.1.3.3", "Powered extract only if the basement is sprinklered (BS EN 12845): ten air changes per hour; 300 °C for at least 60 min; automatic start on sprinklers or detection (BS 5839-1, L3 minimum). Replacement air with an automatic vent; independent power; ductwork and fixings 600 °C for 60 min or the compartment rating if greater; wiring to BS 8519."],
+  ["14.2.1.4", "Car parks: smoke and heat ventilation from every storey to BS 7346-7 (see Approved Document B)."],
+  ["14.2.2", "Vent top close to the ceiling and at least as high as the stair door head (lobby or corridor vents). Manual vents: outward opening, not top-hung, at least 30°, identifiable, lever or rack handle or fire service lock, guarded to 1.1 m. Remote control by the fire and rescue access door with a secondary supply. AOVs to BS EN 12101-2; only the vent at the detecting lobby opens; no sounders on the smoke detectors."],
+  ["14.2.3.1", "A smoke shaft passing through a compartment keeps the compartmentation."],
+  ["14.2.3.2", "Natural shaft: open at the top, closed at the base; top 0.5 m above structures within 2 m; at least 2.5 m above the highest ceiling served; at least 1.5 m², no dimension under 0.85 m; vent, head opening and internal parts at least 1 m²; vent top near the ceiling and not below the stair door head; closed vent 30 min with leakage at most 360 m³/h/m² (BS EN 1366-2); non-combustible, vertical with at most 4 m inclined (30° maximum); no other services; at the remote end of the corridor."],
+  ["14.2.4", "MSVS: shaft by 14.2.3.2 a), f), g), i), j). Conditions at least equal to the natural system replaced (usually CFD). Door opening force at most 100 N at the handle. Secondary power for fans, actuators and controls. Standby fan, automatic change-over."],
+  ["14.3 / 15", "Design, installation, commissioning and maintenance to BS 7346-8. Power, cabling and control protected against fire; cables to BS 8519; secondary supply from another substation, generator, UPS or batteries."],
+  ["24.1.7", "Smoke-sealing fire doors (suffix S): leakage at most 3 m³/h per metre at 25 Pa (BS 476-31.1), or classification Sa to BS EN 1634-3."],
+  ["Annex A", "A.2 methods; A.3 extended corridors: a fire-engineered MSVS (tenability to PD 7974-6); A.4 selection: route of exhaust and replacement air, location of inlet against the extract, two-stage extract with fire-fighter boost, rate decided by CFD or calculation with sensitivity analysis (fire position, door pressures, negative wind at stair head, fire growth; for fire-fighting also door opening sizes, broken window, low-level ventilation to stair)."]
+];
+$("clT").innerHTML = "<thead><tr><th>Clause</th><th>Requirement in short</th></tr></thead><tbody>" + CL.map(r => "<tr><td><b>" + r[0] + "</b></td><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+
+/* ---------- 2.1 stair and lobby vents ---------- */
+const CASES = [
+  { n: "Small building, single stair, common lobby approach", st: 1, lb: null, h: "A 1 m² high-level openable vent at each floor level in the stair, or one 1 m² vent at the stair head operated remotely from fire and rescue access level (14.1.2a). Not for open-plan flat layouts." },
+  { n: "Small building, single stair, no common lobby", st: 1, lb: null, h: "AOV 1 m² at the stair head, opening on smoke anywhere in the stair. Communal travel distance 4.5 m at most, otherwise design as over 11 m (14.1.2b)." },
+  { n: "Over 11 m: AOVs to outside (single or multiple stairs)", st: 1, lb: 1.5, lbn: "Lobby or corridor AOV to outside", h: "AOV 1.5 m² in the corridor or lobby directly next to the stair, as high as practicable, plus AOV 1 m² at the top of the stair (14.1.3a, 14.1.4). With multiple stairs, outside vents may be manual." },
+  { n: "Over 11 m: smoke shaft", st: 1, lb: 1, lbn: "Lobby or corridor vent to the shaft", h: "Vent from the lobby or corridor to a smoke shaft (14.2.3.2), plus AOV 1 m² at the top of the stair (14.1.3b). Check the shaft in 2.2." },
+  { n: "Balcony or deck approach", st: 1, lb: null, h: "Vent 1 m² at the top of any enclosed stair, remotely operated at fire and rescue access level (14.1.5)." },
+  { n: "Lobby or corridor between the stair and a car park or higher-risk area", st: null, lb: 0.4, lbn: "Permanent vent in the lobby or corridor", h: "Permanent ventilation of not less than 0.4 m², or protect the lobby by an MSVS (14.1.6)." },
+  { n: "Fire-fighting lobby at basement level", st: null, lb: 1, lbn: "Manually openable vent at high level", h: "Manually openable vent of 1 m² free area at high level to open air or to a shaft serving only that level. Permanent vents are not allowed (14.2.1.2.1)." }
+];
+$("bcase").innerHTML = CASES.map((c, i) => '<option value="' + i + '">' + c.n + "</option>").join("");
+$("bcase").value = "2";
+
+function hinged(kind, w, h, ang, n) {
+  const L = kind === "top" ? w : h, Sd = kind === "top" ? h : w, th = ang * Math.PI / 180;
+  const full = L * Sd, gap = 2 * Sd * Math.sin(th / 2), side = Sd * Sd * Math.sin(th);
+  const one = Math.min(full, L * gap + side);
+  return { one, n, tot: one * n, full, gap, side, L, Sd, capped: L * gap + side >= full };
+}
+function ventArea(p) {
+  const t = $("vt" + p).value;
+  document.querySelectorAll(".v" + p + "d").forEach(e => e.hidden = t === "area");
+  $("v" + p + "a").hidden = t !== "area";
+  const n = Math.max(1, num("v" + p + "n") || 1);
+  if (t === "area") { const a = num("v" + p + "ar"); return { t, one: a, n, tot: a * n }; }
+  const r = hinged(t, num("v" + p + "w"), num("v" + p + "h"), num("v" + p + "ang"), n);
+  r.t = t; return r;
+}
+let N1 = null;
+function nat1() {
+  const c = CASES[parseInt($("bcase").value)], w = [];
+  $("bcaseH").textContent = c.h;
+  $("stRow").hidden = c.st == null; $("lobRow").hidden = c.lb == null; $("topRow").hidden = !(c.lb != null && c.st != null && c.lb >= 1);
+  $("lobRow").querySelector("label[for=vtL]").textContent = (c.lbn || "Lobby or corridor vent") + ": how entered";
+  const S = c.st != null ? ventArea("S") : null, Lb = c.lb != null ? ventArea("L") : null;
+  let h = "";
+  if (S) { const ok = S.tot >= c.st - 1e-9; h += chk("Stair vent free area", ok, fmt(S.tot, 2) + " m²", (ok ? "meets " : "below ") + fmt(c.st, 1) + " m² minimum"); if (S.t !== "area") h += box("One stair vent, as hinged", fmt(S.one, 2) + " m²", "of " + fmt(S.full, 2) + " m² frame area · estimate"); }
+  if (Lb) { const ok = Lb.tot >= c.lb - 1e-9; h += chk((c.lbn || "Lobby or corridor vent") + ", free area", ok, fmt(Lb.tot, 2) + " m²", (ok ? "meets " : "below ") + fmt(c.lb, 1) + " m² minimum"); if (Lb.t !== "area") h += box("One lobby vent, as hinged", fmt(Lb.one, 2) + " m²", "of " + fmt(Lb.full, 2) + " m² frame area · estimate"); }
+  let top = null;
+  if (!$("topRow").hidden) { const vt = num("vtop"), dh = num("dhead"); if (isFinite(vt) && isFinite(dh)) { top = { vt, dh, ok: vt >= dh - 1e-9 }; h += chk("Top of lobby vent against the stair door head", top.ok, fmt(vt, 2) + " m", (top.ok ? "at or above " : "below ") + fmt(dh, 2) + " m"); } }
+  [S, Lb].forEach(v => { if (v && v.t !== "area" && !(v.tot >= 0)) w.push("Enter the vent width, height and opening angle."); if (v && v.t === "area" && !(v.tot > 0)) w.push("Enter the vent free area."); });
+  [["S", S], ["L", Lb]].forEach(([p, v]) => { if (v && v.t !== "area" && num("v" + p + "ang") < 30) w.push("A manual vent must open to at least 30° (14.2.2.2d).");});
+  warnBox("n1Warn", w);
+  $("n1Res").innerHTML = h;
+  N1 = { c, S, Lb, top };
+}
+
+/* ---------- 2.2 smoke shaft ---------- */
+let N2 = null;
+function nat2() {
+  $("shBox").hidden = !$("shOn").checked; N2 = null;
+  if (!$("shOn").checked) { $("n2Res").innerHTML = ""; warnBox("n2Warn", []); return; }
+  const a = num("sa"), b = num("sb"), hh = num("sh"), st = num("sst"), va = num("sva"), hd = num("shd"), gr = num("sgr"), inc = num("sinc"), ang = num("sang");
+  const area = a * b, mn = Math.min(a, b);
+  let h = "";
+  const row = (k, ok, v, u) => { h += chk(k, ok, v, u); };
+  row("Shaft free area (d)", area >= 1.5 - 1e-9, fmt(area, 2) + " m²", (area >= 1.5 - 1e-9 ? "meets " : "below ") + "1.5 m² minimum");
+  row("Smallest shaft dimension (d)", mn >= 0.85 - 1e-9, fmt(mn, 2) + " m", (mn >= 0.85 - 1e-9 ? "meets " : "below ") + "0.85 m minimum");
+  row("Lobby or corridor vent (e)", va >= 1 - 1e-9, fmt(va, 2) + " m²", (va >= 1 - 1e-9 ? "meets " : "below ") + "1.0 m² minimum");
+  row("Opening at the shaft head (e)", hd >= 1 - 1e-9, fmt(hd, 2) + " m²", (hd >= 1 - 1e-9 ? "meets " : "below ") + "1.0 m² minimum");
+  row("Smallest internal free area (e)", gr >= 1 - 1e-9, fmt(gr, 2) + " m²", (gr >= 1 - 1e-9 ? "meets " : "below ") + "1.0 m² minimum");
+  row("Shaft above the highest ceiling served (c)", hh >= 2.5 - 1e-9, fmt(hh, 2) + " m", (hh >= 2.5 - 1e-9 ? "meets " : "below ") + "2.5 m minimum");
+  row("Top above structures within 2 m (b)", st >= 0.5 - 1e-9, fmt(st, 2) + " m", (st >= 0.5 - 1e-9 ? "meets " : "below ") + "0.5 m minimum");
+  const incOk = !(inc > 0) || (inc <= 4 + 1e-9 && ang <= 30 + 1e-9);
+  row("Inclined part of the shaft (h)", incOk, fmt(inc, 1) + " m at " + fmt(ang, 0) + "°", incOk ? "within 4 m and 30°" : "over 4 m or over 30°");
+  /* indicative stack flow */
+  const H = num("sH"), Ts = num("sTs"), To = num("sTo"), Cd = num("sCd");
+  const Ai = va, Ao = Math.min(hd, gr);
+  let st_ = null;
+  if (Ai > 0 && Ao > 0 && H > 0 && Ts > To && Cd > 0) {
+    const Ae = Ai * Ao / Math.sqrt(Ai * Ai + Ao * Ao), Q = Cd * Ae * Math.sqrt(2 * G * H * (Ts - To) / (To + K0));
+    st_ = { Ai, Ao, Ae, Q, H, Ts, To, Cd };
+    h += box("Effective opening area", fmt(Ae, 2) + " m²", "inlet " + fmt(Ai, 2) + " m² and outlet " + fmt(Ao, 2) + " m² in series");
+    h += box("Indicative stack flow", fmt(Q, 2) + " m³/s", grp(Q * 3600, 0) + " m³/h at smoke temperature · no wind, no friction", "key");
+  }
+  const w = [];
+  if (![a, b, hh, st, va, hd, gr].every(x => x >= 0)) w.push("Enter every shaft dimension and area.");
+  if (!(Ts > To)) w.push("The smoke temperature must be above the outside air temperature for a stack flow.");
+  warnBox("n2Warn", w);
+  $("n2Res").innerHTML = h;
+  N2 = { a, b, area, mn, hh, st, va, hd, gr, inc, ang, st_ };
+}
+
+/* ---------- 2.3 basement natural ---------- */
+let N3 = null;
+function nat3() {
+  const A = num("bA"), D = num("bD"), O = num("bO"), w = [];
+  N3 = null;
+  if (!(A > 0)) { $("n3Res").innerHTML = ""; warnBox("n3Warn", ["Enter the floor area."]); return; }
+  const ex = A <= 200 || D <= 3, req = 0.025 * A, pct = O / A * 100, ok = O >= req - 1e-9;
+  let h = box("Outlet area required, 2.5 %", fmt(req, 2) + " m²", "of " + grp(A, 0) + " m² floor area");
+  h += chk("Outlet area provided", ok, fmt(O, 2) + " m²", fmt(pct, 2) + " % of the floor area · " + (ok ? "meets" : "below") + " 2.5 %");
+  if (ex) w.push("This basement is exempt from a smoke and heat ventilation system: " + (A <= 200 ? "its floor area is 200 m² or less" : "its floor is not more than 3 m below the adjacent ground") + " (14.2.1.3.1). Outlets are still shown for comparison.");
+  if (D > 10) w.push("Natural ventilation is not suitable for a fire-fighting shaft serving a basement more than 10 m below ground (14.2.1.1, note 2).");
+  warnBox("n3Warn", w);
+  $("n3Res").innerHTML = h;
+  N3 = { A, D, O, ex, req, pct, ok };
+}
+
+/* ---------- 3.1 basement mechanical ---------- */
+let M1 = null;
+function mech1() {
+  const A = num("mA"), H = num("mH"), D = num("mD"), ach = num("mACH"), Tg = num("mTg"), Ta = num("mTa"), vd = num("mVd"), vi = num("mVi"), w = [];
+  M1 = null;
+  if (!(A > 0 && H > 0 && ach > 0)) { $("m1Res").innerHTML = ""; warnBox("m1Warn", ["Enter the floor area, clear height and air changes per hour."]); return; }
+  const V = A * H, Q = ach * V, Qs = Q / 3600, hot = (Tg + K0) / (Ta + K0), Qh = Qs * hot;
+  const Ad = vd > 0 ? Qh / vd : NaN, dd = Math.sqrt(4 * Ad / Math.PI), Ai = vi > 0 ? Qs / vi : NaN;
+  const ex = A <= 200 || D <= 3, spr = $("mSpr").checked;
+  let h = box("Basement volume", grp(V, 0), "m³") + box("Extract flow", grp(Q, 0), "m³/h at " + fmt(ach, 1) + " ACH", "key") + box("Extract flow", fmt(Qs, 2), "m³/s · " + grp(Qs * 1000, 0) + " L/s") +
+    box("Flow at the fan, hot", fmt(Qh, 2), "m³/s at " + fmt(Tg, 0) + " °C · × " + fmt(hot, 2) + " if the 10 ACH is at ambient");
+  if (Ad > 0) h += box("Extract duct area", fmt(Ad, 2), "m² at " + fmt(vd, 1) + " m/s on the hot flow · Ø " + fmt(dd * 1000, 0) + " mm round");
+  if (Ai > 0) h += box("Replacement air opening", fmt(Ai, 2), "m² free area at " + fmt(vi, 1) + " m/s");
+  h += chk("Air changes per hour", ach >= 10 - 1e-9, fmt(ach, 1), ach >= 10 - 1e-9 ? "meets ten" : "below ten");
+  h += chk("Sprinklers", spr, spr ? "fitted" : "not fitted", spr ? "BS EN 12845" : "powered extract is not allowed without them");
+  if (ex) w.push("This basement is exempt from a smoke and heat ventilation system: " + (A <= 200 ? "its floor area is 200 m² or less" : "its floor is not more than 3 m below the adjacent ground") + " (14.2.1.3.1).");
+  w.push("BS 9991 does not say whether the ten air changes are measured at ambient or at fire temperature. The hot figure shows the difference; confirm the basis with the fire engineer.");
+  warnBox("m1Warn", w);
+  $("m1Res").innerHTML = h;
+  M1 = { A, H, V, Q, Qs, Tg, Ta, hot, Qh, Ad, dd, Ai, vd, vi, ach, spr, ex };
+}
+
+/* ---------- 3.2 MSVS and door force ---------- */
+let M2 = null;
+function mech2() {
+  const q = num("qM") * parseFloat($("qMu").value), vs = num("mvs"), vr = num("mvr"), Wd = num("dW"), Hd = num("dH"), Fc = num("dF"), d = num("dd"), dP = num("dP"), w = [];
+  M2 = null;
+  if (!(q > 0)) { $("m2Res").innerHTML = ""; warnBox("m2Warn", ["Enter the extract rate from the CFD or calculation."]); return; }
+  const As = vs > 0 ? q / vs : NaN, Ar = vr > 0 ? q / vr : NaN;
+  let h = box("Extract rate", fmt(q, 2) + " m³/s", grp(q * 1000, 0) + " L/s · " + grp(q * 3600, 0) + " m³/h", "key");
+  if (As > 0) h += box("Shaft or duct area", fmt(As, 2) + " m²", "at " + fmt(vs, 1) + " m/s · Ø " + fmt(Math.sqrt(4 * As / Math.PI) * 1000, 0) + " mm round");
+  if (Ar > 0) h += box("Replacement air opening", fmt(Ar, 2) + " m²", "free area at " + fmt(vr, 1) + " m/s");
+  let F = null;
+  if (Wd > 0 && Hd > 0 && Wd > d && isFinite(Fc) && isFinite(dP)) {
+    const Ad = Wd * Hd, F_ = Fc + Wd * Ad * dP / (2 * (Wd - d)), dPmax = Fc < 100 ? 2 * (Wd - d) * (100 - Fc) / (Wd * Ad) : NaN;
+    F = { Ad, F: F_, dPmax, Fc, Wd, Hd, d, dP };
+    h += chk("Force to open the stair door at " + fmt(dP, 0) + " Pa", F_ <= 100 + 1e-9, fmt(F_, 0) + " N", F_ <= 100 + 1e-9 ? "within the 100 N limit" : "over the 100 N limit");
+    h += box("Largest pressure difference for 100 N", isFinite(dPmax) ? fmt(dPmax, 0) + " Pa" : "—", "door " + fmt(Wd, 2) + " × " + fmt(Hd, 2) + " m, closer " + fmt(Fc, 0) + " N");
+    if (Fc >= 100) w.push("The closer force alone is 100 N or more.");
+  } else w.push("Enter the door width, height, closer force, handle distance and pressure difference. The width must exceed the handle distance.");
+  w.push("BS 9991 gives no flow rate for an MSVS. The flow is yours, from CFD or calculation (Annex A.4). This section sizes the shaft and inlet from it and checks the door force.");
+  warnBox("m2Warn", w);
+  $("m2Res").innerHTML = h;
+  M2 = { q, vs, vr, As, Ar, F };
+}
+
+/* ---------- formulae ---------- */
+MX.formula($("fxS1"), ["$A$_{1} = min [ $L$ × $S$ , $L$ · 2 $S$ sin ( @frac{θ}{2} ) + $S$^{2} sin θ ]", "$A$ = $n$ · $A$_{1}"]);
+MX.defs($("fxSD1"), [["$L$", "length of the hinged edge, m (the width of a bottom or top hung vent, the height of a side hung one)"], ["$S$", "the other dimension, m (the way the vent swings)"], ["θ", "opening angle, °"], ["$n$", "number of vents"], ["$A$", "geometric free area estimate, m². The tested aerodynamic free area of the vent to BS EN 12101-2 is what a design uses"]]);
+MX.formula($("fxS2"), ["$A$_{out} = 0.025 × $A$_{floor}", "$Q$ = $ACH$ × $A$_{floor} × $H$ / 3600", "$Q$_{hot} = $Q$ × @frac{$T$_{g} + 273.15}{$T$_{a} + 273.15}"]);
+MX.defs($("fxSD2"), [["$A$_{out}", "smoke outlet free area for natural venting, m²"], ["$ACH$", "air changes per hour, 10 for powered basement extract"], ["$Q$", "extract flow, m³/s"], ["$Q$_{hot}", "the same mass flow as volume at gas temperature $T$_{g}, if the ten changes are counted at ambient"]]);
+MX.formula($("fxS3"), ["$A$ = @frac{$Q$}{$v$}", "$d$ = √( @frac{4 $A$}{π} )"]);
+MX.defs($("fxSD3"), [["$A$", "duct, shaft or opening area, m²"], ["$v$", "velocity chosen by the designer, m/s"], ["$d$", "diameter of a round duct of that area, m"]]);
+MX.formula($("fxS4"), ["$F$ = $F$_{dc} + @frac{$W$ · $A$ · Δ$P$}{2 ( $W$ − $d$ )}", "Δ$P$_{max} = @frac{2 ( $W$ − $d$ ) ( 100 − $F$_{dc} )}{$W$ · $A$}"]);
+MX.defs($("fxSD4"), [["$F$", "force at the handle to open the door, N (BS 9991 limit 100 N)"], ["$F$_{dc}", "force to overcome the door closer with no pressure, N"], ["$W$, $A$", "door width, m, and door area, m²"], ["$d$", "distance from the handle to the edge of the door, m"], ["Δ$P$", "pressure difference across the door, Pa"]]);
+MX.formula($("fxS5"), ["$A$_{e} = @frac{$A$_{i} $A$_{o}}{√( $A$_{i}^{2} + $A$_{o}^{2} )}", "$Q$ = $C$_{d} $A$_{e} √( @frac{2 $g$ $H$ ( $T$_{s} − $T$_{o} )}{$T$_{o}} )"]);
+MX.defs($("fxSD5"), [["$A$_{i}, $A$_{o}", "inlet (lobby vent) and outlet (smallest of head opening and internal area), m²"], ["$H$", "height from the lobby vent to the top of the shaft, m"], ["$T$_{s}, $T$_{o}", "smoke and outside temperatures, K"], ["$C$_{d}", "discharge coefficient, about 0.6"], ["$Q$", "volume flow at smoke temperature, m³/s. Indicative: no wind, friction or fire pressure"]]);
+
+function working() {
+  const s = [];
+  if (N1 && N1.S) { const S = N1.S; s.push({ t: "Stair vent", m: S.t === "area" ? ["$A$ = " + fmt(S.n, 0) + " × " + fmt(S.one, 2) + " = **" + fmt(S.tot, 2) + " m²**"] : ["$A$_{1} = min[" + fmt(S.full, 2) + ", " + fmt(S.L, 2) + " × " + fmt(S.gap, 2) + " + " + fmt(S.side, 2) + "] = " + fmt(S.one, 2) + " m²", "$A$ = " + fmt(S.n, 0) + " × " + fmt(S.one, 2) + " = **" + fmt(S.tot, 2) + " m²**"], n: "Required " + fmt(N1.c.st, 1) + " m²." }); }
+  if (N1 && N1.Lb) { const S = N1.Lb; s.push({ t: "Lobby or corridor vent", m: S.t === "area" ? ["$A$ = " + fmt(S.n, 0) + " × " + fmt(S.one, 2) + " = **" + fmt(S.tot, 2) + " m²**"] : ["$A$_{1} = min[" + fmt(S.full, 2) + ", " + fmt(S.L, 2) + " × " + fmt(S.gap, 2) + " + " + fmt(S.side, 2) + "] = " + fmt(S.one, 2) + " m²", "$A$ = " + fmt(S.n, 0) + " × " + fmt(S.one, 2) + " = **" + fmt(S.tot, 2) + " m²**"], n: "Required " + fmt(N1.c.lb, 1) + " m²." }); }
+  if (N2) { s.push({ t: "Smoke shaft", m: ["Shaft area = " + fmt(N2.a, 2) + " × " + fmt(N2.b, 2) + " = **" + fmt(N2.area, 2) + " m²** (at least 1.5), smallest side " + fmt(N2.mn, 2) + " m (at least 0.85)"] });
+    if (N2.st_) s.push({ t: "Indicative stack flow", m: ["$A$_{e} = " + fmt(N2.st_.Ai, 2) + " × " + fmt(N2.st_.Ao, 2) + " / √(" + fmt(N2.st_.Ai, 2) + "² + " + fmt(N2.st_.Ao, 2) + "²) = " + fmt(N2.st_.Ae, 3) + " m²", "$Q$ = " + fmt(N2.st_.Cd, 2) + " × " + fmt(N2.st_.Ae, 3) + " × √(2 × 9.807 × " + fmt(N2.st_.H, 1) + " × " + fmt(N2.st_.Ts - N2.st_.To, 0) + " / " + fmt(N2.st_.To + K0, 1) + ") = **" + fmt(N2.st_.Q, 2) + " m³/s**"] }); }
+  if (N3) s.push({ t: "Basement natural outlets", m: ["$A$_{out} = 0.025 × " + grp(N3.A, 0) + " = **" + fmt(N3.req, 2) + " m²**; provided " + fmt(N3.O, 2) + " m² = " + fmt(N3.pct, 2) + " %"] });
+  if (M1) { s.push({ t: "Basement extract flow", m: ["$V$ = " + grp(M1.A, 0) + " × " + fmt(M1.H, 2) + " = " + grp(M1.V, 0) + " m³", "$Q$ = " + fmt(M1.ach, 1) + " × " + grp(M1.V, 0) + " / 3600 = **" + fmt(M1.Qs, 3) + " m³/s** = " + grp(M1.Q, 0) + " m³/h"] });
+    s.push({ t: "Hot flow and ducts", m: ["$Q$_{hot} = " + fmt(M1.Qs, 3) + " × (" + fmt(M1.Tg, 0) + " + 273.15)/(" + fmt(M1.Ta, 0) + " + 273.15) = **" + fmt(M1.Qh, 3) + " m³/s**", "Duct area = " + fmt(M1.Qh, 3) + " / " + fmt(M1.vd, 1) + " = " + fmt(M1.Ad, 2) + " m²; inlet = " + fmt(M1.Qs, 3) + " / " + fmt(M1.vi, 1) + " = " + fmt(M1.Ai, 2) + " m²"] }); }
+  if (M2) { s.push({ t: "MSVS shaft and inlet", m: ["Shaft area = " + fmt(M2.q, 3) + " / " + fmt(M2.vs, 1) + " = **" + fmt(M2.As, 2) + " m²**", "Inlet area = " + fmt(M2.q, 3) + " / " + fmt(M2.vr, 1) + " = **" + fmt(M2.Ar, 2) + " m²**"] });
+    if (M2.F) s.push({ t: "Door force", m: ["$A$ = " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Hd, 2) + " = " + fmt(M2.F.Ad, 2) + " m²", "$F$ = " + fmt(M2.F.Fc, 0) + " + " + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Ad, 2) + " × " + fmt(M2.F.dP, 0) + " / (2 × (" + fmt(M2.F.Wd, 2) + " − " + fmt(M2.F.d, 2) + ")) = **" + fmt(M2.F.F, 0) + " N**", "Δ$P$_{max} = 2 × (" + fmt(M2.F.Wd, 2) + " − " + fmt(M2.F.d, 2) + ") × (100 − " + fmt(M2.F.Fc, 0) + ") / (" + fmt(M2.F.Wd, 2) + " × " + fmt(M2.F.Ad, 2) + ") = **" + fmt(M2.F.dPmax, 0) + " Pa**"] }); }
+  MX.steps($("workS"), s, "Enter values in sections 2 and 3 to see the working.");
+}
+
+/* ---------- installation drawings ---------- */
+const SMK = "#7a7068", AIR = "#2f6f6b", FIRE = "#b4492f", INK = "var(--ink)";
+const H_ = {
+  defs: '<defs><pattern id="ht" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#8a7f6c" stroke-width="1.6"/></pattern>' +
+    '<pattern id="er" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#b9ad94"/><circle cx="6.5" cy="6.5" r="1" fill="#b9ad94"/></pattern>' +
+    ["ar:" + INK, "as:" + FIRE, "aa:" + AIR].map(x => { const [i, c] = x.split(":"); return '<marker id="' + i + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="' + c + '"/></marker>'; }).join("") + "</defs>",
+  r: (x, y, w, h, o) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" ' + (o || 'fill="none" stroke="' + INK + '"') + "/>",
+  l: (x1, y1, x2, y2, o) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" ' + (o || 'stroke="' + INK + '" stroke-width="1.4"') + "/>",
+  t: (x, y, s, o) => '<text x="' + x + '" y="' + y + '" font-size="12" ' + (o || 'text-anchor="middle"') + ">" + s + "</text>",
+  c: (n, x, y, tx, ty) => (tx != null ? '<line x1="' + x + '" y1="' + y + '" x2="' + tx + '" y2="' + ty + '" stroke="' + INK + '" stroke-width="1.2"/>' : "") + '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + INK + '"/><text x="' + x + '" y="' + (y + 4.5) + '" font-size="12.5" font-weight="700" text-anchor="middle" fill="#f7f1e4" style="fill:#f7f1e4">' + n + "</text>",
+  slab: (x, y, w) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="8" fill="url(#ht)" stroke="' + INK + '"/>',
+  wall: (x, y, h) => '<rect x="' + x + '" y="' + y + '" width="8" height="' + h + '" fill="url(#ht)" stroke="' + INK + '"/>',
+  smoke: (x, y, w, h) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + SMK + '" opacity=".38"/>',
+  arr: (x1, y1, x2, y2, id, c) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + c + '" stroke-width="2.4" marker-end="url(#' + id + ')"/>',
+  dim: (x1, y1, x2, y2) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + INK + '" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>',
+  flame: (x, y) => '<path d="M' + x + ',' + y + ' c-14,-4 -12,-20 -2,-30 c0,8 6,10 8,4 c6,10 10,20 -6,26 z" fill="' + FIRE + '"/>',
+  fan: (x, y, r) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="var(--panel)" stroke="' + INK + '" stroke-width="1.4"/><path d="M' + (x - r * .7) + ',' + (y - r * .7) + ' L' + (x + r * .7) + ',' + (y + r * .7) + ' M' + (x + r * .7) + ',' + (y - r * .7) + ' L' + (x - r * .7) + ',' + (y + r * .7) + '" stroke="' + INK + '" stroke-width="1.4"/>'
+};
+
+function g1() {
+  const yF = [410, 320, 230, 140], X = 70;
+  let s = H_.defs + H_.r(0, 0, 760, 450, 'fill="var(--panel)" stroke="none"');
+  s += H_.r(40, 410, 690, 30, 'fill="url(#er)" stroke="' + INK + '"');
+  yF.slice(1).forEach(y => s += H_.slab(70, y, 650)); s += H_.slab(70, 42, 650);
+  [70, 262, 470, 712].forEach(x => s += H_.wall(x, 42, 368));
+  /* stair flights */
+  yF.forEach(y => { s += H_.l(90, y, 245, y - 45, 'stroke="#6f6657" stroke-width="1.2"') + H_.l(245, y - 45, 90, y - 90, 'stroke="#6f6657" stroke-width="1.2"'); });
+  /* doors */
+  yF.forEach((y, i) => { s += H_.r(262, y - 62, 8, 62, 'fill="#fffdf7" stroke="' + INK + '" stroke-width="2"'); if (i === 1) s += H_.l(478, y, 520, y - 52, 'stroke="' + INK + '" stroke-width="3"'); else s += H_.r(470, y - 62, 8, 62, 'fill="#fffdf7" stroke="' + INK + '" stroke-width="2"'); });
+  /* fire storey smoke */
+  s += H_.smoke(478, 238, 234, 46) + H_.smoke(270, 238, 200, 46) + H_.flame(600, 320) + H_.flame(640, 320);
+  s += H_.arr(470, 262, 410, 252, "as", FIRE);
+  /* lobby AOV (in external wall behind the section) */
+  s += H_.r(330, 240, 80, 24, 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-dasharray="5 3"') + '<circle cx="370" cy="252" r="9" fill="none" stroke="' + FIRE + '" stroke-width="2"/><circle cx="370" cy="252" r="2.6" fill="' + FIRE + '"/>';
+  s += H_.t(370, 296, "to outside", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  /* closed AOVs on other floors */
+  [0, 2, 3].forEach(i => { const y = yF[i + 1] !== undefined && i === 3 ? 50 : yF[i + 1] + 8; if (i !== 3) s += H_.r(330, y + 2, 80, 22, 'fill="url(#ht)" stroke="' + INK + '"'); else s += H_.r(330, 50, 80, 22, 'fill="url(#ht)" stroke="' + INK + '"'); });
+  /* detector */
+  s += '<circle cx="300" cy="244" r="5" fill="' + INK + '"/>' + H_.l(300, 249, 300, 262, 'stroke="' + INK + '" stroke-dasharray="2 2"');
+  /* stair head AOV */
+  s += H_.r(130, 40, 80, 10, 'fill="var(--panel)" stroke="' + INK + '" stroke-width="2"') + H_.l(210, 42, 236, 20, 'stroke="' + INK + '" stroke-width="3"') + H_.arr(170, 38, 170, 8, "as", FIRE);
+  /* fire and rescue access + remote */
+  s += H_.arr(10, 380, 66, 380, "ar", INK) + H_.r(14, 322, 40, 30, 'fill="#fffdf7" stroke="' + INK + '"') + H_.t(34, 342, "REMOTE", 'text-anchor="middle" font-size="9"') +
+    '<polyline points="34,322 34,26 140,26 150,40" fill="none" stroke="' + INK + '" stroke-dasharray="4 3" stroke-width="1.3"/>';
+  /* blocked smoke */
+  s += H_.t(255, 262, "✕", 'text-anchor="end" font-size="14" fill="' + FIRE + '" style="fill:' + FIRE + '"');
+  /* labels */
+  s += H_.t(170, 436, "Stair", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(370, 436, "Lobby or corridor", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(595, 436, "Flat on the fire storey", 'text-anchor="middle" font-size="12" style="font-weight:700"');
+  s += H_.r(490, 56, 90, 34, 'fill="#fffdf7" stroke="' + INK + '"') + H_.t(535, 70, "SECONDARY", 'text-anchor="middle" font-size="9"') + H_.t(535, 82, "SUPPLY", 'text-anchor="middle" font-size="9"') + '<polyline points="490,73 410,73 410,60" fill="none" stroke="' + INK + '" stroke-dasharray="4 3" stroke-width="1.3"/>';
+  s += H_.r(70, 236, 8, 32, 'fill="var(--panel)" stroke="' + INK + '" stroke-width="2"') + H_.l(70, 236, 52, 226, 'stroke="' + INK + '" stroke-width="2.4"');
+  s += H_.c(1, 370, 214, 370, 240) + H_.c(2, 170, 66) + H_.c(3, 318, 218, 301, 241) + H_.c(4, 285, 190, 266, 215) + H_.c(5, 34, 306) + H_.c(6, 590, 106, 570, 80) + H_.c(7, 40, 204, 66, 250);
+  return s;
+}
+function g2() {
+  const yF = [400, 300, 200], sx = 560;
+  let s = H_.defs + H_.r(0, 0, 760, 500, 'fill="var(--panel)" stroke="none"') + '<g transform="translate(0,48)">';
+  s += H_.slab(60, 400, 500);
+  [300, 200].forEach(y => { s += H_.slab(60, y, 500) + H_.slab(640, y, 80); }); s += H_.slab(60, 100, 500) + H_.slab(640, 100, 80);
+  /* shaft */
+  s += H_.wall(560, 18, 392) + H_.wall(632, 18, 392) + H_.r(560, 410, 80, 14, 'fill="url(#ht)" stroke="' + INK + '"') + H_.t(600, 444, "closed at the base", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  s += H_.r(568, 14, 64, 4, 'fill="none" stroke="none"') + H_.l(560, 18, 640, 18, 'stroke="' + INK + '" stroke-width="3" stroke-dasharray="6 4"');
+  /* structure and 2 m radius */
+  s += H_.r(430, 56, 80, 44, 'fill="url(#ht)" stroke="' + INK + '"') + H_.t(470, 82, "plant", 'text-anchor="middle" font-size="11" style="fill:var(--ink)"') +
+    '<circle cx="600" cy="18" r="72" fill="none" stroke="' + INK + '" stroke-dasharray="3 4" stroke-width="1"/>' + H_.t(676, 24, "2 m radius", 'text-anchor="start" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  s += H_.dim(520, 56, 520, 18) + H_.dim(730, 108, 730, 18);
+  /* stair at left, doors */
+  [400, 300, 200].forEach((y, i) => { s += H_.r(120, y - 76, 8, 76, 'fill="#fffdf7" stroke="' + INK + '" stroke-width="2"'); });
+  s += H_.wall(60, 100, 310) + H_.t(95, 444, "Stair", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(340, 444, "Lobby or corridor", 'text-anchor="middle" font-size="12" style="font-weight:700"');
+  /* door head line */
+  s += H_.l(128, 224, 556, 224, 'stroke="' + INK + '" stroke-dasharray="6 4" stroke-width="1"') + H_.t(180, 218, "stair door head", 'text-anchor="start" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  /* vents */
+  s += H_.r(555, 108, 10, 28, 'fill="url(#ht)" stroke="' + INK + '"') + H_.l(560, 208, 578, 232, 'stroke="' + FIRE + '" stroke-width="3"') + H_.r(555, 308, 10, 28, 'fill="url(#ht)" stroke="' + INK + '"');
+  /* smoke on fire storey */
+  s += H_.smoke(190, 208, 370, 40) + H_.flame(300, 300) + H_.arr(540, 224, 590, 224, "as", FIRE) + H_.arr(600, 200, 600, 50, "as", FIRE);
+  s += H_.l(568, 300, 632, 300, 'stroke="#8a7f6c" stroke-dasharray="3 3"');
+  s += H_.c(1, 600, 150) + H_.c(2, 666, 18, 640, 18) + H_.c(3, 496, 36) + H_.c(4, 706, 62) + H_.c(5, 536, 246, 556, 224) + H_.c(6, 360, 214, 360, 224) + H_.c(7, 536, 346, 556, 326) + H_.c(8, 600, 365) + H_.c(9, 600, 270) + H_.t(400, 150, "remote end of the corridor", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"') + H_.c(10, 480, 160, 540, 160) + H_.c(11, 680, 305, 640, 304);
+  return s + "</g>";
+}
+function g3() {
+  const yF = [420, 335, 250, 165];
+  let s = H_.defs + H_.r(0, 0, 760, 450, 'fill="var(--panel)" stroke="none"');
+  s += H_.r(40, 420, 520, 26, 'fill="url(#er)" stroke="' + INK + '"');
+  yF.slice(1).forEach(y => s += H_.slab(70, y, 468)); s += H_.slab(70, 80, 468);
+  [70, 262, 470, 530].forEach(x => s += H_.wall(x, 80, 340));
+  yF.forEach(y => { s += H_.l(90, y, 245, y - 42, 'stroke="#6f6657" stroke-width="1.2"') + H_.l(245, y - 42, 90, y - 84, 'stroke="#6f6657" stroke-width="1.2"'); s += H_.r(262, y - 62, 8, 62, 'fill="#fffdf7" stroke="' + INK + '" stroke-width="2"'); });
+  /* extract dampers into the shaft */
+  [0, 2, 3].forEach(i => { const y = (i === 3 ? 88 : yF[i + 1] + 8); s += H_.r(466, y + 2, 12, 26, 'fill="url(#ht)" stroke="' + INK + '"'); });
+  s += H_.r(466, yF[2] + 8 + 2, 12, 26, 'fill="none" stroke="' + FIRE + '" stroke-width="2.4"');
+  s += H_.smoke(270, 260, 200, 34) + H_.arr(430, 275, 500, 275, "as", FIRE) + H_.arr(500, 255, 500, 52, "as", FIRE);
+  s += '<circle cx="320" cy="264" r="5" fill="' + INK + '"/>';
+  /* fan set on roof */
+  s += H_.r(456, 36, 100, 44, 'fill="var(--panel)" stroke="' + INK + '" stroke-width="2"') + H_.fan(484, 58, 14) + H_.fan(530, 58, 14) + H_.t(484, 30, "duty", 'text-anchor="middle" font-size="11"') + H_.t(530, 30, "standby", 'text-anchor="middle" font-size="11"') + H_.arr(507, 36, 507, 6, "as", FIRE);
+  /* secondary power */
+  s += H_.r(300, 40, 100, 34, 'fill="#fffdf7" stroke="' + INK + '"') + H_.t(350, 55, "SECONDARY", 'text-anchor="middle" font-size="10"') + H_.t(350, 68, "SUPPLY", 'text-anchor="middle" font-size="10"') + '<polyline points="400,57 456,57" fill="none" stroke="' + INK + '" stroke-dasharray="4 3" stroke-width="1.4"/>';
+  /* replacement air */
+  s += H_.arr(10, 400, 66, 400, "aa", AIR) + H_.arr(170, 395, 170, 120, "aa", AIR) + H_.r(130, 78, 80, 10, 'fill="var(--panel)" stroke="' + INK + '" stroke-width="2"') + H_.l(210, 80, 236, 58, 'stroke="' + INK + '" stroke-width="3"');
+  /* panel and boost */
+  s += H_.r(88, 348, 44, 36, 'fill="#fffdf7" stroke="' + INK + '"') + H_.t(110, 362, "PANEL", 'text-anchor="middle" font-size="9"') + H_.t(110, 375, "BOOST", 'text-anchor="middle" font-size="9"');
+  s += H_.t(240, 316, "≤ 100 N", 'text-anchor="end" font-size="11" style="font-weight:700"');
+  s += H_.t(170, 440, "Stair", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(370, 440, "Lobby or corridor", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(500, 440, "Shaft", 'text-anchor="middle" font-size="12" style="font-weight:700"');
+  s += H_.c(1, 440, 232, 468, 262) + H_.c(2, 580, 58, 556, 58) + H_.c(3, 286, 57, 300, 57) + H_.c(4, 40, 380) + H_.c(5, 170, 112) + H_.c(6, 285, 330, 262, 310) + H_.c(8, 110, 326, 110, 348) + H_.c(11, 428, 40, 428, 56);
+  s += H_.r(560, 110, 196, 128, 'fill="#fffdf7" stroke="' + INK + '"');
+  [[7, 130, "Equal to or better than", "the natural system (CFD)"], [9, 174, "Rate by CFD or calculation;", "BS 9991 gives no figure"], [10, 218, "Design and commissioning", "to BS 7346-8"]].forEach(r => { s += H_.c(r[0], 580, r[1]) + H_.t(596, r[1] - 2, r[2], 'text-anchor="start" font-size="10.5"') + H_.t(596, r[1] + 12, r[3], 'text-anchor="start" font-size="10.5"'); });
+  return s;
+}
+function g4() {
+  let s = H_.defs + H_.r(0, 0, 760, 450, 'fill="var(--panel)" stroke="none"');
+  s += H_.l(380, 20, 380, 440, 'stroke="#8a7f6c" stroke-dasharray="4 4"') + H_.t(190, 22, "NATURAL", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(480, 22, "MECHANICAL", 'text-anchor="middle" font-size="12" style="font-weight:700"') + H_.t(400, 44, "sprinklered basements only", 'text-anchor="start" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  [0, 380].forEach(o => {
+    s += H_.r(o + 10, 150, 350, 240, 'fill="url(#er)" stroke="none"');
+    s += H_.r(o + 78, 158, 224, 172, 'fill="var(--panel)" stroke="none"') + H_.wall(o + 70, 150, 188) + H_.wall(o + 302, 150, 188) + H_.slab(o + 70, 150, 240) + H_.slab(o + 70, 330, 240);
+    s += H_.l(o + 10, 150, o + 70, 150, 'stroke="' + INK + '" stroke-width="2"') + H_.l(o + 310, 150, o + 360, 150, 'stroke="' + INK + '" stroke-width="2"');
+    s += H_.r(o + 100, 70, 180, 80, 'fill="none" stroke="#8a7f6c" stroke-dasharray="5 4"') + H_.t(o + 190, 114, "building above", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+    s += H_.smoke(o + 78, 158, 224, 38) + H_.flame(o + 190, 330);
+    s += H_.arr(o + 6, 316, o + 70, 316, "aa", AIR);
+  });
+  /* natural outlets */
+  s += H_.r(70, 160, 8, 30, 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-dasharray="3 2"') + H_.r(302, 160, 8, 30, 'fill="none" stroke="' + INK + '" stroke-width="2" stroke-dasharray="3 2"');
+  s += '<polyline points="74,175 40,175 40,156" fill="none" stroke="' + FIRE + '" stroke-width="2.4" marker-end="url(#as)"/><polyline points="306,175 340,175 340,156" fill="none" stroke="' + FIRE + '" stroke-width="2.4" marker-end="url(#as)"/>';
+  s += H_.r(28, 144, 24, 8, 'fill="url(#ht)" stroke="' + INK + '"') + H_.r(328, 144, 24, 8, 'fill="url(#ht)" stroke="' + INK + '"');
+  s += H_.t(190, 250, "basement", 'text-anchor="middle" font-size="12"') + H_.t(190, 266, "2.5 % of floor area, spread round", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"') + H_.t(190, 280, "the perimeter, high level", 'text-anchor="middle" font-size="11" fill="#5a5348" style="fill:#5a5348"');
+  /* mechanical */
+  s += H_.t(570, 250, "basement", 'text-anchor="middle" font-size="12"');
+  s += H_.l(470, 168, 640, 168, 'stroke="#6f6657" stroke-width="1.2"') + [480, 505, 530, 555, 580, 605, 630].map(x => H_.l(x, 168, x, 176, 'stroke="#6f6657" stroke-width="1.6"')).join("");
+  s += H_.r(626, 70, 24, 98, 'fill="none" stroke="' + INK + '" stroke-width="2.4"') + H_.r(606, 34, 64, 34, 'fill="var(--panel)" stroke="' + INK + '" stroke-width="2"') + H_.fan(638, 51, 11) + H_.arr(638, 34, 638, 12, "as", FIRE);
+  s += H_.arr(600, 188, 628, 150, "as", FIRE);
+  s += H_.r(690, 36, 56, 34, 'fill="#fffdf7" stroke="' + INK + '"') + H_.t(718, 50, "OWN", 'text-anchor="middle" font-size="9"') + H_.t(718, 62, "SUPPLY", 'text-anchor="middle" font-size="9"') + '<polyline points="690,53 670,53" fill="none" stroke="' + INK + '" stroke-dasharray="4 3" stroke-width="1.4"/>';
+  s += '<circle cx="520" cy="188" r="5" fill="' + INK + '"/>';
+  s += H_.c(1, 190, 214) + H_.c(2, 112, 214, 76, 185) + H_.c(3, 336, 120, 330, 160) + H_.c(4, 28, 300) + H_.c(5, 40, 112, 40, 144) + H_.c(6, 300, 300);
+  s += H_.c(7, 500, 214, 520, 172) + H_.c(8, 410, 336) + H_.c(9, 718, 100, 718, 70) + H_.c(10, 674, 110, 650, 110);
+  return s;
+}
+const FIG = [
+  { k: "g1", n: "Stair and lobby AOVs", f: g1, title: "Points to watch: AOVs to the outside (over 11 m)", list: [
+    ["AOV in the lobby or corridor next to the stair: at least 1.5 m² free area, to the outside, as high as practicable. Its top at least as high as the stair door head.", "14.1.3a, 14.2.2.1"],
+    ["AOV at the top of the stair: at least 1 m², as high as practicable. It opens together with the vent of the lobby that has detected smoke.", "14.1.3, 14.2.2.4"],
+    ["Smoke detector in the lobby or corridor operates the vents. Its purpose is to run the smoke control, not to raise an alarm: no sounders on these detectors unless the building is evacuated together.", "14.2.2.4"],
+    ["Only the AOV of the lobby that detected smoke opens. Every other lobby vent stays shut, and the fire service override must not open several at once. The door to the stair is a smoke-resisting fire door and stays shut.", "14.2.2.4, 24.1.7"],
+    ["Remote control beside the fire and rescue access door, clearly marked, able to open and close the vent. Connections between the control and the vent are protected from the fire.", "14.2.2.3, 14.2.2.4"],
+    ["Secondary power supply for any electrically powered part. Cables and controls kept in an environment protected from fire (BS 8519).", "14.2.2.4, 15"],
+    ["Manual vents, where allowed: outward opening, not top-hung, open at least 30°, lever or rack handle or fire service lock, guarded to 1.1 m. The system must be reachable for maintenance from the common parts.", "14.2.2.2, 14.1.1"]
+  ] },
+  { k: "g2", n: "Natural smoke shaft", f: g2, vb: "0 0 760 500", title: "Points to watch: natural smoke shaft", list: [
+    ["Free area of the shaft at least 1.5 m², and no dimension under 0.85 m.", "14.2.3.2d"],
+    ["Shaft fully open to the air at the top, closed at the base.", "14.2.3.2a"],
+    ["Shaft top at least 0.5 m above any structure within a 2 m radius, so that the wind always gives it a suction.", "14.2.3.2b"],
+    ["Shaft carried at least 2.5 m above the ceiling of the highest storey it serves.", "14.2.3.2c"],
+    ["Lobby or corridor vent, the opening at the shaft head and every internal restriction (such as a safety grille) at least 1.0 m² free area.", "14.2.3.2e"],
+    ["Top of the lobby vent close to the ceiling and at least as high as the top of the stair door.", "14.2.3.2f"],
+    ["Lobby vents, when closed, resist fire and smoke for 30 minutes with leakage of at most 360 m³/h per m² (BS EN 1366-2). Only the fire floor vent, the shaft head and the stair vent open.", "14.2.3.2g, 14.1.4"],
+    ["Non-combustible shaft, run vertically; no more than 4 m of it inclined, and not more than 30°.", "14.2.3.2h"],
+    ["No services in the shaft other than those for the smoke system.", "14.2.3.2i"],
+    ["Shaft at the remote end of the corridor, away from the stair.", "14.2.3.2j"],
+    ["Where the shaft passes through a fire compartment it keeps the compartmentation it breaches.", "14.2.3.1"]
+  ] },
+  { k: "g3", n: "Mechanical (MSVS)", f: g3, title: "Points to watch: mechanical smoke ventilation (MSVS)", list: [
+    ["Extract at the lobby or corridor next to the stair, usually through a shaft. The shaft follows the natural shaft rules for open top, vent height, closed vent leakage, no other services and the remote end position.", "14.1.3c, 14.2.4"],
+    ["Fan set with a standby fan that starts by itself if the duty fan fails.", "14.2.4"],
+    ["Secondary power to the fans, actuators and controls, from another substation, generator, UPS or batteries.", "14.2.4, 15"],
+    ["Replacement air must come in at a place that works with the extract: avoid dead spots, and do not pull smoke from the flat of origin into the lobby.", "A.3, A.4"],
+    ["AOV of at least 1 m² at the top of the stair.", "14.1.3c"],
+    ["Keep pressure differences low enough that the door opening force is no more than 100 N at the handle.", "14.2.4"],
+    ["Show conditions in the lobby and stair equal to or better than the natural system it replaces, usually by comparative CFD.", "14.2.4"],
+    ["Consider two-stage extract with a fire-fighter’s boost switch. Only the responsible fire-fighting team should be able to change the rate.", "A.4"],
+    ["The extract rate is decided by CFD or calculation with a sensitivity study: fire close to and far from the extract, door pressures, a negative wind at the stair head, fire growth. BS 9991 gives no figure.", "A.4"],
+    ["Design, install, commission and maintain to BS 7346-8.", "14.3"],
+    ["Power and control cables protected against fire (BS 8519).", "15"]
+  ] },
+  { k: "g4", n: "Basement", f: g4, title: "Points to watch: basement smoke and heat ventilation", list: [
+    ["Natural: smoke outlets of at least 2.5 % of the floor area of each storey.", "14.2.1.3.2a"],
+    ["Outlets at the highest level practicable, in the ceiling or wall of the space served. Each compartment has direct access to vents, without opening a door into another compartment.", "14.2.1.3.2b"],
+    ["Outlets spread round the perimeter and discharging to open air outside the building.", "14.2.1.3.2c"],
+    ["Outlets must not prevent the use of escape routes. Basement smoke shafts do not discharge by the building exits or fire and rescue access points.", "14.2.1.3.2d, 14.2.1.2.2"],
+    ["Where an outlet is out of reach it carries only a non-combustible grille or louvre. Where it is reachable it may carry a breakable panel, stallboard or pavement light, and is marked.", "14.2.1.3.2"],
+    ["Not needed for a basement of 200 m² or less, or with its floor not more than 3 m below the adjacent ground.", "14.2.1.3.1"],
+    ["Powered extract only if the basement is sprinklered (BS EN 12845): ten air changes per hour; fans for 300 °C for 60 minutes; start by the sprinklers or by detection (BS 5839-1, L3 at least).", "14.2.1.3.3"],
+    ["Replacement air, with the vent opening automatically on the same trigger as the extract.", "14.2.1.3.3"],
+    ["Independent power supply that works if the mains fails. Wiring to BS 8519.", "14.2.1.3.3"],
+    ["Ductwork and fixings for 600 °C for 60 minutes, or the fire resistance of any compartment boundary it crosses if that is greater.", "14.2.1.3.3"]
+  ] }
+];
+let fig = 0;
+function drawFig() {
+  $("gtabs").innerHTML = FIG.map((f, i) => '<button type="button" data-i="' + i + '" class="' + (i === fig ? "on" : "") + '">' + f.n + "</button>").join("");
+  const f = FIG[fig];
+  $("gsvg").setAttribute("viewBox", f.vb || "0 0 760 450");
+  $("gsvg").innerHTML = f.f();
+  $("gTitle").textContent = f.title;
+  $("gList").innerHTML = f.list.map(x => "<li>" + x[0] + ' <span class="cl">(' + x[1] + ")</span></li>").join("");
+}
+$("gtabs").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) { fig = parseInt(b.dataset.i); drawFig(); } });
+
+function all() { nat1(); nat2(); nat3(); mech1(); mech2(); working(); }
+document.querySelectorAll("input,select").forEach(e => { e.addEventListener("input", all); e.addEventListener("change", all); });
+drawFig(); all();
+})();
+</script>
+</body>
+</html>

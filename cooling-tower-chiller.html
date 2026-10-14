@@ -334,6 +334,19 @@ h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px s
 p.grpsub { margin:2px 0 0 13px; }
 .step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
 .step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
 </style>
 </head>
 <body>
@@ -363,6 +376,8 @@ p.grpsub { margin:2px 0 0 13px; }
   <a href="chiller-efficiency.html"><span>XVI</span>Chiller efficiency</a>
   <a href="feed-expansion-tank.html"><span>XVII</span>Feed and expansion tank</a>
   <a href="layer-stack-u-factor.html"><span>XVIII</span>Assembly U-factor</a>
+  <a href="air-change-rate.html"><span>XIX</span>Air change rate</a>
+  <a href="smoke-extraction.html"><span>XX</span>Smoke extraction</a>
   </nav>
 
 <p class="lead">Works out the heat a cooling tower rejects, how the range and the water temperatures move when you change the flow or load, and how much water it evaporates, bleeds off, loses as drift and needs as make-up. The chiller is on its own page, <a href="chiller-efficiency.html">sheet XVI</a>, which takes the water temperatures from here. <button class="mx-open" type="button" data-mxopen="tower">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 tower rating</button></p>
