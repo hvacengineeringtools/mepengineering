@@ -366,6 +366,28 @@ table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weig
 #topRow, #lobRow { margin-top:14px; }
 
 .topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* input drawings */
+button.igb { display:inline-block; width:20px !important; height:20px; min-height:0 !important; padding:0 !important; margin:0 0 0 6px; border-radius:50%; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:700 11px/18px Georgia, serif !important; text-align:center; vertical-align:1px; cursor:pointer; }
+@media (hover:hover) { button.igb:hover { background:#b4492f; border-color:#b4492f; } }
+button.igopen { display:block; width:auto !important; min-height:0 !important; background:none; border:0; padding:0 !important; margin:-2px 0 10px; text-decoration:underline; font:600 13px Georgia, serif !important; color:var(--ink); cursor:pointer; text-align:left; }
+#igTabs { margin:8px 0 6px; }
+#igTabs button { width:auto !important; min-height:32px !important; font-size:12.5px !important; padding:5px 9px; }
+.igwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:6px 0 4px; }
+#igSvg { margin:0; display:block; }
+.igswipe { display:none; }
+@media (max-width:600px) { #igSvg { width:700px; max-width:none; } .igswipe { display:block; margin-top:2px; } }
+#igSvg .igc.hl circle { fill:#b4492f; }
+ol.igl { list-style:none; margin:8px 0 0; padding:0; }
+ol.igl li { display:grid; grid-template-columns:30px minmax(0,1fr); gap:6px; padding:8px 6px; border-bottom:1px solid var(--faint); font-size:13.5px; line-height:1.45; }
+ol.igl li.hl { background:var(--tint, #efe6d4); }
+ol.igl .ign { width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.igl li.hl .ign { background:#b4492f; }
+ol.igl .igr { margin-top:6px; color:var(--muted); }
+ol.igl .igr br { display:block; }
+button.igto { display:inline; width:auto !important; min-height:0 !important; padding:0 !important; background:none; border:0; color:var(--ink); font:700 13.5px Georgia, serif !important; text-decoration:underline; text-align:left; cursor:pointer; }
+ol.igl .igs { display:inline-block; padding:0 5px; border:1px solid var(--rule, #8a7f6c); font:italic 700 12.5px Georgia, serif; color:var(--ink); background:var(--panel); }
+@media print { button.igb, button.igopen { display:none !important; } }
 </style>
 </head>
 <body>
@@ -480,12 +502,20 @@ table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weig
 <aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
   <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
   <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-guide" data-tab="guide" aria-controls="mxtab-guide">Input drawings</button>
     <button role="tab" type="button" id="mxt-clauses" data-tab="clauses" aria-controls="mxtab-clauses">Clause summary</button>
     <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
     <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
     <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
   </div>
   <div class="mx-body">
+    <div role="tabpanel" id="mxtab-guide" aria-labelledby="mxt-guide" hidden>
+      <p>What each input means and where to measure it. The numbers match the small numbered buttons beside the inputs on the sheet. Tap a number on the drawing to find it in the list, or tap an input name in the list to go to that box.</p>
+      <div class="tabs" id="igTabs"></div>
+      <div class="igwrap" id="igWrap"><svg id="igSvg" class="chart" viewBox="0 0 760 540" role="img" aria-label="3D drawing of the inputs"></svg></div>
+      <p class="tn igswipe">Swipe the drawing sideways to see all of it.</p>
+      <ol class="igl" id="igList"></ol>
+    </div>
     <div role="tabpanel" id="mxtab-clauses" aria-labelledby="mxt-clauses" hidden>
       <p>What BS 9991:2015 says about smoke ventilation, in short form with the clause numbers. Check the standard for the full wording.</p>
       <div class="table-scroll"><table class="cmp" id="clT"></table></div>
@@ -1025,6 +1055,505 @@ function drawFig() {
   $("gList").innerHTML = f.list.map(x => "<li>" + x[0] + ' <span class="cl">(' + x[1] + ")</span></li>").join("");
 }
 $("gtabs").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) { fig = parseInt(b.dataset.i); drawFig(); } });
+
+/* ---------- input drawings: a 3D (isometric) drawing for every input ---------- */
+let isoO = [0, 0], isoK = 30;
+const isoAt = (ox, oy, k) => { isoO = [ox, oy]; isoK = k; };
+const P3 = (x, y, z) => [isoO[0] + (x - y) * 0.866 * isoK, isoO[1] + (x + y) * 0.5 * isoK - z * isoK];
+const f1 = v => v.toFixed(1);
+const V3 = (a, b, k) => [a[0] + b[0] * (k == null ? 1 : k), a[1] + b[1] * (k == null ? 1 : k), a[2] + b[2] * (k == null ? 1 : k)];
+const IC = { FL: "#ece3cf", WA: "#f4eddd", WB: "#e9dfc9", SL: "#d8cbb0", SKY: "#dfe8e4", LEAF: "#fffdf7", HI: "#e3eee9" };
+const I = {
+  pts: a => a.map(q => P3(q[0], q[1], q[2]).map(f1).join(",")).join(" "),
+  pg: (a, st) => '<polygon points="' + I.pts(a) + '" ' + (st || 'fill="none" stroke="' + INK + '" stroke-width="1.2"') + "/>",
+  pl: (a, st) => '<polyline points="' + I.pts(a) + '" fill="none" ' + (st || 'stroke="' + INK + '" stroke-width="1.2"') + "/>",
+  ln: (a, b, st) => { const A = P3(...a), B = P3(...b); return '<line x1="' + f1(A[0]) + '" y1="' + f1(A[1]) + '" x2="' + f1(B[0]) + '" y2="' + f1(B[1]) + '" ' + (st || 'stroke="' + INK + '" stroke-width="1.2"') + "/>"; },
+  qx: (x, y0, y1, z0, z1, st) => I.pg([[x, y0, z0], [x, y1, z0], [x, y1, z1], [x, y0, z1]], st),
+  qy: (y, x0, x1, z0, z1, st) => I.pg([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], st),
+  qz: (z, x0, x1, y0, y1, st) => I.pg([[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]], st),
+  fill: (c, o) => 'fill="' + c + '" stroke="' + INK + '" stroke-width="1.1"' + (o != null ? ' fill-opacity="' + o + '"' : ""),
+  ghost: 'fill="none" stroke="' + INK + '" stroke-width="1.1" stroke-dasharray="5 4"',
+  /* solid box: top and the two faces turned to the viewer */
+  box: (x0, y0, z0, x1, y1, z1, c) => I.qx(x1, y0, y1, z0, z1, I.fill(c[1])) + I.qy(y1, x0, x1, z0, z1, I.fill(c[2])) + I.qz(z1, x0, x1, y0, y1, I.fill(c[0])),
+  /* glass box: transparent faces, outline only */
+  glass: (x0, y0, z0, x1, y1, z1, o) => I.qx(x1, y0, y1, z0, z1, I.fill("#ffffff", o == null ? .25 : o)) + I.qy(y1, x0, x1, z0, z1, I.fill("#ffffff", o == null ? .25 : o)) + I.qz(z1, x0, x1, y0, y1, I.fill("#ffffff", o == null ? .25 : o)),
+  /* text with a light halo so it reads over lines */
+  tx: (x, y, s, o) => '<text x="' + f1(x) + '" y="' + f1(y) + '" font-size="' + ((o && o.fs) || 12) + '" text-anchor="' + ((o && o.a) || "middle") + '" paint-order="stroke" stroke="#fffdf7" stroke-width="4" stroke-linejoin="round" style="fill:' + ((o && o.c) || "var(--ink)") + (o && o.b ? ";font-weight:700" : "") + (o && o.i ? ";font-style:italic" : "") + '">' + s + "</text>",
+  t3: (a, s, dx, dy, o) => { const A = P3(...a); return I.tx(A[0] + (dx || 0), A[1] + (dy || 0), s, o); },
+  /* dimension between two 3D points, pushed out by the vector off */
+  dim: (a, b, off, lab, o) => {
+    const A = V3(a, off), B = V3(b, off), e = V3(off, [0, 0, 0], 0);
+    const ext = (p, q) => I.ln(p, V3(q, off, 0.18), 'stroke="' + INK + '" stroke-width=".8"');
+    const pa = P3(...A), pb = P3(...B);
+    return ext(a, A) + ext(b, B) + '<line x1="' + f1(pa[0]) + '" y1="' + f1(pa[1]) + '" x2="' + f1(pb[0]) + '" y2="' + f1(pb[1]) + '" stroke="' + INK + '" stroke-width="1.1" marker-start="url(#ar)" marker-end="url(#ar)"/>' +
+      I.tx((pa[0] + pb[0]) / 2 + ((o && o.dx) || 0), (pa[1] + pb[1]) / 2 + ((o && o.dy) || 4), lab, { fs: 12.5, b: true, i: true, a: (o && o.a) || "middle" });
+  },
+  /* numbered callout: leader from a 3D point to a circle offset on screen */
+  tag: (n, a, dx, dy) => { const A = P3(...a); return '<g class="igc" data-n="' + n + '" style="cursor:pointer">' + '<circle cx="' + f1(A[0]) + '" cy="' + f1(A[1]) + '" r="2.6" fill="' + INK + '"/>' + H_.c(n, A[0] + dx, A[1] + dy, A[0], A[1]) + "</g>"; },
+  tag2: (n, x, y) => '<g class="igc" data-n="' + n + '" style="cursor:pointer">' + H_.c(n, x, y) + "</g>",
+  arr: (a, b, c, id, w) => { const A = P3(...a), B = P3(...b); return '<line x1="' + f1(A[0]) + '" y1="' + f1(A[1]) + '" x2="' + f1(B[0]) + '" y2="' + f1(B[1]) + '" stroke="' + c + '" stroke-width="' + (w || 2.4) + '" marker-end="url(#' + id + ')"/>'; },
+  /* arc around centre c, from direction u towards v, radius r, angle t (deg) */
+  arc: (c, u, v, r, t) => { const a = []; for (let i = 0; i <= 16; i++) { const th = t * Math.PI / 180 * i / 16; a.push(V3(V3(c, u, r * Math.cos(th)), v, r * Math.sin(th))); } return I.pl(a, 'stroke="' + INK + '" stroke-width="1" marker-end="url(#ar)"'); },
+  /* a hinged leaf: hinge h0-h1, closed across direction u, swings towards v, leaf length s, open t deg */
+  leaf: (h0, h1, u, v, s, t, st) => { const th = t * Math.PI / 180, d = V3(V3([0, 0, 0], u, Math.cos(th)), v, Math.sin(th)); return I.pg([h0, h1, V3(h1, d, s), V3(h0, d, s)], st || I.fill(IC.LEAF)); },
+  thermo: (x, y, lab, a) => '<g><rect x="' + f1(x - 3) + '" y="' + f1(y - 22) + '" width="6" height="18" rx="3" fill="#fffdf7" stroke="' + INK + '" stroke-width="1.1"/><circle cx="' + f1(x) + '" cy="' + f1(y) + '" r="5" fill="' + FIRE + '" stroke="' + INK + '" stroke-width="1.1"/><line x1="' + f1(x) + '" y1="' + f1(y - 4) + '" x2="' + f1(x) + '" y2="' + f1(y - 15) + '" stroke="' + FIRE + '" stroke-width="2.4"/>' + (lab ? I.tx(x + (a === "end" ? -9 : 9), y - 6, lab, { fs: 12.5, b: true, i: true, a: a || "start" }) : "") + "</g>",
+  louvre: (pts, n) => { let s = I.pg(pts, I.fill("#fffdf7")); for (let i = 1; i < n; i++) { const k = i / n; s += I.ln(V3(pts[0], V3(pts[3], pts[0], -1), k), V3(pts[1], V3(pts[2], pts[1], -1), k), 'stroke="' + INK + '" stroke-width=".9"'); } return s; },
+  bg: (h) => H_.defs + H_.r(0, 0, 760, h, 'fill="var(--panel)" stroke="none"')
+};
+const notScale = (h) => I.tx(748, h - 10, "Not to scale", { fs: 10.5, a: "end", c: "#5a5348" });
+
+/* 1. stair and lobby vents */
+function ig0() {
+  let s = I.bg(540);
+  /* inset: how the building height is measured */
+  s += H_.r(18, 60, 200, 300, 'fill="#fffdf7" stroke="' + INK + '" stroke-width=".8"') + I.tx(118, 80, "Building, in elevation", { fs: 11.5, b: true });
+  const gy = 330, fh = 34;
+  s += H_.r(58, gy - 6 * fh, 110, 6 * fh, 'fill="' + IC.WA + '" stroke="' + INK + '"');
+  for (let i = 1; i < 6; i++) s += H_.l(58, gy - i * fh, 168, gy - i * fh, 'stroke="' + INK + '" stroke-width=".8"');
+  s += H_.r(58, gy - 6 * fh - 12, 30, 6 * fh + 12, 'fill="url(#ht)" stroke="' + INK + '"') + I.tx(73, gy - 6 * fh - 18, "stair", { fs: 10 });
+  s += H_.l(26, gy, 210, gy, 'stroke="' + INK + '" stroke-width="2"') + I.tx(200, gy + 14, "fire and rescue access level", { fs: 9.5, a: "end" });
+  s += H_.l(168, gy - 5 * fh, 200, gy - 5 * fh, 'stroke="' + FIRE + '" stroke-width="1.6"') + I.tx(200, gy - 5 * fh - 5, "top storey floor", { fs: 9.5, a: "end", c: FIRE });
+  s += '<line x1="190" y1="' + gy + '" x2="190" y2="' + (gy - 5 * fh) + '" stroke="' + INK + '" stroke-width="1.1" marker-start="url(#ar)" marker-end="url(#ar)"/>' + I.tx(186, gy - 2.5 * fh, "height", { fs: 11, a: "end", b: true, i: true });
+  s += H_.l(40, gy - 11 / 3 * fh * 1, 176, gy - 11 / 3 * fh, 'stroke="' + INK + '" stroke-dasharray="3 3" stroke-width=".9"') + I.tx(42, gy - 11 / 3 * fh - 4, "11 m", { fs: 10, a: "start" });
+  s += I.tag2(1, 36, 98);
+
+  isoAt(470, 318, 34);
+  /* back walls and floor */
+  s += I.qz(0, 0, 6.4, 0, 5.5, I.fill(IC.FL));
+  s += I.qx(0, 0, 5.5, 0, 7.2, I.fill(IC.WB)) + I.qy(0, 0, 3, 0, 7.2, I.fill(IC.WA)) + I.qy(0, 3, 6.4, 0, 3.2, I.fill(IC.WA));
+  s += I.t3([3.3, 0, 3.2], "outside wall", 6, -6, { fs: 10.5, a: "start", c: "#5a5348" });
+  /* stair flights, two storeys */
+  for (let k = 0; k < 2; k++) {
+    const z = k * 3.6;
+    s += I.pg([[0.15, 5.3, z], [1.4, 5.3, z], [1.4, 1.8, z + 1.8], [0.15, 1.8, z + 1.8]], I.fill(IC.SL)) + I.pg([[0.15, 0.2, z + 1.8], [2.85, 0.2, z + 1.8], [2.85, 1.8, z + 1.8], [0.15, 1.8, z + 1.8]], I.fill("#e6dcc5"));
+    s += I.pg([[1.6, 1.8, z + 1.8], [2.85, 1.8, z + 1.8], [2.85, 5.3, z + 3.6], [1.6, 5.3, z + 3.6]], I.fill(IC.SL));
+  }
+  /* lobby vent in the outside wall: bottom hung, opening inwards */
+  const vx0 = 3.6, vx1 = 5.1, vz0 = 1.0, vz1 = 2.3;
+  s += I.qy(0, vx0, vx1, vz0, vz1, I.fill(IC.SKY));
+  s += I.leaf([vx0, 0, vz0], [vx1, 0, vz0], [0, 0, 1], [0, 1, 0], 1.3, 38);
+  s += I.arc([vx1, 0, vz0], [0, 0, 1], [0, 1, 0], 0.75, 38) + I.t3([vx1, 0.42, vz0 + 0.95], "θ", 8, 0, { fs: 13, b: true, i: true });
+  s += I.dim([vx0, 0, vz0], [vx1, 0, vz0], [0, 0, -0.5], "W", { dy: 14 });
+  s += I.dim([vx1, 0, vz0], [vx1, 0, vz1], [0.4, 0, 0], "H", { dx: 10 });
+  s += I.dim([6.2, 0, 0], [6.2, 0, vz1], [0, 0, 0], "a", { dx: 10 }) + I.ln([vx1, 0, vz1], [6.2, 0, vz1], 'stroke="' + INK + '" stroke-width=".8" stroke-dasharray="3 2"');
+  /* smoke layer in the lobby */
+  s += I.qx(6.4, 0, 3, 2.4, 3.2, 'fill="' + SMK + '" fill-opacity=".16" stroke="none"') + I.qy(3, 3, 6.4, 2.4, 3.2, 'fill="' + SMK + '" fill-opacity=".16" stroke="none"');
+  s += I.arr([4.6, 2.2, 2.6], [4.5, 0.6, 2.2], FIRE, "as");
+  /* stair enclosure: glass so the inside shows; door to the lobby */
+  s += I.qx(3, 0, 5.5, 0, 7.2, I.fill("#ffffff", .32)) + I.qy(5.5, 0, 3, 0, 7.2, I.fill("#ffffff", .32));
+  const dy0 = 0.9, dy1 = 1.8, dz = 2.1;
+  s += I.qx(3, dy0, dy1, 0, dz, I.fill("#fffdf7")) + I.ln([3, dy1 - 0.12, 1.0], [3, dy1 - 0.12, 1.1], 'stroke="' + INK + '" stroke-width="3"');
+  s += I.dim([3, dy1, 0], [3, dy1, dz], [0, 0.55, 0], "b", { dx: -10 }) ;
+  /* roof of the stair and the stair-head vent, hinged on one edge */
+  s += I.qz(7.2, 0, 3, 0, 5.5, I.fill(IC.SL));
+  const rx0 = 1.0, rx1 = 2.0, ry0 = 2.2, ry1 = 3.2;
+  s += I.qz(7.2, rx0, rx1, ry0, ry1, I.fill(IC.SKY));
+  s += I.leaf([rx0, ry0, 7.2], [rx1, ry0, 7.2], [0, 1, 0], [0, 0, 1], 1.0, 62);
+  s += I.arc([rx1, ry0, 7.2], [0, 1, 0], [0, 0, 1], 0.6, 62) + I.t3([rx1, ry0 + 0.35, 7.2 + 0.4], "θ", 12, 2, { fs: 13, b: true, i: true });
+  s += I.dim([rx0, ry0, 7.2], [rx1, ry0, 7.2], [0, -0.55, 0], "W", { dy: -6 });
+  s += I.dim([rx1, ry0, 7.2], [rx1, ry1, 7.2], [0.55, 0, 0], "H", { dx: 10, dy: 10 });
+  s += I.arr([1.5, 2.9, 7.4], [1.5, 2.9, 8.6], FIRE, "as");
+  /* labels */
+  s += I.t3([1.5, 5.5, 0], "Stair", 0, 20, { fs: 12.5, b: true }) + I.t3([4.7, 3, 0], "Lobby or corridor", 6, 20, { fs: 12.5, b: true });
+  s += I.t3([3, 1.35, dz], "stair door", 0, -6, { fs: 10.5, c: "#5a5348" });
+  s += I.tag(2, [1.5, 2.6, 7.95], -80, -24) + I.tag(3, [4.35, 0.5, 2.0], 110, -80) + I.tag(4, [6.2, 0, 1.15], 66, 10) + I.tag(5, [3, 2.35, 1.05], -64, 52);
+  return s + notScale(540);
+}
+
+/* 2. natural smoke shaft */
+function ig1() {
+  let s = I.bg(560);
+  /* inset: an inclined length of shaft, in section */
+  s += H_.r(18, 300, 190, 230, 'fill="#fffdf7" stroke="' + INK + '" stroke-width=".8"') + I.tx(113, 318, "Inclined part, in section", { fs: 11.5, b: true });
+  s += '<polygon points="70,510 100,510 100,450 140,380 140,330 170,330 170,388 130,458 130,510" fill="none" stroke="none"/>';
+  s += H_.l(70, 515, 70, 445, 'stroke="' + INK + '" stroke-width="1.6"') + H_.l(70, 445, 120, 375, 'stroke="' + INK + '" stroke-width="1.6"') + H_.l(120, 375, 120, 335, 'stroke="' + INK + '" stroke-width="1.6"');
+  s += H_.l(102, 515, 102, 457, 'stroke="' + INK + '" stroke-width="1.6"') + H_.l(102, 457, 152, 387, 'stroke="' + INK + '" stroke-width="1.6"') + H_.l(152, 387, 152, 335, 'stroke="' + INK + '" stroke-width="1.6"');
+  s += '<line x1="98" y1="455" x2="140" y2="396" stroke="' + INK + '" stroke-width="1.1" marker-start="url(#ar)" marker-end="url(#ar)"/>' + I.tx(130, 432, "L", { fs: 13, b: true, i: true, a: "start" });
+  s += H_.l(70, 445, 70, 385, 'stroke="' + INK + '" stroke-width=".8" stroke-dasharray="3 3"') + '<path d="M70,409 A36,36 0 0 1 91,416" fill="none" stroke="' + INK + '" stroke-width="1"/>' + I.tx(80, 402, "φ", { fs: 13, b: true, i: true });
+  s += I.tag2(4, 182, 450);
+  /* building */
+  isoAt(470, 400, 25);
+  const sx = 1.1, sy = 1.6, top = 12.0, roof = 9.0, D = 3.2, X = 7;
+  const notch = (z, st) => I.pg([[0, sy, z], [sx, sy, z], [sx, 0, z], [X, 0, z], [X, D, z], [0, D, z]], st);
+  const edge = z => I.qy(D, 0, X, z - 0.3, z, 'fill="url(#ht)" stroke="' + INK + '" stroke-width=".9"') + I.qx(X, 0, D, z - 0.3, z, 'fill="url(#ht)" stroke="' + INK + '" stroke-width=".9"');
+  s += I.qy(0, sx, X, 0, roof, I.fill(IC.WA)) + I.qx(0, sy, D, 0, roof, I.fill(IC.WB));
+  /* shaft: back faces, grille inside */
+  s += I.qy(0, 0, sx, 0, top, I.fill("#e2d6bd")) + I.qx(0, 0, sy, 0, top, I.fill("#d9ccb1"));
+  s += I.qz(7.7, 0, sx, 0, sy, 'fill="url(#ht)" stroke="' + INK + '" stroke-width="1.1"');
+  /* storeys: the floors are drawn open so the corridors show */
+  [0, 3, 6].forEach((z, i) => {
+    const fire = i === 1;
+    s += notch(z, i === 0 ? I.fill(IC.FL) : fire ? I.fill(IC.FL, .85) : 'fill="none" stroke="' + INK + '" stroke-width="1"') + edge(z);
+    s += I.qx(sx, 0.35, 1.25, z + 1.8, z + 2.7, fire ? I.fill("#4b443c") : 'fill="url(#ht)" stroke="' + INK + '" stroke-width="1.1"');
+    if (fire) {
+      s += I.qy(D, sx, X, z + 1.6, z + 2.9, 'fill="' + SMK + '" fill-opacity=".2" stroke="none"') + I.qx(X, 0, D, z + 1.6, z + 2.9, 'fill="' + SMK + '" fill-opacity=".2" stroke="none"');
+      s += I.arr([4.2, 1.6, z + 2.2], [sx + 0.15, 0.8, z + 2.25], FIRE, "as") + I.arr([sx / 2, sy / 2, z + 2.4], [sx / 2, sy / 2, 7.4], FIRE, "as", 1.8);
+    }
+  });
+  /* shaft front faces, seen through */
+  s += I.qx(sx, 0, sy, 0, top, I.fill("#ffffff", .3)) + I.qy(sy, 0, sx, 0, top, I.fill("#ffffff", .3));
+  s += notch(roof, I.fill(IC.SL, .55)) + edge(roof);
+  s += I.qx(sx, 0, sy, roof, top, I.fill("#e9dfc9", .75)) + I.qy(sy, 0, sx, roof, top, I.fill("#ddd1b7", .75));
+  s += I.louvre([[0, 0, top], [sx, 0, top], [sx, sy, top], [0, sy, top]], 4);
+  s += I.arr([sx / 2, sy / 2, top + 0.1], [sx / 2, sy / 2, top + 1.3], FIRE, "as");
+  /* plant on the roof and the 2 m circle */
+  const ring = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * 2 * Math.PI; ring.push([sx / 2 + 2.6 * Math.cos(t), sy / 2 + 2.6 * Math.sin(t), roof]); }
+  s += I.pl(ring.filter(p => p[0] >= 0 && p[1] >= 0), 'stroke="' + INK + '" stroke-width=".9" stroke-dasharray="2 3"');
+  s += I.box(2.4, 0.3, roof, 3.4, 1.3, 10.9, [IC.SL, "#cdbf9f", "#c3b493"]) + I.t3([2.9, 0.8, 10.9], "plant", 0, -6, { fs: 10.5 });
+  s += I.t3([2.6, 2.4, roof], "within 2 m", 6, 6, { fs: 10.5, a: "start", c: "#5a5348" });
+  /* dimensions */
+  s += I.dim([0, sy, top], [sx, sy, top], [0, 0.55, 0], "width", { dx: -26, dy: 10 });
+  s += I.dim([sx, 0, top], [sx, sy, top], [0.55, 0, 0], "depth", { dx: 24, dy: 2 });
+  s += I.dim([sx, sy, roof], [sx, sy, top], [0, 0.9, 0], "c", { dx: -10 });
+  s += I.dim([3.4, 1.3, 10.9], [3.4, 1.3, top], [1.2, 0, 0], "e", { dx: 10 }) + I.ln([sx, 0, top], [4.6, 0, top], 'stroke="' + INK + '" stroke-width=".8" stroke-dasharray="3 2"');
+  s += I.dim([0, sy, 3 + 2.25], [0, sy, top], [0, 2.9, 0], "H", { dx: -10 });
+  s += I.t3([X, D, roof], "highest ceiling served", 8, 2, { fs: 10, a: "start", c: "#5a5348" });
+  /* thermometers */
+  const tA = P3(5.0, 2.2, 3 + 2.3); s += I.thermo(tA[0], tA[1], "Ts");
+  const tB = P3(5.6, 0, 12.8); s += I.thermo(tB[0], tB[1], "To") + I.tx(tB[0] + 9, tB[1] + 10, "outside", { fs: 10, a: "start", c: "#5a5348" });
+  s += I.t3([X, D, 4.6], "fire storey", 8, 0, { fs: 10.5, a: "start", c: FIRE });
+  s += I.t3([4, D, 0], "Corridors", 0, 22, { fs: 12.5, b: true }) + I.t3([0, sy, 0], "Shaft", -8, 16, { fs: 12.5, b: true, a: "end" });
+  s += I.tag(1, [0.3, sy + 0.55, top], -90, -24) + I.tag(2, [0.3, 0.5, top + 0.02], -40, -70) + I.tag(3, [2.9, 1.3, 10.4], 70, -60) + I.tag(5, [sx, 0.8, 3 + 2.25], 90, 60) + I.tag(6, [0.1, sy, 7.7], -96, 56) + I.tag(7, [0, sy + 2.9, 7.2], -40, 26);
+  return s + notScale(560);
+}
+
+/* basement shell shared by 3 and 4 */
+function bsmt(L, W, D, opts) {
+  let s = "";
+  /* ground beyond the back walls */
+  s += I.qz(0, -2.2, L, -2.2, 0, I.fill("#e6dcc5")) + I.qz(0, -2.2, 0, 0, W, I.fill("#e6dcc5"));
+  s += I.qx(0, 0, W, -D, 0, I.fill(IC.WB)) + I.qy(0, 0, L, -D, 0, I.fill(IC.WA));
+  s += I.qz(-D, 0, L, 0, W, I.fill(opts.hiFloor ? IC.HI : IC.FL));
+  return s;
+}
+function ground(L, W, D) {
+  /* ground beside the basement, cut to show the depth */
+  let s = "";
+  s += I.ln([0, W, 0], [L, W, 0], 'stroke="' + INK + '" stroke-width=".9" stroke-dasharray="6 4"') + I.ln([L, 0, 0], [L, W, 0], 'stroke="' + INK + '" stroke-width=".9" stroke-dasharray="6 4"') + I.t3([L, W / 2, 0], "ground level", 8, 2, { fs: 10.5, a: "start", c: "#5a5348" });
+  s += I.ln([0, W, -D], [0, W, 0], 'stroke="' + INK + '" stroke-width="1" stroke-dasharray="6 4"') + I.ln([L, W, -D], [L, W, 0], 'stroke="' + INK + '" stroke-width="1" stroke-dasharray="6 4"');
+  return s;
+}
+
+/* 3. basement, natural outlets */
+function ig2() {
+  let s = I.bg(500);
+  const L = 12, W = 7, D = 4.5;
+  isoAt(300, 145, 20);
+  s += bsmt(L, W, D, { hiFloor: true });
+  /* outlets high in the walls, smoke out to the open air */
+  [[1.6, "y"], [5.4, "y"], [9.4, "y"], [2.2, "x"], [5.0, "x"]].forEach(([p, w]) => {
+    const z0 = -1.15, z1 = -0.35;
+    if (w === "y") { s += I.louvre([[p, 0, z0], [p + 1.3, 0, z0], [p + 1.3, 0, z1], [p, 0, z1]], 3) + I.arr([p + 0.65, -0.2, -0.1], [p + 0.65, -1.2, 1.3], SMK, "ar", 2); }
+    else { s += I.louvre([[0, p, z0], [0, p + 1.3, z0], [0, p + 1.3, z1], [0, p, z1]], 3) + I.arr([-0.2, p + 0.65, -0.1], [-1.2, p + 0.65, 1.3], SMK, "ar", 2); }
+  });
+  s += I.qz(-1.3, 0, L, 0, W, 'fill="' + SMK + '" fill-opacity=".1" stroke="none"');
+  s += ground(L, W, D);
+  s += I.t3([L / 2, W / 2, -D], "floor area", 0, 4, { fs: 13, b: true });
+  s += I.dim([0, W, -D], [L, W, -D], [0, 0.8, 0], "length", { dy: 16 }) + I.dim([L, 0, -D], [L, W, -D], [0.8, 0, 0], "width", { dx: 18, dy: 14 });
+  s += I.dim([L, W, -D], [L, W, 0], [0.9, 0.9, 0], "depth", { dx: 10, a: "start" });
+  s += I.t3([2, 0, -0.75], "outlet", 0, -18, { fs: 10.5, c: "#5a5348" });
+  s += I.tag(1, [L / 2 - 2, W / 2, -D], -150, 70) + I.tag(2, [L + 0.9, W + 0.9, -D / 2], 76, -36) + I.tag(3, [6.05, 0, -0.75], 40, -80);
+  return s + notScale(500);
+}
+
+/* 4. basement, powered extract */
+function ig3() {
+  let s = I.bg(520);
+  const L = 12, W = 7, D = 4.5, Hc = 3.2;
+  isoAt(300, 175, 20);
+  s += bsmt(L, W, D, {});
+  /* replacement air inlet, low in the wall */
+  s += I.louvre([[0, 3.8, -D + 0.5], [0, 5.4, -D + 0.5], [0, 5.4, -D + 1.5], [0, 3.8, -D + 1.5]], 4);
+  s += I.arr([-1.6, 4.6, -D + 1.0], [0.9, 4.6, -D + 1.0], AIR, "aa") + I.arr([0.4, 4.0, -D + 0.8], [2.2, 4.4, -D + 0.6], AIR, "aa", 1.6);
+  s += I.t3([0, 5.4, -D + 0.5], "v, A", -8, 16, { fs: 12.5, b: true, i: true, a: "end" });
+  /* ceiling and sprinklers */
+  const zc = -D + Hc;
+  s += I.qz(zc, 0, L, 0, W, 'fill="none" stroke="' + INK + '" stroke-width="1" stroke-dasharray="6 4"');
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) { const p = [1.8 + i * 3, 1.8 + j * 3.4, zc]; s += I.ln(p, V3(p, [0, 0, -0.3]), 'stroke="' + INK + '" stroke-width="1.2"') + I.t3(V3(p, [0, 0, -0.35]), "✱", 0, 4, { fs: 11, c: FIRE }); }
+  /* air change symbol */
+  const cA = P3(5.0, 4.6, -D + 1.4);
+  s += '<path d="M' + f1(cA[0] - 34) + "," + f1(cA[1]) + " a34,15 0 1 1 18,13" + '" fill="none" stroke="' + AIR + '" stroke-width="2" marker-end="url(#aa)"/>' + I.tx(cA[0] + 8, cA[1] + 5, "volume", { fs: 11.5, b: true });
+  /* extract grille, duct up to the fan */
+  const dx0 = 8.6, dx1 = 9.7, dyy = 0.9;
+  s += I.box(dx0, 0, zc - 0.9, dx1, dyy, 1.8, ["#e2d6bd", "#d4c6a8", "#c9ba9a"]);
+  s += I.louvre([[dx0, dyy, zc - 0.9], [dx1, dyy, zc - 0.9], [dx1, dyy, zc - 0.2], [dx0, dyy, zc - 0.2]], 3);
+  s += I.arr([8.2, 3.4, zc - 0.6], [9.0, 1.3, zc - 0.55], SMK, "ar", 2.2);
+  s += I.qz(1.8, dx0, dx1, 0, dyy, 'fill="url(#ht)" stroke="' + INK + '" stroke-width="1"');
+  const fA = P3((dx0 + dx1) / 2, dyy / 2, 2.6); s += H_.fan(fA[0], fA[1], 15) + I.arr([(dx0 + dx1) / 2, dyy / 2, 3.1], [(dx0 + dx1) / 2, dyy / 2, 4.4], SMK, "ar");
+  s += I.t3([dx1, 0, 1.6], "v, A", 12, 8, { fs: 12.5, b: true, i: true, a: "start" });
+  s += I.thermo(fA[0] - 24, fA[1] + 6, "Tg", "end");
+  s += ground(L, W, D);
+  /* outside air temperature */
+  const oA = P3(-1.6, 6.2, 1.2); s += I.thermo(oA[0], oA[1], "Ta") + I.tx(oA[0] + 9, oA[1] + 10, "outside", { fs: 10, a: "start", c: "#5a5348" });
+  /* dimensions */
+  s += I.t3([4.0, 4.6, -D], "floor area", 0, 4, { fs: 13, b: true });
+  s += I.dim([0, W, -D], [L, W, -D], [0, 0.8, 0], "length", { dy: 16 }) + I.dim([L, 0, -D], [L, W, -D], [0.8, 0, 0], "width", { dx: 18, dy: 14 });
+  s += I.dim([0, W, -D], [0, W, zc], [0, 1.4, 0], "clear height", { dx: -8, a: "end" });
+  s += I.dim([L, W, -D], [L, W, 0], [0.9, 0.9, 0], "depth", { dx: 10, a: "start" });
+  s += I.t3([L, 0, zc], "ceiling", 6, 4, { fs: 10.5, a: "start", c: "#5a5348" });
+  s += I.tag(1, [3.2, 5.6, -D], -110, 40) + I.tag(2, [0, W + 1.4, -D + 0.5], -60, 40) + I.tag(3, [L + 0.9, W + 0.9, -D / 2], 70, 20) + I.tag(4, [5.0, 4.6, -D + 1.7], 80, 64) + I.tag(5, [dx1, dyy / 2, 2.6], 70, -40) + I.tag(6, [0, 4.6, -D + 1.0], -60, -60) + I.tag(7, [-1.6, 6.2, 1.9], -40, -50) + I.tag(8, [1.8, 1.8, zc - 0.3], -40, -70);
+  return s + notScale(520);
+}
+
+/* 5 and 6. lobby or corridor mechanical system (MSVS) */
+function igM(mode) {
+  let s = I.bg(560);
+  isoAt(430, 330, 24);
+  const sw = 2.6, sl = 5.2, z0 = 3, z1 = 6, roof = 9, cx1 = 11.4, cw = 2.2;
+  /* extract shaft behind the corridor wall, up through the roof */
+  const shx0 = 10.0, shx1 = 11.4, sy0 = 0, sy1 = 1.3, shy = 1.3, shTop = 10.8, shc = (10.0 + 11.4) / 2;
+  /* stair, back walls */
+  s += I.qx(0, 0, sl, 0, roof, I.fill(IC.WB)) + I.qy(0, 0, sw, 0, roof, I.fill(IC.WA));
+  for (let k = 0; k < 3; k++) {
+    const z = k * 3;
+    s += I.pg([[0.15, sl - 0.2, z], [1.2, sl - 0.2, z], [1.2, 1.7, z + 1.5], [0.15, 1.7, z + 1.5]], I.fill(IC.SL)) + I.pg([[0.15, 0.2, z + 1.5], [sw - 0.15, 0.2, z + 1.5], [sw - 0.15, 1.7, z + 1.5], [0.15, 1.7, z + 1.5]], I.fill("#e6dcc5")) + I.pg([[1.4, 1.7, z + 1.5], [sw - 0.15, 1.7, z + 1.5], [sw - 0.15, sl - 0.2, z + 3], [1.4, sl - 0.2, z + 3]], I.fill(IC.SL));
+  }
+  /* corridor on the fire storey */
+  s += I.qz(z0, sw, cx1, 0, cw, I.fill(IC.FL)) + I.qy(0, sw, cx1, z0, z1, I.fill(IC.WA)) + I.qy(cw, sw, cx1, z0 - 0.3, z0, 'fill="url(#ht)" stroke="' + INK + '" stroke-width=".9"') + I.qx(cx1, 0, cw, z0 - 0.3, z0, 'fill="url(#ht)" stroke="' + INK + '" stroke-width=".9"');
+  /* extract shaft, behind the corridor wall, seen above it */
+
+  /* fire flat door, open, fire beyond */
+  const fd0 = 6.2, fd1 = 7.1;
+  s += I.qy(0, fd0, fd1, z0, z0 + 2.1, I.fill("#3a2f27"));
+  const fl = P3((fd0 + fd1) / 2, 0, z0); s += H_.flame(fl[0] - 2, fl[1] - 2) + H_.flame(fl[0] + 12, fl[1] - 6);
+  s += I.leaf([fd1, 0, z0], [fd1, 0, z0 + 2.1], [-1, 0, 0], [0, 1, 0], 0.9, 75);
+  /* extract grille high in the corridor wall */
+
+  /* smoke in the corridor */
+  s += I.qz(z0 + 1.7, sw, cx1, 0, cw, 'fill="' + SMK + '" fill-opacity=".14" stroke="none"') + I.qy(cw, sw, cx1, z0 + 1.7, z1, 'fill="' + SMK + '" fill-opacity=".2" stroke="none"');
+  s += I.arr([(fd0 + fd1) / 2, 0.3, z0 + 1.9], [8.6, 1.2, z0 + 2.3], FIRE, "as") + I.arr([8.6, 1.2, z0 + 2.3], [shx0 + 0.3, sy1 + 0.1, z0 + 2.35], FIRE, "as");
+  /* extract shaft at the end of the corridor, grille high on its face, up through the roof */
+  s += I.box(shx0, sy0, z0, shx1, sy1, shTop, ["#e2d6bd", "#d4c6a8", "#e9dfc9"]);
+  s += I.louvre([[shx0 + 0.15, sy1, z0 + 2.0], [shx1 - 0.15, sy1, z0 + 2.0], [shx1 - 0.15, sy1, z0 + 2.75], [shx0 + 0.15, sy1, z0 + 2.75]], 3);
+  s += I.ln([shx1, sy1, 0], [shx1, sy1, z0 - 0.3], 'stroke="' + INK + '" stroke-width=".9" stroke-dasharray="4 3"') + I.ln([shx0, sy1, 0], [shx0, sy1, z0 - 0.3], 'stroke="' + INK + '" stroke-width=".9" stroke-dasharray="4 3"');
+  /* stair enclosure front faces as glass, stair door */
+  s += I.qx(sw, 0, sl, 0, roof, I.fill("#ffffff", .3)) + I.qy(sl, 0, sw, 0, roof, I.fill("#ffffff", .3));
+  const dy0 = 0.55, dy1 = 1.5, dh = 2.1;
+  s += I.qx(sw, dy0, dy1, z0, z0 + dh, I.fill("#fffdf7"));
+  const hd = [sw, dy1 - 0.15, z0 + 1.0];
+  s += I.ln(hd, V3(hd, [0, 0, 0.12]), 'stroke="' + INK + '" stroke-width="3.2"');
+  /* roof over the stair, stair-head vent */
+  s += I.qz(roof, 0, sw, 0, sl, I.fill(IC.SL));
+  const rx0 = 0.8, rx1 = 1.8, ry0 = 2.0, ry1 = 3.0;
+  s += I.qz(roof, rx0, rx1, ry0, ry1, I.fill(IC.SKY));
+  s += I.leaf([rx0, ry0, roof], [rx1, ry0, roof], [0, 1, 0], [0, 0, 1], 1.0, 60);
+  /* shaft above the roof line, fan on top */
+  s += I.qz(shTop, shx0, shx1, sy0, sy1, 'fill="url(#ht)" stroke="' + INK + '" stroke-width="1"');
+  const fA = P3(shc, sy1 / 2, shTop + 0.9); s += H_.fan(fA[0], fA[1], 14) + I.arr([shc, sy1 / 2, shTop + 1.5], [shc, sy1 / 2, shTop + 2.7], SMK, "ar");
+
+  s += I.t3([shx1, 0, shTop - 3.8], "extract shaft", 8, 0, { fs: 10.5, a: "start", c: "#5a5348" });
+  /* labels */
+  s += I.t3([sw / 2, sl, 0], "Stair", 0, 20, { fs: 12.5, b: true }) + I.t3([8.4, cw, z0], "Corridor, fire storey", 10, 22, { fs: 12.5, b: true });
+  s += I.t3([(fd0 + fd1) / 2, 0, z0 + 2.1], "flat door", 0, -6, { fs: 10.5, c: "#5a5348" });
+  if (mode === 0) {
+    /* A: entrained air; B: the natural vents the system replaces; C: stair size */
+    s += I.arr([7.4, 2.1, z0 + 0.6], [7.6, 1.1, z0 + 1.6], AIR, "aa", 1.8) + I.arr([8.6, 2.1, z0 + 0.6], [8.5, 1.1, z0 + 1.7], AIR, "aa", 1.8);
+    s += I.t3([shx1, sy1, z0 + 2.4], "Tx", 10, 4, { fs: 12.5, b: true, i: true, a: "start" });
+    s += I.t3([fd1, 0, z0 + 1.2], "ṁ, T", 30, -18, { fs: 12.5, b: true, i: true, a: "start" });
+    s += I.qy(0.02, 4.0, 5.2, z0 + 1.7, z0 + 2.75, I.ghost) + I.t3([4.6, 0, z0 + 2.75], "Ac", 0, -6, { fs: 12.5, b: true, i: true });
+    s += I.qz(roof + 0.01, rx0, rx1, ry0, ry1, I.ghost) + I.t3([rx1, ry1, roof], "As", 10, 12, { fs: 12.5, b: true, i: true, a: "start" });
+    s += I.dim([5.6, 0, z0 + 2.2], [5.6, 0, roof], [0, 0, 0], "H", { dx: 10 }) + I.ln([5.2, 0, z0 + 2.2], [5.6, 0, z0 + 2.2], 'stroke="' + INK + '" stroke-width=".8" stroke-dasharray="3 2"') + I.ln([rx1, ry0, roof], [5.6, 0, roof], 'stroke="' + INK + '" stroke-width=".8" stroke-dasharray="3 2"');
+    const tA = P3(5.4, 1.6, z0 + 2.2); s += I.thermo(tA[0], tA[1], "Tc", "end");
+    const tB = P3(14.2, 0, 12.4); s += I.thermo(tB[0], tB[1], "To", "end") + I.tx(tB[0] - 9, tB[1] + 10, "outside", { fs: 10, a: "end", c: "#5a5348" });
+    s += I.dim([0, sl, roof], [sw, sl, roof], [0, 0.8, 0], "W", { dx: -8, dy: 14 }) + I.dim([sw, 0, roof], [sw, sl, roof], [0.8, 0, 0], "L", { dx: 14, dy: 10 }) + I.dim([0, sl, 0], [0, sl, roof], [-0.9, 0.9, 0], "H", { dx: -12 });
+    s += I.tag(1, [(fd0 + fd1) / 2, 0, z0 + 0.6], 10, 120) + I.tag(2, [shc, sy1, z0 + 2.0], 64, 46) + I.tag(3, [4.3, 0, z0 + 2.2], -40, -56) + I.tag(4, [rx0 + 0.3, ry0 + 0.6, roof + 0.4], -70, -40) + I.tag(5, [5.6, 0, roof - 0.6], 20, -64) + I.tag(6, [5.4, 1.6, z0 + 2.2], -10, 100) + I.tag(7, [0, sl + 0.9, roof / 2], -60, 10);
+  } else {
+    /* D: fan rate; E: replacement air; F: shaft size; G: stair door */
+    s += I.arr([1.3, 2.6, roof + 1.5], [1.3, 2.6, roof + 0.2], AIR, "aa") + I.t3([rx1, ry1, roof], "A, Cd", 10, 12, { fs: 12.5, b: true, i: true, a: "start" });
+    s += I.t3([shc, sy1 / 2, shTop + 0.9], "Q", 22, 4, { fs: 13, b: true, i: true, a: "start" });
+    s += I.arr([shx1 + 0.5, sy1 / 2, shTop - 2.2], [shx1 + 0.5, sy1 / 2, shTop - 0.4], SMK, "ar", 1.8) + I.t3([shx1 + 0.5, sy1 / 2, shTop - 1.4], "v", 8, 0, { fs: 13, b: true, i: true, a: "start" });
+    s += I.arr([1.0, 1.0, z0 + 1.4], [sw - 0.1, 1.0, z0 + 1.4], AIR, "aa", 1.8);
+    /* inset: shaft or duct in plan */
+    s += H_.r(18, 40, 200, 170, 'fill="#fffdf7" stroke="' + INK + '" stroke-width=".8"') + I.tx(128, 58, "Shaft or duct, in plan", { fs: 11.5, b: true });
+    s += H_.r(58, 78, 104, 80, 'fill="url(#ht)" stroke="' + INK + '" stroke-width="2"') + H_.r(66, 86, 88, 64, 'fill="' + IC.SKY + '" stroke="' + INK + '"') + I.tx(110, 122, "A", { fs: 15, b: true, i: true });
+    s += '<circle cx="138" cy="102" r="7" fill="none" stroke="' + INK + '" stroke-width="1.2"/><circle cx="138" cy="102" r="2" fill="' + INK + '"/>' + I.tx(150, 106, "v", { fs: 13, b: true, i: true, a: "start" });
+    s += I.tx(118, 178, "A: clear area inside the lining", { fs: 10.5 }) + I.tx(118, 192, "v: air speed up the shaft", { fs: 10.5 });
+    s += I.tag2(3, 36, 60);
+    /* inset: stair door seen from the corridor */
+    s += H_.r(18, 300, 200, 238, 'fill="#fffdf7" stroke="' + INK + '" stroke-width=".8"') + I.tx(130, 318, "Stair door, from the corridor", { fs: 11.5, b: true });
+    const X0 = 70, Y0 = 340, DW = 86, DH = 150;
+    s += H_.r(X0, Y0, DW, DH, 'fill="#fffdf7" stroke="' + INK + '" stroke-width="2"') + I.tx(X0 + 8, Y0 + 80, "hinge", { fs: 9.5, a: "start", c: "#5a5348" });
+    s += H_.l(X0, Y0 + 20, X0 + 4, Y0 + 20, 'stroke="' + INK + '" stroke-width="3"') + H_.l(X0, Y0 + DH - 20, X0 + 4, Y0 + DH - 20, 'stroke="' + INK + '" stroke-width="3"');
+    const hx = X0 + DW - 14, hy = Y0 + 80;
+    s += H_.r(hx - 3, hy - 9, 6, 18, 'fill="' + INK + '" stroke="none"');
+    s += '<line x1="' + X0 + '" y1="' + (Y0 + DH + 14) + '" x2="' + (X0 + DW) + '" y2="' + (Y0 + DH + 14) + '" stroke="' + INK + '" stroke-width="1.1" marker-start="url(#ar)" marker-end="url(#ar)"/>' + I.tx(X0 + DW / 2, Y0 + DH + 30, "W", { fs: 13, b: true, i: true });
+    s += '<line x1="' + (X0 - 16) + '" y1="' + Y0 + '" x2="' + (X0 - 16) + '" y2="' + (Y0 + DH) + '" stroke="' + INK + '" stroke-width="1.1" marker-start="url(#ar)" marker-end="url(#ar)"/>' + I.tx(X0 - 22, Y0 + DH / 2, "H", { fs: 13, b: true, i: true, a: "end" });
+    s += '<line x1="' + hx + '" y1="' + (Y0 + 104) + '" x2="' + (X0 + DW) + '" y2="' + (Y0 + 104) + '" stroke="' + INK + '" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>' + H_.l(hx, hy + 9, hx, Y0 + 110, 'stroke="' + INK + '" stroke-width=".8"') + I.tx(hx + 7, Y0 + 122, "d", { fs: 13, b: true, i: true });
+    s += '<line x1="' + (hx + 52) + '" y1="' + hy + '" x2="' + (hx + 8) + '" y2="' + hy + '" stroke="' + INK + '" stroke-width="2.2" marker-end="url(#ar)"/>' + I.tx(hx + 56, hy + 4, "F", { fs: 13, b: true, i: true, a: "start" }) + I.tx(hx + 30, hy - 8, "push", { fs: 9.5, c: "#5a5348" });
+    s += I.tx(X0 + DW / 2, Y0 + 34, "ΔP", { fs: 13, b: true, i: true }) + I.tx(X0 + DW / 2, Y0 + 48, "across", { fs: 9.5, c: "#5a5348" }) + I.tx(X0 + DW / 2, Y0 + 59, "the door", { fs: 9.5, c: "#5a5348" });
+    s += I.tx(118, 530, "Stair side pushes the door shut", { fs: 9.5, c: "#5a5348" });
+    s += I.tag2(4, 36, 320);
+    s += I.tag(1, [shc + 0.3, sy1 / 2, shTop + 1.2], 70, -10) + I.tag(2, [1.3, 2.4, roof + 0.6], -80, -40) + I.tag(3, [shx1, sy1 / 2, shTop - 0.2], 70, 40) + I.tag(4, [sw, 1.0, z0 + 1.5], 40, 110) + I.t3([sw, dy0, z0 + dh], "stair door", 0, -8, { fs: 10.5, c: "#5a5348" });
+  }
+  return s + notScale(560);
+}
+
+/* legend: every input, by number on the drawing. [input id, symbol on the drawing, what to enter] */
+const IGD = [
+  { n: "Stair and lobby vents", p: "p1", h: 540, f: ig0, items: [
+    [1, "The building", [["bcase", "", "Pick the row that matches the building: how high the top storey floor is above the fire and rescue access level (11 m is the dividing line), how many stairs there are, and whether the flats open off a lobby or a corridor. The inset shows how the height is measured."]]],
+    [2, "Vent at the head of the stair", [
+      ["vtS", "", "<b>Free area known</b> if you have the maker’s figure. Otherwise pick how the vent is hinged, and the sheet estimates the free area from W, H and θ."],
+      ["vSar", "", "The clear area smoke can pass through one open vent, from the maker’s data (the aerodynamic free area to BS EN 12101-2). It is less than the frame size."],
+      ["vSw", "W", "Clear width of the opening, inside the frame. On a roof vent, or one hinged at the top or bottom, W is the hinged edge."],
+      ["vSh", "H", "Clear height of the opening, inside the frame. On a roof vent it is the side that lifts, at right angles to the hinge."],
+      ["vSang", "θ", "How far the leaf opens, measured from closed. 90° is fully open. Use the angle the opener really reaches."],
+      ["vSn", "n", "How many vents of this size there are. The sheet adds their areas."]]],
+    [3, "Vent in the lobby or corridor", [
+      ["vtL", "", "As for the stair vent: the maker’s free area if you have it, otherwise how the vent is hinged."],
+      ["vLar", "", "Clear area through one open vent, from the maker’s data."],
+      ["vLw", "W", "Clear width of the opening, inside the frame. For a vent hinged at the top or bottom, this is the hinged edge."],
+      ["vLh", "H", "Clear height of the opening, inside the frame. For a side-hung vent, this is the hinged edge."],
+      ["vLang", "θ", "How far the leaf opens from closed. A manual vent must open to at least 30°."],
+      ["vLn", "n", "How many vents of this size serve the lobby or corridor."]]],
+    [4, "Height of the lobby vent", [["vtop", "a", "From the finished floor of the lobby or corridor up to the <b>top edge of the clear opening</b> of the vent (not the top of the frame). It must be no lower than b."]]],
+    [5, "Height of the stair door", [["dhead", "b", "From the same floor up to the top of the stair door’s clear opening, the underside of the door head."]]]
+  ] },
+  { n: "Smoke shaft", p: "p2", h: 560, f: ig1, items: [
+    [1, "Shaft cross-section", [
+      ["sa", "width", "Inside size of the shaft one way, between the finished wall faces, at its tightest point."],
+      ["sb", "depth", "Inside size the other way. Width × depth is the shaft area: at least 1.5 m², and neither side under 0.85 m."]]],
+    [2, "Head of the shaft", [
+      ["sh", "c", "From the ceiling of the highest storey the shaft serves up to the top of the shaft. At least 2.5 m."],
+      ["shd", "", "Free area of the vent or louvre at the top of the shaft, open to the air. At least 1.0 m²."]]],
+    [3, "Anything near the head", [["sst", "e", "How far the top of the shaft is above the highest thing (plant, parapet, lift room) within 2 m of it, measured on plan. At least 0.5 m."]]],
+    [4, "Inclined part", [
+      ["sinc", "L", "Length of any part of the shaft that is not vertical, measured along the shaft. 0 if the shaft is straight."],
+      ["sang", "φ", "Angle of that part from the vertical. No more than 30°, over no more than 4 m."]]],
+    [5, "Vent from the corridor into the shaft", [
+      ["sva", "", "Free area of the vent between the lobby or corridor and the shaft, on each storey. At least 1.0 m²."],
+      ["sCd", "", "Discharge coefficient: the share of the free area that acts. About 0.6 for a vent. Used only for the stack flow."]]],
+    [6, "Inside the shaft", [["sgr", "", "The smallest free area anywhere inside the shaft, such as a safety grille or a damper. At least 1.0 m²."]]],
+    [7, "Stack flow", [
+      ["sH", "H", "From the middle of the vent on the fire storey up to the top of the shaft. The top storey served has the shortest height and the least flow."],
+      ["sTs", "Ts", "Temperature of the smoke in the shaft."],
+      ["sTo", "To", "Outside air temperature. A warmer day gives less flow."]]]
+  ] },
+  { n: "Basement: natural", p: "p3", h: 500, f: ig2, items: [
+    [1, "Basement floor", [["bA", "floor area", "Area of this basement storey on plan, inside the outside walls: length × width for a plain rectangle. Each storey is taken on its own. This box and the one on the powered extract tab fill each other."]]],
+    [2, "Depth below ground", [["bD", "depth", "From the finished floor of the basement up to the ground outside, next to the building."]]],
+    [3, "Smoke outlets", [["bO", "", "Add up the free areas of <b>all</b> the outlets on this storey: vents high in the walls or ceiling, spread round the perimeter, opening to the open air (louvres, stallboards, pavement lights)."]]]
+  ] },
+  { n: "Basement: powered extract", p: "p4", h: 520, f: ig3, items: [
+    [1, "Basement floor", [["mA", "floor area", "Area of the storey on plan, inside the outside walls. The same as on the natural tab: each box fills the other."]]],
+    [2, "Clear height", [["mH", "clear height", "From the finished floor to the underside of the ceiling, or of the slab if there is no ceiling. Floor area × clear height is the volume the fan has to change."]]],
+    [3, "Depth below ground", [["mD", "depth", "From the finished floor up to the ground outside, next to the building."]]],
+    [4, "Air changes", [["mACH", "", "How many times the basement volume is extracted each hour. BS 9991 asks for ten."]]],
+    [5, "Extract fan and duct", [
+      ["mTg", "Tg", "Temperature of the gases reaching the fan. The fan must run at 300 °C for 60 minutes."],
+      ["mdG", "", "Say what you know about the duct: the air speed (the sheet finds the area) or the area (the sheet finds the speed)."],
+      ["mdV", "v", "Air speed in the duct, on the hot flow."],
+      ["mdA", "A", "Clear cross-section of the duct, inside any lining."]]],
+    [6, "Replacement air", [
+      ["miG", "", "Say what you know about the opening that lets outside air back in: the air speed or the area."],
+      ["miV", "v", "Air speed through the opening’s free area."],
+      ["miA", "A", "Free area of the replacement air opening, louvre or vent."]]],
+    [7, "Outside air", [["mTa", "Ta", "Outside (ambient) air temperature, usually 20 °C."]]],
+    [8, "Sprinklers", [["mSpr", "", "Tick if the basement has sprinklers to BS EN 12845. Powered extract is only allowed with them."]]]
+  ] },
+  { n: "MSVS: smoke and rate (A–C)", p: "p5", h: 560, f: () => igM(0), items: [
+    [1, "A. Fire in the flat", [
+      ["fsel", "", "Pick a design fire from the SCA guidance and it fills in the smoke flow and temperature. Typing your own figures switches this to “My own”."],
+      ["fm", "ṁ", "Mass of smoke coming out of the flat door each second."],
+      ["fT", "T", "Temperature of that smoke at the flat door."]]],
+    [2, "A. At the extract", [
+      ["fTx", "Tx", "Temperature of the gas where it enters the extract grille. Lower than at the flat door if the smoke cools along the corridor."],
+      ["fdil", "", "Extra air drawn in with the smoke on its way to the extract, as a percentage of the smoke flow."]]],
+    [3, "B. Corridor vent of the natural system", [["bAc", "Ac", "Free area of the corridor or lobby vent the natural system would have (shown dashed): 1.5 m² in BS 9991."]]],
+    [4, "B. Stair-head vent of the natural system", [["bAs", "As", "Free area of the vent at the top of the stair: 1.0 m²."]]],
+    [5, "B. Height between the vents", [["bH", "H", "From the middle of the corridor vent up to the stair-head vent."]]],
+    [6, "B. Temperatures and vents", [
+      ["bTs", "Tc", "Temperature of the smoke in the corridor."],
+      ["bTo", "To", "Outside air temperature."],
+      ["bCd", "", "Discharge coefficient of the vents, about 0.6."]]],
+    [7, "C. Stair", [
+      ["ssOn", "", "Tick if this is a small building with one stair (SCA 6.5.4). The stair volume then sets a minimum rate."],
+      ["ssW", "W", "Clear width of the stair enclosure, inside the walls."],
+      ["ssL", "L", "Clear length of the stair enclosure, inside the walls."],
+      ["ssH", "H", "Height inside the stair, from the ground floor to the underside of the roof."]]]
+  ] },
+  { n: "MSVS: fan, air and door (D–G)", p: "p5", h: 560, f: () => igM(1), items: [
+    [1, "D. Extract fan", [
+      ["qSel", "", "Take the largest of A, B and C as the starting rate, or use your own rate from the CFD."],
+      ["qOwn", "Q", "Your extract rate, in m³/s."]]],
+    [2, "E. Replacement air", [
+      ["mrG", "", "Say what you know: the opening’s free area (the sheet finds the pressure) or the pressure you can allow (the sheet finds the area)."],
+      ["mrA", "A", "Free area of the way replacement air comes in: a vent at the head of the stair, a window, or the route through the stair door."],
+      ["mrP", "ΔP", "Pressure difference needed to draw the air in. The sheet also takes it as the pressure across the stair door. The SCA guidance suggests no more than 20 Pa."],
+      ["mrCd", "Cd", "Discharge coefficient of the opening, about 0.6."]]],
+    [3, "F. Extract shaft or duct", [
+      ["msG", "", "Say what you know: the air speed (the sheet finds the area) or the area (the sheet finds the speed)."],
+      ["msV", "v", "Air speed in the shaft or duct."],
+      ["msA", "A", "Clear cross-section of the shaft or duct."]]],
+    [4, "G. Stair door", [
+      ["dW", "W", "Width of the door leaf."],
+      ["dH", "H", "Height of the door leaf."],
+      ["dF", "F", "Force the door closer needs at the handle with no pressure, from the closer’s data or measured with a gauge."],
+      ["dd", "d", "Distance from the handle to the latch edge of the door."]]]
+  ] }
+];
+
+/* where each input sits on the drawings */
+const IGMAP = {};
+IGD.forEach((g, gi) => g.items.forEach(it => it[2].forEach(r => { IGMAP[r[0]] = [gi, it[0]]; })));
+const igLabel = id => { const el = $(id); let lb = document.querySelector('label[for="' + id + '"]') || (el && el.closest("label")); return lb ? lb.textContent.replace(/\s+/g, " ").trim() : id; };
+const IGLAB = {}; Object.keys(IGMAP).forEach(id => { IGLAB[id] = igLabel(id); });
+let igI = 0, igN = 0, igLock = false;
+function igDraw() {
+  const g = IGD[igI];
+  $("igTabs").innerHTML = IGD.map((x, i) => '<button type="button" data-i="' + i + '" class="' + (i === igI ? "on" : "") + '">' + x.n + "</button>").join("");
+  $("igSvg").setAttribute("viewBox", "0 0 760 " + g.h);
+  $("igSvg").innerHTML = g.f();
+  $("igList").innerHTML = g.items.map(it => '<li data-n="' + it[0] + '"><span class="ign">' + it[0] + "</span><div><b>" + it[1] + "</b>" + it[2].map(r => '<div class="igr"><button type="button" class="igto" data-id="' + r[0] + '">' + IGLAB[r[0]] + "</button>" + (r[1] ? ' <span class="igs">' + r[1] + "</span>" : "") + "<br>" + r[2] + "</div>").join("") + "</div></li>").join("");
+  igHi(igN);
+}
+function igHi(n) {
+  igN = n;
+  document.querySelectorAll("#igSvg .igc").forEach(e => e.classList.toggle("hl", +e.dataset.n === n));
+  document.querySelectorAll("#igList li").forEach(e => e.classList.toggle("hl", +e.dataset.n === n));
+}
+$("igTabs").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) { igI = +b.dataset.i; igN = 0; igDraw(); } });
+$("igSvg").addEventListener("click", e => { const c = e.target.closest(".igc"); if (!c) return; igHi(+c.dataset.n); const li = document.querySelector('#igList li[data-n="' + c.dataset.n + '"]'); if (li) li.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+if (window.matchMedia && matchMedia("(hover:hover)").matches) $("igList").addEventListener("mouseover", e => { const li = e.target.closest("li[data-n]"); if (li) igHi(+li.dataset.n); });
+/* from the legend back to the input on the sheet */
+$("igList").addEventListener("click", e => {
+  const b = e.target.closest("button.igto"); if (!b) return;
+  const id = b.dataset.id, panel = $(id).closest(".cpanel");
+  document.querySelector("#mxDrawer .mx-close").click();
+  const tb = document.querySelector('#ctabs button[data-p="' + panel.id + '"]'); if (tb) tb.click();
+  setTimeout(() => { $(id).scrollIntoView({ block: "center" }); $(id).focus({ preventScroll: true }); }, 280);
+});
+/* open the drawings at a given input */
+function igOpen(gi, n) {
+  igI = gi; igN = n || 0; igDraw();
+  if (!$("mxDrawer").classList.contains("open")) { igLock = true; $("mxPull").click(); igLock = false; }
+  $("mxt-guide").click();
+  setTimeout(() => {
+    document.querySelector("#mxDrawer .mx-body").scrollTop = 0;
+    /* on a narrow screen the drawing scrolls sideways: bring the numbered item into view */
+    const w = $("igWrap"), c = document.querySelector("#igSvg .igc.hl circle:last-of-type");
+    if (w && c && w.scrollWidth > w.clientWidth) { const r = c.getBoundingClientRect(), R = w.getBoundingClientRect(); w.scrollLeft += (r.left + r.width / 2) - (R.left + R.width / 2); }
+  }, 320);
+}
+/* a numbered button beside every input label, and a link at the head of each calculator */
+Object.keys(IGMAP).forEach(id => {
+  const el = $(id); if (!el) return;
+  const lb = document.querySelector('label[for="' + id + '"]') || el.closest("label"); if (!lb) return;
+  const [gi, n] = IGMAP[id], b = document.createElement("button");
+  b.type = "button"; b.className = "igb"; b.textContent = n; b.title = "See it on drawing " + (gi + 1) + ", item " + n; b.setAttribute("aria-label", "Show “" + IGLAB[id] + "” on the drawing, item " + n);
+  b.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); igOpen(gi, n); });
+  lb.appendChild(b);
+});
+document.querySelectorAll(".cpanel").forEach(p => {
+  const h = p.querySelector("h4.grp"); if (!h) return;
+  const gi = IGD.findIndex(g => g.p === p.id), b = document.createElement("button");
+  b.type = "button"; b.className = "igopen"; b.innerHTML = "See every input on a 3D drawing";
+  b.addEventListener("click", () => igOpen(gi, 0));
+  h.insertAdjacentElement("afterend", b);
+});
+/* opening the notes shows the drawing for the calculator in use */
+$("mxPull").addEventListener("click", () => { if (igLock) return; const on = document.querySelector("#ctabs button.on"); const gi = on ? IGD.findIndex(g => g.p === on.dataset.p) : 0; if (gi >= 0 && IGD[igI].p !== IGD[gi].p) { igI = gi; igN = 0; igDraw(); } }, true);
+igDraw();
 
 function all() { nat1(); nat2(); nat3(); mech1(); mech2(); working(); }
 /* the two basement tabs share the floor area and depth: typing in one fills the other */
