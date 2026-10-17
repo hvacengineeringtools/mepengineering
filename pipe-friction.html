@@ -377,6 +377,9 @@ tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); 
 .na2 { color:var(--muted); text-decoration:line-through; }
 table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
 @media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
 </style>
 </head>
 <body>
@@ -411,8 +414,8 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
   <a class="on" href="pipe-friction.html"><span>XXI</span>Pipe friction loss</a>
   </nav>
 
-<p class="lead">Gives the velocity, Reynolds number, friction factor and pressure drop per metre for water (or any liquid you give the density and viscosity of) in a round pipe. The flow can be entered, or worked out from a load and a temperature difference with an optional safety factor. The pressure limit is yours: leave it blank and nothing is judged against a limit. The one notice that always shows is for a velocity outside what the friction formula covers. Every step of the working is in the side bar.</p>
-<nav class="toc" aria-label="On this page"><a href="#s1">1 Calculator</a><a href="#s2">2 Pipe sizes at this flow</a></nav>
+<p class="lead">Gives the velocity, Reynolds number, friction factor and pressure drop per metre for water (or any liquid you give the density and viscosity of) in a round pipe. The flow can be entered, or worked out from a load and a temperature difference with an optional safety factor. The pipe is chosen from the British or Australian tube tables (copper BS EN 1057 or AS 1432, steel BS EN 10255 or AS 1074, and BS EN 10216/10217 steel with a wall of your choice), or typed in. The pipework specification you supplied is in section 3, and the sheet can check your pipe against it. The pressure limit is yours: leave it blank and nothing is judged against a limit. The one notice that always shows is for a velocity outside what the friction formula covers. Every step of the working is in the side bar.</p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Calculator</a><a href="#s2">2 Pipe sizes at this flow</a><a href="#s3">3 Pipework specification</a></nav>
 
 <h2 id="s1">1. Calculator</h2>
 <div class="calc2"><div class="cin">
@@ -421,6 +424,7 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
 <h5 class="vh">Fluid</h5>
 <div class="fields two">
   <div class="field wide"><label for="fl">Fluid</label><select id="fl"></select><div class="hint" id="flH"></div></div>
+  <div class="field ftw" hidden><label for="tw">Water temperature</label><div class="pair"><input id="tw" type="number" inputmode="decimal" step="any" min="0" max="200" value="10" /><span>°C</span></div></div>
   <div class="field"><label for="rho">Density ρ</label><div class="pair"><input id="rho" type="number" inputmode="decimal" step="any" min="0" value="999.73" /><span>kg/m³</span></div></div>
   <div class="field"><label for="nu">Kinematic viscosity ν</label><div class="pair"><input id="nu" type="number" inputmode="decimal" step="any" min="0" value="1.306" /><span>10⁻⁶ m²/s</span></div></div>
 </div>
@@ -438,9 +442,15 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
 
 <h5 class="vh">Pipe</h5>
 <div class="fields two">
-  <div class="field wide"><label for="pp">Pipe size</label><select id="pp"></select><div class="hint" id="ppH"></div></div>
+  <div class="field wide"><label for="svc">Service (optional)</label><select id="svc"></select><label class="chk" id="svcF" hidden><input type="checkbox" id="svcFollow" /> Follow the specification: pick the tube for each size I choose</label><div class="hint" id="svcH"></div><button type="button" class="lbtn" id="svcApply" hidden>Use the specified tube</button></div>
+  <div class="field wide"><label for="pt">Pipe and standard</label><select id="pt"></select><div class="hint" id="ptH"></div></div>
+  <div class="field wide pps"><label for="pp">Size</label><select id="pp"></select></div>
+  <div class="field wide pss"><label for="ps">Wall series</label><select id="ps"></select><div class="hint" id="psH"></div></div>
+  <div class="field odw"><label for="od">Outside diameter</label><div class="pair"><input id="od" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
+  <div class="field odw"><label for="wt">Wall thickness</label><div class="pair"><input id="wt" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
   <div class="field"><label for="dia">Inside diameter D</label><div class="pair"><input id="dia" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
-  <div class="field"><label for="eps">Roughness ε</label><div class="pair"><input id="eps" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
+  <div class="field wide"><label for="rg">Roughness source</label><select id="rg"></select></div>
+  <div class="field"><label for="eps">Roughness ε</label><div class="pair"><input id="eps" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div><div class="hint" id="ppH"></div></div>
   <div class="field"><label for="len">Pipe length (optional)</label><div class="pair"><input id="len" type="number" inputmode="decimal" step="any" min="0" value="" placeholder="blank" /><span>m</span></div></div>
 </div>
 
@@ -456,9 +466,18 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
 </div></div>
 
 <h2 id="s2">2. Pipe sizes at this flow</h2>
-<p class="lead" style="margin-top:6px">The same flow and fluid in every size in the pipe table. Click a row to use that size above. Copper rows use 0.0015 mm roughness and steel rows 0.046 mm. A row outside the range of the friction formula is marked and not judged.</p>
+<p class="lead" style="margin-top:6px">The same flow and fluid in every size of the pipe table you chose above, at the wall series you chose. Click a row to use that size. Copper rows use 0.0015 mm roughness and steel rows 0.046 mm. A row outside the range of the friction formula is marked and not judged.</p>
 <div class="table-scroll"><table class="cmp" id="szT"></table></div>
 <p class="si" id="szNote"></p>
+
+<h2 id="s3">3. Pipework specification</h2>
+<p class="lead" style="margin-top:6px">The tube and fittings the specification names for each service and nominal bore. Choose a service under “Pipe” above and the sheet selects the tube the specification names for the size you pick, switching between BS EN 10255 and BS EN 10216/10217 as the size changes. You can still change the pipe standard, the wall series or the size by hand; the sheet then stops following and checks your pipe against the specification instead.</p>
+<div class="table-scroll"><table class="cmp" id="spT"></table></div>
+<h3 style="margin-top:22px">Specified tubes at each size, at this flow</h3>
+<div class="fields two"><div class="field"><label for="sw">Wall for the BS EN 10216/10217 rows</label><select id="sw"></select><div class="hint">These standards leave the wall to the buyer. The table uses the ASME wall you pick here.</div></div></div>
+<div class="table-scroll"><table class="cmp" id="spS"></table></div>
+<p class="si" id="spSN"></p>
+<p class="si">Copied from the table supplied with the brief. The picture ends at the MTHW rows, so any rows below them are not here, and the asterisk on MTHW has no note in the picture. HTHW, MTHW and LTHW are high, medium and low temperature hot water. The two API 5L rows under HTHW have no bore in the table; they read as alternatives. “BS 1640 ASTMA A.106 Grade B” is as printed. “Over 150mm” is taken as DN200 and above, the sizes the sheet holds.</p>
 
 <footer>Preliminary checking only. The friction factor is an approximation to the Colebrook equation and holds for turbulent flow. Fittings, valves, elevation and the pump are not included. Formulae, the working and the notes are in the side bar.</footer>
 <div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
@@ -480,6 +499,9 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
       <div id="workP"></div>
     </div>
     <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>0. Inside diameter from a tube table</h3>
+      <div id="fxPI" role="math"></div>
+      <ul id="fxPDI"></ul>
       <h3>1. Flow from a load (optional)</h3>
       <div id="fxP1" role="math"></div>
       <ul id="fxPD1"></ul>
@@ -503,11 +525,36 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
       <p class="tn">Conversions: 1 m³/s = 1000 L/s = 3600 m³/h. 1 Pa/m = 1 kPa per 1000 m, so 100 Pa/m is 10 kPa per 100 m.</p>
     </div>
     <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
-      <p>The pipe sizes, inside diameters, roughness values and fluid properties the sheet starts from. They are taken from the workbook this sheet was extracted from; see the notes. Replace any of them with your own on the sheet.</p>
-      <h3>Pipe inside diameters</h3>
-      <div class="table-scroll"><table class="cmp" id="dT"></table></div>
+      <p>The tube tables, roughness values and fluid properties the sheet starts from. The tube dimensions are from the British and Australian standards named in the notes, read from supplier and reference tables, not from the standards themselves. Inside diameter = outside diameter − 2 × wall. Replace any figure with your own on the sheet.</p>
+      <h3>Copper tube, BS EN 1057</h3>
+      <div class="table-scroll"><table class="cmp" id="cuT"></table></div>
+      <h3>Steel tube, BS EN 10255 (replaced BS 1387)</h3>
+      <div class="table-scroll"><table class="cmp" id="stT"></table></div>
+      <h3>Copper tube, AS 1432 (Australia)</h3>
+      <div class="table-scroll"><table class="cmp" id="auT"></table></div>
+      <h3>Steel pipe, ASME B36.10M sizes (API 5L, BS 1600)</h3>
+      <div class="table-scroll"><table class="cmp" id="asmT"></table></div>
+      <h3>The workbook steel against ASME standard weight</h3>
+      <div class="table-scroll"><table class="cmp" id="wbS"></table></div>
+      <p class="tn" id="wbSN"></p>
+      <h3>Steel tube, AS 1074 (Australia), against the sheet figures</h3>
+      <div class="table-scroll"><table class="cmp" id="asT"></table></div>
+      <p class="tn" id="asN"></p>
+      <h3>The workbook copper against AS 1432 Type B</h3>
+      <div class="table-scroll"><table class="cmp" id="wbA"></table></div>
+      <p class="tn" id="wbAN"></p>
+      <h3>Steel tube to BS EN 10216 and 10217, outside diameters from BS EN 10220</h3>
+      <div class="table-scroll"><table class="cmp" id="slT"></table></div>
+      <h3>The workbook copper against BS EN 1057</h3>
+      <div class="table-scroll"><table class="cmp" id="wbT"></table></div>
+      <p class="tn" id="wbN"></p>
       <h3>Roughness</h3>
       <div class="table-scroll"><table class="cmp" id="rT"></table></div>
+      <h3>Water density by temperature</h3>
+      <div class="table-scroll"><table class="cmp" id="wdT"></table></div>
+      <h3>Water kinematic viscosity by temperature</h3>
+      <div class="table-scroll"><table class="cmp" id="wvT"></table></div>
+      <p class="tn">Water at 1 atm to 100 °C and at saturation pressure above. Between the rows the sheet interpolates: density linearly, viscosity as ln ν against 1/T (a held-out test against the rows gave 0.1 % at worst for density and under 1.6 % for viscosity, which moves a pressure drop by under 0.4 %).</p>
       <h3>Fluid properties</h3>
       <div class="table-scroll"><table class="cmp" id="fT"></table></div>
     </div>
@@ -518,7 +565,7 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
       <ul class="tn" style="margin-left:18px">
         <li>The flow safety factor, the specific heat, the temperature difference and the pressure limit are all yours. None is fixed in the sheet. A blank limit means no limit; a blank safety factor box (unticked) means none is added.</li>
         <li>No limit on velocity is applied. The only velocity notice is for a velocity where the friction formula itself does not hold, and it stays on the sheet whenever it applies.</li>
-        <li>Pipe diameter, roughness, density and viscosity can all be typed over.</li>
+        <li>The pipe is yours to pick: copper to BS EN 1057 or AS 1432, steel to BS EN 10255 or AS 1074, BS EN 10216/10217 steel with a wall you choose, the workbook’s own sizes, or any outside diameter, wall or inside diameter you type. Roughness, density and viscosity can all be typed over too.</li>
       </ul>
       <h3>What the friction formula covers</h3>
       <ul class="tn" style="margin-left:18px">
@@ -530,16 +577,44 @@ table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
       <ul class="tn" style="margin-left:18px">
         <li>Darcy–Weisbach is the standard friction-loss equation behind pipe sizing guidance generally.</li>
         <li>The Altshul–Tsal friction factor is published in the ASHRAE Handbook, Fundamentals, duct design chapter (the 2001 edition, chapter 34, is the one cited by the sources I could read). It is written there for ducts. Applying it to water pipes is mathematically sound, but it is not the form a pipe chapter prints, which I understand to be Colebrook–White. I could not open the CIBSE Guide C or the ASHRAE pipe chapter to confirm.</li>
-        <li>The method was extracted from a pipe sizing workbook (the “Pipetulator” sheet of a project calculation). Its fixed velocity limits and fixed pressure limits are not carried over.</li>
+        <li>The method was extracted from a pipe sizing workbook (the “Pipetulator” sheet of a project calculation), whose copper sizes are Australian (AS 1432 Type B). Its fixed velocity limits and fixed pressure limits are not carried over.</li>
+      </ul>
+      <h3>What the British Standards cover</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Copper, BS EN 1057.</b> Round copper tube for water, gas and heating. The supplier tables I read run from 6 mm to 267 mm outside diameter, in half-hard (R250) and hard (R290) temper, with annealed coils (R220) in the small sizes. Wall thickness is set per size in two common series, Table X (thinner) and Table Y (thicker). The sheet lists 15 mm to 267 mm. Table Y is not listed above 108 mm in the tables I read.</li>
+        <li><b>Steel, BS EN 10255</b> (it replaced BS 1387). Threaded or welded steel tube, outside diameter 10.2 mm to 165.1 mm, which is DN6 to DN150 (1/8 in to 6 in). Light, medium and heavy walls. Light stops at DN100. The sheet lists DN8 to DN150. For DN8 and DN10 the table I read gave only one outside diameter (the maximum), so those two inside diameters are slightly small, which errs on the high side for pressure drop.</li>
+        <li><b>Steel to BS EN 10216 and 10217.</b> BS EN 10255 stops at DN150. Above that, steel pipe for pressure services is made to BS EN 10216 (seamless) or BS EN 10217 (welded), with outside diameters from BS EN 10220. The pipework specification also names them for hot water from DN50. Those standards do not fix one wall for each size: the buyer chooses it. So for DN50 to DN450 the sheet gives the outside diameter and you pick the wall.</li>
+        <li>These are product standards. They fix the tube dimensions and quality. They do not set a velocity or pressure-drop limit; that comes from your brief or the design guide you use.</li>
+        <li>I could not open the standards, which are paid documents. The dimensions come from supplier and reference tables that agree with each other, and the sheet lets you type any outside diameter, wall or inside diameter to override them. Check them against the standard before you issue anything.</li>
+        <li>For BS EN 10255 the outside diameter used is the middle of the maximum and minimum in the table, so the inside diameter is nominal; the tolerance on the wall is not applied.</li>
+      </ul>
+      <h3>The Australian standards, and what the workbook used</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Copper, AS 1432</b>, <i>Copper tubes for plumbing, gasfitting and drainage applications</i>. Round seamless tube. Types A and B run from DN6 to DN200, Type C from DN10 to DN25 and Type D from DN32 to DN150, with Type A the heaviest wall and Type D the lightest. Nominal sizes follow the old inch outside diameters (DN15 is 12.70 mm, DN20 is 19.05 mm, DN25 is 25.40 mm). Editions of 1990, 1996 and 2004 are listed by the sellers, so check which one your project cites. The sheet lists DN15 to DN200.</li>
+        <li><b>Steel, AS 1074-1989 (R2018)</b>, <i>Steel tubes and tubulars for ordinary service</i>. Threaded tube, DN8 to DN150, in light, medium and heavy walls. In the ACADS-BSG table its inside diameters agree with the BS EN 10255 figures within about 0.1 mm, apart from DN80 heavy (79.1 mm in that table against 78.75 mm worked out here), so the sheet uses the same outside diameters and walls for both. The comparison is in the Pipe and fluid data tab. The sheet lists DN15 to DN150.</li>
+        <li><b>Larger steel water pipe, AS 1579-2001 (R2018)</b>, <i>Arc welded steel pipes and fittings for water and waste water</i>. It covers DN100 and larger, for water and waste water up to 6.8 MPa. I could not find its dimension tables, so the sheet does not list AS 1579 sizes: use the BS EN 10216/10217 choice, or type the outside diameter and wall from your supplier’s table.</li>
+        <li><b>What the workbook used.</b> Its copper inside diameters match the ACADS-BSG table “Australian copper, AS 1432 Type B” (ten of the eleven sizes to 0.01 mm), and match Type B worked out from the outside diameter and wall within 0.15 mm. So the workbook copper is AS 1432 Type B, not BS EN 1057. Its steel sizes DN200 to DN450 are ASME B36.10M standard-weight pipe (outside diameters 219.1 to 457 mm, walls 8.18 and 9.27 mm for DN200 and DN250 and 9.53 mm above), agreeing with the standard-weight inside diameters within 0.25 mm; the comparison is in the Pipe and fluid data tab. The ACADS-BSG table labels those rows “American steel”. That is not an Australian standard table. BS EN 10216 and 10217 tube is also made to these sizes with a wall chosen by the buyer, so the figures are acceptable there too. The workbook steel is kept under “Workbook sizes as supplied”.</li>
+        <li>The copper DN50 inside diameter, 48.3 mm, is correct for AS 1432 Type B (50.80 mm outside, 1.22 mm wall). I earlier took it for a mis-entry. That was wrong.</li>
+        <li>I could not open AS 1432 or AS 1074, which are paid documents. The outside diameters and walls for AS 1432 are from Austral Wright Metals’ tube list, and the inside diameters from the ACADS-BSG help page. Both are secondary sources; check them against the standard before you issue anything.</li>
+        <li>Like the British tubes, these are product standards. They fix dimensions and quality, not a velocity or pressure-drop limit.</li>
       </ul>
       <h3>Data to check</h3>
       <ul class="tn" style="margin-left:18px">
-        <li>The pipe diameters, roughness and fluid properties are as in the workbook, which cites CIBSE Guide C Table 4.7 for the fluid properties. I did not check them against the guide or a manufacturer’s tube schedule.</li>
-        <li>The copper DN50 entry, 48.3 mm, is the outside diameter of DN40 steel pipe, so it may be a mis-entry; check the other copper and steel diameters against your pipe schedule too, or use the own-diameter option.</li>
-        <li>The workbook uses copper up to DN150 and steel from DN200, with no steel sizes below that. The table here follows it.</li>
+        <li>Roughness is chosen on the sheet: from the pipe type (0.0015 mm copper, 0.046 mm steel as in the workbook), commercial steel 0.046 mm, galvanised iron 0.15 mm, drawn tubing 0.0015 mm, or your own. The published values carry real uncertainty; the source suggests allowing 30 % to 50 % on typical figures. Ageing and scale are not included, and an old pipe can be much rougher.</li>
+        <li>The workbook’s three fluids (about 10, 30 and 40 °C) agree with the water tables to within 0.1 % in density and 0.2 % in viscosity. The sheet can also take water at any temperature from 0 to 200 °C. It is for plain water: glycol or other mixtures need their own density and viscosity.</li>
+        <li>BS EN 1057 copper has thinner walls than AS 1432 Type B, so its inside diameters are larger. Choosing between them changes the result: the workbook copper gives up to about three times the pressure drop of Table X copper in the smallest sizes. Use the standard your project calls for.</li>
+      </ul>
+      <h3>Where the data came from</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Water density and kinematic viscosity by temperature: the Engineering ToolBox tables for water, which cover 0 to 360 °C along the saturation line. The sheet uses 0 to 200 °C.</li>
+        <li>Roughness: Engineers Edge’s table, which quotes the Hydraulic Institute and F. M. White (commercial steel 0.046 mm, new galvanised iron 0.15 mm, drawn tubing 0.0015 mm). I did not have CIBSE Guide C, which gives its own figures.</li>
+        <li>ASME B36.10M pipe: the Engineering ToolBox tables. The metric table gives DN15 to DN200 in standard weight, Schedule 40 and Schedule 80. For DN250 to DN450 the page gave inches only: standard weight from that table, and the Schedule 40 walls (10.31, 11.13, 12.70 and 14.27 mm for DN300 to DN450) are the ASME inch walls converted, cross-checked against a second table that rounds them to 0.41, 0.44, 0.50 and 0.56 in. Schedule 80 above DN200 is not in the sheet.</li>
+        <li>BS EN 10255 DN8 and DN10: the Engineering ToolBox BS 1387 table.</li>
+        <li>BS EN 10216/10217 outside diameters (60.3, 76.1, 88.9, 114.3, 139.7 and 168.3 mm for DN50 to DN150): the usual BS EN 10220 and ISO series, which I have not checked against a published table here. They match the ASME outside diameters for DN50, DN80, DN100 and DN150, and differ at DN65 (76.1 against 73.0 mm) and DN125 (139.7 against 141.3 mm).</li>
+        <li>All of these are secondary sources. The standards themselves are paid documents I could not open.</li>
       </ul>
       <h3>Not included</h3>
-      <p>Fittings, valves, strainers, coils and elevation changes, the pump head, ageing of the pipe, and a flow that changes along the pipe. The sheet gives straight pipe friction only.</p>
+      <p>Fittings, valves, strainers, coils and elevation changes, the pump head, ageing of the pipe, and a flow that changes along the pipe. The sheet gives straight pipe friction only. Fittings and valves can be added by equivalent length or loss coefficient if wanted.</p>
     </div>
   </div>
 </aside>
@@ -558,7 +633,7 @@ function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<di
 const sci = (x, n) => { if (!(x > 0)) return "—"; const e = Math.floor(Math.log10(x)); return sig(x / Math.pow(10, e), n) + " × 10^{" + e + "}"; };
 const dp = x => x < 10 ? fmt(x, 2) : x < 100 ? fmt(x, 1) : fmt(x, 0);
 
-/* nominal size, inside diameter in mm: copper up to DN150, steel from DN200 (workbook data) */
+/* ---- workbook sizes: nominal size, inside diameter in mm (copper up to DN150, steel from DN200) ---- */
 const COPPER = [[15, 10.84], [20, 16.97], [25, 22.91], [32, 29.26], [40, 35.61], [50, 48.3], [65, 60.99], [80, 72.84], [100, 98.21], [125, 123.62], [150, 148.27]];
 const STEEL = [[200, 202.8], [250, 254.6], [300, 304.8], [350, 336.5], [400, 387.3], [450, 437.9]];
 const EPS = { c: 0.0015, s: 0.046 };
@@ -566,10 +641,218 @@ const EPS = { c: 0.0015, s: 0.046 };
 const FLUIDS = [["Chilled water (workbook, about 10 °C)", 999.73, 1.306], ["Condenser water (workbook, about 30 °C)", 995.6, 0.8005], ["Heating hot water (workbook, about 40 °C)", 992.2, 0.6561]];
 const PIPES = COPPER.map(p => ["c" + p[0], "Copper DN" + p[0] + " — inside " + p[1] + " mm", p[1], EPS.c, "c", p[0]]).concat(STEEL.map(p => ["s" + p[0], "Steel DN" + p[0] + " — inside " + p[1] + " mm", p[1], EPS.s, "s", p[0]]));
 
-$("fl").innerHTML = FLUIDS.map((f, i) => '<option value="' + i + '">' + f[0] + "</option>").join("") + '<option value="own">Enter my own density and viscosity</option>';
-$("pp").innerHTML = '<optgroup label="Copper (roughness 0.0015 mm)">' + PIPES.filter(p => p[4] === "c").map(p => '<option value="' + p[0] + '">' + p[1] + "</option>").join("") +
-  '</optgroup><optgroup label="Steel (roughness 0.046 mm)">' + PIPES.filter(p => p[4] === "s").map(p => '<option value="' + p[0] + '">' + p[1] + "</option>").join("") +
-  '</optgroup><option value="own">Enter my own diameter and roughness</option>';
+/* ---- British Standard tube tables (from supplier and reference tables, not from the standards) ---- */
+/* BS EN 1057 copper: outside diameter mm, wall Table X, wall Table Y (null = not listed) */
+const CU = [[15, 0.7, 1.0], [22, 0.9, 1.2], [28, 0.9, 1.2], [35, 1.2, 1.5], [42, 1.2, 1.5], [54, 1.2, 2.0], [66.7, 1.2, 2.0], [76.1, 1.5, 2.0], [108, 1.5, 2.5], [133, 1.5, null], [159, 2.0, null], [219, 3.0, null], [267, 3.0, null]];
+/* BS EN 10255 steel: DN, light OD max, min, medium/heavy OD max, min, wall light, medium, heavy (DN8 and DN10: only the maximum outside diameter was in the table I read, used for both) */
+const ST = [[8, 13.6, 13.6, 13.9, 13.9, 1.8, 2.3, 2.9], [10, 17.1, 17.1, 17.4, 17.4, 1.8, 2.3, 2.9], [15, 21.4, 21.0, 21.8, 21.0, 2.0, 2.6, 3.2], [20, 26.9, 26.4, 27.3, 26.5, 2.3, 2.6, 3.2], [25, 33.8, 33.2, 34.2, 33.3, 2.6, 3.2, 4.0], [32, 42.5, 41.9, 42.9, 42.0, 2.6, 3.2, 4.0],
+  [40, 48.4, 47.8, 48.8, 47.9, 2.9, 3.2, 4.0], [50, 60.2, 59.6, 60.8, 59.7, 2.9, 3.6, 4.5], [65, 76.0, 75.2, 76.6, 75.3, 3.2, 3.6, 4.5], [80, 88.7, 87.9, 89.5, 88.0, 3.2, 4.0, 5.0],
+  [100, 113.9, 113.0, 115.0, 113.1, 3.6, 4.5, 5.4], [125, null, null, 140.8, 138.5, null, 5.0, 5.4], [150, null, null, 166.5, 163.9, null, 5.0, 5.4]];
+/* BS EN 10216 / 10217 steel: DN, outside diameter from BS EN 10220; the wall is the buyer's choice */
+const SL = [[50, 60.3], [65, 76.1], [80, 88.9], [100, 114.3], [125, 139.7], [150, 168.3], [200, 219.1], [250, 273.0], [300, 323.9], [350, 355.6], [400, 406.4], [450, 457.0]];
+/* AS 1432 copper (Australia), outside diameters and walls as listed by Austral Wright Metals: nominal size, OD, wall Type A, B, C, D (null = not made) */
+const AUCU = [[15, 12.70, 1.02, 0.91, 0.71, null], [18, 15.88, 1.22, 1.02, 0.91, null], [20, 19.05, 1.42, 1.02, 0.91, null], [25, 25.40, 1.63, 1.22, 0.91, null], [32, 31.75, 1.63, 1.22, null, 0.91], [40, 38.10, 1.63, 1.22, null, 0.91],
+  [50, 50.80, 1.63, 1.22, null, 0.91], [65, 63.50, 1.63, 1.22, null, 0.91], [80, 76.20, 2.03, 1.63, null, 1.22], [90, 88.90, 2.03, 1.63, null, 1.22], [100, 101.60, 2.03, 1.63, null, 1.22], [125, 127.00, 2.03, 1.63, null, 1.42],
+  [150, 152.40, 2.64, 2.03, null, 1.63], [200, 203.20, 2.64, 2.03, null, null]];
+/* inside diameters in the ACADS-BSG table "internal pipe diameters" (the figures the workbook uses), mm, by nominal size */
+const ACADS = {
+  B: { 15: 10.84, 18: null, 20: 16.97, 25: 22.91, 32: 29.26, 40: 35.61, 50: 48.30, 65: 60.99, 80: 72.85, 90: 85.54, 100: 98.22, 125: 123.62, 150: 148.19, 200: 198.9 },
+  A: { 15: 10.62, 20: 16.17, 25: 22.09, 32: 28.44, 40: 34.79, 50: 47.48, 65: 60.17, 80: 72.05, 90: 84.74, 100: 97.42, 125: 122.82, 150: 148.97, 200: 197.7 },
+  D: { 32: 29.98, 40: 36.23, 50: 48.92, 65: 61.61, 80: 73.76, 90: 86.36, 100: 99.04, 125: 124.04, 150: 148.99 },
+  C: { 15: 11.24, 20: 17.19, 25: 23.52 },
+  SL: { 15: 17.2, 20: 22.0, 25: 28.3, 32: 37.0, 40: 42.3, 50: 54.1, 65: 69.2, 80: 81.9, 100: 106.2 },
+  SM: { 15: 16.2, 20: 21.7, 25: 27.4, 32: 36.1, 40: 42.0, 50: 53.1, 65: 68.8, 80: 80.8, 100: 105.1, 125: 129.7, 150: 155.1 },
+  SH: { 15: 15.0, 20: 20.5, 25: 25.8, 32: 34.5, 40: 40.4, 50: 51.3, 65: 67.0, 80: 79.1, 100: 103.3, 125: 128.9 }
+};
+/* ASME B36.10M steel pipe (API 5L, BS 1600 sizes): DN, OD mm, wall Sch 40, Sch 80, standard weight (null = not in the tables I read) */
+const ASME = [[15, 21.336, 2.769, 3.734, 2.769], [20, 26.670, 2.870, 3.912, 2.870], [25, 33.401, 3.378, 4.547, 3.378], [32, 42.164, 3.556, 4.851, 3.556], [40, 48.260, 3.683, 5.080, 3.683], [50, 60.325, 3.912, 5.537, 3.912],
+  [65, 73.025, 5.156, 7.010, 5.156], [80, 88.900, 5.486, 7.620, 5.486], [90, 101.600, 5.740, 8.077, 5.740], [100, 114.300, 6.020, 8.560, 6.020], [125, 141.300, 6.553, 9.525, 6.553], [150, 168.275, 7.112, 10.973, 7.112],
+  [200, 219.075, 8.179, 12.700, 8.179], [250, 273.050, 9.271, null, 9.271], [300, 323.850, 10.312, null, 9.525], [350, 355.600, 11.138, null, 9.525], [400, 406.400, 12.700, null, 9.525], [450, 457.200, 14.275, null, 9.525]];
+/* water at saturation pressure (1 atm to 100 °C): temperature °C, density kg/m3 */
+const WRHO = [[0.1, 999.85], [1, 999.90], [4, 999.97], [10, 999.70], [15, 999.10], [20, 998.21], [25, 997.05], [30, 995.65], [35, 994.03], [40, 992.22], [45, 990.21], [50, 988.04], [55, 985.69], [60, 983.20], [65, 980.55], [70, 977.76], [75, 974.84], [80, 971.79], [85, 968.61], [90, 965.31], [95, 961.89], [100, 958.35], [110, 950.95], [120, 943.11], [140, 926.13], [160, 907.45], [180, 887.00], [200, 864.66]];
+/* kinematic viscosity, 1e-6 m2/s */
+const WNU = [[0.01, 1.7918], [10, 1.3065], [20, 1.0035], [25, 0.8927], [30, 0.8007], [40, 0.6579], [50, 0.5531], [60, 0.4740], [70, 0.4127], [80, 0.3643], [90, 0.3255], [100, 0.2938], [110, 0.2677], [120, 0.2460], [140, 0.2123], [160, 0.1878], [180, 0.1695], [200, 0.1556]];
+function wInterp(tab, T, lg) {
+  if (!(T >= 0 && T <= 200)) return NaN;
+  for (let i = 0; i < tab.length - 1; i++) {
+    const a = tab[i], b = tab[i + 1];
+    if (T >= a[0] && T <= b[0]) {
+      if (!lg) return a[1] + (b[1] - a[1]) * (T - a[0]) / (b[0] - a[0]);
+      const x0 = 1 / (a[0] + 273.15), x1 = 1 / (b[0] + 273.15), x = 1 / (T + 273.15);
+      return Math.exp(Math.log(a[1]) + (Math.log(b[1]) - Math.log(a[1])) * (x - x0) / (x1 - x0));
+    }
+  }
+  return T < tab[0][0] ? tab[0][1] : tab[tab.length - 1][1];
+}
+const rhoAt = T => wInterp(WRHO, T, false), nuAt = T => wInterp(WNU, T, true);
+/* roughness choices, mm (Hydraulic Institute and F. M. White values, as listed by Engineers Edge) */
+const RG = [["", "From the pipe type"], ["0.046", "Commercial steel, new, 0.046 mm"], ["0.15", "Galvanised iron, new, 0.15 mm"], ["0.0015", "Drawn tubing (copper), 0.0015 mm"], ["own", "My own value"]];
+const SLW = [2.9, 3.2, 3.6, 4.0, 4.5, 5.0, 5.6, 6.3, 7.1, 8.0, 8.8, 10.0, 11.0, 12.5];
+const TYPES = [["cu", "Copper tube, BS EN 1057, UK (15 to 267 mm)"], ["st", "Steel tube, BS EN 10255, UK (DN8 to DN150)"], ["sl", "Steel tube, BS EN 10216/10217 (DN50 to DN450, wall of your choice)"], ["aucu", "Copper tube, AS 1432, Australia (DN15 to DN200)"], ["aust", "Steel tube, AS 1074, Australia (DN8 to DN150)"], ["asme", "Steel pipe, ASME B36.10M: Sch 40, Sch 80, standard weight (API 5L, BS 1600) DN15 to DN450"], ["wb", "Workbook sizes as supplied (AS 1432 Type B copper; ASME standard-weight steel DN200 to DN450)"], ["own", "My own pipe"]];
+const optText = id => { const e = $(id), o = e.options[e.selectedIndex]; return o ? o.text : ""; };
+const r3 = x => Math.round(x * 1000) / 1000;
+const mid = (a, b) => (a + b) / 2;
+
+/* the geometry of one tube: type, size key, series, wall typed by the user */
+function geomFor(pt, k, sv, wOwn) {
+  let od = NaN, wt = NaN, eps = NaN, lab = "", miss = "", id = NaN;
+  if (pt === "cu") {
+    const r = CU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.c; lab = "Cu " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = sv === "Y" ? r[2] : r[1]; if (w == null) miss = "Table Y has no tube of this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "aucu") {
+    const r = AUCU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.c; lab = "Cu DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = r[2 + "ABCD".indexOf(sv)]; if (w == null) miss = sv === "C" ? "Type C is made only from DN10 to DN25." : sv === "D" ? "Type D is made only from DN32 to DN150." : "Not listed in this size."; else wt = w; }
+    }
+  } else if (pt === "st" || pt === "aust") {
+    const r = ST.find(x => String(x[0]) === k);
+    if (r) {
+      eps = EPS.s; lab = "St DN" + r[0];
+      const L = sv === "L", noL = L && r[1] == null;
+      od = L && !noL ? mid(r[1], r[2]) : mid(r[3], r[4]);
+      if (noL) miss = "The light series is not made above DN100."; else wt = sv === "own" ? wOwn : sv === "L" ? r[5] : sv === "M" ? r[6] : r[7];
+    }
+  } else if (pt === "sl") {
+    const r = SL.find(x => String(x[0]) === k);
+    if (r) { od = r[1]; eps = EPS.s; lab = "St DN" + r[0]; wt = sv === "own" ? wOwn : parseFloat(sv); }
+  } else if (pt === "asme") {
+    const r = ASME.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.s; lab = "St DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = sv === "S" ? r[4] : sv === "40" ? r[2] : r[3]; if (w == null) miss = "Schedule 80 above DN200 is not in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "wb") {
+    const p = PIPES.find(x => x[0] === k);
+    if (p) { id = p[2]; eps = p[3]; lab = (p[4] === "c" ? "Cu" : "St") + " DN" + p[5]; }
+  }
+  if (pt !== "wb" && od > 0 && wt > 0 && od > 2 * wt) id = r3(od - 2 * wt);
+  return { od, wt, id, eps, lab, miss };
+}
+function sizeOpts(pt) {
+  if (pt === "cu") return CU.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "st" || pt === "aust") return ST.map(r => [String(r[0]), "DN" + r[0]]);
+  if (pt === "asme") return ASME.map(r => [String(r[0]), "DN" + r[0] + " — outside " + sig(r[1], 5) + " mm"]);
+  if (pt === "aucu") return AUCU.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  if (pt === "sl") return SL.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  if (pt === "wb") return PIPES.map(p => [p[0], p[1]]);
+  return [];
+}
+function serOpts(pt) {
+  if (pt === "cu") return [["X", "Table X (thinner wall)"], ["Y", "Table Y (thicker wall)"], ["own", "My own wall"]];
+  if (pt === "asme") return [["S", "Standard weight (STD)"], ["40", "Schedule 40"], ["80", "Schedule 80 (to DN200)"], ["own", "My own wall"]];
+  if (pt === "aucu") return [["A", "Type A (heaviest wall)"], ["B", "Type B"], ["C", "Type C (DN10 to DN25 only)"], ["D", "Type D (DN32 to DN150 only)"], ["own", "My own wall"]];
+  if (pt === "st" || pt === "aust") return [["L", "Light"], ["M", "Medium"], ["H", "Heavy"], ["own", "My own wall"]];
+  if (pt === "sl") return SLW.map(w => [w.toFixed(1), w.toFixed(1) + " mm wall"]).concat([["own", "My own wall"]]);
+  return [];
+}
+const optHtml = a => a.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+$("fl").innerHTML = FLUIDS.map((f, i) => '<option value="' + i + '">' + f[0] + "</option>").join("") + '<option value="T">Water at a temperature I enter (0 to 200 °C)</option><option value="own">Enter my own density and viscosity</option>';
+$("rg").innerHTML = RG.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+$("pt").innerHTML = optHtml(TYPES);
+
+/* the pipework specification table supplied with the brief: service, bore from, bore to (null = open or not stated), bore as printed, tube, fittings, structured form for the check */
+const SVC = ["Chilled water", "Condenser water (Open circuit GALV)", "HTHW", "LTHW", "MTHW*"];
+const API = ["API Std 5L Grade B Sched 40 BS1600", "BS 1640 ASTMA A.106 Grade B"];
+const SPEC = [
+  [0, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [0, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [0, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [1, 15, 50, "15mm to 50mm", "BS EN 10255 GALV", "BS 143 &amp; 1256", { pt: "st", galv: 1 }],
+  [1, 65, 150, "65mm to 150mm", "BS EN 10255 GALV", "BS EN 10253 GALV", { pt: "st", galv: 1 }],
+  [1, 151, null, "Over 150mm", "BS EN 10216 or 10217 Grade ERW430", "BS EN 10253 Heavy", { pt: "sl" }],
+  [2, 15, 40, "15mm to 40mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy Grade S410", { pt: "st", ser: "H" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [2, 50, 300, "50mm to 300mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [3, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [3, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [3, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [4, 15, 150, "15mm to 150mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy", { pt: "st", ser: "H" }],
+  [4, 151, null, "Above 150mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }]
+];
+(function () {
+  let h = "<thead><tr><th>Service</th><th>Nominal bore</th><th>Tube</th><th>Fittings</th></tr></thead><tbody>";
+  SVC.forEach((sv, i) => { const rs = SPEC.filter(r => r[0] === i); rs.forEach((r, j) => { h += "<tr>" + (j === 0 ? '<th rowspan="' + rs.length + '">' + sv + "</th>" : "") + "<td>" + r[3] + "</td><td>" + r[4] + "</td><td>" + r[5] + "</td></tr>"; }); });
+  $("spT").innerHTML = h + "</tbody>";
+  $("svc").innerHTML = '<option value="">No service chosen</option>' + SVC.map((v, i) => '<option value="' + i + '">' + v + "</option>").join("");
+})();
+const SERN = { L: "light", M: "medium", H: "heavy" };
+const nomDN = (pt, k) => { if (pt === "st" || pt === "aust" || pt === "sl" || pt === "asme") return parseInt(k); if (pt === "wb") { const p = PIPES.find(x => x[0] === k); return p && p[4] === "s" ? p[5] : null; } return null; };
+let specHit = null;
+function specCheck(pt, k, sv) {
+  const H = $("svcH"), B = $("svcApply"), si = $("svc").value; specHit = null; B.hidden = true; $("svcF").hidden = si === "";
+  if (si === "") { H.textContent = "Pick a service to check this pipe against the pipework specification table in section 3."; return; }
+  const i = parseInt(si), dn = nomDN(pt, k);
+  if (pt === "cu" || pt === "aucu") { H.textContent = "The specification table lists steel tube only, so copper is not covered by it."; return; }
+  if (dn == null) { H.textContent = pt === "wb" ? "The workbook copper is not in the specification table, which lists steel tube. Choose a steel tube to check it." : "Choose a steel tube above to check it against the specification."; return; }
+  const rows = SPEC.filter(r => r[0] === i && r[1] != null && dn >= r[1] && (r[2] == null || dn <= r[2]));
+  if (!rows.length) { H.textContent = "The specification table has no row for DN" + dn + " in " + SVC[i] + "."; return; }
+  const r = rows[0], st = r[6] || {}, alt = SPEC.filter(x => x[0] === i && x[1] == null);
+  let m = "<b>Specification, DN" + dn + ", " + SVC[i] + ":</b> tube " + r[4] + "; fittings " + r[5] + ".";
+  if (alt.length) m += " The table also gives, with no bore stated: tube " + alt[0][4] + "; fittings " + alt[0][5] + ".";
+  const bad = [];
+  if (st.pt === "st") {
+    if (pt === "sl") bad.push("You have chosen BS EN 10216/10217 tube; the specification calls for BS EN 10255.");
+    else if (pt === "asme") bad.push("You have chosen ASME-size pipe; the specification calls for BS EN 10255.");
+    else if (pt === "wb") bad.push("The workbook steel is American schedule pipe; the specification calls for BS EN 10255.");
+    else {
+      if (pt === "aust") m += " You have chosen AS 1074, which has the same dimensions as BS EN 10255 within about 0.1 mm in the table I checked.";
+      if (st.ser && sv !== st.ser) bad.push(sv === "own" ? "The wall is typed by you; the specification says " + SERN[st.ser] + "." : "You have chosen " + SERN[sv] + "; the specification says " + SERN[st.ser] + ".");
+    }
+  } else if (st.pt === "sl") {
+    if (pt === "st" || pt === "aust") bad.push("You have chosen " + (pt === "st" ? "BS EN 10255" : "AS 1074") + " tube; the specification calls for BS EN 10216/10217, with the wall set by the buyer.");
+    else if (pt === "asme" && i === 2) m += " ASME pipe in Schedule 40 is the API 5L Grade B Sched 40 alternative the table gives for HTHW.";
+    else if (pt === "wb") bad.push("The workbook steel is American schedule pipe; the specification calls for BS EN 10216/10217.");
+  }
+  if (st.galv) m += " Galvanised: the sheet uses the plain tube’s inside diameter, and galvanised steel is rougher than plain steel (commonly taken as about 0.15 mm), so type the roughness you want.";
+  if (bad.length) { m += ' <b style="color:#9b1c1c">' + bad.join(" ") + "</b>"; if (st.pt !== "sl" || SL.some(q => q[0] === dn)) { specHit = { pt: st.pt, ser: st.ser || null, dn }; B.hidden = false; } }
+  else m += " <b>This pipe agrees with it.</b>";
+  if (follow) m += " The sheet is following the specification: change the size and the tube changes with it. Change the standard or the wall yourself and it stops.";
+  H.innerHTML = m;
+}
+$("sw").innerHTML = '<option value="40">Schedule 40</option><option value="S">Standard weight</option><option value="80">Schedule 80 (to DN200)</option>';
+/* following the specification: a service chosen, the tube switches with the size; the maker can leave it at any time */
+let follow = false, wallPick = false;   /* wallPick: the maker chose a BS EN 10216/10217 wall, keep it across sizes */
+const specRow = (i, dn) => SPEC.find(r => r[0] === i && r[1] != null && r[6] && dn >= r[1] && (r[2] == null || dn <= r[2]));
+function specList(i) {
+  const out = [];
+  ST.forEach(x => { const r = specRow(i, x[0]); if (r && r[6].pt === "st") out.push([x[0], r]); });
+  SL.forEach(x => { const r = specRow(i, x[0]); if (r && r[6].pt === "sl") out.push([x[0], r]); });
+  return out.sort((a, b) => a[0] - b[0]).map(o => [String(o[0]), "DN" + o[0] + " — " + o[1][4].replace(/ GALV$/, " galvanised")]);
+}
+const ppOpts = pt => follow && $("svc").value !== "" ? specList(parseInt($("svc").value)) : sizeOpts(pt);
+function setFollow(on) { if (!on) wallPick = false; follow = on; $("svcFollow").checked = on; }
+function unfollow() {   /* the size list goes back to the chosen pipe's own sizes, the pipe stays as it is */
+  if (!follow) return; setFollow(false);
+  const pt = $("pt").value, prev = $("pp").value; if (pt === "own") return;
+  $("pp").innerHTML = optHtml(sizeOpts(pt)); if (sizeOpts(pt).some(o => o[0] === prev)) $("pp").value = prev;
+}
+function useSpec(dn) {
+  const i = parseInt($("svc").value); if (isNaN(i)) return;
+  const r = specRow(i, parseInt(dn)); if (!r) return;
+  const st = r[6], pt = st.pt, prevPt = $("pt").value, prevS = $("ps").value;
+  setFollow(true);
+  $("pt").value = pt;
+  $("pp").innerHTML = optHtml(ppOpts(pt)); $("pp").value = String(dn);
+  $("ps").innerHTML = optHtml(serOpts(pt));
+  const a = ASME.find(q => q[0] === parseInt(dn)), near = a ? SLW.reduce((m, w) => Math.abs(w - a[2]) < Math.abs(m - a[2]) ? w : m, SLW[0]).toFixed(1) : null;
+  const want = st.ser || (pt === "st" ? "M" : prevPt === "sl" && wallPick ? prevS : near);
+  $("ps").value = want && serOpts(pt).some(o => o[0] === want) ? want : defSer(pt);
+  const rg = $("rg").value; if (st.galv) { if (rg === "") $("rg").value = "0.15"; } else if (rg === "0.15") $("rg").value = "";
+  showPipeFields(); setPipe();
+}
+function startFollow() {
+  const i = parseInt($("svc").value), L = specList(i); if (!L.length) return;
+  const dn = nomDN($("pt").value, $("pp").value), has = d => L.some(o => o[0] === String(d));
+  useSpec(has(dn) ? dn : has(50) ? 50 : L[0][0]);
+}
+$("svc").addEventListener("change", () => { if ($("svc").value === "") unfollow(); else startFollow(); calc(); });
+$("svcFollow").addEventListener("change", () => { if (!$("svcFollow").checked) unfollow(); else if ($("svc").value !== "") startFollow(); calc(); });
+$("svcApply").addEventListener("click", () => { if (!specHit) return; useSpec(specHit.dn); calc(); });
 
 /* the friction calculation, one pipe */
 function fric(Vd, Dmm, eps, rho, nu) {
@@ -588,10 +871,13 @@ function calc() {
   document.querySelectorAll(".fl").forEach(e => e.hidden = mode !== "l");
   document.querySelector(".sf").hidden = !$("sfOn").checked;
   const sfp = $("sfOn").checked ? num("sf") : 0;
-  const pip = PIPES.find(p => p[0] === $("pp").value);
-  $("ppH").textContent = pip ? "Roughness " + pip[3] + " mm, " + (pip[4] === "c" ? "copper" : "steel") + ". Typing a new diameter or roughness switches to your own." : "Type the inside diameter and the roughness of your pipe.";
-  const fl = FLUIDS[parseInt($("fl").value)];
-  $("flH").textContent = fl ? "Properties as in the workbook the method came from. Typing a new value switches to your own." : "Enter the density and the kinematic viscosity of the liquid at its working temperature.";
+  const pt = $("pt").value, sv = $("ps").value;
+  const pg = geomFor(pt, $("pp").value, sv, num("wt"));
+  specCheck(pt, $("pp").value, sv);
+  $("ppH").textContent = $("rg").value === "own" ? "Roughness typed by you." : $("rg").value !== "" ? "Roughness chosen above." : pt === "own" || pt === "wb" || sv === "own" ? "Roughness is yours to type." : "From the pipe type: " + pg.eps + " mm, " + (pt === "cu" || pt === "aucu" ? "copper" : "steel") + ".";
+  const fl = FLUIDS[parseInt($("fl").value)], isT = $("fl").value === "T";
+  document.querySelectorAll(".ftw").forEach(e => e.hidden = !isT);
+  $("flH").textContent = isT ? (isFinite(rhoAt(num("tw"))) ? "Water at " + sig(num("tw"), 4) + " °C from the tables in the side bar: density " + sig(rhoAt(num("tw")), 6) + " kg/m³, kinematic viscosity " + sig(nuAt(num("tw")), 5) + " × 10⁻⁶ m²/s. Above 100 °C the system must be pressurised. Typing a density or viscosity switches to your own." : "Enter a temperature from 0 to 200 °C.") : fl ? "Properties as in the workbook the method came from. Typing a new value switches to your own." : "Enter the density and the kinematic viscosity of the liquid at its working temperature.";
 
   /* flow */
   let V = NaN, qm = NaN, Q = NaN, dT = NaN, cp = NaN, q0 = NaN, qu = "L";
@@ -643,38 +929,102 @@ function calc() {
     if (lim > 0) h += box("Against your limit", lim_ok ? "Within" : "Above", "limit " + sig(lim, 4) + " Pa/m · " + (lim_ok ? fmt(100 * (1 - R.dpm / lim), 0) + " % below it" : fmt(100 * (R.dpm / lim - 1), 0) + " % over it"), lim_ok ? "ok" : "bad");
   }
   $("pRes").innerHTML = h;
-  sizes(Vd, rho, nu, lim, pip);
-  W = { mode, rho, nu, V, qm, Q, dT, cp, q0, qu, sf, sfp, Vd, D, eps, L, lim, R };
+  sizes(Vd, rho, nu, lim);
+  specSizes(Vd, rho, nu, lim);
+  const od = num("od"), wt = num("wt");
+  const desc = pt === "own" ? "Pipe: inside diameter and roughness typed by you." : pt === "wb" ? "Pipe: " + pg.lab + ", inside diameter as in the workbook." :
+    "Pipe: " + optText("pt") + ", " + pg.lab + (sv === "own" ? ", wall typed by you." : ", " + optText("ps") + ".");
+  W = { T: $("fl").value === "T" ? num("tw") : null, mode, rho, nu, V, qm, Q, dT, cp, q0, qu, sf, sfp, Vd, D, eps, L, lim, R, od, wt, desc, byTube: od > 0 && wt > 0 && Math.abs(od - 2 * wt - D) < 0.0015 };
   working(W);
 }
 
 /* every size at the same flow */
-function sizes(Vd, rho, nu, lim, pip) {
-  const T = $("szT");
-  if (!(Vd > 0 && rho > 0 && nu > 0)) { T.innerHTML = ""; $("szNote").textContent = "Enter the flow and the fluid to see the sizes."; return; }
-  let n = 0;
-  T.innerHTML = "<thead><tr><th>Size</th><th>Inside mm</th><th>Velocity m/s</th><th>Reynolds</th><th>Pa/m</th><th>Against the formula and your limit</th></tr></thead><tbody>" + PIPES.map(p => {
-    const r = fric(Vd, p[2], p[3], rho, nu), ok = r.zone === "ok";
-    if (ok && lim > 0 && r.dpm <= lim) n++;
+let lastSz = null;   /* redraw only when the table changes, or a click that follows a blur is lost */
+function setSz(h) { if (h !== lastSz) { $("szT").innerHTML = h; lastSz = h; } }
+function sizes(Vd, rho, nu, lim) {
+  const T = $("szT"), pt = $("pt").value, sv = $("ps").value, cur = $("pp").value;
+  if (!(Vd > 0 && rho > 0 && nu > 0)) { setSz(""); $("szNote").textContent = "Enter the flow and the fluid to see the sizes."; return; }
+  if (pt === "own") { setSz(""); $("szNote").textContent = "Choose copper, steel or the workbook sizes under “Pipe and standard” to see the table of sizes."; return; }
+  /* the series the table uses: your own wall is shown on the chosen size only, so the table uses the first series */
+  const ts = sv === "own" ? defSer(pt) : sv;
+  let n = 0, cnt = 0;
+  const rows = sizeOpts(pt).map(o => {
+    const g = geomFor(pt, o[0], ts, NaN);
+    if (!(g.id > 0)) return '<tr class="pickrow" data-p="' + o[0] + '" tabindex="0"><th>' + g.lab + "</th><td colspan=\"6\">" + (g.miss || "—") + "</td></tr>";
+    const r = fric(Vd, g.id, g.eps, rho, nu), ok = r.zone === "ok";
+    cnt++; if (ok && lim > 0 && r.dpm <= lim) n++;
     const st = !ok ? "outside the formula range" : lim > 0 ? (r.dpm <= lim ? "within the limit" : "above the limit") : "—";
-    return '<tr class="pickrow' + (pip && pip[0] === p[0] ? " on" : "") + '" data-p="' + p[0] + '" tabindex="0"><th>' + (p[4] === "c" ? "Cu" : "St") + " DN" + p[5] + "</th><td>" + p[2] + "</td><td>" + fmt(r.v, 2) + "</td><td>" + grp(r.Re, 0) + "</td><td>" + (ok ? dp(r.dpm) : '<span class="na2">' + dp(r.dpm) + "</span>") + "</td><td>" + st + "</td></tr>";
-  }).join("") + "</tbody>";
-  $("szNote").textContent = lim > 0 ? n + " of " + PIPES.length + " sizes are within " + sig(lim, 4) + " Pa/m and inside the formula range at this flow." : "Enter a pressure limit above to see which sizes are within it.";
+    return '<tr class="pickrow' + (cur === o[0] ? " on" : "") + '" data-p="' + o[0] + '" tabindex="0"><th>' + g.lab + "</th><td>" + (g.od > 0 ? sig(g.od, 4) : "—") + "</td><td>" + (g.wt > 0 ? sig(g.wt, 3) : "—") + "</td><td>" + sig(g.id, 5) + "</td><td>" + fmt(r.v, 2) + "</td><td>" + (ok ? dp(r.dpm) : '<span class="na2">' + dp(r.dpm) + "</span>") + "</td><td>" + st + "</td></tr>";
+  }).join("");
+  setSz("<thead><tr><th>Size</th><th>Outside mm</th><th>Wall mm</th><th>Inside mm</th><th>Velocity m/s</th><th>Pa/m</th><th>Against the formula and your limit</th></tr></thead><tbody>" + rows + "</tbody>");
+  const tsTxt = pt === "wb" ? "" : " Series used in the table: " + (pt === "cu" ? "Table " + ts : pt === "aucu" ? "Type " + ts : pt === "asme" ? ({ S: "standard weight", 40: "Schedule 40", 80: "Schedule 80" })[ts] : (pt === "st" || pt === "aust") ? ({ L: "light", M: "medium", H: "heavy" })[ts] : ts + " mm wall") + ".";
+  $("szNote").textContent = (lim > 0 ? n + " of " + cnt + " sizes are within " + sig(lim, 4) + " Pa/m and inside the formula range at this flow." : "Enter a pressure limit above to see which sizes are within it.") + tsTxt;
 }
-$("szT").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) { $("pp").value = tr.dataset.p; setPipe(); calc(); } });
-$("szT").addEventListener("keydown", e => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-p]"); if (tr) { $("pp").value = tr.dataset.p; setPipe(); calc(); } } });
+function pickSize(tr) {
+  const d = tr.dataset.p;
+  if (follow) { if (specList(parseInt($("svc").value)).some(o => o[0] === d)) { useSpec(d); calc(); return; } unfollow(); }
+  $("pp").value = d; if ($("pt").value !== "wb" && $("ps").value === "own") { $("ps").value = defSer($("pt").value); } setPipe(); calc();
+}
+$("szT").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) pickSize(tr); });
+$("szT").addEventListener("keydown", e => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-p]"); if (tr) pickSize(tr); } });
+
+/* the specified tubes at each size, at this flow */
+let lastSp = null;
+function setSp(h) { if (h !== lastSp) { $("spS").innerHTML = h; lastSp = h; } }
+function specSizes(Vd, rho, nu, lim) {
+  const N = $("spSN"), si = $("svc").value;
+  if (si === "") { setSp(""); N.textContent = "Choose a service under “Pipe” above to see the specified tubes at each size and the pressure drop at this flow."; return; }
+  if (!(Vd > 0 && rho > 0 && nu > 0)) { setSp(""); N.textContent = "Enter the flow and the fluid to see the specified tubes."; return; }
+  const i = parseInt(si), sw = $("sw").value, rows = [], seen = {};
+  const wallOf = a => sw === "S" ? a[4] : sw === "80" ? a[3] : a[2];
+  SPEC.filter(r => r[0] === i).forEach(r => {
+    const st = r[6];
+    if (!st) {
+      if (seen[r[4]]) return; seen[r[4]] = 1;
+      ASME.filter(a => a[0] >= 15 && a[0] <= 300).forEach(a => rows.push({ pt: "asme", dn: a[0], ser: "40", tube: r[4] + " (alternative, bore not stated)", od: a[1], wt: a[2], eps: EPS.s }));
+    } else if (st.pt === "st") {
+      ST.filter(x => x[0] >= Math.max(15, r[1]) && (r[2] == null || x[0] <= r[2])).forEach(x => { const ser = st.ser || "M", g = geomFor("st", String(x[0]), ser, NaN); rows.push({ pt: "st", dn: x[0], ser, tube: r[4] + (st.galv ? " (series not stated, medium shown)" : ""), od: g.od, wt: g.wt, eps: st.galv ? 0.15 : EPS.s }); });
+    } else {
+      SL.filter(x => x[0] >= r[1] && (r[2] == null || x[0] <= r[2])).forEach(x => { const a = ASME.find(q => q[0] === x[0]), w = a ? wallOf(a) : null; rows.push({ pt: "sl", dn: x[0], ser: "own", tube: r[4] + " (wall as " + (sw === "S" ? "standard weight" : "Sch " + sw) + ")", od: x[1], wt: w == null ? NaN : w, eps: EPS.s }); });
+    }
+  });
+  let n = 0, cnt = 0;
+  const body = rows.map(x => {
+    const id = x.od > 0 && x.wt > 0 ? r3(x.od - 2 * x.wt) : NaN;
+    const at = ' class="pickrow" data-d="' + x.dn + '" data-pt="' + x.pt + '" data-ser="' + x.ser + '" data-wt="' + (x.wt > 0 ? x.wt : "") + '" data-eps="' + x.eps + '" tabindex="0"';
+    if (!(id > 0)) return "<tr" + at + "><th>DN" + x.dn + "</th><td>" + x.tube + '</td><td colspan="7">no wall data for this size</td></tr>';
+    const r = fric(Vd, id, x.eps, rho, nu), ok = r.zone === "ok"; cnt++; if (ok && lim > 0 && r.dpm <= lim) n++;
+    const stt = !ok ? "outside the formula range" : lim > 0 ? (r.dpm <= lim ? "within the limit" : "above the limit") : "—";
+    return "<tr" + at + "><th>DN" + x.dn + "</th><td>" + x.tube + "</td><td>" + sig(x.od, 5) + "</td><td>" + sig(x.wt, 4) + "</td><td>" + sig(id, 5) + "</td><td>" + x.eps + "</td><td>" + fmt(r.v, 2) + "</td><td>" + (ok ? dp(r.dpm) : '<span class="na2">' + dp(r.dpm) + "</span>") + "</td><td>" + stt + "</td></tr>";
+  }).join("");
+  setSp("<thead><tr><th>Size</th><th>Tube as specified</th><th>Outside mm</th><th>Wall mm</th><th>Inside mm</th><th>ε mm</th><th>Velocity m/s</th><th>Pa/m</th><th>Against the formula and your limit</th></tr></thead><tbody>" + body + "</tbody>");
+  N.textContent = SVC[i] + ": " + rows.length + " size and tube combinations from the specification" + (lim > 0 ? ", " + n + " of " + cnt + " within " + sig(lim, 4) + " Pa/m and inside the formula range at this flow." : ". Enter a pressure limit above to see which are within it.") + " Click a row to use it above.";
+}
+$("spS").addEventListener("click", e => { const tr = e.target.closest("tr[data-d]"); if (tr) applyRow(tr); });
+$("spS").addEventListener("keydown", e => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-d]"); if (tr) applyRow(tr); } });
+function applyRow(tr) {
+  const pt = tr.dataset.pt, dn = tr.dataset.d, ser = tr.dataset.ser;
+  if (pt === "asme") setFollow(false);
+  $("pt").value = pt; fillType();
+  if (ppOpts(pt).some(o => o[0] === dn)) $("pp").value = dn;
+  if (ser !== "own" && serOpts(pt).some(o => o[0] === ser)) $("ps").value = ser; else { $("ps").value = "own"; $("wt").value = tr.dataset.wt; }
+  if (tr.dataset.eps === "0.15") $("rg").value = "0.15"; else if ($("rg").value === "0.15") $("rg").value = "";
+  setPipe(); calc();
+}
 
 /* the working, for the side bar */
 function working(W) {
   const s = [], R = W.R;
   if (!R) { MX.steps($("workP"), s, "Enter the flow, the fluid and the pipe to see the working."); return; }
-  s.push({ t: "Fluid", m: ["$ρ$ = **" + sig(W.rho, 6) + " kg/m³**", "$ν$ = " + sig(W.nu * 1e6, 5) + " × 10^{-6} = **" + sci(W.nu, 5) + " m²/s**"] });
+  s.push({ t: "Fluid", n: W.T != null ? "Water at " + sig(W.T, 4) + " °C: density and kinematic viscosity from the water table in the side bar (density interpolated linearly, viscosity interpolated in ln ν against 1/T)." : "", m: ["$ρ$ = **" + sig(W.rho, 6) + " kg/m³**", "$ν$ = " + sig(W.nu * 1e6, 5) + " × 10^{-6} = **" + sci(W.nu, 5) + " m²/s**"] });
   if (W.mode === "l") {
     s.push({ t: "Mass flow from the load", m: ["$q$_{m} = @frac{" + sig(W.Q, 6) + "}{" + sig(W.cp, 5) + " × " + sig(W.dT, 5) + "} = **" + sig(W.qm, 5) + " kg/s**"], n: "Load in kW and specific heat in kJ/kg·K give kg/s." });
     s.push({ t: "Volume flow", m: ["$q$_{v} = @frac{" + sig(W.qm, 5) + "}{" + sig(W.rho, 6) + "} = **" + sig(W.V, 5) + " m³/s** = " + sig(W.V * 1000, 5) + " L/s"] });
   } else s.push({ t: "Volume flow", m: ["$q$_{v} = " + sig(W.q0, 6) + " " + (W.qu === "L" ? "L/s" : W.qu === "H" ? "m³/h" : "m³/s") + " = **" + sig(W.V, 5) + " m³/s**"], n: "Entered directly." });
   if (W.sf > 0) s.push({ t: "Flow with the safety factor", m: ["$q$_{v,d} = " + sig(W.V, 5) + " × ( 1 + @frac{" + sig(W.sfp, 5) + "}{100} ) = **" + sig(W.Vd, 5) + " m³/s** = " + sig(W.Vd * 1000, 5) + " L/s"] });
   else s.push({ t: "Safety factor", m: ["none added, $q$_{v,d} = **" + sig(W.Vd, 5) + " m³/s**"] });
+  if (W.byTube) s.push({ t: "Inside diameter of the tube", m: ["$D$ = $d$_{o} − 2 $t$ = " + sig(W.od, 5) + " − 2 × " + sig(W.wt, 4) + " = **" + sig(W.D, 5) + " mm**"], n: W.desc });
+  else s.push({ t: "Inside diameter", m: ["$D$ = **" + sig(W.D, 6) + " mm**"], n: W.desc });
   s.push({ t: "Pipe area and relative roughness", m: ["$D$ = " + sig(W.D, 6) + " mm = " + sig(R.D, 6) + " m", "$A$ = @frac{π × " + sig(R.D, 6) + "^{2}}{4} = **" + sig(R.A, 5) + " m²**", "@frac{$ε$}{$D$} = @frac{" + sig(W.eps, 5) + "}{" + sig(W.D, 6) + "} = **" + sig(R.rr, 4) + "**"] });
   s.push({ t: "Velocity", m: ["$v$ = @frac{" + sig(W.Vd, 5) + "}{" + sig(R.A, 5) + "} = **" + sig(R.v, 4) + " m/s**"] });
   s.push({ t: "Reynolds number", m: ["$Re$ = @frac{" + sig(R.v, 4) + " × " + sig(R.D, 6) + "}{" + sci(W.nu, 5) + "} = **" + grp(R.Re, 0) + "**"], bad: R.zone !== "ok", n: R.zone === "ok" ? "Within 4 000 to 10^8, so the friction formula applies." : "Outside the range of the friction formula (see the notice on the sheet)." });
@@ -689,6 +1039,8 @@ function working(W) {
 }
 
 /* formulae */
+MX.formula($("fxPI"), ["$D$ = $d$_{o} − 2 $t$"]);
+MX.defs($("fxPDI"), [["$d$_{o}", "outside diameter of the tube, mm"], ["$t$", "wall thickness, mm"], ["$D$", "inside diameter, mm (the figure the rest of the sheet uses)"]]);
 MX.formula($("fxP1"), ["$Q$ = $q$_{m} × $c$ × Δ$T$", "$q$_{m} = @frac{$Q$}{$c$ × Δ$T$}", "$q$_{v} = @frac{$q$_{m}}{$ρ$}"]);
 MX.defs($("fxPD1"), [["$Q$", "load, kW"], ["$q$_{m}", "mass flow, kg/s"], ["$c$", "specific heat, kJ/kg·K (4.2 for water)"], ["Δ$T$", "temperature difference across the load, K"], ["$q$_{v}", "volume flow, m³/s"], ["$ρ$", "density, kg/m³"]]);
 MX.formula($("fxP2"), ["$q$_{v,d} = $q$_{v} × ( 1 + @frac{$SF$}{100} )"]);
@@ -704,19 +1056,116 @@ MX.formula($("fxP7"), ["4000 ≤ $Re$ ≤ 10^{8}", "$v$_{min} = @frac{4000 $ν$}
 MX.defs($("fxPD7"), [["$v$_{min}", "lowest velocity for which the formula holds in this pipe, m/s"]]);
 
 /* data tables in the side bar */
-$("dT").innerHTML = "<thead><tr><th>Size</th><th>Inside diameter mm</th></tr></thead><tbody>" + PIPES.map(p => "<tr><th>" + (p[4] === "c" ? "Copper" : "Steel") + " DN" + p[5] + "</th><td>" + p[2] + "</td></tr>").join("") + "</tbody>";
-$("rT").innerHTML = "<thead><tr><th>Material</th><th>Roughness ε mm</th></tr></thead><tbody><tr><th>Copper</th><td>" + EPS.c + "</td></tr><tr><th>Steel</th><td>" + EPS.s + "</td></tr></tbody>";
+const n1 = x => x == null ? "—" : String(x), idf = (od, w) => w == null ? "—" : sig(od - 2 * w, 5);
+$("cuT").innerHTML = "<thead><tr><th>Outside mm</th><th>Table X wall</th><th>Table X inside</th><th>Table Y wall</th><th>Table Y inside</th></tr></thead><tbody>" + CU.map(r => "<tr><th>" + r[0] + "</th><td>" + n1(r[1]) + "</td><td>" + idf(r[0], r[1]) + "</td><td>" + n1(r[2]) + "</td><td>" + idf(r[0], r[2]) + "</td></tr>").join("") + "</tbody>";
+const stOD = (mx, mn) => mx == null ? "—" : mx + " / " + mn, stID = (mx, mn, w) => mx == null ? "—" : sig(mid(mx, mn) - 2 * w, 5);
+$("stT").innerHTML = "<thead><tr><th>DN</th><th>Light OD max / min</th><th>Light wall</th><th>Light inside</th><th>Medium and heavy OD max / min</th><th>Medium wall</th><th>Medium inside</th><th>Heavy wall</th><th>Heavy inside</th></tr></thead><tbody>" + ST.map(r => "<tr><th>" + r[0] + "</th><td>" + stOD(r[1], r[2]) + "</td><td>" + n1(r[5]) + "</td><td>" + stID(r[1], r[2], r[5]) + "</td><td>" + stOD(r[3], r[4]) + "</td><td>" + r[6] + "</td><td>" + stID(r[3], r[4], r[6]) + "</td><td>" + r[7] + "</td><td>" + stID(r[3], r[4], r[7]) + "</td></tr>").join("") + "</tbody>";
+const slw = [4.0, 6.3, 8.0, 10.0, 12.5];
+$("slT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th>" + slw.map(w => "<th>Inside, " + w.toFixed(1) + " mm wall</th>").join("") + "</tr></thead><tbody>" + SL.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td>" + slw.map(w => "<td>" + sig(r[1] - 2 * w, 5) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+/* workbook against the BS tubes: copper paired in order with the eleven BS EN 1057 sizes 15 to 159; steel with the BS EN 10220 outside diameters */
+let wbH = "<thead><tr><th>Workbook size</th><th>Workbook inside mm</th><th>BS tube compared</th><th>Table X inside mm</th><th>Table Y inside mm</th><th>Workbook inside against Table X</th><th>Pressure drop, workbook against Table X, same flow</th></tr></thead><tbody>";
+let cuMin = 1e9, cuMax = -1e9;
+COPPER.forEach((p, i) => {
+  const b = CU[i], ix = b[0] - 2 * b[1], iy = b[2] == null ? null : b[0] - 2 * b[2], d = (p[1] / ix - 1) * 100, k = Math.pow(ix / p[1], 5);
+  cuMin = Math.min(cuMin, -d); cuMax = Math.max(cuMax, -d);
+  wbH += "<tr><th>Copper DN" + p[0] + "</th><td>" + p[1] + "</td><td>" + b[0] + " mm</td><td>" + sig(ix, 5) + "</td><td>" + (iy == null ? "—" : sig(iy, 5)) + "</td><td>" + fmt(d, 1) + " %</td><td>about ×" + fmt(k, 1) + "</td></tr>";
+});
+wbH += "</tbody>";
+$("wbT").innerHTML = wbH;
+let stN = "Pressure drop varies roughly as D<sup>−5</sup>, so the last column is the inside-diameter ratio to the fifth power, a guide only. ";
+stN += "Steel: " + STEEL.map((p, i) => "DN" + p[0] + " inside " + p[1] + " mm is a " + fmt((SL[i][1] - p[1]) / 2, 2) + " mm wall on a " + SL.find(q => q[0] === p[0])[1] + " mm outside diameter").join("; ") + ".";
+$("wbN").innerHTML = stN;
+
+/* Australian tables */
+const dd = (a, b) => (a == null || b == null) ? "—" : (a - b >= 0 ? "+" : "−") + Math.abs(a - b).toFixed(2);
+$("auT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th>" + "ABCD".split("").map(t => "<th>Type " + t + " wall</th><th>Type " + t + " inside</th>").join("") + "<th>Type B inside, ACADS-BSG table</th><th>Type B: table minus (OD − 2 × wall)</th></tr></thead><tbody>" +
+  AUCU.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td>" + [2, 3, 4, 5].map(i => "<td>" + n1(r[i]) + "</td><td>" + idf(r[1], r[i]) + "</td>").join("") + "<td>" + n1(ACADS.B[r[0]]) + "</td><td>" + dd(ACADS.B[r[0]], r[1] - 2 * r[3]) + "</td></tr>").join("") + "</tbody>";
+let asH = "<thead><tr><th>DN</th><th>Series</th><th>Inside mm, from OD and wall (sheet)</th><th>Inside mm, ACADS-BSG table for AS 1074</th><th>Table minus sheet, mm</th></tr></thead><tbody>", asMax = 0, asWorst = "";
+ST.forEach(r => [["L", "SL", 1, 2, 5], ["M", "SM", 3, 4, 6], ["H", "SH", 3, 4, 7]].forEach(q => {
+  const a = ACADS[q[1]][r[0]], w = r[q[4]]; if (a == null || w == null || r[q[2]] == null) return;
+  const mine = r3(mid(r[q[2]], r[q[3]]) - 2 * w), d = a - mine;
+  if (Math.abs(d) > asMax) { asMax = Math.abs(d); asWorst = "DN" + r[0] + " " + ({ L: "light", M: "medium", H: "heavy" })[q[0]]; }
+  asH += "<tr><th>" + r[0] + "</th><td>" + ({ L: "Light", M: "Medium", H: "Heavy" })[q[0]] + "</td><td>" + sig(mine, 5) + "</td><td>" + a + "</td><td>" + dd(a, mine) + "</td></tr>";
+}));
+$("asT").innerHTML = asH + "</tbody>";
+$("asN").textContent = "Largest difference between that table and the sheet's figures: " + asMax.toFixed(2) + " mm (" + asWorst + ").";
+let wa = "<thead><tr><th>Workbook size</th><th>Workbook inside mm</th><th>AS 1432 Type B inside, ACADS-BSG table</th><th>Workbook minus table, mm</th><th>Type B inside from OD − 2 × wall, mm</th><th>Workbook minus that, mm</th></tr></thead><tbody>";
+let waMax = 0;
+COPPER.forEach(p => { const a = ACADS.B[p[0]], r = AUCU.find(x => x[0] === p[0]), m = r3(r[1] - 2 * r[3]); waMax = Math.max(waMax, Math.abs(p[1] - m));
+  wa += "<tr><th>Copper DN" + p[0] + "</th><td>" + p[1] + "</td><td>" + a + "</td><td>" + dd(p[1], a) + "</td><td>" + sig(m, 5) + "</td><td>" + dd(p[1], m) + "</td></tr>"; });
+$("wbA").innerHTML = wa + "</tbody>";
+$("wbAN").textContent = "The workbook copper agrees with the ACADS-BSG table for AS 1432 Type B to 0.01 mm in ten of the eleven sizes (DN150 is 0.08 mm higher), and with Type B worked out from its outside diameter and wall to within " + waMax.toFixed(2) + " mm, which is under 0.2 % of the diameter.";
+
+$("rT").innerHTML = "<thead><tr><th>Material</th><th>Roughness ε mm</th></tr></thead><tbody>" + RG.slice(1, 4).map(o => "<tr><th>" + o[1].replace(/, [0-9.]+ mm$/, "") + "</th><td>" + o[0] + "</td></tr>").join("") + "</tbody>";
 $("fT").innerHTML = "<thead><tr><th>Fluid</th><th>ρ kg/m³</th><th>ν 10⁻⁶ m²/s</th></tr></thead><tbody>" + FLUIDS.map(f => "<tr><th>" + f[0] + "</th><td>" + f[1] + "</td><td>" + f[2] + "</td></tr>").join("") + "</tbody>";
+$("wdT").innerHTML = "<thead><tr><th>Temperature °C</th><th>Density kg/m³</th></tr></thead><tbody>" + WRHO.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("wvT").innerHTML = "<thead><tr><th>Temperature °C</th><th>Kinematic viscosity 10⁻⁶ m²/s</th></tr></thead><tbody>" + WNU.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("asmT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th><th>Standard weight wall</th><th>Standard weight inside</th><th>Sch 40 wall</th><th>Sch 40 inside</th><th>Sch 80 wall</th><th>Sch 80 inside</th></tr></thead><tbody>" + ASME.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td><td>" + r[4] + "</td><td>" + sig(r[1] - 2 * r[4], 6) + "</td><td>" + r[2] + "</td><td>" + sig(r[1] - 2 * r[2], 6) + "</td><td>" + n1(r[3]) + "</td><td>" + (r[3] == null ? "—" : sig(r[1] - 2 * r[3], 6)) + "</td></tr>").join("") + "</tbody>";
+let wsH = "<thead><tr><th>Workbook size</th><th>Workbook inside mm</th><th>ASME standard weight inside mm</th><th>Workbook minus ASME, mm</th></tr></thead><tbody>", wsMax = 0;
+STEEL.forEach(p => { const a = ASME.find(x => x[0] === p[0]), m = a[1] - 2 * a[4]; wsMax = Math.max(wsMax, Math.abs(p[1] - m)); wsH += "<tr><th>Steel DN" + p[0] + "</th><td>" + p[1] + "</td><td>" + sig(m, 6) + "</td><td>" + dd(p[1], m) + "</td></tr>"; });
+$("wbS").innerHTML = wsH + "</tbody>";
+$("wbSN").textContent = "The workbook steel agrees with ASME standard-weight pipe within " + wsMax.toFixed(2) + " mm in every size.";
 
 /* linked inputs */
-function setPipe() { const p = PIPES.find(x => x[0] === $("pp").value); if (p) { $("dia").value = p[2]; $("eps").value = p[3]; } }
-function setFluid() { const f = FLUIDS[parseInt($("fl").value)]; if (f) { $("rho").value = f[1]; $("nu").value = f[2]; } }
-$("pp").addEventListener("change", () => { setPipe(); calc(); });
+const defSer = pt => pt === "cu" ? "X" : pt === "aucu" ? "B" : pt === "asme" ? "40" : (pt === "st" || pt === "aust") ? "M" : "8.0";
+function showPipeFields() {
+  const pt = $("pt").value, tube = ["cu", "st", "sl", "aucu", "aust", "asme"].indexOf(pt) >= 0;
+  document.querySelector(".pps").hidden = pt === "own";
+  document.querySelector(".pss").hidden = !tube;
+  document.querySelectorAll(".odw").forEach(e => e.hidden = !(tube || pt === "own"));
+  const h = { cu: "Round copper tube for water, gas and heating. The standard covers 6 to 267 mm outside diameter; this list starts at 15 mm.", st: "Threaded or welded steel tube. The standard covers outside diameters 10.2 to 165.1 mm (DN6 to DN150); this list starts at DN8.", sl: "BS EN 10216 (seamless) and 10217 (welded) tube, outside diameters from BS EN 10220. The standards leave the wall to the buyer, so choose one. BS EN 10255 stops at DN150.", aucu: "Australian copper tube for plumbing, gasfitting and drainage. The standard covers Types A and B from DN6 to DN200, Type C DN10 to DN25 and Type D DN32 to DN150; this list starts at DN15. Type B is the series the workbook used.", aust: "Australian threaded steel tube, DN8 to DN150 in light, medium and heavy walls. The dimensions agree with BS EN 10255 within about 0.1 mm in the table I checked; see the notes.", asme: "American pipe sizes in standard weight, Schedule 40 and Schedule 80 (Schedule 80 to DN200 only). The pipework specification names API 5L Grade B Sched 40 to BS 1600 for HTHW; BS 1600 is, as I understand it, the British standard for these dimensions.", wb: "The workbook’s own inside diameters: copper as AS 1432 Type B, steel DN200 to DN450 as ASME standard-weight pipe. See the notes and the Pipe and fluid data tab.", own: "Type the inside diameter and roughness, or an outside diameter and wall, of your own pipe." };
+  $("ptH").textContent = h[pt] || "";
+}
+function fillType(keep) {
+  const pt = $("pt").value, prev = $("pp").value;
+  $("pp").innerHTML = optHtml(ppOpts(pt));
+  if (ppOpts(pt).some(o => o[0] === prev)) $("pp").value = prev; else if (pt === "cu") $("pp").value = "54"; else if (pt === "st" || pt === "aust" || pt === "aucu" || pt === "asme") $("pp").value = "50"; else if (pt === "sl") $("pp").value = "200";
+  $("ps").innerHTML = optHtml(serOpts(pt));
+  if (serOpts(pt).length) $("ps").value = keep && serOpts(pt).some(o => o[0] === keep) ? keep : defSer(pt);
+  showPipeFields(); setPipe();
+}
+/* roughness: from the pipe type unless a roughness source is chosen; a typed value stays */
+function setEps(def) { const r = $("rg").value; if (r === "own") return; $("eps").value = r === "" ? def : r; }
+function setPipe() {
+  const pt = $("pt").value; if (pt === "own") { $("psH").textContent = ""; setEps($("eps").value); return; }
+  const g = geomFor(pt, $("pp").value, $("ps").value, num("wt"));
+  $("psH").textContent = g.miss;
+  if (pt === "wb") { $("od").value = ""; $("wt").value = ""; $("dia").value = isFinite(g.id) ? g.id : ""; setEps(g.eps); return; }
+  const own = $("ps").value === "own";
+  if (!own) $("wt").value = isFinite(g.wt) ? g.wt : "";
+  $("od").value = isFinite(g.od) ? g.od : "";
+  setEps(g.eps);
+  if (own && !(num("wt") > 0)) return;   /* an inside diameter you typed stays */
+  $("dia").value = isFinite(g.id) ? g.id : "";
+}
+function fromOdWall() { const od = num("od"), wt = num("wt"); if (od > 0 && wt > 0 && od > 2 * wt) $("dia").value = r3(od - 2 * wt); }
+function setFluid() {
+  if ($("fl").value === "T") { const T = num("tw"); if (isFinite(rhoAt(T))) { $("rho").value = r3(rhoAt(T)); $("nu").value = parseFloat(nuAt(T).toPrecision(5)); } return; }
+  const f = FLUIDS[parseInt($("fl").value)]; if (f) { $("rho").value = f[1]; $("nu").value = f[2]; }
+}
+$("tw").addEventListener("input", () => { setFluid(); });
+$("pt").addEventListener("change", () => { setFollow(false); fillType(); calc(); });
+$("pp").addEventListener("change", () => { if (follow) useSpec($("pp").value); else setPipe(); calc(); });
+$("ps").addEventListener("change", () => {
+  if (follow && $("pt").value === "sl") wallPick = true;
+  if (follow) { const r = specRow(parseInt($("svc").value), parseInt($("pp").value)); if (r && r[6].ser && $("ps").value !== r[6].ser) unfollow(); }
+  setPipe(); calc();
+});
 $("fl").addEventListener("change", () => { setFluid(); calc(); });
-["dia", "eps"].forEach(id => $(id).addEventListener("input", () => { $("pp").value = "own"; }));
+/* typing an outside diameter or wall: the series becomes “my own wall” (or the pipe becomes my own) and the inside diameter follows */
+["od", "wt"].forEach(id => $(id).addEventListener("input", () => { unfollow(); if ($("pt").value !== "own" && $("ps").options.length) $("ps").value = "own"; fromOdWall(); }));
+/* typing an inside diameter or roughness: the tube table no longer drives them */
+$("rg").addEventListener("change", () => { setPipe(); calc(); });
+$("eps").addEventListener("input", () => { $("rg").value = "own"; });
+["dia", "eps"].forEach(id => $(id).addEventListener("input", () => {
+  const pt = $("pt").value;
+  if (pt === "wb") { $("pt").value = "own"; setFollow(false); fillType(); return; }
+  if (id === "dia") unfollow();
+  if (id === "dia" && pt !== "own" && $("ps").options.length) { $("ps").value = "own"; $("wt").value = ""; }
+}));
 ["rho", "nu"].forEach(id => $(id).addEventListener("input", () => { $("fl").value = "own"; }));
 document.querySelectorAll("input,select").forEach(e => { e.addEventListener("input", calc); e.addEventListener("change", calc); });
-$("fl").value = "0"; setFluid(); $("pp").value = "c40"; setPipe();
+$("fl").value = "0"; setFluid(); $("pt").value = "cu"; fillType();
 calc();
 })();
 </script>
