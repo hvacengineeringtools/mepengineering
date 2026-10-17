@@ -27,8 +27,9 @@ A static site of fifteen calculation sheets. Open `index.html` in a browser, or 
 | XVIII | `layer-stack-u-factor.html` | Assembly U-factor by layers: roof (insulation entirely above deck), mass wall or mass floor from a stack of layers with the A9.4.1 air films and Table A9.4.4-1 material R-values, checked against the Tables 5.5-0 to 5.5-8 maximum U-factor and minimum continuous-insulation R by climate zone and space category |
 | XIX | `air-change-rate.html` | Air change rate: room width, depth and height (or volume) and room type to air flow in m³/h, L/s and m³/s, with the 104-row Axair / DIN 1946 table in the side bar, a fresh-air-per-person check, and air changes from a known flow. |
 | XX | `smoke-extraction.html` | Smoke extraction sizing to BS 9991:2015 clause 14 and Annex A: rules summary, natural vent, smoke shaft and basement outlet checks, basement powered extract, lobby or corridor MSVS with a stepwise extract-rate method (SCA design fire, natural-system benchmark, small-stair minimum) plus replacement-air pressure, shaft and door-force checks, one calculator per tab with two-way velocity/area inputs, and four installation drawings with the points to watch. |
+| XXI | `pipe-friction.html` | Pipe friction loss: Darcy–Weisbach with the Altshul–Tsal friction factor. Flow entered or worked out from load, ΔT and specific heat with an optional safety factor; your own pressure limit; all steps in the side bar. |
 
-`psychro.js` must stay beside sheets IV and V. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX, XV, XVI, XVII, XVIII, XIX and XX: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
+`psychro.js` must stay beside sheets IV and V. `formula.css` and `formula.js` must stay beside sheets I, II, III, IX, XV, XVI, XVII, XVIII, XIX, XX and XXI: they typeset the formulae and the step-by-step working shown in the “Notes and formulae” panel. The sheet IX drawings are built into its page. `solar-irradiance.html` only redirects to sheet VII.
 
 ## Browsers and devices
 
