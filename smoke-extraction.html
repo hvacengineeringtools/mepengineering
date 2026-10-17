@@ -1213,7 +1213,7 @@ function ig1() {
   const tB = P3(5.6, 0, 12.8); s += I.thermo(tB[0], tB[1], "To") + I.tx(tB[0] + 9, tB[1] + 10, "outside", { fs: 10, a: "start", c: "#5a5348" });
   s += I.t3([X, D, 4.6], "fire storey", 8, 0, { fs: 10.5, a: "start", c: FIRE });
   s += I.t3([4, D, 0], "Corridors", 0, 22, { fs: 12.5, b: true }) + I.t3([0, sy, 0], "Shaft", -8, 16, { fs: 12.5, b: true, a: "end" });
-  s += I.tag(1, [0.3, sy + 0.55, top], -90, -24) + I.tag(2, [0.3, 0.5, top + 0.02], -40, -70) + I.tag(3, [2.9, 1.3, 10.4], 70, -60) + I.tag(5, [sx, 0.8, 3 + 2.25], 90, 60) + I.tag(6, [0.1, sy, 7.7], -96, 56) + I.tag(7, [0, sy + 2.9, 7.2], -40, 26);
+  s += I.tag(1, [0.3, sy + 0.55, top], -90, -24) + I.tag(2, [sx, sy, 10.5], -72, -6) + I.tag(3, [2.9, 1.3, 10.4], 70, -60) + I.tag(5, [sx, 0.8, 3 + 2.25], 90, 60) + I.tag(6, [0.3, 0.5, top + 0.02], -40, -70) + I.tag(7, [0.1, sy, 7.7], -96, 56) + I.tag(8, [0, sy + 2.9, 7.2], -40, 26);
   return s + notScale(560);
 }
 
@@ -1413,21 +1413,22 @@ const IGD = [
     [1, "Shaft cross-section", [
       ["sa", "width", "Inside size of the shaft one way, between the finished wall faces, at its tightest point."],
       ["sb", "depth", "Inside size the other way. Width × depth is the shaft area: at least 1.5 m², and neither side under 0.85 m."]]],
-    [2, "Head of the shaft", [
-      ["sh", "c", "From the ceiling of the highest storey the shaft serves up to the top of the shaft. At least 2.5 m."],
-      ["shd", "", "Free area of the vent or louvre at the top of the shaft, open to the air. At least 1.0 m²."]]],
+    [2, "Shaft height above the highest ceiling", [
+      ["sh", "c", "From the ceiling of the highest storey the shaft serves up to the top of the shaft. At least 2.5 m."]]],
     [3, "Anything near the head", [["sst", "e", "How far the top of the shaft is above the highest thing (plant, parapet, lift room) within 2 m of it, measured on plan. At least 0.5 m."]]],
     [4, "Inclined part", [
       ["sinc", "L", "Length of any part of the shaft that is not vertical, measured along the shaft. 0 if the shaft is straight."],
       ["sang", "φ", "Angle of that part from the vertical. No more than 30°, over no more than 4 m."]]],
     [5, "Vent from the corridor into the shaft", [
-      ["sva", "", "Free area of the vent between the lobby or corridor and the shaft, on each storey. At least 1.0 m²."],
-      ["sCd", "", "Discharge coefficient: the share of the free area that acts. About 0.6 for a vent. Used only for the stack flow."]]],
-    [6, "Inside the shaft", [["sgr", "", "The smallest free area anywhere inside the shaft, such as a safety grille or a damper. At least 1.0 m²."]]],
-    [7, "Stack flow", [
+      ["sva", "", "Free area of the vent between the lobby or corridor and the shaft, on each storey. At least 1.0 m²."]]],
+    [6, "Opening at the head of the shaft", [
+      ["shd", "", "Free area of the vent or louvre at the top of the shaft, open to the air. At least 1.0 m²."]]],
+    [7, "Inside the shaft", [["sgr", "", "The smallest free area anywhere inside the shaft, such as a safety grille or a damper. At least 1.0 m²."]]],
+    [8, "Stack flow", [
       ["sH", "H", "From the middle of the vent on the fire storey up to the top of the shaft. The top storey served has the shortest height and the least flow."],
       ["sTs", "Ts", "Temperature of the smoke in the shaft."],
-      ["sTo", "To", "Outside air temperature. A warmer day gives less flow."]]]
+      ["sTo", "To", "Outside air temperature. A warmer day gives less flow."],
+      ["sCd", "Cd", "Discharge coefficient of the vent: the share of its free area that acts. About 0.6 for a vent. Used only for the stack flow."]]]
   ] },
   { n: "Basement: natural", p: "p3", h: 500, f: ig2, items: [
     [1, "Basement floor", [["bA", "floor area", "Area of this basement storey on plan, inside the outside walls: length × width for a plain rectangle. Each storey is taken on its own. This box and the one on the powered extract tab fill each other."]]],
