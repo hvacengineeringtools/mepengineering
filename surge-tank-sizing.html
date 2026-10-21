@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Gas-charged surge tank sizing by the maker’s method: water hammer protection when the pump starts and cavitation protection when the pump stops, in US or SI units, with the maker’s worked example checked and an Excel export." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VIII — Surge tank sizing</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<style>
+.sec { border:1px solid var(--rule); background:var(--panel); margin:12px 0; padding:0; }
+.sec.eq { background:#f4efe3; }
+.sec .sh { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid var(--rule); }
+.sec .sn { min-width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:var(--ink); color:var(--paper); font-size:13px; }
+.sec .sh select.kd { width:auto; min-height:36px; font-size:14px; }
+.sec .sh input.dsc { flex:1 1 220px; min-width:160px; min-height:36px; font-size:14px; }
+.sec .sh .lca { margin:0; display:flex; gap:4px; }
+.sec .sb { padding:10px; }
+.sec .sb .fields { gap:10px 14px; }
+.sec details.fit { margin:10px 0 0; border:1px solid var(--faint); background:var(--paper); }
+.sec details.fit summary { cursor:pointer; padding:7px 10px; font-size:13px; font-weight:600; min-height:36px; display:flex; align-items:center; }
+.sec details.fit .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px 12px; padding:8px 10px 10px; }
+.sec details.fit .fg label { font-size:12px; display:block; margin:0 0 2px; }
+.sec details.fit .fg input { min-height:34px; font-size:14px; }
+.sec .rs { display:flex; flex-wrap:wrap; gap:6px 18px; padding:8px 10px; border-top:1px solid var(--rule); font-size:13px; background:var(--tint); }
+.sec .rs b { font-weight:700; }
+.sec .rs .tot { margin-left:auto; font-weight:700; }
+.sec .wn { color:#8a3b12; font-size:12px; padding:4px 10px 8px; line-height:1.4; }
+.seg2 { display:flex; flex-wrap:wrap; gap:0; }
+.seg2 button { flex:1 1 150px; width:auto; min-height:40px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.seg2 button + button { border-left:0; }
+.seg2 button.on { background:var(--ink); color:var(--paper); }
+.fitq { margin:12px 0 0; }
+.fitq .fl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.fitq .fgrid, .fitq .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px 12px; }
+.stp label { font-size:12px; display:block; margin:0 0 2px; font-weight:600; }
+.stp .sc { display:flex; }
+.stp .sc input { flex:1 1 auto; min-width:0; width:100%; text-align:center; min-height:40px; font-size:15px; border-left:0; border-right:0; }
+.stp .sc button { width:40px; min-height:40px; flex:none; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 18px Georgia, serif; cursor:pointer; padding:0; }
+.stp small.kv { display:block; font-size:11px; color:var(--muted); margin-top:2px; min-height:13px; }
+table.cmp#cmpT td.bad { color:#9b1c1c; font-weight:700; }
+.sec details.fit { margin:10px 0 0; }
+.addrow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+.addrow button, .exrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.addrow button.pri, .exrow button.pri { background:var(--ink); color:var(--paper); }
+.exrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:5px 6px; }
+table.cmp#prT td.l, table.cmp#prT th.l { text-align:left; }
+table.cmp#prT tr.eqr td { background:#f4efe3; }
+table.cmp#prT td.bad { color:#9b1c1c; font-weight:700; }
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+.prhead { display:none; }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .sec, .mx-pull, .mx-scrim, .mx-drawer, header .sub, #s1, #s2h, .addrow, .exrow, footer, #s4, #s4 ~ ul, #s4 ~ div:not(.rights), #s4 ~ table, #s4 ~ h4, #s4 ~ p { display:none !important; }
+  .prhead { display:block; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+<style>
+.segu { display:flex; flex-wrap:wrap; }
+.segu button { flex:1 1 140px; width:auto; min-height:42px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.segu button + button { border-left:0; }
+.segu button.on { background:var(--ink); color:var(--paper); }
+.case { border:1px solid var(--rule); background:var(--panel); margin:12px 0; }
+.case h4 { margin:0; padding:8px 12px; border-bottom:1px solid var(--rule); font-size:15px; }
+.case .cb { padding:8px 12px 12px; overflow-x:auto; }
+.case table.cmp { width:100%; }
+.case table.cmp td, .case table.cmp th { white-space:normal; }
+.case table.cmp td, .case table.cmp th { font-size:13px; padding:5px 8px; }
+.case table.cmp td.v { text-align:right; font-variant-numeric:tabular-nums; }
+.case table.cmp tr.k td { font-weight:700; background:var(--tint); }
+.cmpnote { font-size:12.5px; color:var(--muted); line-height:1.45; margin:8px 0 0; }
+.warnbox { border-left:4px solid #8a3b12; background:#f6ece3; padding:8px 12px; font-size:13.5px; line-height:1.5; margin:10px 0; }
+@media print { #s0, #s0 ~ .fields, h5.vh, .fields, .segu, #s1, #s1 ~ p.lead, #s2, #cases, .field, #s4 ~ p { display:none !important; } }
+.helpbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; justify-content:space-between; border:1px solid var(--rule,#cdbf9f); border-left:4px solid var(--ink,#1a1714); background:var(--panel,#fffdf7); padding:10px 14px; margin:12px 0; font-size:14px; line-height:1.45; }
+.helpbar > div { flex:1 1 340px; }
+.helpbtn { width:auto; flex:none; display:inline-block; font:inherit; font-size:14px; border:1px solid var(--ink,#1a1714); background:var(--ink,#1a1714); color:#fff; padding:8px 14px; cursor:pointer; border-radius:0; }
+.helpbtn:hover { background:#3a342b; }
+.dgd { flex-direction:column; flex-wrap:nowrap; margin-top:10px; }
+.dgd figure { flex:none; width:100%; box-sizing:border-box; }
+.dgs .rd { stroke:#9b1c1c; stroke-width:2; stroke-dasharray:5 3; fill:none; }
+.dgs .cv { stroke:#1a1a1a; stroke-width:2.6; fill:none; }
+.dgs .mk { fill:#fffdf7; stroke:#1a1a1a; stroke-width:1.6; }
+.dgs .mn { font:700 11px Georgia, serif; fill:#1a1a1a; text-anchor:middle; }
+.dgs .rt { font:11px Georgia, serif; fill:#9b1c1c; }
+ol.ptl { font-size:13.5px; line-height:1.45; margin:6px 0 4px; padding-left:22px; }
+ol.ptl li { margin:3px 0; }
+.ptn h4 { font-size:13px; margin:12px 0 2px; }
+</style>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VIII</div>
+  <h1>Surge tank sizing</h1>
+  <div class="sub">Water hammer when the pump starts · cavitation when the pump stops · US or SI units · export to Excel</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a class="on" href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Sizes the gas-charged surge tank on a pump discharge line, by the maker’s published method (sizing sheet MC 10261, 03/19). Two cases are worked: water hammer protection when the pump starts, and cavitation protection when it stops. The tank must be at least as large as the bigger of the two. Enter the pump flow, the pipe, the line pressures and the pre-charge gas in either US units or SI units; the answer is given in your units. The maker’s own worked example can be loaded with one button and checked against the figures printed on the sheet.</p>
+<nav class="toc" aria-label="On this page"><a href="#s0">1 Units, fluid and pipe</a><a href="#s1">2 Pump and pressures</a><a href="#s2">3 Result</a><a href="#s4">4 Check against the example</a></nav>
+
+<h2 id="s0">1. Units, fluid and pipe</h2>
+<div class="field wide"><label>Units</label><div class="segu" role="group" aria-label="Units"><button type="button" id="uU">US units (gpm, ft, psi)</button><button type="button" id="uS">SI units (L/s, m, kPa)</button></div></div>
+<div class="fields two" style="margin-top:12px">
+  <div class="field" id="puF"><label for="pu">Pressure unit</label><select id="pu"></select><div class="hint">Every pressure on this sheet is a <b>gauge</b> pressure: the reading on a pressure gauge, where 0 is the atmosphere. Do not type absolute pressure. The sheet adds the atmosphere itself (14.7 psi, 101.3 kPa) where the gas law needs it.</div></div>
+</div>
+<h5 class="vh">Fluid</h5>
+<div class="fields two">
+  <div class="field"><label for="fl">Fluid</label><select id="fl"></select></div>
+  <div class="field"><label for="sg">Specific gravity SG</label><input id="sg" type="number" inputmode="decimal" step="any" min="0" /><div class="hint">Water = 1.</div></div>
+</div>
+<h5 class="vh">Pipe</h5>
+<div class="fields two">
+  <div class="field"><label for="pm">Pipe material</label><select id="pm"></select></div>
+  <div class="field"><label for="av">Speed of the pressure wave a</label><div class="pair"><input id="av" type="number" inputmode="decimal" step="any" min="0" /><span id="avU"></span></div><div class="hint">Steel, cast iron and ductile iron 4,500 ft/s (1,372 m/s); PVC 1,250 ft/s (381 m/s). Type a value for your own.</div></div>
+  <div class="field"><label for="ps">Pipe size</label><select id="ps"></select></div>
+  <div class="field"><label for="id">Inside diameter</label><div class="pair"><input id="id" type="number" inputmode="decimal" step="any" min="0" /><span id="idU"></span></div><div class="hint" id="idH">From the pipe size. Type a value for your own pipe.</div></div>
+  <div class="field"><label for="ln">Pipe length L</label><div class="pair"><input id="ln" type="number" inputmode="decimal" step="any" min="0" /><span id="lnU"></span></div><div class="hint">From the pump to the end of the line, or to the point where the flow is taken off.</div></div>
+</div>
+
+<h2 id="s1">2. Pump and pressures</h2>
+<style>
+.dgs { display:flex; flex-wrap:wrap; gap:14px; margin:12px 0 6px; }
+.dgs figure { flex:1 1 360px; margin:0; border:1px solid var(--rule); background:var(--panel); padding:8px 8px 4px; min-width:0; }
+.dgs figcaption { font-size:12.5px; font-weight:700; letter-spacing:.04em; margin:0 0 2px; }
+.dgs svg { display:block; width:100%; height:auto; max-width:520px; margin:0 auto; }
+.dgs .ln { stroke:#1a1a1a; stroke-width:2; fill:none; }
+.dgs .pipe { stroke:#5b5346; stroke-width:7; fill:none; }
+.dgs .tx { font:12px Georgia, serif; fill:#1a1a1a; }
+.dgs .mu { font:11px Georgia, serif; fill:#6b6355; }
+.dgs .b { font-weight:700; }
+.dgs .gas { fill:#efe3c4; }
+.dgs .wat { fill:#bcd3de; }
+.dgs .dash { stroke:#8a7f6c; stroke-width:1; stroke-dasharray:4 3; fill:none; }
+.dgn { font-size:14px; line-height:1.5; margin:8px 0 16px; }
+.dgn li { margin:3px 0; }
+</style>
+<div class="helpbar noprint"><div><b>Not sure what to enter?</b> The pictures of the system, the tank and the pressure changes when the pump starts and stops are in the side panel.</div><button type="button" class="helpbtn" data-mxopen="pics">Open the pictures</button></div>
+<ul class="dgn">
+<li><b>P₂</b>: the highest pressure the pipe, valves and tank may see. You set it.</li>
+<li><b>Ps</b>: the pressure in the line with the pump stopped (static head, or the pump’s set pressure).</li>
+<li><b>P₁</b>: the gas pressure the tank is charged to <i>before</i> it is put on line, with no water in it. It is a <b>gauge</b> pressure (0 = atmosphere). The maker’s rule sets it <b>below Ps</b>: 15 % below for the pump-start case and 50 % below for the pump-stop case. That rule is the only reason for the percentage boxes. If you already have a pre-charge pressure, type it in the pressure box instead and the percentage is ignored.</li>
+<li><b>Pump starts</b>: the water in the pipe is set moving and the pressure briefly <b>rises above Ps</b> (water hammer). The tank takes in water to keep the peak below P₂.</li>
+<li><b>Pump stops</b>: the water keeps moving for a moment and the pressure briefly <b>falls below Ps</b>, which can make vapour pockets form (cavitation). The tank pushes water back into the line to hold the pressure up. These are pressure swings in the pipe, not the pump’s cut-in and cut-out settings.</li>
+</ul>
+<div class="fields two">
+  <div class="field"><label for="qs">Pump flow Qs</label><div class="pair"><input id="qs" type="number" inputmode="decimal" step="any" min="0" /><span id="qsU"></span></div></div>
+  <div class="field"><label for="sp">Static pressure (gauge)</label><div class="pair"><input id="sp" type="number" inputmode="decimal" step="any" min="0" /><span class="pu"></span></div><div class="hint">The pressure in the line with the pump stopped.</div></div>
+  <div class="field"><label for="p2">Maximum allowable pressure P₂ (gauge)</label><div class="pair"><input id="p2" type="number" inputmode="decimal" step="any" min="0" /><span class="pu"></span></div><div class="hint">The highest pressure the pipe and fittings may see while the tank is working.</div></div>
+  <div class="field"><label for="gas">Pre-charge gas (gas constant n)</label><select id="gas"></select></div>
+  <div class="field" id="nF" hidden><label for="nv">Gas constant n</label><input id="nv" type="number" inputmode="decimal" step="any" min="0" value="1.2" /></div>
+</div>
+<h5 class="vh">Pre-charge pressure P₁</h5>
+<p class="cmpnote" style="margin:0 0 10px">P₁ is the pressure of the gas (air or nitrogen) that is charged into the tank <i>before</i> it is put on line, with no water in it. It is a <b>gauge</b> pressure: the reading on a gauge fitted to the tank’s gas valve, with 0 at the atmosphere. If a maker’s sheet gives an absolute pressure, subtract the atmosphere first (14.7 psi, 101.3 kPa or 1.013 bar). <span id="absN"></span></p>
+<div class="fields two">
+  <div class="field"><label for="p1a">Pump-start case: pre-charge pressure P₁ (gauge)</label><div class="pair"><input id="p1a" type="number" inputmode="decimal" step="any" min="0" /><span class="pu"></span></div><div class="hint">Filled in from the percentage below. Type your own pressure here to replace it.</div></div>
+  <div class="field"><label for="c1">Or: pump-start P₁ as a % below Ps</label><div class="pair"><input id="c1" type="number" inputmode="decimal" step="any" min="0" max="99" value="15" /><span>%</span></div><div class="hint">The maker’s rule: 15 %. Ps × (1 − 15 %) = P₁. See picture C.</div></div>
+  <div class="field"><label for="p1b">Pump-stop case: pre-charge pressure P₁ (gauge)</label><div class="pair"><input id="p1b" type="number" inputmode="decimal" step="any" min="0" /><span class="pu"></span></div><div class="hint">Filled in from the percentage below. Type your own pressure here to replace it.</div></div>
+  <div class="field"><label for="c2">Or: pump-stop P₁ as a % below Ps</label><div class="pair"><input id="c2" type="number" inputmode="decimal" step="any" min="0" max="99" value="50" /><span>%</span></div><div class="hint">The maker’s rule: 50 %. Ps × (1 − 50 %) = P₁. See picture C.</div></div>
+  <div class="field wide"><label for="vo">Pipe velocity for the pump-stop case (optional)</label><div class="pair"><input id="vo" type="number" inputmode="decimal" step="any" min="0" placeholder="from the flow and the inside diameter" /><span id="voU"></span></div><div class="hint">The maker’s chart gives the velocity for each flow and size. This sheet works it out from the inside diameter, which agrees with the chart to within 0.2 %. Type the chart figure here to use it exactly.</div></div>
+  <div class="field wide"><label for="tl">Tank sizes you can buy (optional)</label><input id="tl" type="text" placeholder="e.g. 20, 40, 80, 150, 300" /><div class="hint">Volumes in the answer’s units, separated by commas. The sheet then shows the next size at or above the answer.</div></div>
+</div>
+<div class="addrow noprint">
+  <button type="button" id="ex">Load the maker’s example</button>
+</div>
+
+<h2 id="s2">3. Result</h2>
+<div class="helpbar noprint"><div>To see how the pressure changes in time when the pump starts and when it stops, open the diagram in the side panel.</div><button type="button" class="helpbtn" data-mxopen="pics">Open the diagram</button></div>
+<div class="warn" id="sWarn" role="status"></div>
+<div class="big" id="sRes"></div>
+<div id="cases"></div>
+
+<div class="prhead"><h3 id="prTitle" style="margin:0 0 4px">Surge tank sizing</h3><div id="prMeta" style="font-size:11px;margin-bottom:6px"></div></div>
+<div class="table-scroll"><table class="cmp" id="prT"></table></div>
+<table class="cmp prhead sig" style="margin-top:14px"><tbody><tr><td>Prepared by:</td><td>Checked by:</td><td>Approved by:</td></tr></tbody></table>
+
+<div class="exrow noprint">
+  <button type="button" class="pri" id="xl">Download Excel workbook (.xlsx)</button>
+  <button type="button" id="pr">Print or save as PDF</button>
+  <button type="button" id="sv">Save the inputs (.json)</button>
+  <button type="button" id="ld">Open saved inputs</button>
+  <input type="file" id="ldf" accept=".json,application/json" hidden />
+</div>
+<p class="si noprint">The workbook keeps your inputs in blue and works out both cases with formulas, in the units you chose, so a checker can follow every figure. Press the example button first to get the maker’s numbers.</p>
+
+<h2 id="s4">4. Check against the maker’s example</h2>
+<p class="lead" style="margin-top:6px">The sizing sheet works one example: water, a 400 gpm pump, 2,500 ft of 4 inch steel pipe, 100 psi static pressure, 150 psi maximum, dry air. The table sets the figures printed on the sheet against this sheet’s own working.</p>
+<div class="table-scroll"><table class="cmp" id="chkT"></table></div>
+<p class="cmpnote" id="chkN"></p>
+
+<footer>Preliminary checking only. The method is the maker’s published sizing method and is only as good as that method: it takes the pipe as straight with one flow, ignores friction, and gives the tank volume as the gas-filled volume to select. Confirm the final selection and the tank model with the maker. Formulae, the working and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-pics" data-tab="pics" aria-controls="mxtab-pics">Pictures</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Data</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-pics" aria-labelledby="mxt-pics" hidden>
+      <p>Start here if you are not sure what the boxes mean. Pictures A to C show what you enter and what it refers to in the system and in the tank. The two diagrams below them show how the pressure in the pipe changes with time, step by step, when the pump starts and when it stops.</p>
+      <div class="dgs dgd" role="group" aria-label="What the inputs are in the system and in the tank">
+<figure>
+<figcaption>A. Where the inputs are in the system</figcaption>
+<svg viewBox="0 0 420 250" role="img" aria-label="Pump, check valve, pipe of length L and a surge tank on a tee in the pipe">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/></marker><clipPath id="ctk"><rect x="212" y="30" width="76" height="98" rx="16"/></clipPath></defs>
+<path class="pipe" d="M72 170 H402"/><path class="pipe" d="M250 170 V126"/>
+<circle class="ln" cx="48" cy="170" r="24" fill="#fffdf7"/><path d="M40 160 L60 170 L40 180 z" fill="#1a1a1a"/><text class="tx" x="48" y="212" text-anchor="middle">Pump</text>
+<path d="M104 161 L120 170 L104 179 z" fill="#1a1a1a"/><rect x="122" y="160" width="3" height="20" fill="#1a1a1a"/><text class="mu" x="114" y="150" text-anchor="middle">check valve</text>
+<line class="ln" x1="140" y1="142" x2="196" y2="142" marker-end="url(#ar)"/><text class="tx b" x="168" y="133" text-anchor="middle">Qs pump flow</text>
+<g clip-path="url(#ctk)"><rect class="gas" x="212" y="30" width="76" height="42"/><rect class="wat" x="212" y="72" width="76" height="56"/></g>
+<rect class="ln" x="212" y="30" width="76" height="98" rx="16"/>
+<text class="tx" x="250" y="56" text-anchor="middle">gas</text><text class="tx" x="250" y="104" text-anchor="middle">water</text>
+<text class="tx b" x="250" y="20" text-anchor="middle">Surge tank</text>
+<text class="tx" x="296" y="56">gas P₁</text>
+<text class="mu" x="402" y="154" text-anchor="end">to the end of the line</text>
+<line class="ln" x1="330" y1="186" x2="330" y2="176"/><text class="tx" x="330" y="199" text-anchor="middle"><tspan class="b">d</tspan> inside diameter</text>
+<line class="ln" x1="48" y1="232" x2="402" y2="232" marker-start="url(#ar)" marker-end="url(#ar)"/><line class="ln" x1="48" y1="224" x2="48" y2="240"/><line class="ln" x1="402" y1="224" x2="402" y2="240"/>
+<text class="tx" x="225" y="224" text-anchor="middle"><tspan class="b">L</tspan> pipe length, pump to the end of the line</text>
+</svg>
+</figure>
+<figure>
+<figcaption>B. What the tank sees: three states</figcaption>
+<svg viewBox="0 0 420 270" role="img" aria-label="The tank gas volume at the pre-charge pressure, at the static pressure and at the maximum pressure">
+<defs><clipPath id="t1"><rect x="18" y="40" width="96" height="130" rx="18"/></clipPath><clipPath id="t2"><rect x="153" y="40" width="96" height="130" rx="18"/></clipPath><clipPath id="t3"><rect x="288" y="40" width="96" height="130" rx="18"/></clipPath></defs>
+<g clip-path="url(#t1)"><rect class="gas" x="18" y="40" width="96" height="130"/></g>
+<g clip-path="url(#t2)"><rect class="gas" x="153" y="40" width="96" height="113"/><rect class="wat" x="153" y="153" width="96" height="17"/></g>
+<g clip-path="url(#t3)"><rect class="gas" x="288" y="40" width="96" height="81"/><rect class="wat" x="288" y="121" width="96" height="49"/></g>
+<rect class="ln" x="18" y="40" width="96" height="130" rx="18"/><rect class="ln" x="153" y="40" width="96" height="130" rx="18"/><rect class="ln" x="288" y="40" width="96" height="130" rx="18"/>
+<text class="tx" x="66" y="110" text-anchor="middle">gas</text><text class="tx" x="201" y="100" text-anchor="middle">gas</text><text class="tx" x="336" y="84" text-anchor="middle">gas</text><text class="tx" x="336" y="150" text-anchor="middle">water</text>
+<line class="dash" x1="14" y1="40" x2="392" y2="40"/><text class="mu" x="392" y="34" text-anchor="end">top of the tank</text>
+<line class="ln" x1="118" y1="105" x2="148" y2="105" marker-end="url(#ar)"/><line class="ln" x1="253" y1="105" x2="283" y2="105" marker-end="url(#ar)"/>
+<text class="tx b" x="66" y="190" text-anchor="middle">1  P₁ pre-charge</text><text class="tx b" x="201" y="190" text-anchor="middle">2  Ps static</text><text class="tx b" x="336" y="190" text-anchor="middle">3  P₂ maximum</text>
+<text class="mu" x="66" y="208" text-anchor="middle">Gas only, charged to</text><text class="mu" x="66" y="222" text-anchor="middle">P₁ before use. This</text><text class="mu" x="66" y="236" text-anchor="middle">volume is the tank size.</text>
+<text class="mu" x="201" y="208" text-anchor="middle">Pump stopped. The line</text><text class="mu" x="201" y="222" text-anchor="middle">is at static pressure and</text><text class="mu" x="201" y="236" text-anchor="middle">has pushed water in.</text>
+<text class="mu" x="336" y="208" text-anchor="middle">Pressure peak: gas is</text><text class="mu" x="336" y="222" text-anchor="middle">squeezed to P₂, the most</text><text class="mu" x="336" y="236" text-anchor="middle">the pipe may see.</text>
+<text class="mu" x="210" y="262" text-anchor="middle">Not to scale. All pressures are gauge pressures (0 = atmosphere).</text>
+</svg>
+</figure>
+<figure>
+<figcaption>C. The pressures, and what the % refers to</figcaption>
+<svg viewBox="0 0 420 215" role="img" aria-label="Pressure scale with P2, static pressure, and the two pre-charge pressures below the static pressure">
+<line class="ln" x1="60" y1="20" x2="60" y2="190"/><line class="ln" x1="54" y1="190" x2="402" y2="190"/>
+<line class="dash" x1="60" y1="20" x2="402" y2="20"/><line class="dash" x1="60" y1="77" x2="310" y2="77"/><line class="dash" x1="60" y1="94" x2="310" y2="94"/><line class="dash" x1="60" y1="133" x2="310" y2="133"/>
+<text class="tx b" x="70" y="15">P₂  maximum allowed</text>
+<text class="tx b" x="70" y="72">Ps  static</text>
+<text class="tx b" x="70" y="90">P₁ pump starts</text>
+<text class="tx b" x="70" y="129">P₁ pump stops</text>
+<text class="mu" x="70" y="184">0 = atmosphere</text><text class="mu" x="60" y="208">All values are gauge. Absolute = gauge + atmosphere (14.7 psi).</text>
+<path class="ln" d="M300 77 H308 V94 H300"/><text class="tx" x="316" y="90">15 % below Ps</text>
+<path class="ln" d="M300 107 H308 V133 H300"/><text class="tx" x="316" y="124">50 % below Ps</text>
+</svg>
+</figure>
+      </div>
+      <h3>How the pressure changes in time</h3>
+      <p>The levels P₂, Ps and P₁ are your own numbers. The timing and the size of the swings are drawn for illustration only: the method sizes the tank, it does not calculate a pressure–time curve.</p>
+      <div class="dgs dgd" id="ptD"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The working with the values now on the sheet, in US units (the units of the maker’s formulae).</p>
+      <div id="workS"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. Pump starts: water hammer protection</h3>
+      <p class="si">r = (P₂ + 14.7) / (P₁ + 14.7), pressures in psi gauge<br>Tank volume = [ (SG × 2 × Qs × L / (449 × a)) × r<sup>1/n</sup> / (r<sup>1/n</sup> − 1) ] × 7.481 gallons<br>Qs in gal/min, L in ft, a in ft/s. 449 converts gal/min to ft³/s; 7.481 converts ft³ to gallons.</p>
+      <h3>2. Pump stops: cavitation protection</h3>
+      <p class="si">T<sub>c</sub> = 2 L / a, in seconds<br>V<sub>v</sub> = Q<sub>ss</sub> × T<sub>c</sub> × 7.481, with Q<sub>ss</sub> the pipe velocity in ft/s from the maker’s chart<br>AF = 1 − ((P₁ + 14.7) / (P₂ + 14.7))<sup>1/n</sup><br>Tank volume = V<sub>v</sub> / AF</p>
+      <h3>3. Pipe velocity</h3>
+      <p class="si">Q<sub>ss</sub> = Qs / (449 × A), A = π (d / 12)² / 4 in ft², d the inside diameter in inches</p>
+      <h3>4. Units</h3>
+      <p class="si">1 gal/min = 0.0630902 L/s, 1 ft = 0.3048 m, 1 psi = 6.894757 kPa, 1 in = 25.4 mm, 1 US gal = 3.785412 L. The sheet converts SI inputs to US, works in US units as the maker does, and converts the tank volume back. Atmospheric pressure is taken as 14.7 psi, as on the maker’s sheet.</p>
+      <h3>5. Choosing the tank</h3>
+      <p class="si">Tank volume = the larger of the two cases. Select a standard tank equal to or larger than it.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <h3>Pipe sizes and inside diameters</h3>
+      <p class="si">The inside diameters that reproduce the maker’s velocity chart.</p>
+      <div class="table-scroll"><table class="cmp" id="szT"></table></div>
+      <h3>Fluids and pipe</h3>
+      <div class="table-scroll"><table class="cmp" id="flT"></table></div>
+      <h3>Pre-charge gas</h3>
+      <p class="si">Dry air n = 1.2; nitrogen n = 1.4.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Gauge and absolute pressure</h3>
+      <p class="si">Every pressure you type (Ps, P₂, P₁) is a <b>gauge</b> pressure, as read on a pressure gauge: 0 is the atmosphere. <b>Absolute</b> pressure = gauge + atmosphere, with the atmosphere taken as 14.7 psi (101.3 kPa, 1.013 bar). Example: 100 psi gauge is 114.7 psi absolute, or 790.8 kPa absolute.</p>
+      <p class="si">The sheet uses the absolute value inside the gas law, because the gas volume depends on absolute pressure: r = (P₂ + 14.7) / (P₁ + 14.7). Pipe, valve and tank ratings are also gauge pressures, so P₂ is typed as a gauge pressure too. A gauge on the tank’s gas valve, with no water in the tank, reads P₁.</p>
+      <h3>Progress of the pressure change</h3>
+      <div class="ptn" id="ptNotes"></div>
+      <p><button type="button" class="helpbtn" data-mxopen="pics">Show the diagram</button></p>
+      <h3>Pre-charge pressure</h3>
+      <p class="si">The maker’s sheet pre-charges 15 % below the static pressure for the pump-start case and 50 % below it for the pump-stop case, and the sheet does the same by default. You can change the percentages or type the pressure.</p>
+      <h3>A check on the pump-stop formula</h3>
+      <p class="si">The maker’s pump-stop formula multiplies the pipe <i>velocity</i> (ft/s) by a time, which gives a length. A volume would need the pipe area as well. Used as printed, the formula is the same as taking the pipe area as 1 ft². This sheet follows the printed formula, so its answer matches the maker’s example and tank selection. For comparison, the result shows what the pump-stop volume would be if the vacuum volume were taken as flow × T<sub>c</sub>. For a 4 inch pipe that is about one eleventh of the printed figure. Ask the maker which basis their tank selection rests on before choosing a smaller tank.</p>
+      <h3>Printing errors in the maker’s example</h3>
+      <p class="si">In the pump-stop example the sheet gives V<sub>v</sub> = 83.70 and then divides 83.04 by 0.541 to get 153.5 gallons. Dividing 83.70 by 0.541 gives 154.7, and working it exactly gives 154.9. The chart value for a 12 inch pipe at 3,500 gpm (10.30 ft/s) is also out of line with the rest of its column; the others give 10.03.</p>
+      <h3>What is not included</h3>
+      <p class="si">Pipe friction, branches, pump run-down time, valve closing, and the choice of tank model. The method treats the line as one straight pipe with one flow.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pf = v => { const x = parseFloat(v); return isFinite(x) ? x : NaN; };
+const colL = n => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const X = (() => {
+  const fonts = [], fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>'], borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>'], nf = [], xfs = [], map = {};
+  const idx = (arr, x) => { let i = arr.indexOf(x); if (i < 0) { arr.push(x); i = arr.length - 1; } return i; };
+  fonts.push('<font><sz val="10"/><name val="Calibri"/></font>');
+  const BUILT = { "General": 0, "0": 1, "0.00": 2, "#,##0": 3, "#,##0.00": 4 };
+  function sty(o) {
+    o = o || {}; const key = JSON.stringify(o); if (map[key] != null) return map[key];
+    const font = idx(fonts, '<font>' + (o.b ? "<b/>" : "") + (o.i ? "<i/>" : "") + '<sz val="' + (o.sz || 10) + '"/>' + (o.c ? '<color rgb="FF' + o.c + '"/>' : "") + '<name val="Calibri"/></font>');
+    const fill = o.fill ? idx(fills, '<fill><patternFill patternType="solid"><fgColor rgb="FF' + o.fill + '"/><bgColor indexed="64"/></patternFill></fill>') : 0;
+    const bd = o.bd ? idx(borders, '<border><left style="thin"><color rgb="FFBFB8A5"/></left><right style="thin"><color rgb="FFBFB8A5"/></right><top style="thin"><color rgb="FFBFB8A5"/></top><bottom style="thin"><color rgb="FFBFB8A5"/></bottom><diagonal/></border>') : 0;
+    let nid = 0; if (o.fmt) { if (BUILT[o.fmt] != null) nid = BUILT[o.fmt]; else nid = 164 + idx(nf, o.fmt); }
+    const al = (o.h || o.wrap || o.v) ? '<alignment' + (o.h ? ' horizontal="' + o.h + '"' : "") + (o.v ? ' vertical="' + o.v + '"' : "") + (o.wrap ? ' wrapText="1"' : "") + "/>" : "";
+    xfs.push('<xf numFmtId="' + nid + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + bd + '" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"' + (al ? ' applyAlignment="1">' + al + "</xf>" : "/>"));
+    map[key] = xfs.length; return xfs.length;   /* index 0 is the default xf */
+  }
+  const xml = () => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + (nf.length ? '<numFmts count="' + nf.length + '">' + nf.map((f, i) => '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + esc(f) + '"/>').join("") + "</numFmts>" : "") + '<fonts count="' + fonts.length + '">' + fonts.join("") + '</fonts><fills count="' + fills.length + '">' + fills.join("") + '</fills><borders count="' + borders.length + '">' + borders.join("") + '</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + (xfs.length + 1) + '"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' + xfs.join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return { sty, xml };
+})();
+function sheetXml(sh) {
+  let rows = "";
+  sh.rows.forEach((row, ri) => {
+    if (!row) return; let cx = "";
+    row.forEach((c, ci) => {
+      if (c == null) return; const ref = colL(ci) + (ri + 1), s = c.s ? ' s="' + c.s + '"' : "";
+      if (c.f != null) { const v = c.v; if (typeof v === "string") cx += '<c r="' + ref + '"' + s + ' t="str"><f>' + esc(c.f) + "</f><v>" + esc(v) + "</v></c>"; else cx += '<c r="' + ref + '"' + s + "><f>" + esc(c.f) + "</f>" + (typeof v === "number" && isFinite(v) ? "<v>" + v + "</v>" : "") + "</c>"; }
+      else if (typeof c.v === "number") { if (isFinite(c.v)) cx += '<c r="' + ref + '"' + s + "><v>" + c.v + "</v></c>"; }
+      else if (c.v != null && c.v !== "") cx += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + "</t></is></c>";
+      else if (s) cx += '<c r="' + ref + '"' + s + "/>";
+    });
+    rows += '<row r="' + (ri + 1) + '"' + (sh.ht && sh.ht[ri] ? ' ht="' + sh.ht[ri] + '" customHeight="1"' : "") + ">" + cx + "</row>";
+  });
+  const cols = sh.cols ? "<cols>" + sh.cols.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("") + "</cols>" : "";
+  const pane = sh.freeze ? '<pane xSplit="' + sh.freeze[0] + '" ySplit="' + sh.freeze[1] + '" topLeftCell="' + colL(sh.freeze[0]) + (sh.freeze[1] + 1) + '" activePane="bottomRight" state="frozen"/>' : "";
+  const merges = sh.merges && sh.merges.length ? '<mergeCells count="' + sh.merges.length + '">' + sh.merges.map(m => '<mergeCell ref="' + m + '"/>').join("") + "</mergeCells>" : "";
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"' + (sh.first ? ' tabSelected="1"' : "") + ' showGridLines="0">' + pane + "</sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14\"/>" + cols + "<sheetData>" + rows + "</sheetData>" + merges + '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+}
+const CRCT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRCT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), sz = data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    cen.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+  });
+  const cs = cen.reduce((a, x) => a + x.length, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cen, [new Uint8Array(end.buffer)]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+/* conversion to the US units of the maker's formulae */
+const FQ = { U: 1, S: 15.850323 }, FL = { U: 1, S: 3.280840 }, FD = { U: 1, S: 1 / 25.4 };
+const FP = { psi: 1, kPa: 0.145037738, bar: 14.5037738, MPa: 145.037738 };
+const GAL_L = 3.785412, FT3_M3 = 0.0283168, ATM = 14.7;
+const FLU = [["1", "Water", 1], ["0.7", "Ammonia", 0.7], ["1.1", "Ethylene glycol", 1.1], ["1.3", "Glycerin", 1.3], ["1.1p", "Propylene glycol", 1.1], ["own", "My own value", null]];
+const MAT = [["st", "Steel, cast iron or ductile iron", 4500], ["pv", "PVC", 1250], ["own", "My own value", null]];
+const PIPES = [[2, 2.067, 50], [3, 3.068, 80], [4, 4.026, 100], [5, 5.047, 125], [6, 6.065, 150], [8, 7.981, 200], [10, 10.02, 250], [12, 11.938, 300], [14, 13.124, 350], [16, 15.0, 400]];
+const GAS = [["1.2", "Dry air (n = 1.2)"], ["1.4", "Nitrogen (n = 1.4)"], ["own", "My own value"]];
+const SAVE_KEY = "nv-sheet-xxv-v1";
+const blank = () => ({ u: "U", pu: "psi", fl: "1", sg: "1", pm: "st", av: "4500", ps: "4", id: "4.026", ln: "", qs: "", sp: "", p2: "", gas: "1.2", nv: "1.2", c1: "15", c2: "50", p1a: "", p1b: "", vo: "", tl: "" });
+let S = blank();
+function load() { try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.u) return Object.assign(blank(), o); } } catch (e) {} return null; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+
+/* ---- the maker's formulae, all in US units ---- */
+function calcUS(i) {
+  const o = { msg: [] };
+  const A = Math.PI / 4 * Math.pow(i.d / 12, 2);
+  o.A = A; o.v = i.vo > 0 ? i.vo : i.q / 449 / A;
+  o.first = i.sg * 2 * i.q * i.L / (449 * i.a);                 /* ft3 */
+  o.r1 = (i.p2 + ATM) / (i.p1s + ATM); o.rn1 = Math.pow(o.r1, 1 / i.n); o.fac1 = o.rn1 / (o.rn1 - 1);
+  o.V1 = o.first * o.fac1 * 7.481;
+  o.tc = 2 * i.L / i.a; o.Vv = o.v * o.tc * 7.481;
+  o.r2 = (i.p1d + ATM) / (i.p2 + ATM); o.AF = 1 - Math.pow(o.r2, 1 / i.n); o.V2 = o.Vv / o.AF;
+  o.Vvq = i.q / 449 * o.tc * 7.481; o.V2q = o.Vvq / o.AF;       /* flow-based comparison */
+  return o;
+}
+function inputs() {
+  const u = S.u, fp = FP[S.pu] || 1;
+  const sp = pf(S.sp) * fp, p2 = pf(S.p2) * fp;
+  const p1s = S.p1a !== "" && pf(S.p1a) >= 0 ? pf(S.p1a) * fp : sp * (1 - (pf(S.c1) || 0) / 100);
+  const p1d = S.p1b !== "" && pf(S.p1b) >= 0 ? pf(S.p1b) * fp : sp * (1 - (pf(S.c2) || 0) / 100);
+  return { q: pf(S.qs) * FQ[u], L: pf(S.ln) * FL[u], a: pf(S.av) * FL[u], d: pf(S.id) * FD[u], sg: pf(S.sg), n: S.gas === "own" ? pf(S.nv) : pf(S.gas), sp, p2, p1s, p1d, vo: pf(S.vo) > 0 ? pf(S.vo) * FL[u] : 0 };
+}
+function calc() {
+  const i = inputs(), msg = [];
+  const need = [["q", "the pump flow"], ["L", "the pipe length"], ["a", "the wave speed"], ["d", "the inside diameter"], ["sg", "the specific gravity"], ["sp", "the static pressure"], ["p2", "the maximum pressure"]];
+  need.forEach(x => { if (!(i[x[0]] > 0)) msg.push("Enter " + x[1] + "."); });
+  if (!(i.n > 1)) msg.push("The gas constant n must be above 1.");
+  const ok = !msg.length;
+  if (ok && !(i.p2 > i.sp)) msg.push("The maximum allowable pressure must be above the static pressure.");
+  if (ok && !(i.p1s < i.p2)) msg.push("The pump-start pre-charge must be below the maximum pressure.");
+  if (ok && !(i.p1d < i.p2)) msg.push("The pump-stop pre-charge must be below the maximum pressure.");
+  const good = !msg.length, o = good ? calcUS(i) : null;
+  const vf = S.u === "S" ? GAL_L : 1;
+  if (good) { o.I = i; o.vol1 = o.V1 * vf; o.vol2 = o.V2 * vf; o.vol = Math.max(o.vol1, o.vol2); o.gov = o.vol1 >= o.vol2 ? "pump starts: water hammer" : "pump stops: cavitation"; o.vol2q = o.V2q * vf;
+    if (o.v < 8 || o.v > 20) msg.push("The pipe velocity is " + fmt(o.v * (S.u === "S" ? 0.3048 : 1), 2) + " " + (S.u === "S" ? "m/s" : "ft/s") + ", outside the 8 to 20 ft/s (2.4 to 6.1 m/s) of the maker’s chart. The formula still works, but check the flow and the size.");
+    if (!(o.AF > 0)) msg.push("The pump-stop acceptance factor is not positive."); }
+  return { ok: good, msg, o, i, vf };
+}
+const VU = () => S.u === "S" ? "L" : "gal", VEL = () => S.u === "S" ? "m/s" : "ft/s", PU = () => S.pu;
+const dv = (x, d) => fmt(x, d);
+
+/* ---- fields ---- */
+const FIELDS = [["qs", "q"], ["ln", "L"], ["av", "a"], ["id", "d"], ["vo", "a"]];
+function convUnits(to) {
+  const from = S.u; if (from === to) return;
+  const f = { qs: FQ, ln: FL, av: FL, id: FD, vo: FL };
+  Object.keys(f).forEach(k => { const x = pf(S[k]); if (isFinite(x)) S[k] = sig(x * f[k][from] / f[k][to], 9); });
+  S.u = to; S.pu0 = S.pu;
+  convPressure(to === "S" ? "kPa" : "psi");
+  if (S.pm !== "own") S.av = matAv(); if (S.ps !== "own") S.id = pipeId();
+}
+function convPressure(to) {
+  const from = S.pu; if (from === to) return;
+  ["sp", "p2", "p1a", "p1b"].forEach(k => { const x = pf(S[k]); if (isFinite(x) && S[k] !== "") S[k] = sig(x * FP[from] / FP[to], 9); });
+  S.pu = to;
+}
+const matAv = () => { const m = MAT.find(x => x[0] === S.pm); return m && m[2] ? sig(m[2] / FL[S.u], 5) : S.av; };
+const pipeId = () => { const p = PIPES.find(x => String(x[0]) === String(S.ps)); return p ? sig(p[1] / FD[S.u], 5) : S.id; };
+const sizeLabel = p => S.u === "S" ? "DN" + p[2] + " (" + p[0] + " in)" : p[0] + " in";
+function syncTop() {
+  $("uU").classList.toggle("on", S.u === "U"); $("uS").classList.toggle("on", S.u === "S");
+  $("pu").value = S.pu; document.querySelectorAll(".pu").forEach(e => e.textContent = S.pu + " gauge");
+  $("fl").value = S.fl; $("sg").value = S.sg; $("pm").value = S.pm; $("av").value = S.av; $("avU").textContent = S.u === "S" ? "m/s" : "ft/s";
+  $("ps").innerHTML = PIPES.map(p => '<option value="' + p[0] + '">' + sizeLabel(p) + "</option>").join("") + '<option value="own">My own pipe</option>'; $("ps").value = S.ps;
+  $("id").value = S.id; $("idU").textContent = S.u === "S" ? "mm" : "in"; $("idH").textContent = S.ps === "own" ? "Your own inside diameter." : "From the pipe size. Type a value for your own pipe.";
+  $("ln").value = S.ln; $("lnU").textContent = S.u === "S" ? "m" : "ft"; $("qs").value = S.qs; $("qsU").textContent = S.u === "S" ? "L/s" : "gal/min";
+  $("sp").value = S.sp; $("p2").value = S.p2; $("gas").value = S.gas; $("nv").value = S.nv; $("nF").hidden = S.gas !== "own";
+  $("c1").value = S.c1; $("c2").value = S.c2; $("p1a").value = S.p1a; $("p1b").value = S.p1b; $("vo").value = S.vo; $("voU").textContent = S.u === "S" ? "m/s" : "ft/s"; $("tl").value = S.tl;
+}
+function autoFill() {
+  const fp = FP[S.pu], sp = pf(S.sp);
+  if (S.p1a === "" && document.activeElement !== $("p1a")) $("p1a").value = isFinite(sp) ? sig(sp * (1 - (pf(S.c1) || 0) / 100), 6) : "";
+  if (S.p1b === "" && document.activeElement !== $("p1b")) $("p1b").value = isFinite(sp) ? sig(sp * (1 - (pf(S.c2) || 0) / 100), 6) : "";
+}
+function box(k, v, u, cls) { return '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>"; }
+function nextSize(x) { const L = String(S.tl || "").split(/[,;\s]+/).map(pf).filter(v => v > 0).sort((a, b) => a - b); const r = L.find(v => v >= x - 1e-9); return L.length ? (r != null ? r : null) : undefined; }
+function rowsT(rows) { return "<table class=\"cmp\"><tbody>" + rows.map(r => '<tr' + (r[3] ? ' class="k"' : "") + '><td class="l">' + r[0] + '</td><td class="v">' + r[1] + "</td><td>" + (r[2] || "") + "</td></tr>").join("") + "</tbody></table>"; }
+
+/* ---- pressure against time: stages, notes and the live diagram ---- */
+const PT = [
+ { id: "start", title: "When the pump starts", cap: "D. Pump starts: pressure rises above Ps", st: [
+   "Pump stopped. The line is at the static pressure Ps. The tank holds some water (picture B, state 2).",
+   "The pump starts. The water in the pipe is set moving and the pressure climbs above Ps.",
+   "The peak. The tank takes in water and the gas is squeezed. With the tank the peak stays at or below P₂ (picture B, state 3). Without a tank it could go above P₂ (dashed line).",
+   "The pressure rings down. The water surges to and fro in the pipe and each swing is smaller.",
+   "The pressure settles. The line runs steadily (drawn here at Ps)."] },
+ { id: "stop", title: "When the pump stops", cap: "E. Pump stops: pressure falls below Ps", st: [
+   "Pump running. The pressure in the line is steady (drawn here at Ps).",
+   "The pump stops. The water keeps moving for a moment and the pressure falls below Ps.",
+   "The tank answers. It pushes water into the line and its gas expands, so the fall stops at about P₁ (picture B, state 1). Without a tank the pressure could drop to the vapour pressure and vapour pockets form (dashed line).",
+   "The pressure comes back. The water slows and turns, and the pressure rises past Ps and dips again. Without a tank the vapour pockets collapse with a bang, a sharp spike (dashed line).",
+   "The pressure settles at Ps with the pump stopped."] }];
+const ptList = st => '<ol class="ptl">' + st.map(t => "<li>" + t + "</li>").join("") + "</ol>";
+function ptDraw() {
+  const i = inputs(), fp = FP[S.pu] || 1, un = " " + S.pu;
+  const ok = i.sp > 0 && i.p2 > i.sp;
+  const cl = (x, a, b) => Math.min(b, Math.max(a, x));
+  const rP2 = ok ? cl(i.p2 / i.sp, 1.25, 1.9) : 1.5;
+  const rA = ok && i.p1s > 0 ? cl(i.p1s / i.sp, 0.1, 0.97) : 0.85, rB = ok && i.p1d > 0 ? cl(i.p1d / i.sp, 0.1, 0.97) : 0.5;
+  const Y = r => 196 - 76 * r, yS = Y(1), yP2 = Y(rP2);
+  const lab = (sym, v) => ok && v > 0 ? sym + " " + sig(v / fp, 4) + un : sym;
+  const mk = (n, x, y) => '<circle class="mk" cx="' + x + '" cy="' + y + '" r="9"/><text class="mn" x="' + x + '" y="' + (y + 4) + '">' + n + "</text>";
+  const base = (p1y, p1l) => {
+    const ly = [[yP2, lab("P₂", i.p2)], [yS, lab("Ps", i.sp)], [p1y, p1l]].sort((a, b) => a[0] - b[0]);
+    let last = -99; const pos = ly.map(r => { const y = Math.max(r[0] + 4, last + 14); last = y; return [y, r[1]]; });
+    return '<line class="ln" x1="56" y1="14" x2="56" y2="196"/><line class="ln" x1="56" y1="196" x2="406" y2="196" marker-end="url(#ar)"/>' +
+    [yP2, yS, p1y].map(y => '<line class="dash" x1="56" y1="' + y + '" x2="406" y2="' + y + '"/>').join("") +
+    pos.map(r => '<text class="tx b" x="412" y="' + r[0] + '">' + r[1] + "</text>").join("") +
+    '<text class="mu" x="52" y="12" text-anchor="end">Pressure</text><text class="mu" x="60" y="210">0 = atmosphere (gauge)</text><text class="mu" x="230" y="212" text-anchor="middle">time (not to scale)</text>'; };
+  const leg = '<line class="cv" x1="110" y1="236" x2="138" y2="236"/><text class="tx" x="144" y="240">with the tank</text><line class="rd" x1="274" y1="236" x2="302" y2="236"/><text class="tx" x="308" y="240">without a tank</text>';
+  /* pump starts */
+  const pk = yP2 + 5, top = Math.max(16, yP2 - 40), tr = yS + 6, hi = yS - 14, lo = yS + 4;
+  const s1 = '<path class="rd" d="M110 ' + yS + " C124 " + yS + " 136 " + top + " 160 " + top + " C184 " + top + " 190 " + (yS + 16) + " 214 " + (yS + 16) + " C236 " + (yS + 16) + " 244 " + (yS - 28) + " 266 " + (yS - 28) + " C288 " + (yS - 28) + " 292 " + yS + " 316 " + yS + ' H404"/>' +
+    '<path class="cv" d="M64 ' + yS + " H110 C128 " + yS + " 144 " + pk + " 168 " + pk + " C190 " + pk + " 196 " + tr + " 222 " + tr + " C240 " + tr + " 246 " + hi + " 268 " + hi + " C288 " + hi + " 292 " + lo + " 314 " + lo + " C334 " + lo + " 340 " + yS + " 360 " + yS + ' H404"/>' +
+    mk(1, 82, yS) + mk(2, 137, (yS + pk) / 2) + mk(3, 168, pk) + mk(4, 222, tr) + mk(5, 380, yS);
+  /* pump stops */
+  const mn = Y(rB) - 3, ov = yS - 12, dp = yS + 8;
+  const sp2 = Math.max(16, yP2 - 8);
+  const s2 = '<path class="rd" d="M110 ' + yS + " C124 " + yS + " 134 190 156 190 H196 C208 190 214 " + sp2 + " 226 " + sp2 + " C242 " + sp2 + " 248 " + (yS + 22) + " 270 " + (yS + 22) + " C290 " + (yS + 22) + " 298 " + yS + " 322 " + yS + ' H404"/>' +
+    '<path class="cv" d="M64 ' + yS + " H110 C126 " + yS + " 140 " + mn + " 176 " + mn + " C206 " + mn + " 214 " + ov + " 244 " + ov + " C266 " + ov + " 270 " + dp + " 296 " + dp + " C318 " + dp + " 326 " + yS + " 350 " + yS + ' H404"/>' +
+    mk(1, 82, yS) + mk(2, 136, (yS + mn) / 2) + mk(3, 176, mn) + mk(4, 244, ov) + mk(5, 380, yS);
+  const svg = (cap, body, y1, l1, st) => '<figure><figcaption>' + cap + '</figcaption><svg viewBox="0 0 500 250" role="img" aria-label="' + esc(cap) + '">' + base(y1, l1) + body + leg + "</svg>" + ptList(st) + "</figure>";
+  const el = $("ptD");
+  if (el) el.innerHTML = svg(PT[0].cap, s1, Y(rA), lab("P₁", i.p1s), PT[0].st) + svg(PT[1].cap, s2, Y(rB), lab("P₁", i.p1d), PT[1].st);
+  const an = $("absN");
+  if (an) { const A = ATM / fp, f = v => sig(v / fp + A, 5) + un, parts = [];
+    if (i.sp > 0) parts.push("Ps = " + f(i.sp)); if (i.p1s > 0) parts.push("P₁ pump starts = " + f(i.p1s)); if (i.p1d > 0) parts.push("P₁ pump stops = " + f(i.p1d)); if (i.p2 > 0) parts.push("P₂ = " + f(i.p2));
+    an.innerHTML = parts.length ? "<b>As absolute pressures</b> (gauge + " + sig(A, 4) + un + "), for information only: " + parts.join("; ") + "." : ""; }
+  const nt = $("ptNotes");
+  if (nt) nt.innerHTML = PT.map(p => "<h4>" + p.title + "</h4>" + ptList(p.st)).join("") + '<p class="si">These are pressure changes in the pipe, not the pump’s cut-in and cut-out settings. The levels follow your inputs; the timing is drawn for illustration only.</p>';
+}
+function update() {
+  autoFill(); ptDraw();
+  const R = calc(), o = R.o, vu = VU(), pu = PU();
+  const w = $("sWarn"); w.innerHTML = R.msg.map(t => "<div>" + esc(t) + "</div>").join(""); w.classList.toggle("show", R.msg.length > 0);
+  if (!R.ok) { $("sRes").innerHTML = ""; $("cases").innerHTML = ""; $("prT").innerHTML = ""; $("workS").innerHTML = '<p class="si">Fill in the inputs to see the working.</p>'; chk(); save(); return; }
+  const ns = nextSize(o.vol), vd = x => x < 100 ? fmt(x, 1) : fmt(x, 0);
+  $("sRes").innerHTML = box("Pump starts: water hammer", vd(o.vol1), vu + " minimum", o.vol1 >= o.vol2 ? "ok" : "") + box("Pump stops: cavitation", vd(o.vol2), vu + " minimum", o.vol2 > o.vol1 ? "ok" : "") +
+    box("Tank to select", vd(o.vol), vu + " or larger, set by " + o.gov, "ok") + (ns !== undefined ? box("Next size in your list", ns == null ? "none" : String(ns), ns == null ? "the list stops below the answer" : vu) : "") +
+    box("Pipe velocity", fmt(o.v * (S.u === "S" ? 0.3048 : 1), 2), VEL());
+  const dp = x => fmt(x / FP[pu], pu === "psi" ? 1 : pu === "kPa" ? 0 : pu === "bar" ? 2 : 3);
+  const I = o.I, vol3 = S.u === "S" ? '<span>m³</span>' : "ft³", cf = S.u === "S" ? FT3_M3 : 1;
+  const c1 = '<div class="case"><h4>Pump starts: water hammer protection</h4><div class="cb">' + rowsT([
+    ["Pre-charge pressure P₁ (absolute)", dp(I.p1s + ATM), pu], ["Maximum pressure P₂ (absolute)", dp(I.p2 + ATM), pu], ["Pressure ratio r = P₂ ÷ P₁", fmt(o.r1, 4), ""],
+    ["r to the power 1/n", fmt(o.rn1, 4), ""], ["Gas factor r<sup>1/n</sup> ÷ (r<sup>1/n</sup> − 1)", fmt(o.fac1, 4), ""],
+    ["Water volume in the pressure-wave time, SG × 2 × Qs × L ÷ (449 × a)", fmt(o.first * cf, S.u === "S" ? 4 : 3), S.u === "S" ? "m³" : "ft³"],
+    ["Tank volume", vd(o.vol1), vu, true]]) + "</div></div>";
+  const c2 = '<div class="case"><h4>Pump stops: cavitation protection</h4><div class="cb">' + rowsT([
+    ["Pipe inside diameter", fmt(pf(S.id), S.u === "S" ? 1 : 3), S.u === "S" ? "mm" : "in"], ["Pipe velocity Qss" + (I.vo > 0 ? " (typed)" : " (from the flow and the diameter)"), fmt(o.v * (S.u === "S" ? 0.3048 : 1), 2), VEL()],
+    ["Critical time Tc = 2 L ÷ a", fmt(o.tc, 3), "s"], ["Vacuum volume Vv = Qss × Tc × 7.481", fmt(o.Vv * (S.u === "S" ? GAL_L : 1), S.u === "S" ? 1 : 2), vu + " (as the maker’s formula)"],
+    ["Pre-charge pressure P₁ (absolute)", dp(I.p1d + ATM), pu], ["Acceptance factor AF = 1 − (P₁ ÷ P₂)<sup>1/n</sup>", fmt(o.AF, 4), ""],
+    ["Tank volume = Vv ÷ AF", vd(o.vol2), vu, true]]) + '<p class="cmpnote">For comparison only: if the vacuum volume were taken as flow × Tc (the pipe area included), this case would give ' + vd(o.vol2q) + " " + vu + ". The maker’s printed formula uses the velocity alone; see the notes in the side bar before relying on a smaller tank.</p></div></div>";
+  $("cases").innerHTML = c1 + c2;
+  /* print table */
+  const L = [["Fluid", FLU.find(f => f[0] === S.fl) ? FLU.find(f => f[0] === S.fl)[1] + ", SG " + S.sg : "SG " + S.sg], ["Pump flow Qs", S.qs + " " + (S.u === "S" ? "L/s" : "gal/min")], ["Pipe", (S.ps === "own" ? "own" : sizeLabel(PIPES.find(p => String(p[0]) === String(S.ps)))) + ", inside diameter " + S.id + " " + (S.u === "S" ? "mm" : "in") + ", length " + S.ln + " " + (S.u === "S" ? "m" : "ft")],
+    ["Wave speed a", S.av + " " + (S.u === "S" ? "m/s" : "ft/s")], ["Static pressure", S.sp + " " + pu + " gauge"], ["Maximum pressure P₂", S.p2 + " " + pu + " gauge"], ["Pre-charge gas", "n = " + (S.gas === "own" ? S.nv : S.gas)],
+    ["Pre-charge P₁, pump starts", dp(I.p1s) + " " + pu + " gauge"], ["Pre-charge P₁, pump stops", dp(I.p1d) + " " + pu + " gauge"]];
+  $("prT").innerHTML = "<thead><tr><th class=\"l\">Input</th><th class=\"l\">Value</th></tr></thead><tbody>" + L.map(r => '<tr><td class="l">' + r[0] + '</td><td class="l">' + esc(r[1]) + "</td></tr>").join("") + "</tbody><tfoot>" +
+    '<tr><td class="l">Pump starts: water hammer tank volume</td><td class="l">' + vd(o.vol1) + " " + vu + '</td></tr><tr><td class="l">Pump stops: cavitation tank volume</td><td class="l">' + vd(o.vol2) + " " + vu + '</td></tr><tr style="font-weight:700"><td class="l">Tank to select (equal or larger)</td><td class="l">' + vd(o.vol) + " " + vu + "</td></tr></tfoot>";
+  $("prMeta").textContent = "Maker’s method, sizing sheet MC 10261 (03/19)";
+  working(o, I); chk(); save();
+}
+function working(o, I) {
+  const L = [];
+  L.push("<b>In US units</b>: Qs = " + sig(I.q, 6) + " gal/min, L = " + sig(I.L, 6) + " ft, a = " + sig(I.a, 6) + " ft/s, d = " + sig(I.d, 5) + " in, SG = " + I.sg + ", n = " + I.n);
+  L.push("P₁ = " + sig(I.p1s, 5) + " psi (pump starts), " + sig(I.p1d, 5) + " psi (pump stops); P₂ = " + sig(I.p2, 5) + " psi; atmospheric 14.7 psi");
+  L.push("<b>Pump starts</b>: SG × 2 × Qs × L ÷ (449 × a) = " + fmt(o.first, 4) + " ft³");
+  L.push("r = (P₂ + 14.7) ÷ (P₁ + 14.7) = " + fmt(o.r1, 5) + "; r^(1/n) = " + fmt(o.rn1, 5));
+  L.push("Volume = " + fmt(o.first, 4) + " × " + fmt(o.fac1, 4) + " × 7.481 = <b>" + fmt(o.V1, 2) + " gal</b> (" + fmt(o.V1 * GAL_L, 1) + " L)");
+  L.push("<b>Pump stops</b>: area = " + fmt(o.A, 5) + " ft², Qss = Qs ÷ (449 × A) = " + fmt(o.v, 3) + " ft/s");
+  L.push("Tc = 2 L ÷ a = " + fmt(o.tc, 4) + " s; Vv = " + fmt(o.v, 3) + " × " + fmt(o.tc, 4) + " × 7.481 = " + fmt(o.Vv, 2));
+  L.push("AF = 1 − ((P₁ + 14.7) ÷ (P₂ + 14.7))^(1/n) = " + fmt(o.AF, 5));
+  L.push("Volume = Vv ÷ AF = <b>" + fmt(o.V2, 2) + " gal</b> (" + fmt(o.V2 * GAL_L, 1) + " L)");
+  $("workS").innerHTML = L.map(x => '<p class="si">' + x + "</p>").join("");
+}
+/* ---- the maker's example ---- */
+const EXAMPLE = { q: 400, L: 2500, a: 4500, d: 4.026, sg: 1, n: 1.2, sp: 100, p2: 150, p1s: 85, p1d: 50, vo: 0 };
+function loadExample() {
+  S = Object.assign(blank(), { u: "U", pu: "psi", qs: "400", ln: "2500", sp: "100", p2: "150" });
+  syncTop(); update();
+}
+function chk() {
+  const e = calcUS(EXAMPLE), mk = (a, b, c) => "<tr><td>" + a + "</td><td class=\"v\">" + b + '</td><td class="v">' + c + "</td></tr>";
+  $("chkT").innerHTML = "<thead><tr><th>Item</th><th>Printed on the maker’s sheet</th><th>This sheet</th></tr></thead><tbody>" +
+    mk("Water hammer tank volume, gal", "21.6", fmt(e.V1, 2)) + mk("Pipe velocity Qss (400 gpm, 4 in), ft/s", "10.08", fmt(e.v, 2)) + mk("Critical time Tc, s", "1.11", fmt(e.tc, 2)) +
+    mk("Vacuum volume Vv", "83.70 (then 83.04)", fmt(e.Vv, 2)) + mk("Acceptance factor AF", "0.541", fmt(e.AF, 3)) + mk("Cavitation tank volume, gal", "153.5", fmt(e.V2, 1)) + "</tbody>";
+  $("chkN").textContent = "The pump-start figure agrees (21.66 rounds to 21.7; the sheet prints 21.6). In the pump-stop example the sheet writes Vv = 83.70 and then divides 83.04 by 0.541, which gives its 153.5 gal. Dividing 83.70 by 0.541 gives 154.7, and the exact working gives " + fmt(e.V2, 1) + " gal, about 1 % above the printed figure. The difference is a printing slip in the example, not a difference in method.";
+}
+/* ---- events ---- */
+function bind() {
+  $("fl").innerHTML = FLU.map(f => '<option value="' + f[0] + '">' + f[1] + "</option>").join("");
+  $("pm").innerHTML = MAT.map(m => '<option value="' + m[0] + '">' + m[1] + "</option>").join("");
+  $("gas").innerHTML = GAS.map(g => '<option value="' + g[0] + '">' + g[1] + "</option>").join("");
+  $("pu").innerHTML = [["psi", "psi"], ["kPa", "kPa"], ["bar", "bar"], ["MPa", "MPa"]].map(p => '<option value="' + p[0] + '">' + p[1] + "</option>").join("");
+  $("uU").addEventListener("click", () => { convUnits("U"); syncTop(); update(); });
+  $("uS").addEventListener("click", () => { convUnits("S"); syncTop(); update(); });
+  $("pu").addEventListener("change", () => { convPressure($("pu").value); syncTop(); update(); });
+  $("fl").addEventListener("change", () => { S.fl = $("fl").value; const f = FLU.find(x => x[0] === S.fl); if (f && f[2] != null) S.sg = String(f[2]); syncTop(); update(); });
+  $("sg").addEventListener("input", () => { S.sg = $("sg").value; S.fl = "own"; $("fl").value = "own"; update(); });
+  $("pm").addEventListener("change", () => { S.pm = $("pm").value; if (S.pm !== "own") S.av = matAv(); syncTop(); update(); });
+  $("av").addEventListener("input", () => { S.av = $("av").value; S.pm = "own"; $("pm").value = "own"; update(); });
+  $("ps").addEventListener("change", () => { S.ps = $("ps").value; if (S.ps !== "own") S.id = pipeId(); syncTop(); update(); });
+  $("id").addEventListener("input", () => { S.id = $("id").value; S.ps = "own"; $("ps").value = "own"; $("idH").textContent = "Your own inside diameter."; update(); });
+  $("gas").addEventListener("change", () => { S.gas = $("gas").value; $("nF").hidden = S.gas !== "own"; update(); });
+  ["ln", "qs", "sp", "p2", "nv", "c1", "c2", "p1a", "p1b", "vo", "tl"].forEach(k => $(k).addEventListener("input", () => {
+    S[k] = $(k).value;
+    if (k === "c1") { S.p1a = ""; $("p1a").value = ""; } if (k === "c2") { S.p1b = ""; $("p1b").value = ""; }
+    update();
+  }));
+  $("ex").addEventListener("click", loadExample);
+  $("pr").addEventListener("click", () => window.print());
+  $("xl").addEventListener("click", () => { const R = calc(); if (!R.ok) { alert("Fill in the inputs first, or press “Load the maker’s example”."); return; } download(buildXlsx(), "surge_tank_sizing.xlsx"); });
+  $("sv").addEventListener("click", () => download(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), "surge_tank_sizing.json"));
+  $("ld").addEventListener("click", () => $("ldf").click());
+  $("ldf").addEventListener("change", () => { const f = $("ldf").files[0]; if (!f) return; f.text().then(t => { try { const o = JSON.parse(t); if (!o || !o.u) throw 0; S = Object.assign(blank(), o); syncTop(); update(); } catch (e) { alert("That file is not saved from this sheet."); } $("ldf").value = ""; }); });
+}
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+
+/* ---- Excel workbook ---- */
+function buildXlsx() {
+  const R = calc(), o = R.o, I = o.I, sty = X.sty, BL = "0000FF", u = S.u, pu = S.pu;
+  const H = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "center", v: "center", wrap: 1, bd: 1 }), HL = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "left", v: "center", wrap: 1, bd: 1 });
+  const T1 = sty({ b: 1, sz: 14 }), T2 = sty({ b: 1, sz: 11 }), NOTE = sty({ i: 1, c: "555555", wrap: 1, v: "top" }), TXT = sty({ bd: 1 }), TXTW = sty({ bd: 1, wrap: 1, v: "top" });
+  const inN = sty({ c: BL, bd: 1, fmt: "0.0000" }), inG = sty({ c: BL, bd: 1 });
+  const c2 = sty({ bd: 1, fmt: "0.00" }), c3 = sty({ bd: 1, fmt: "0.000" }), c4 = sty({ bd: 1, fmt: "0.0000" }), c1b = sty({ bd: 1, fmt: "0.0", b: 1, fill: "E7EFE4" }), LABB = sty({ b: 1, bd: 1 }), fc = sty({ c: "2E7D32", bd: 1, fmt: "0.000000" });
+  const uq = u === "S" ? "L/s" : "gal/min", ul = u === "S" ? "m" : "ft", ua = u === "S" ? "m/s" : "ft/s", ud = u === "S" ? "mm" : "in";
+  const fq = FQ[u], fl = FL[u], fd = FD[u], fp = FP[pu];
+  const def = [
+    ["hdr", "Inputs", "Value", "Unit", "× to US units"],
+    ["SG", "Specific gravity SG", pf(S.sg), "", 1],
+    ["Q", "Pump flow Qs", pf(S.qs), uq, fq],
+    ["L", "Pipe length L", pf(S.ln), ul, fl],
+    ["D", "Pipe inside diameter", pf(S.id), ud, fd],
+    ["A", "Speed of the pressure wave a", pf(S.av), ua, fl],
+    ["N", "Gas constant n", I.n, "", 1],
+    ["SP", "Static pressure (gauge)", pf(S.sp), pu, fp],
+    ["P2", "Maximum allowable pressure P₂ (gauge)", pf(S.p2), pu, fp],
+    ["C1", "Pump-start pre-charge below static by, %", pf(S.c1), "%", ""],
+    ["C2", "Pump-stop pre-charge below static by, %", pf(S.c2), "%", ""],
+    ["P1A", "Pump-start pre-charge P₁ (gauge)", S.p1a !== "" ? pf(S.p1a) : "=SP*(1-C1/100)", pu, fp],
+    ["P1B", "Pump-stop pre-charge P₁ (gauge)", S.p1b !== "" ? pf(S.p1b) : "=SP*(1-C2/100)", pu, fp],
+    ["VO", "Pipe velocity from the maker’s chart (leave blank to work it out)", pf(S.vo) > 0 ? pf(S.vo) : "", ua, fl],
+    ["hdr", "Working in US units (as the maker’s formulae)", "Value", "Unit", ""],
+    ["qU", "Pump flow", "=Q*Q_f", "gal/min", ""], ["lU", "Pipe length", "=L*L_f", "ft", ""], ["aU", "Wave speed", "=A*A_f", "ft/s", ""], ["dU", "Inside diameter", "=D*D_f", "in", ""],
+    ["sU", "Static pressure", "=SP*SP_f", "psi", ""], ["p2U", "Maximum pressure P₂", "=P2*P2_f", "psi", ""], ["p1U", "Pump-start pre-charge P₁", "=P1A*P1A_f", "psi", ""], ["p1dU", "Pump-stop pre-charge P₁", "=P1B*P1B_f", "psi", ""],
+    ["hdr", "Pump starts: water hammer protection", "Value", "Unit", ""],
+    ["first", "SG × 2 × Qs × L ÷ (449 × a)", "=SG*2*qU*lU/(449*aU)", "ft³", ""],
+    ["r1", "r = (P₂ + 14.7) ÷ (P₁ + 14.7)", "=(p2U+14.7)/(p1U+14.7)", "", ""],
+    ["rn1", "r ^ (1/n)", "=r1^(1/N)", "", ""],
+    ["V1", "Tank volume = first × rⁿ ÷ (rⁿ − 1) × 7.481", "=first*rn1/(rn1-1)*7.481", "gal", "b"],
+    ["hdr", "Pump stops: cavitation protection", "Value", "Unit", ""],
+    ["area", "Pipe area", "=PI()/4*(dU/12)^2", "ft²", ""],
+    ["vel", "Pipe velocity Qss", "=IF(VO>0,VO*VO_f,qU/449/area)", "ft/s", ""],
+    ["tc", "Critical time Tc = 2 L ÷ a", "=2*lU/aU", "s", ""],
+    ["Vv", "Vacuum volume Vv = Qss × Tc × 7.481", "=vel*tc*7.481", "", ""],
+    ["AF", "Acceptance factor AF = 1 − ((P₁ + 14.7) ÷ (P₂ + 14.7))^(1/n)", "=1-((p1dU+14.7)/(p2U+14.7))^(1/N)", "", ""],
+    ["V2", "Tank volume = Vv ÷ AF", "=Vv/AF", "gal", "b"],
+    ["hdr", "Result", "Value", "Unit", ""],
+    ["G", "Tank to select (the larger of the two), US", "=MAX(V1,V2)", "gal", "b"],
+    ["GL", "Tank to select, SI", "=G*3.785412", "L", "b"],
+    ["alt", "For comparison: pump-stop volume with Vv = flow × Tc", "=(qU/449*tc*7.481)/AF", "gal", ""]
+  ];
+  const rowOf = {}; def.forEach((d, i) => { if (d[0] !== "hdr") rowOf[d[0]] = i + 5; });
+  const ref = n => "B" + rowOf[n];
+  const sub = f => f.replace(/\b([A-Za-z][A-Za-z0-9]*)_f\b/g, (m, n) => "$D$" + rowOf[n]).replace(/\b(SG|Q|L|D|A|N|SP|P2|C1|C2|P1A|P1B|VO|qU|lU|aU|dU|sU|p2U|p1U|p1dU|first|r1|rn1|V1|area|vel|tc|Vv|AF|V2|G)\b(?![0-9(])/g, (m, n) => rowOf[n] ? "B" + rowOf[n] : m);
+  const vals = { SG: I.sg, qU: I.q, lU: I.L, aU: I.a, dU: I.d, sU: I.sp, p2U: I.p2, p1U: I.p1s, p1dU: I.p1d, first: o.first, r1: o.r1, rn1: o.rn1, V1: o.V1, area: o.A, vel: o.v, tc: o.tc, Vv: o.Vv, AF: o.AF, V2: o.V2, G: Math.max(o.V1, o.V2), GL: Math.max(o.V1, o.V2) * GAL_L, alt: o.V2q };
+  const rows = []; rows[0] = [{ v: "Surge tank sizing", s: T1 }]; rows[1] = [{ v: "Maker’s method (sizing sheet MC 10261, 03/19). Inputs in blue; everything else is a formula. Units: " + (u === "S" ? "SI" : "US") + ".", s: NOTE }];
+  def.forEach((d, i) => {
+    const r = i + 4, row = [];
+    if (d[0] === "hdr") { row[0] = { v: d[1], s: HL }; row[1] = { v: d[2], s: H }; row[2] = { v: d[3], s: H }; row[3] = { v: d[4], s: H }; rows[r] = row; return; }
+    const isIn = i >= 1 && i <= 13, bold = d[4] === "b";
+    row[0] = { v: d[1], s: bold ? LABB : TXT };
+    const v = d[2];
+    if (isIn) {
+      const isF = typeof v === "string" && v[0] === "=";
+      row[1] = isF ? { f: sub(v.slice(1)), v: d[0] === "P1A" ? I.p1s / fp : I.p1d / fp, s: c3 } : { v: v, s: inN };
+      row[3] = typeof d[4] === "number" ? { v: d[4], s: fc } : { v: "", s: TXT };
+    } else {
+      row[1] = { f: sub(v.slice(1)), v: vals[d[0]], s: bold ? c1b : c4 }; row[3] = { v: "", s: TXT };
+    }
+    row[2] = { v: d[3], s: TXT }; rows[r] = row;
+  });
+  const nt = [[{ v: "Notes", s: T1 }], [{ v: "Method: the maker’s published sizing method for a gas-charged surge tank, sheet MC 10261 (03/19). Pump starts: water hammer: tank volume = (SG × 2 × Qs × L ÷ (449 × a)) × r^(1/n) ÷ (r^(1/n) − 1) × 7.481 gallons, r = (P₂ + 14.7) ÷ (P₁ + 14.7). Pump stops: cavitation: Tc = 2 L ÷ a; Vv = Qss × Tc × 7.481; AF = 1 − ((P₁ + 14.7) ÷ (P₂ + 14.7))^(1/n); tank volume = Vv ÷ AF.", s: NOTE }],
+    [{ v: "SI inputs are converted to US units with the factors in the last column, worked in US units, and the answer is given in gallons and litres. Atmospheric pressure is 14.7 psi, as on the maker’s sheet.", s: NOTE }],
+    [{ v: "The pump-stop formula multiplies the pipe velocity by a time. It is reproduced as printed so that the answer matches the maker’s example. The last result row shows the volume if the vacuum volume were taken as flow × Tc. Confirm the basis with the maker before choosing a smaller tank.", s: NOTE }]];
+  const sheets = [{ name: "Sizing", rows, cols: [64, 16, 12, 14], first: true, ht: { 1: 30 }, merges: ["A2:D2"] }, { name: "Notes", rows: nt, cols: [120], ht: { 1: 80, 2: 40, 3: 56 } }];
+  const wbx = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>').join("") + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+  const files = [
+    { name: "[Content_Types].xml", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((s, i) => '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("") + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: "_rels/.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", text: wbx },
+    { name: "xl/_rels/workbook.xml.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>').join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' }
+  ];
+  const sx = sheets.map(s => sheetXml(s));
+  files.push({ name: "xl/styles.xml", text: X.xml() });
+  sx.forEach((t, i) => files.push({ name: "xl/worksheets/sheet" + (i + 1) + ".xml", text: t }));
+  return zip(files);
+}
+function fillData() {
+  $("szT").innerHTML = "<thead><tr><th>Pipe size</th><th>DN</th><th>Inside diameter, in</th><th>mm</th></tr></thead><tbody>" + PIPES.map(p => "<tr><td>" + p[0] + " in</td><td>" + p[2] + "</td><td>" + p[1] + "</td><td>" + sig(p[1] * 25.4, 4) + "</td></tr>").join("") + "</tbody>";
+  $("flT").innerHTML = "<thead><tr><th class=\"l\">Item</th><th>Value</th></tr></thead><tbody>" + [["Water", "SG 1"], ["Ammonia", "SG 0.7"], ["Ethylene glycol", "SG 1.1"], ["Glycerin", "SG 1.3"], ["Propylene glycol", "SG 1.1"], ["Steel, cast iron, ductile iron pipe", "a = 4,500 ft/s (1,372 m/s)"], ["PVC pipe", "a = 1,250 ft/s (381 m/s)"]].map(r => '<tr><td class="l">' + r[0] + "</td><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+}
+S = load() || blank();
+bind(); fillData(); syncTop(); update();
+window.__sg = { get S() { return S; }, calc, calcUS, loadExample, buildXlsx, convUnits, syncTop, update, EXAMPLE };
+})();
+</script>
+</body>
+</html>

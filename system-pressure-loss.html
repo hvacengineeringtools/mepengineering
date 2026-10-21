@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Pressure loss along the index run of a water circuit, section by section: pipe friction from the sheet VI tables, fittings, coil, strainer and chiller entered case by case, a running total, and export to Excel for submission." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VII — Pipework system pressure loss</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<style>
+.sec { border:1px solid var(--rule); background:var(--panel); margin:12px 0; padding:0; }
+.sec.eq { background:#f4efe3; }
+.sec .sh { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid var(--rule); }
+.sec .sn { min-width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:var(--ink); color:var(--paper); font-size:13px; }
+.sec .sh select.kd { width:auto; min-height:36px; font-size:14px; }
+.sec .sh input.dsc { flex:1 1 220px; min-width:160px; min-height:36px; font-size:14px; }
+.sec .sh .lca { margin:0; display:flex; gap:4px; }
+.sec .sb { padding:10px; }
+.sec .sb .fields { gap:10px 14px; }
+.sec details.fit { margin:10px 0 0; border:1px solid var(--faint); background:var(--paper); }
+.sec details.fit summary { cursor:pointer; padding:7px 10px; font-size:13px; font-weight:600; min-height:36px; display:flex; align-items:center; }
+.sec details.fit .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px 12px; padding:8px 10px 10px; }
+.sec details.fit .fg label { font-size:12px; display:block; margin:0 0 2px; }
+.sec details.fit .fg input { min-height:34px; font-size:14px; }
+.sec .rs { display:flex; flex-wrap:wrap; gap:6px 18px; padding:8px 10px; border-top:1px solid var(--rule); font-size:13px; background:var(--tint); }
+.sec .rs b { font-weight:700; }
+.sec .rs .tot { margin-left:auto; font-weight:700; }
+.sec .wn { color:#8a3b12; font-size:12px; padding:4px 10px 8px; line-height:1.4; }
+.seg2 { display:flex; flex-wrap:wrap; gap:0; }
+.seg2 button { flex:1 1 150px; width:auto; min-height:40px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.seg2 button + button { border-left:0; }
+.seg2 button.on { background:var(--ink); color:var(--paper); }
+.fitq { margin:12px 0 0; }
+.fitq .fl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.fitq .fgrid, .fitq .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px 12px; }
+.stp label { font-size:12px; display:block; margin:0 0 2px; font-weight:600; }
+.stp .sc { display:flex; }
+.stp .sc input { flex:1 1 auto; min-width:0; width:100%; text-align:center; min-height:40px; font-size:15px; border-left:0; border-right:0; }
+.stp .sc button { width:40px; min-height:40px; flex:none; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 18px Georgia, serif; cursor:pointer; padding:0; }
+.stp small.kv { display:block; font-size:11px; color:var(--muted); margin-top:2px; min-height:13px; }
+table.cmp#cmpT td.bad { color:#9b1c1c; font-weight:700; }
+.sec details.fit { margin:10px 0 0; }
+.addrow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+.addrow button, .exrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.addrow button.pri, .exrow button.pri { background:var(--ink); color:var(--paper); }
+.exrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:5px 6px; }
+table.cmp#prT td.l, table.cmp#prT th.l { text-align:left; }
+table.cmp#prT tr.eqr td { background:#f4efe3; }
+table.cmp#prT td.bad { color:#9b1c1c; font-weight:700; }
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+.prhead { display:none; }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .sec, .mx-pull, .mx-scrim, .mx-drawer, header .sub, #s1, #s2h, .addrow, .exrow, footer, #s4, #s4 ~ ul, #s4 ~ div:not(.rights), #s4 ~ table, #s4 ~ h4, #s4 ~ p { display:none !important; }
+  .prhead { display:block; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VII</div>
+  <h1>Pipework system pressure loss</h1>
+  <div class="sub">Section by section along the index run · pipe from the XXI tables · coil, strainer and chiller entered case by case · export to Excel</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a class="on" href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Adds up the pressure loss along one circuit, the index run, from the pump round to the pump. Each section is either a length of pipe with its fittings, or an item of equipment with the pressure drop from the maker’s data. Every pipe section uses the same Darcy–Weisbach and Altshul–Tsal friction as sheet VI, with the same pipe tables, so the size you choose here is the size sheet VI would give you. The running total is kept as you go, and the whole table can be downloaded as an Excel workbook that recalculates, or printed for submission.</p>
+<nav class="toc" aria-label="On this page"><a href="#s0">1 Project and water</a><a href="#s1">2 Sections</a><a href="#s3">3 Result and export</a><a href="#s4">4 Checking the K values</a></nav>
+
+<h2 id="s0">1. Project and design basis</h2>
+<div class="fields two">
+</div>
+
+<h5 class="vh">Water</h5>
+<div class="fields two">
+  <div class="field"><label for="tw">Water temperature</label><div class="pair"><input id="tw" type="number" inputmode="decimal" step="any" min="0" max="200" value="10" /><span>°C</span></div><div class="hint">Mean temperature in the circuit. Chilled water about 10, condenser water about 30.</div></div>
+  <div class="field"><label for="rho">Density ρ</label><div class="pair"><input id="rho" type="number" inputmode="decimal" step="any" min="0" /><span>kg/m³</span></div></div>
+  <div class="field"><label for="nu">Kinematic viscosity ν</label><div class="pair"><input id="nu" type="number" inputmode="decimal" step="any" min="0" /><span>10⁻⁶ m²/s</span></div><div class="hint" id="fh">Worked out from the temperature. Type a value to use your own.</div></div>
+  <div class="field"><label for="rg">Pipe roughness</label><select id="rg"></select></div>
+  <div class="field" id="rgf" hidden><label for="rgv">Roughness ε</label><div class="pair"><input id="rgv" type="number" inputmode="decimal" step="any" min="0" value="0.046" /><span>mm</span></div></div>
+</div>
+
+<h5 class="vh">Totals</h5>
+<div class="fields two">
+  <div class="field"><label for="mg">Design margin</label><div class="pair"><input id="mg" type="number" inputmode="decimal" step="any" min="0" value="10" /><span>%</span></div><div class="hint">Added to the total, for the accuracy of the information you have.</div></div>
+  <div class="field"><label for="mr">Pipe and fittings counted</label><select id="mr"><option value="1">As listed (supply and return entered as sections)</option><option value="2">Return the same as supply (twice)</option></select><div class="hint">Equipment is never doubled.</div></div>
+  <div class="field wide"><label class="chk"><input type="checkbox" id="ck" checked /> Also work the total out at a higher flow</label></div>
+  <div class="field ckf"><label for="cf">Flow at the check</label><div class="pair"><input id="cf" type="number" inputmode="decimal" step="any" min="0" value="115" /><span>% of design</span></div><div class="hint">Every pipe is worked out again at this flow. Equipment marked “varies with flow²” is scaled; other equipment keeps its figure.</div></div>
+</div>
+
+<h5 class="vh">Fittings</h5>
+<div class="fields two">
+  <div class="field wide"><label for="ks">Fitting K values from</label><select id="ks"><option value="t">Our reference data (by nominal size)</option><option value="d">Darby 3-K method (by pipe diameter and Reynolds number)</option></select><div class="hint" id="ksH"></div></div>
+</div>
+
+<h5 class="vh">Pipe tables</h5>
+<div class="fields two">
+  <div class="field wide"><label for="svc">Specification service (optional)</label><select id="svc"></select><label class="chk" id="svcF" hidden><input type="checkbox" id="svcFollow" /> Follow the specification: pipe sections take the tube it names for their size</label><div class="hint" id="svcH">Pick a service to get the sizes and tubes of the pipework specification, as in sheet VI. You can still change any section.</div></div>
+</div>
+
+<h2 id="s1">2. Sections along the index run</h2>
+<p class="lead" style="margin-top:6px">Add the sections in the order the water flows. Use a pipe section for each length of pipe with the same flow, size and fittings. Add equipment (coil, strainer, chiller, control valve) where it sits in the circuit, and enter the pressure drop from the maker’s data at the design flow.</p>
+<div id="secs"></div>
+<div class="addrow">
+  <button type="button" class="pri" id="addP">Add pipe section</button>
+  <button type="button" data-eq="Coil">Add coil</button>
+  <button type="button" data-eq="Strainer">Add strainer</button>
+  <button type="button" data-eq="Chiller">Add chiller</button>
+  <button type="button" data-eq="Control valve">Add control valve</button>
+  <button type="button" data-eq="">Add other equipment</button>
+</div>
+<div class="addrow noprint">
+  <button type="button" id="ex">Load an example</button>
+  <button type="button" id="clr">Clear all sections</button>
+</div>
+
+<h2 id="s3">3. Result and export</h2>
+<div id="vNote" class="perm" role="status"></div>
+<div class="warn" id="sWarn" role="status"></div>
+<div class="big" id="sRes"></div>
+
+<div class="prhead"><h3 id="prTitle" style="margin:0 0 4px"></h3><div id="prMeta" style="font-size:11px;margin-bottom:6px"></div></div>
+<div class="table-scroll"><table class="cmp" id="prT"></table></div>
+<p class="si" id="prN"></p>
+<table class="cmp prhead sig" style="margin-top:14px"><tbody><tr><td>Prepared by:</td><td>Checked by:</td><td>Approved by:</td></tr></tbody></table>
+
+<div class="exrow noprint">
+  <button type="button" class="pri" id="xl">Download Excel workbook (.xlsx)</button>
+  <button type="button" id="pr">Print or save as PDF</button>
+  <button type="button" id="sv">Save the project (.json)</button>
+  <button type="button" id="ld">Open a saved project</button>
+  <input type="file" id="ldf" accept=".json,application/json" hidden />
+</div>
+<p class="si noprint" id="exN">The workbook keeps your inputs in blue and recalculates the friction, fittings and running total with formulas, so a checker can follow every figure. The pipe tables are not in the workbook: each section carries the inside diameter the table gave.</p>
+
+<h2 id="s4">4. Checking the K values</h2>
+<p class="lead" style="margin-top:6px">How far our reference K values are from a published method. The Darby 3-K method gives K for a fitting from its diameter and the Reynolds number, so it needs no table of sizes. Pick a fitting and a Reynolds number to see the two side by side, and see what the difference does to the circuit you have entered.</p>
+<div class="fields two">
+  <div class="field"><label for="cfit">Fitting</label><select id="cfit"></select></div>
+  <div class="field"><label for="cre">Reynolds number</label><input id="cre" type="number" inputmode="decimal" step="any" min="1" value="100000" /><div class="hint">About 100,000 is typical for chilled water at 1 to 1.5 m/s in DN100.</div></div>
+</div>
+<div class="table-scroll"><table class="cmp" id="cmpT"></table></div>
+<h4 class="grp">Effect on the circuit above</h4>
+<div class="big" id="cmpRes"></div>
+<p class="si" id="cmpN"></p>
+<h4 class="grp">What the comparison shows (Reynolds number 100,000)</h4>
+<ul class="si" id="cmpF">
+  <li><b>Our reference table:</b> the table has no separate 125 mm row of its own; the 125 mm values repeat the 100 mm ones.</li>
+  <li><b>90° elbow and tee (run through):</b> within about 20 % of the 3-K method from DN25 to DN50. Higher at DN15 and DN20, up to 36 % higher. From DN65 upward the table is lower and the gap grows with size: about 30 % low at DN80, 35 % at DN100, and 45 to 55 % low at DN150 to DN300.</li>
+  <li><b>Tee, branch and 45° elbow:</b> lower than 3-K at every size, by 20 to 40 %.</li>
+  <li><b>Gate valve:</b> three to four times the 3-K value at DN15 to DN25, close from DN100 to DN150, about half at DN300. <b>Angle valve:</b> three to four times at DN15 and DN20, within 15 % from DN40. <b>Globe valve:</b> 10 to 95 % higher than 3-K. <b>Swing check valve:</b> a constant 2.0, which is up to 25 % low in small sizes and 20 to 50 % high from DN100.</li>
+  <li><b>What it means:</b> the table falls with size faster than the 3-K method does. In the larger sizes, where most of the pressure loss of a plant room is, the table gives lower fitting losses than a published method, so it may be on the low side. I cannot say which of the two matches the actual Hattersley fittings, and the 3-K values here are for standard, not long-radius, elbows. Valves are best entered from the maker’s Kv or Cv data as equipment.</li>
+</ul>
+
+<footer>Preliminary checking only. Straight pipe friction and fittings are by the standard K × velocity pressure method; the K values and the equipment figures are yours to check against the maker and the design guide. Static head, the pump, control valve authority, ageing of the pipe and a flow that changes along a section are not included. Formulae, the working and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Fittings and limits</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The working for the section you last changed, with the values now on the sheet.</p>
+      <div id="workS"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. Velocity and Reynolds number</h3>
+      <p class="si">v = Q / A, with A = π D² / 4 and Q in m³/s (litres per second ÷ 1000).<br>Re = v D / ν</p>
+      <h3>2. Friction factor (Altshul–Tsal)</h3>
+      <p class="si">f′ = 0.11 (ε / D + 68 / Re)^0.25<br>f = f′ if f′ ≥ 0.018, otherwise f = 0.85 f′ + 0.0028</p>
+      <h3>3. Pipe friction</h3>
+      <p class="si">Δp per metre = (f / D) × ½ ρ v²<br>Pipe loss = Δp per metre × length</p>
+      <h3>4. Fittings</h3>
+      <p class="si">Σ K = Σ (number of each fitting × its K at the size) + any extra K you enter<br>Fittings loss = Σ K × ½ ρ v²</p>
+      <h3>5. Equipment</h3>
+      <p class="si">Pressure drop from the maker’s data, entered in kPa. At a higher flow it is scaled by (flow ratio)² only if the section is marked “varies with flow²”.</p>
+      <h3>6. Running total and design total</h3>
+      <p class="si">Section = pipe + fittings + equipment<br>Running total = sum of the sections down to this one<br>Subtotal = (pipe + fittings) × 1 or 2 + equipment<br>Design total = subtotal × (1 + margin)<br>Head of water = design total × 1000 / (ρ g)</p>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <h3>Fitting K values by size (our reference data)</h3>
+      <p class="si">Our reference data, by nominal size. Section 4 compares it with the Darby 3-K method.</p>
+      <div class="table-scroll"><table class="cmp" id="kT"></table></div>
+      <h3>Darby 3-K method</h3>
+      <p class="si">K = K₁ / Re + K∞ (1 + K<sub>d</sub> / D<sup>0.3</sup>), with D the inside diameter in inches. The constants used (as given by Neutrium, for flanged or welded steel pipework):</p>
+      <div class="table-scroll"><table class="cmp" id="k3T"></table></div>
+      <p class="si">The reducer, expansion and Y-strainer have no 3-K constants in the source, so the sheet keeps the table value for them. The 45° elbow constants are for a threaded fitting, the only standard 45° elbow given.</p>
+      <h3>Velocity and friction flags</h3>
+      <p class="si">A section is flagged when the velocity is above 1.5 m/s up to DN50 or 3 m/s above, or when the pressure drop per metre is above 250 Pa/m up to DN20, 180 Pa/m for DN25 to DN50 and 300 Pa/m from DN65. These come from our pipe-sizing reference data. They are flags only: the total still counts the section.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>How this sheet works</h3>
+      <ul>
+        <li>One row per pipe, fitting or equipment item, with the running total and a design margin. The friction formula is the same as sheet VI.</li>
+        <li>Density and viscosity follow the water temperature you enter.</li>
+        <li>The workbook this sheet writes uses ordinary formulas, so it opens and recalculates without macros.</li>
+      </ul>
+      <h3>Choosing the K for a size</h3>
+      <p class="si">The K table is by nominal size. For a size that is not in it (22 mm copper, for example), the sheet uses the next smaller size in the table, which has the larger K, and above 300 it uses 300. The size used is shown on the section and you can change it.</p>
+      <h3>Points to know about the K table</h3>
+      <ul>
+        <li>The 125 mm row repeats the 100 mm values for every fitting except the expansion and the Y-strainer. Check it if you use 125 mm fittings.</li>
+        <li>The Y-strainer K (about 4) is a placeholder for a typical strainer. For a real strainer enter the maker’s pressure drop as equipment.</li>
+        <li>The “expansion” item is not defined further in the reference data; it may be a bellows, a loop or a sudden enlargement.</li>
+      </ul>
+      <h3>What is not included</h3>
+      <p class="si">Static head, pump head and curve, control valve authority, the effect of glycol, ageing of the pipe, and the extra loss in tees where the flow splits (use the tee and branch counts for the section that carries the flow you are following).</p>
+      <h3>Sources</h3>
+      <ul>
+        <li>Pipe tables, water properties and friction factor: sheet VI and its notes.</li>
+        <li>K values and the velocity and friction flags: our reference data.</li>
+              </ul>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pf = v => { const x = parseFloat(v); return isFinite(x) ? x : NaN; };
+const EPS = { c: 0.0015, s: 0.046, p: 0.0015 };
+/* name, density kg/m3, kinematic viscosity 1e-6 m2/s, water at about these temperatures */
+const FLUIDS = [["Chilled water, about 10 °C", 999.73, 1.306], ["Condenser water, about 30 °C", 995.6, 0.8005], ["Heating hot water, about 40 °C", 992.2, 0.6561]];
+
+/* ---- British Standard tube tables (from supplier and reference tables, not from the standards) ---- */
+/* BS EN 1057 copper: outside diameter mm, wall Table X, wall Table Y (null = not listed) */
+const CU = [[15, 0.7, 1.0, 0.5], [22, 0.9, 1.2, 0.6], [28, 0.9, 1.2, 0.6], [35, 1.2, 1.5, 0.7], [42, 1.2, 1.5, 0.8], [54, 1.2, 2.0, 0.9], [66.7, 1.2, 2.0, 1.0], [76.1, 1.5, 2.0, 1.2], [108, 1.5, 2.5, 1.2], [133, 1.5, null, 1.5], [159, 2.0, null, 1.5], [219, 3.0, null, null], [267, 3.0, null, null]];
+/* UPVC pressure pipe, BS EN 1452-2 (Engineering ToolBox tables): outside diameter, minimum wall for SDR 41, 33, 26, 21, 17, 13.6, 11 (null = not listed). Up to 90 mm the table is design coefficient 2.5, from 110 mm design coefficient 2.0 */
+const PSDR = ["41", "33", "26", "21", "17", "13.6", "11"];
+const PSDRN = { 41: "SDR 41", 33: "SDR 33 (PN 6)", 26: "SDR 26 (PN 8)", 21: "SDR 21 (PN 10)", 17: "SDR 17 (PN 12.5)", 13.6: "SDR 13.6 (PN 16)", 11: "SDR 11 (PN 20)" };
+/* polyethylene pressure pipe, BS EN 12201 / ISO 4427: outside diameter, minimum wall for SDR 41, 26, 17, 13.6, 11 (ISO 161 series 20, 12.5, 8, 6.3, 5; null = not listed). PN is for PE100; PE80 is lower. */
+const PESDR = ["41", "26", "17", "13.6", "11"];
+const PESDRN = { 41: "SDR 41", 26: "SDR 26", 17: "SDR 17 (PE100 PN 10)", 13.6: "SDR 13.6 (PE100 PN 12.5)", 11: "SDR 11 (PE100 PN 16)" };
+const PE = [[40, null, 1.6, 2.4, 3.0, 3.7], [50, 1.3, 2.0, 3.0, 3.7, 4.6], [63, 1.6, 2.5, 3.8, 4.7, 5.8], [75, 1.9, 2.9, 4.5, 5.6, 6.8], [90, 2.2, 3.5, 5.4, 6.7, 8.2], [110, 2.7, 4.2, 6.6, 8.1, 10.0], [125, 3.1, 4.8, 7.4, 9.2, 11.4], [140, 3.5, 5.4, 8.3, 10.3, 12.7], [160, 4.0, 6.2, 9.5, 11.8, 14.6], [180, 4.4, 6.9, 10.7, 13.3, 16.4], [200, 4.9, 7.7, 11.9, 14.7, 18.2],
+  [225, 5.5, 8.6, 13.4, 16.6, 20.5], [250, 6.2, 9.6, 14.8, 18.4, 22.7], [280, 6.9, 10.7, 16.6, 20.6, 25.4], [315, 7.7, 12.1, 18.7, 23.2, 28.6]];
+/* HDPE drainage pipe, Geberit PE (BS EN 1519): outside diameter, wall (manufacturer's data sheet) */
+const HD = [[40, 3.0], [50, 3.0], [56, 3.0], [63, 3.0], [75, 3.0], [90, 3.5], [110, 4.3], [125, 4.9], [160, 6.2], [200, 6.2], [250, 7.8], [315, 9.8]];
+const PVC = [[20, null, null, null, null, null, 1.5, 1.9], [25, null, null, null, null, 1.5, 1.9, 2.3], [32, null, null, 1.5, 1.6, 1.9, 2.4, 2.9], [40, null, 1.5, 1.6, 1.9, 2.4, 3.0, 3.7], [50, null, 1.6, 2.0, 2.4, 3.0, 3.7, 4.6], [63, null, 2.0, 2.5, 3.0, 3.8, 4.7, 5.8], [75, null, 2.3, 2.9, 3.6, 4.5, 5.6, 6.8], [90, null, 2.8, 3.5, 4.3, 5.4, 6.7, 8.2],
+  [110, 2.7, 3.4, 4.2, 5.3, 6.6, 8.1, 10.0], [125, 3.1, 3.9, 4.8, 6.0, 7.4, 9.2, 11.4], [140, 3.5, 4.3, 5.4, 6.7, 8.3, 10.3, 12.7], [160, 4.0, 4.9, 6.2, 7.7, 9.5, 11.8, 14.6], [180, 4.4, 5.5, 6.9, 8.6, 10.7, 13.3, 16.4], [200, 4.9, 6.2, 7.7, 9.6, 11.9, 14.7, 18.2],
+  [225, 5.5, 6.9, 8.6, 10.8, 13.4, 16.6, null], [250, 6.2, 7.7, 9.6, 11.9, 14.8, 18.4, null], [280, 6.9, 8.6, 10.7, 13.4, 16.6, 20.6, null], [315, 7.7, 9.7, 12.1, 15.0, 18.7, 23.2, null]];
+/* BS EN 10255 steel: DN, light OD max, min, medium/heavy OD max, min, wall light, medium, heavy (DN8 and DN10: only the maximum outside diameter was in the table I read, used for both) */
+const ST = [[8, 13.6, 13.6, 13.9, 13.9, 1.8, 2.3, 2.9], [10, 17.1, 17.1, 17.4, 17.4, 1.8, 2.3, 2.9], [15, 21.4, 21.0, 21.8, 21.0, 2.0, 2.6, 3.2], [20, 26.9, 26.4, 27.3, 26.5, 2.3, 2.6, 3.2], [25, 33.8, 33.2, 34.2, 33.3, 2.6, 3.2, 4.0], [32, 42.5, 41.9, 42.9, 42.0, 2.6, 3.2, 4.0],
+  [40, 48.4, 47.8, 48.8, 47.9, 2.9, 3.2, 4.0], [50, 60.2, 59.6, 60.8, 59.7, 2.9, 3.6, 4.5], [65, 76.0, 75.2, 76.6, 75.3, 3.2, 3.6, 4.5], [80, 88.7, 87.9, 89.5, 88.0, 3.2, 4.0, 5.0],
+  [100, 113.9, 113.0, 115.0, 113.1, 3.6, 4.5, 5.4], [125, null, null, 140.8, 138.5, null, 5.0, 5.4], [150, null, null, 166.5, 163.9, null, 5.0, 5.4]];
+/* BS EN 10216 / 10217 steel: DN, outside diameter from BS EN 10220; the wall is the buyer's choice */
+const SL = [[50, 60.3], [65, 76.1], [80, 88.9], [100, 114.3], [125, 139.7], [150, 168.3], [200, 219.1], [250, 273.0], [300, 323.9], [350, 355.6], [400, 406.4], [450, 457.0]];
+/* AS 1432 copper (Australia), outside diameters and walls as listed by Austral Wright Metals: nominal size, OD, wall Type A, B, C, D (null = not made) */
+const AUCU = [[15, 12.70, 1.02, 0.91, 0.71, null], [18, 15.88, 1.22, 1.02, 0.91, null], [20, 19.05, 1.42, 1.02, 0.91, null], [25, 25.40, 1.63, 1.22, 0.91, null], [32, 31.75, 1.63, 1.22, null, 0.91], [40, 38.10, 1.63, 1.22, null, 0.91],
+  [50, 50.80, 1.63, 1.22, null, 0.91], [65, 63.50, 1.63, 1.22, null, 0.91], [80, 76.20, 2.03, 1.63, null, 1.22], [90, 88.90, 2.03, 1.63, null, 1.22], [100, 101.60, 2.03, 1.63, null, 1.22], [125, 127.00, 2.03, 1.63, null, 1.42],
+  [150, 152.40, 2.64, 2.03, null, 1.63], [200, 203.20, 2.64, 2.03, null, null]];
+/* inside diameters in the ACADS-BSG table "internal pipe diameters" , mm, by nominal size */
+const ACADS = {
+  B: { 15: 10.84, 18: null, 20: 16.97, 25: 22.91, 32: 29.26, 40: 35.61, 50: 48.30, 65: 60.99, 80: 72.85, 90: 85.54, 100: 98.22, 125: 123.62, 150: 148.19, 200: 198.9 },
+  A: { 15: 10.62, 20: 16.17, 25: 22.09, 32: 28.44, 40: 34.79, 50: 47.48, 65: 60.17, 80: 72.05, 90: 84.74, 100: 97.42, 125: 122.82, 150: 148.97, 200: 197.7 },
+  D: { 32: 29.98, 40: 36.23, 50: 48.92, 65: 61.61, 80: 73.76, 90: 86.36, 100: 99.04, 125: 124.04, 150: 148.99 },
+  C: { 15: 11.24, 20: 17.19, 25: 23.52 },
+  SL: { 15: 17.2, 20: 22.0, 25: 28.3, 32: 37.0, 40: 42.3, 50: 54.1, 65: 69.2, 80: 81.9, 100: 106.2 },
+  SM: { 15: 16.2, 20: 21.7, 25: 27.4, 32: 36.1, 40: 42.0, 50: 53.1, 65: 68.8, 80: 80.8, 100: 105.1, 125: 129.7, 150: 155.1 },
+  SH: { 15: 15.0, 20: 20.5, 25: 25.8, 32: 34.5, 40: 40.4, 50: 51.3, 65: 67.0, 80: 79.1, 100: 103.3, 125: 128.9 }
+};
+/* ASME B36.10M steel pipe (API 5L, BS 1600 sizes): DN, OD mm, wall Sch 40, Sch 80, standard weight (null = not in the tables I read) */
+const ASME = [[15, 21.336, 2.769, 3.734, 2.769], [20, 26.670, 2.870, 3.912, 2.870], [25, 33.401, 3.378, 4.547, 3.378], [32, 42.164, 3.556, 4.851, 3.556], [40, 48.260, 3.683, 5.080, 3.683], [50, 60.325, 3.912, 5.537, 3.912],
+  [65, 73.025, 5.156, 7.010, 5.156], [80, 88.900, 5.486, 7.620, 5.486], [90, 101.600, 5.740, 8.077, 5.740], [100, 114.300, 6.020, 8.560, 6.020], [125, 141.300, 6.553, 9.525, 6.553], [150, 168.275, 7.112, 10.973, 7.112],
+  [200, 219.075, 8.179, 12.700, 8.179], [250, 273.050, 9.271, null, 9.271], [300, 323.850, 10.312, null, 9.525], [350, 355.600, 11.138, null, 9.525], [400, 406.400, 12.700, null, 9.525], [450, 457.200, 14.275, null, 9.525]];
+/* water at saturation pressure (1 atm to 100 °C): temperature °C, density kg/m3 */
+const WRHO = [[0.1, 999.85], [1, 999.90], [4, 999.97], [10, 999.70], [15, 999.10], [20, 998.21], [25, 997.05], [30, 995.65], [35, 994.03], [40, 992.22], [45, 990.21], [50, 988.04], [55, 985.69], [60, 983.20], [65, 980.55], [70, 977.76], [75, 974.84], [80, 971.79], [85, 968.61], [90, 965.31], [95, 961.89], [100, 958.35], [110, 950.95], [120, 943.11], [140, 926.13], [160, 907.45], [180, 887.00], [200, 864.66]];
+/* kinematic viscosity, 1e-6 m2/s */
+const WNU = [[0.01, 1.7918], [10, 1.3065], [20, 1.0035], [25, 0.8927], [30, 0.8007], [40, 0.6579], [50, 0.5531], [60, 0.4740], [70, 0.4127], [80, 0.3643], [90, 0.3255], [100, 0.2938], [110, 0.2677], [120, 0.2460], [140, 0.2123], [160, 0.1878], [180, 0.1695], [200, 0.1556]];
+function wInterp(tab, T, lg) {
+  if (!(T >= 0 && T <= 200)) return NaN;
+  for (let i = 0; i < tab.length - 1; i++) {
+    const a = tab[i], b = tab[i + 1];
+    if (T >= a[0] && T <= b[0]) {
+      if (!lg) return a[1] + (b[1] - a[1]) * (T - a[0]) / (b[0] - a[0]);
+      const x0 = 1 / (a[0] + 273.15), x1 = 1 / (b[0] + 273.15), x = 1 / (T + 273.15);
+      return Math.exp(Math.log(a[1]) + (Math.log(b[1]) - Math.log(a[1])) * (x - x0) / (x1 - x0));
+    }
+  }
+  return T < tab[0][0] ? tab[0][1] : tab[tab.length - 1][1];
+}
+const rhoAt = T => wInterp(WRHO, T, false), nuAt = T => wInterp(WNU, T, true);
+/* roughness choices, mm (Hydraulic Institute and F. M. White values, as listed by Engineers Edge) */
+const RG = [["", "From the pipe type"], ["0.046", "Commercial steel, new, 0.046 mm"], ["0.15", "Galvanised iron, new, 0.15 mm"], ["0.0015", "Drawn tubing (copper), 0.0015 mm"], ["own", "My own value"]];
+const SLW = [2.9, 3.2, 3.6, 4.0, 4.5, 5.0, 5.6, 6.3, 7.1, 8.0, 8.8, 10.0, 11.0, 12.5];
+const TYPES = [["cu", "Copper tube, BS EN 1057, UK (15 to 267 mm)"], ["st", "Steel tube, BS EN 10255, UK (DN8 to DN150)"], ["sl", "Steel tube, BS EN 10216/10217 (DN50 to DN450, wall of your choice)"], ["aucu", "Copper tube, AS 1432, Australia (DN15 to DN200)"], ["aust", "Steel tube, AS 1074, Australia (DN8 to DN150)"], ["asme", "Steel pipe, ASME B36.10M: Sch 40, Sch 80, standard weight (API 5L, BS 1600) DN15 to DN450"], ["pe", "Polyethylene pressure pipe, BS EN 12201: PE80, PE100 (OD 40 to 315 mm)"], ["hd", "HDPE drainage pipe, BS EN 1519, Geberit PE sizes (OD 40 to 315 mm)"], ["pvc", "UPVC pressure pipe, BS EN 1452, for reference (OD 20 to 315 mm)"], ["own", "My own pipe"]];
+
+const r3 = x => Math.round(x * 1000) / 1000;
+const mid = (a, b) => (a + b) / 2;
+
+/* the geometry of one tube: type, size key, series, wall typed by the user */
+function geomFor(pt, k, sv, wOwn) {
+  let od = NaN, wt = NaN, eps = NaN, lab = "", miss = "", id = NaN;
+  if (pt === "cu") {
+    const r = CU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.c; lab = "Cu " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = sv === "Y" ? r[2] : sv === "Z" ? r[3] : r[1]; if (w == null) miss = "Table " + sv + " has no tube of this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "pe") {
+    const r = PE.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.p; lab = "PE " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = r[1 + PESDR.indexOf(sv)]; if (w == null) miss = "SDR " + sv + " is not listed for this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "hd") {
+    const r = HD.find(x => String(x[0]) === k);
+    if (r) { od = r[0]; eps = EPS.p; lab = "HDPE " + r[0] + " mm"; wt = sv === "own" ? wOwn : r[1]; }
+  } else if (pt === "pvc") {
+    const r = PVC.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.p; lab = "UPVC " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = r[1 + PSDR.indexOf(sv)]; if (w == null) miss = "SDR " + sv + " is not listed for this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "aucu") {
+    const r = AUCU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.c; lab = "Cu DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = r[2 + "ABCD".indexOf(sv)]; if (w == null) miss = sv === "C" ? "Type C is made only from DN10 to DN25." : sv === "D" ? "Type D is made only from DN32 to DN150." : "Not listed in this size."; else wt = w; }
+    }
+  } else if (pt === "st" || pt === "aust") {
+    const r = ST.find(x => String(x[0]) === k);
+    if (r) {
+      eps = EPS.s; lab = "St DN" + r[0];
+      const L = sv === "L", noL = L && r[1] == null;
+      od = L && !noL ? mid(r[1], r[2]) : mid(r[3], r[4]);
+      if (noL) miss = "The light series is not made above DN100."; else wt = sv === "own" ? wOwn : sv === "L" ? r[5] : sv === "M" ? r[6] : r[7];
+    }
+  } else if (pt === "sl") {
+    const r = SL.find(x => String(x[0]) === k);
+    if (r) { od = r[1]; eps = EPS.s; lab = "St DN" + r[0]; wt = sv === "own" ? wOwn : parseFloat(sv); }
+  } else if (pt === "asme") {
+    const r = ASME.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.s; lab = "St DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = sv === "S" ? r[4] : sv === "40" ? r[2] : r[3]; if (w == null) miss = "Schedule 80 above DN200 is not in the tables I read."; else wt = w; }
+    }
+  }
+  if (od > 0 && wt > 0 && od > 2 * wt) id = r3(od - 2 * wt);
+  return { od, wt, id, eps, lab, miss };
+}
+function sizeOpts(pt) {
+  if (pt === "cu") return CU.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "pe") return PE.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "hd") return HD.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "pvc") return PVC.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "st" || pt === "aust") return ST.map(r => [String(r[0]), "DN" + r[0]]);
+  if (pt === "asme") return ASME.map(r => [String(r[0]), "DN" + r[0] + " — outside " + sig(r[1], 5) + " mm"]);
+  if (pt === "aucu") return AUCU.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  if (pt === "sl") return SL.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  return [];
+}
+function serOpts(pt) {
+  if (pt === "cu") return [["X", "Table X"], ["Y", "Table Y (thicker wall)"], ["Z", "Table Z (thinnest wall)"], ["own", "My own wall"]];
+  if (pt === "pe") return PESDR.map(s => [s, PESDRN[s]]).concat([["own", "My own wall"]]);
+  if (pt === "hd") return [["S", "Standard wall (BS EN 1519, Geberit)"], ["own", "My own wall"]];
+  if (pt === "pvc") return PSDR.map(s => [s, PSDRN[s]]).concat([["own", "My own wall"]]);
+  if (pt === "asme") return [["S", "Standard weight (STD)"], ["40", "Schedule 40"], ["80", "Schedule 80 (to DN200)"], ["own", "My own wall"]];
+  if (pt === "aucu") return [["A", "Type A (heaviest wall)"], ["B", "Type B"], ["C", "Type C (DN10 to DN25 only)"], ["D", "Type D (DN32 to DN150 only)"], ["own", "My own wall"]];
+  if (pt === "st" || pt === "aust") return [["L", "Light"], ["M", "Medium"], ["H", "Heavy"], ["own", "My own wall"]];
+  if (pt === "sl") return SLW.map(w => [w.toFixed(1), w.toFixed(1) + " mm wall"]).concat([["own", "My own wall"]]);
+  return [];
+}
+
+const SVC = ["Chilled water", "Condenser water (Open circuit GALV)", "HTHW", "LTHW", "MTHW*", "Condensate", "Internal drainage (pumped)", "Internal drainage (rainwater)", "Internal drainage (sanitary plumbing)", "External drainage – gravity"];
+const SVC_CALC = [0, 1, 2, 3, 4, 5, 6, 7, 8];   /* services the sheet can calculate; the others are in the table for reference */
+const API = ["API Std 5L Grade B Sched 40 BS1600", "BS 1640 ASTMA A.106 Grade B"];
+const SPEC = [
+  [0, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [0, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [0, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [1, 15, 50, "15mm to 50mm", "BS EN 10255 GALV", "BS 143 &amp; 1256", { pt: "st", galv: 1 }],
+  [1, 65, 150, "65mm to 150mm", "BS EN 10255 GALV", "BS EN 10253 GALV", { pt: "st", galv: 1 }],
+  [1, 151, null, "Over 150mm", "BS EN 10216 or 10217 Grade ERW430", "BS EN 10253 Heavy", { pt: "sl" }],
+  [2, 15, 40, "15mm to 40mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy Grade S410", { pt: "st", ser: "H" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [2, 50, 300, "50mm to 300mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [3, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [3, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [3, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [4, 15, 150, "15mm to 150mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy", { pt: "st", ser: "H" }],
+  [4, 151, null, "Above 150mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }],
+  /* Table 13, above ground sanitation and rainwater services. Copper is sized by outside diameter, so the bore limits are in mm of outside diameter; 66 lets the 66.7 mm tube count as “67” */
+  [5, 15, 54, "15 to 54mm", "BS EN 1057 R250, table 3", "BS EN 1254-1 (capillary)", { pt: "cu" }],
+  [6, 66, 159, "67 to 159mm", "Copper Pipes to BS EN 1057 R250, Table 3", "BS EN 1254-1 (capillary)<br>Brazed with silver alloy", { pt: "cu" }],
+  [6, 50, null, "50mm and above", "Stainless steel complete with dimples and clamps", "Max. 3 bar<br>2.5 bar for 250Ø", { ref: 1 }],
+  [6, 80, null, "80mm and above", "Ductile iron to BS EN 598 (red)", "Flanged (PN16)", { ref: 1 }],
+  [6, 80, null, "80mm and above", "MDPE (PE-80) and HPPE (PE-100) to BS EN 12201 (black)<br>GPS PE80 black and Excel (PE100) black", "Electrofusion couplers<br>Butt welding is prohibited", { pt: "pe" }],
+  [7, 110, null, "110mm and above", "HDPE to BS EN 1519<br>Products include Geberit HDPE – Fusion Coupled Welding (acoustically dampened if required)", "Electrofusion fittings<br>Butt welding is prohibited", { pt: "hd" }],
+  [7, 110, null, "110mm and above", "Stainless steel to BS EN 1124-1 and BS EN 1124-2<br>Products include Blucher Europipe", "Spigot and socket c/w Blucher anchor clip on all joints", { ref: 1 }],
+  [8, 40, null, "40mm and above", "High density Polyethylene (HDPE) to BS EN 1519<br>Products include Geberit HDPE – Fusion Coupled Welding (acoustically dampened if required)", "Electrofusion fittings<br>Butt welding is prohibited", { pt: "hd" }],
+  [9, 100, null, "100mm and above", "Ductile iron to BS EN 598<br>Products include PAM St Gobain Timesaver Drain and Ensign Drain", "Mechanical coupler<br>PN16 flanged joint", { ref: 1 }],
+  [9, 100, null, "100mm and above", "Vitrified clay to BS EN 295 (external only)<br>Products include Hepworth SuperSleve up to 300mm", "Polypropylene couplers (100mm)<br>Factory fitted couplings (150mm to 300mm)", { ref: 1 }]
+];
+
+const nomDN = (pt, k) => { if (pt === "cu" || pt === "pe" || pt === "hd") return parseFloat(k); if (pt === "st" || pt === "aust" || pt === "sl" || pt === "asme") return parseInt(k); return null; };
+
+const SIZES = { st: ST.map(x => x[0]), sl: SL.map(x => x[0]), cu: CU.map(x => x[0]), pe: PE.map(x => x[0]), hd: HD.map(x => x[0]) };
+/* the sizes a service allows, each with its row of the specification: [key, label, pipe type, row] */
+function specEnts(i) {
+  const out = [], seen = {};
+  SPEC.filter(r => r[0] === i && r[1] != null && r[6] && r[6].pt).forEach(r => (SIZES[r[6].pt] || []).forEach(d => {
+    if (d >= r[1] && (r[2] == null || d <= r[2]) && !seen[d]) { seen[d] = 1; out.push([String(d), r[6].pt, r]); }
+  }));
+  return out.sort((a, b) => a[0] - b[0]).map(o => {
+    const pt = o[1], r = o[2], t = r[4].split("<br>")[0];
+    const lab = pt === "cu" ? o[0] + " mm — copper, " + t.replace(/^Copper Pipes to /, "") : pt === "pe" ? o[0] + " mm — PE pipe, BS EN 12201" : pt === "hd" ? o[0] + " mm — HDPE, BS EN 1519" : "DN" + o[0] + " — " + t.replace(/ GALV$/, " galvanised");
+    return [o[0], lab, pt, r];
+  });
+}
+const specList = i => specEnts(i);
+const specEnt = (i, d) => specEnts(i).find(o => o[0] === String(d));
+
+function fric(Vd, Dmm, eps, rho, nu) {
+  const D = Dmm / 1000, A = Math.PI * D * D / 4, v = Vd / A, Re = v * D / nu, rr = eps / Dmm;
+  const f1 = 0.11 * Math.pow(rr + 68 / Re, 0.25), tsal = f1 < 0.018, f = tsal ? 0.85 * f1 + 0.0028 : f1;
+  const dyn = 0.5 * rho * v * v, dpm = f / D * dyn;
+  const zone = !(Re > 0) ? "none" : Re < 2300 ? "lam" : Re < 4000 ? "trans" : Re > 1e8 ? "hi" : rr > 0.05 ? "rough" : "ok";
+  return { D, A, v, Re, rr, f1, tsal, f, dyn, dpm, zone, vmin: 4000 * nu / D, vlam: 2300 * nu / D, vmax: 1e8 * nu / D };
+}
+
+
+const optHtml = a => a.map(o => '<option value="' + esc(o[0]) + '">' + esc(o[1]) + "</option>").join("");
+
+/* ---- fitting K values by nominal size: reference data ---- */
+const FIT = ["45° elbow", "90° elbow", "Tee, straight through", "Reducer", "Tee, branch", "Gate valve", "Globe valve", "Angle valve", "Swing check valve", "Expansion", "Y-strainer"];
+const KDN = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200, 250, 300];
+const KT = [
+  [0.24, 0.68, 0.39, 0.53, 1.28, 0.89, 15.3, 15, 2, 0.16, 4.94], [0.23, 0.56, 0.32, 0.53, 1.14, 0.89, 15.3, 10.7, 2, 0.16, 4.5], [0.22, 0.48, 0.28, 0.53, 1.06, 0.89, 15.3, 5.2, 2, 0.16, 4.06],
+  [0.21, 0.41, 0.25, 0.53, 0.97, 0.65, 11.9, 3.5, 2, 0.16, 5.45], [0.2, 0.36, 0.22, 0.53, 0.9, 0.49, 10.1, 2.9, 2, 0.16, 5.04], [0.2, 0.32, 0.19, 0.53, 0.84, 0.38, 8.8, 2.6, 2, 0.16, 3.69],
+  [0.19, 0.27, 0.17, 0.53, 0.77, 0.28, 7.7, 2.4, 2, 0.16, 3.6], [0.19, 0.24, 0.15, 0.53, 0.72, 0.22, 7.1, 2.3, 2, 0.16, 2.86], [0.18, 0.22, 0.13, 0.23, 0.67, 0.17, 6.6, 2.2, 2, 0.11, 4.04],
+  [0.18, 0.22, 0.13, 0.23, 0.67, 0.17, 6.6, 2.2, 2, 0.29, 4.02], [0.17, 0.17, 0.11, 0.62, 0.59, 0.1, 5.9, 2.1, 2, 0.29, 3.97], [0.16, 0.15, 0.09, 0.31, 0.54, 0.07, 5.4, 2.1, 2, 0.15, 3.88],
+  [0.16, 0.13, 0.08, 0.16, 0.51, 0.06, 5.4, 2.1, 2, 0.11, 4.19], [0.15, 0.12, 0.08, 0.14, 0.48, 0.05, 5.4, 2.1, 2, 0.11, 4.08]];
+const kRow = dn => KT[KDN.indexOf(dn)];
+/* Darby 3-K constants (K = K1/Re + Kinf (1 + Kd / D^0.3), D in inches), as given by Neutrium: flanged or welded elbows and tees, standard valves.
+   Order as FIT; null = no 3-K data, the table value is used */
+const D3 = [[500, 0.071, 4.2], [800, 0.091, 4], [150, 0.05, 4], null, [800, 0.28, 4], [300, 0.037, 3.9], [1500, 1.7, 3.6], [1000, 0.69, 4], [1500, 0.46, 4], null, null];
+const D3NOTE = ["45° elbow, threaded, r/D 1", "90° elbow, flanged or welded, r/D 1", "Tee, run through, flanged", "", "Tee, branch, flanged", "Gate valve, standard", "Globe valve, standard", "Angle valve, 90°", "Swing check valve", "", ""];
+const kd3 = (i, id, Re) => D3[i][0] / Re + D3[i][1] * (1 + D3[i][2] / Math.pow(id / 25.4, 0.3));
+function kOf(i, kd, id, Re, src) { return src === "d" && D3[i] ? kd3(i, id, Re) : kRow(kd)[i]; }
+/* the size to take the K from: the largest table size not above the nominal size (the larger K), 15 below the table, 300 above */
+function autoK(n) { if (!(n > 0)) return 50; let d = KDN[0]; KDN.forEach(k => { if (k <= n + 1e-9) d = k; }); return d; }
+const TSHORT = { cu: "Cu BS EN 1057", st: "Steel BS EN 10255", sl: "Steel BS EN 10216/17", aucu: "Cu AS 1432", aust: "Steel AS 1074", asme: "Steel ASME B36.10M", pvc: "UPVC BS EN 1452", pe: "PE BS EN 12201", hd: "HDPE BS EN 1519", own: "Own pipe" };
+const defSer = pt => pt === "pe" ? "17" : pt === "hd" ? "S" : pt === "pvc" ? "13.6" : pt === "cu" ? "X" : pt === "aucu" ? "B" : pt === "asme" ? "40" : (pt === "st" || pt === "aust") ? "M" : "8.0";
+const EQ_HINT = { "Coil": "Cooling or heating coil, from the maker’s data at the design flow.", "Strainer": "Strainer, clean or the allowance you use, from the maker’s data.", "Chiller": "Evaporator or condenser water-side drop at the design flow.", "Control valve": "Control valve at the design flow." };
+
+/* ---- state ---- */
+const SAVE_KEY = "nv-sheet-xxii-v1";
+let S = null, activeRow = 0;
+const newPipe = p => Object.assign({ kind: "p", desc: "", q: "", pt: "st", pp: "50", ps: "M", wown: "", idown: "", len: "", kdn: "", fit: {}, xk: "", free: false }, p || {});
+const newEq = (d, p) => Object.assign({ kind: "e", desc: d || "", dpe: "", sc: true }, p || {});
+const blank = () => ({ j: { title: "", num: "", sys: "", by: "", chk: "", date: "", rev: "" }, T: "10", rho: "", nu: "", own: false, rg: "", rgv: "0.046", ks: "t", mg: "10", mr: "1", ck: true, cf: "115", svc: "", follow: false, rows: [newPipe()] });
+function example() {
+  const s = blank();
+  s.j = { title: "", num: "", sys: "", by: "", chk: "", date: "", rev: "A" };
+  s.mr = "2";
+  s.rows = [
+    newEq("Chiller (evaporator)", { dpe: "30" }),
+    newPipe({ desc: "Chiller to main header", q: "23.65", pt: "st", pp: "150", ps: "M", len: "18", fit: { 1: 4, 5: 2, 2: 1 } }),
+    newEq("Strainer", { dpe: "15" }),
+    newPipe({ desc: "Main riser", q: "23.65", pt: "st", pp: "150", ps: "M", len: "42", fit: { 1: 3, 5: 1 } }),
+    newPipe({ desc: "Branch to AHU-3", q: "9", pt: "st", pp: "100", ps: "M", len: "36", fit: { 1: 5, 4: 1, 5: 2, 8: 1 } }),
+    newEq("Control valve", { dpe: "20", sc: true }),
+    newEq("Coil (AHU-3)", { dpe: "30" })
+  ];
+  return s;
+}
+function load() { try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.rows) return Object.assign(blank(), o); } } catch (e) {} return null; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+
+/* ---- fluid ---- */
+function fluid() {
+  const T = pf(S.T);
+  const rho = S.own && pf(S.rho) > 0 ? pf(S.rho) : rhoAt(T), nu = S.own && pf(S.nu) > 0 ? pf(S.nu) : nuAt(T);
+  return { T, rho, nu };   /* nu in 1e-6 m2/s */
+}
+const epsOf = g => S.rg === "" ? (g.eps > 0 ? g.eps : 0.046) : S.rg === "own" ? pf(S.rgv) : pf(S.rg);
+
+/* ---- one section ---- */
+function pipeInfo(r) {
+  if (r.pt === "own") { const id = pf(r.idown); return { id: id > 0 ? id : NaN, eps: NaN, lab: "Own pipe", miss: id > 0 ? "" : "Enter the inside diameter." }; }
+  return geomFor(r.pt, r.pp, r.ps, pf(r.wown));
+}
+const nomOf = r => r.pt === "own" ? null : nomDN(r.pt, r.pp);
+function kdOf(r, g) { const k = pf(r.kdn); if (k > 0 && kRow(k)) return k; const n = nomOf(r); if (n != null) return autoK(n); return KDN.reduce((m, d) => Math.abs(d - g.id) < Math.abs(m - g.id) ? d : m, KDN[0]); }
+function evalRow(r, F, fl) {
+  const o = { kind: r.kind, F, ok: false, pipe: 0, fit: 0, eq: 0, sect: 0, msg: [], flag: [] };
+  if (r.kind === "e") { const dp = pf(r.dpe); o.eq = (dp > 0 ? dp : 0) * (r.sc && F !== 1 ? F * F : 1); o.sect = o.eq; o.ok = dp >= 0; if (!(dp >= 0)) o.msg.push("Enter the pressure drop."); return o; }
+  const g = pipeInfo(r), Q = pf(r.q), L = pf(r.len) > 0 ? pf(r.len) : 0;
+  o.g = g; o.L = L; o.Q = Q * F; o.kd = kdOf(r, g);
+  if (!(g.id > 0)) { o.msg.push(g.miss || "Choose a size and a wall."); return o; }
+  const eps = epsOf(g); o.eps = eps;
+  const f = Q > 0 ? fric(Q * F / 1000, g.id, eps, fl.rho, fl.nu * 1e-6) : null, Re0 = f ? f.Re : 1e5;
+  const kv = FIT.map((nm, i) => kOf(i, o.kd, g.id, Re0, S.ks)); o.kv = kv;
+  let sk = pf(r.xk) > 0 ? pf(r.xk) : 0; const parts = [];
+  FIT.forEach((nm, i) => { const q = pf(r.fit && r.fit[i]); if (q > 0) { sk += q * kv[i]; parts.push(q + " × " + nm + " (K " + fmt(kv[i], 3) + ")"); } });
+  o.sk = sk; o.kparts = parts;
+  if (!f) { o.msg.push(L > 0 || sk > 0 ? "Enter the flow." : "Enter the flow, length and fittings."); o.ok = false; return o; }
+  o.f = f; o.v = f.v; o.Re = f.Re; o.dpm = f.dpm;
+  o.pipe = f.dpm * L / 1000; o.fit = sk * f.dyn / 1000; o.sect = o.pipe + o.fit; o.ok = true;
+  if (F === 1) {
+    if (f.zone === "lam" || f.zone === "trans") o.msg.push("Reynolds number " + Math.round(f.Re) + ": below 4000 the friction factor is not reliable.");
+    if (f.zone === "hi") o.msg.push("Reynolds number above 10⁸: outside the range of the friction factor.");
+    const vl = o.kd <= 50 ? 1.5 : 3, pl = o.kd <= 20 ? 250 : o.kd <= 50 ? 180 : 300;
+    if (f.v > vl) o.flag.push("velocity " + fmt(f.v, 2) + " m/s is above " + vl + " m/s");
+    if (f.dpm > pl) o.flag.push(fmt(f.dpm, 0) + " Pa/m is above " + pl + " Pa/m");
+  }
+  return o;
+}
+function evalAll(F, ks) {
+  const keep = S.ks; if (ks) S.ks = ks;
+  try { return evalAll2(F); } finally { S.ks = keep; }
+}
+function evalAll2(F) {
+  const fl = fluid(); let cum = 0; const rows = S.rows.map(r => { const o = evalRow(r, F, fl); cum += o.sect; o.cum = cum; return o; });
+  const m = S.mr === "2" ? 2 : 1;
+  const P = rows.reduce((a, o) => a + o.pipe, 0), Ft = rows.reduce((a, o) => a + o.fit, 0), E = rows.reduce((a, o) => a + o.eq, 0);
+  const sub = (P + Ft) * m + E, mg = pf(S.mg) >= 0 ? pf(S.mg) : 0, tot = sub * (1 + mg / 100);
+  const L = rows.reduce((a, o) => a + (o.L || 0), 0);
+  return { fl, rows, m, P, Ft, E, sub, mg, tot, head: tot * 1000 / (fl.rho * 9.80665), L };
+}
+
+/* ---- cards ---- */
+function pOpts(r) {
+  const i = parseInt(S.svc);
+  return S.follow && !r.free && !isNaN(i) ? specList(i) : sizeOpts(r.pt);
+}
+const COMMON = [1, 0, 2, 4, 5], MORE = [3, 6, 7, 8, 9, 10];
+const moreCount = r => MORE.reduce((a, k) => a + (pf(r.fit && r.fit[k]) > 0 ? pf(r.fit[k]) : 0), 0) + (pf(r.xk) > 0 ? 1 : 0);
+function stepper(r, k) {
+  return '<div class="stp"><label>' + FIT[k] + '</label><div class="sc"><button type="button" data-s="-1" data-k="' + k + '" aria-label="One fewer ' + FIT[k] + '">−</button><input data-q="' + k + '" type="number" inputmode="numeric" step="1" min="0" value="' + esc(r.fit && r.fit[k] != null ? r.fit[k] : "") + '" placeholder="0" /><button type="button" data-s="1" data-k="' + k + '" aria-label="One more ' + FIT[k] + '">+</button></div><small class="kv" data-kv="' + k + '"></small></div>';
+}
+function cardHtml(i) {
+  const r = S.rows[i], n = i + 1;
+  const kind = '<select class="kd" data-f="kind" aria-label="Kind of section"><option value="p"' + (r.kind === "p" ? " selected" : "") + '>Pipe</option><option value="e"' + (r.kind === "e" ? " selected" : "") + ">Equipment</option></select>";
+  const btns = '<span class="lca"><button type="button" data-a="up"' + (i === 0 ? " disabled" : "") + ' aria-label="Move up">↑</button><button type="button" data-a="dn"' + (i === S.rows.length - 1 ? " disabled" : "") + ' aria-label="Move down">↓</button><button type="button" data-a="dup">Copy</button><button type="button" data-a="rm" aria-label="Delete section">Delete</button></span>';
+  let h = '<div class="sec' + (r.kind === "e" ? " eq" : "") + '" data-i="' + i + '"><div class="sh"><b class="sn">' + n + "</b>" + kind + '<input class="dsc" data-f="desc" type="text" placeholder="' + (r.kind === "e" ? "Equipment, e.g. coil" : "Description, e.g. riser to AHU-3") + '" value="' + esc(r.desc) + '" list="eqlist" />' + btns + "</div><div class=\"sb\">";
+  if (r.kind === "e") {
+    h += '<div class="fields two"><div class="field"><label>Pressure drop, from the maker’s data</label><div class="pair"><input data-f="dpe" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.dpe) + '" /><span>kPa</span></div><div class="hint">' + esc(EQ_HINT[r.desc] || "At the design flow.") + '</div></div><div class="field"><label class="chk" style="margin-top:22px"><input type="checkbox" data-f="sc"' + (r.sc ? " checked" : "") + ' /> Varies with flow² (a coil, strainer or valve does; a fixed allowance does not)</label></div></div>';
+  } else {
+    const g = pipeInfo(r), own = r.pt === "own";
+    h += '<div class="fields two">';
+    h += '<div class="field"><label>Water flow</label><div class="pair"><input data-f="q" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.q) + '" /><span>L/s</span></div></div>';
+    h += '<div class="field"><label>Length of pipe</label><div class="pair"><input data-f="len" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.len) + '" placeholder="0" /><span>m</span></div></div>';
+    h += '<div class="field wide"><label>Pipe diameter</label><div class="seg2" role="group" aria-label="Pipe diameter"><button type="button" data-a="tbl" class="' + (own ? "" : "on") + '">From a pipe table</button><button type="button" data-a="typ" class="' + (own ? "on" : "") + '">I type the diameter</button></div></div>';
+    if (own) {
+      h += '<div class="field"><label>Inside diameter</label><div class="pair"><input data-f="idown" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.idown) + '" /><span>mm</span></div><div class="hint">Fitting K values are taken at this diameter.</div></div>';
+    } else {
+      h += '<div class="field wide"><label>Pipe and standard</label><select data-f="pt">' + optHtml(TYPES.filter(t => t[0] !== "own")) + "</select></div>";
+      h += '<div class="field"><label>Size</label><select data-f="pp">' + optHtml(pOpts(r)) + "</select></div>";
+      h += '<div class="field"><label>Wall series</label><select data-f="ps">' + optHtml(serOpts(r.pt)) + "</select></div>";
+      if (r.ps === "own") h += '<div class="field"><label>Wall thickness</label><div class="pair"><input data-f="wown" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.wown) + '" /><span>mm</span></div></div>';
+      h += '<div class="field"><label>Inside diameter (from the table)</label><div class="pair"><input class="idshow" disabled value="' + (g.id > 0 ? sig(g.id, 5) : "") + '" /><span>mm</span></div></div>';
+    }
+    h += "</div>";
+    h += '<div class="fitq"><div class="fl">Fittings in this section</div><div class="fgrid">' + COMMON.map(k => stepper(r, k)).join("") + "</div>";
+    h += '<details class="fit"' + (moreCount(r) > 0 ? " open" : "") + '><summary>More fittings and valves</summary><div class="fg">' + MORE.map(k => stepper(r, k)).join("");
+    h += '<div><label>Extra K (sum)</label><input data-f="xk" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.xk) + '" placeholder="0" /></div>';
+    h += '<div><label>Table size for K</label><select data-f="kdn"><option value="">Automatic</option>' + KDN.map(k => '<option value="' + k + '"' + (String(r.kdn) === String(k) ? " selected" : "") + ">DN" + k + "</option>").join("") + "</select></div>";
+    h += "</div></details></div>";
+  }
+  h += '</div><div class="rs"></div><div class="wn"></div></div>';
+  return h;
+}
+const fitCount = r => (r.fit ? Object.keys(r.fit).reduce((a, k) => a + (pf(r.fit[k]) > 0 ? pf(r.fit[k]) : 0), 0) : 0) + (pf(r.xk) > 0 ? 1 : 0);
+function fitSummary(r) {
+  const p = []; FIT.forEach((nm, k) => { const q = pf(r.fit && r.fit[k]); if (q > 0) p.push(q + " × " + nm.toLowerCase()); });
+  if (pf(r.xk) > 0) p.push("extra K " + r.xk);
+  return p.length ? esc(p.join(", ")) : "none";
+}
+function setSelects(card, r) {
+  const sel = (f, v) => { const e = card.querySelector('select[data-f="' + f + '"]'); if (e && Array.prototype.some.call(e.options, o => o.value === String(v))) e.value = String(v); };
+  sel("pt", r.pt); sel("pp", r.pp); sel("ps", r.ps);
+}
+function renderCards() {
+  const host = $("secs"); host.innerHTML = S.rows.map((_, i) => cardHtml(i)).join("");
+  host.querySelectorAll(".sec").forEach(c => setSelects(c, S.rows[+c.dataset.i]));
+  S.rows.forEach((r, i) => { if (r.kind === "p" && r.pt !== "own") { const c = host.children[i], sp = c.querySelector('select[data-f="pp"]'); if (sp && sp.value !== String(r.pp) && sp.options.length) { r.pp = sp.value; } } });
+  update();
+}
+
+/* ---- update results ---- */
+function box(k, v, u, cls) { return '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + u + "</div></div>"; }
+function update() {
+  const A = evalAll(1), C = S.ck ? evalAll(Math.max(pf(S.cf), 0) / 100) : null;
+  const cards = $("secs").children;
+  S.rows.forEach((r, i) => {
+    const o = A.rows[i], c = cards[i]; if (!c) return;
+    let rs = "";
+    if (r.kind === "e") rs = "";
+    else if (o.ok || o.g) {
+      if (o.ok) rs = "<span>Velocity <b>" + fmt(o.v, 2) + " m/s</b></span><span>Re <b>" + Math.round(o.Re).toLocaleString("en-GB") + "</b></span><span>Friction <b>" + fmt(o.dpm, 1) + " Pa/m</b></span><span>Pipe <b>" + fmt(o.pipe, 3) + " kPa</b></span><span>ΣK <b>" + fmt(o.sk, 2) + "</b> (DN" + o.kd + ")</span><span>Fittings <b>" + fmt(o.fit, 3) + " kPa</b></span>";
+    }
+    if (o.ok || r.kind === "e") rs += '<span class="tot">Section ' + fmt(o.sect, 2) + " kPa · running total " + fmt(o.cum, 2) + " kPa</span>";
+    c.querySelector(".rs").innerHTML = rs;
+    const w = o.msg.concat(o.flag.length ? ["Flag: " + o.flag.join("; ") + "."] : []);
+    c.querySelector(".wn").innerHTML = w.map(esc).join("<br>");
+    c.querySelectorAll("[data-kv]").forEach(e => { const k = +e.dataset.kv; e.textContent = o.kv ? "K " + fmt(o.kv[k], o.kv[k] < 1 ? 3 : 2) : ""; });
+    const ids = c.querySelector(".idshow"); if (ids) { const g = pipeInfo(r); ids.value = g.id > 0 ? sig(g.id, 5) : ""; }
+  });
+  /* summary boxes */
+  const m = A.m;
+  $("sRes").innerHTML = box("Design total", fmt(A.tot, 1), "kPa, with " + fmt(A.mg, 0) + " % margin", "ok") + box("Head of water", fmt(A.head, 2), "m at the design total") + box("Subtotal", fmt(A.sub, 1), "kPa before the margin") + box("Straight pipe", fmt((A.P) * m, 1), "kPa" + (m === 2 ? " (×2)" : "")) + box("Fittings", fmt(A.Ft * m, 1), "kPa" + (m === 2 ? " (×2)" : "")) + box("Equipment", fmt(A.E, 1), "kPa") + (C ? box("Design total at " + fmt(pf(S.cf), 0) + " % flow", fmt(C.tot, 1), "kPa, with the margin", "bad") : "");
+  const warn = [];
+  if (!S.rows.length) warn.push("There are no sections yet.");
+  S.rows.forEach((r, i) => { const o = A.rows[i]; const nm = "Section " + (i + 1) + (r.desc ? " (" + r.desc + ")" : ""); if (!o.ok && !(r.kind === "e" && !(pf(r.dpe) >= 0))) { if (o.msg.length && r.kind === "p" && (pf(r.q) > 0 || pf(r.len) > 0 || fitCount(r) > 0)) warn.push(nm + ": " + o.msg[0]); } else if (r.kind === "e" && !(pf(r.dpe) >= 0)) warn.push(nm + ": enter the pressure drop."); if (o.flag.length) warn.push(nm + ": " + o.flag.join("; ") + "."); o.msg.forEach(t => { if (/Reynolds/.test(t)) warn.push(nm + ": " + t); }); });
+  if (!(A.fl.rho > 0 && A.fl.nu > 0)) warn.push("Water properties are outside 0 to 200 °C. Enter the density and viscosity.");
+  const el = $("sWarn"); el.innerHTML = warn.map(t => "<div>" + esc(t) + "</div>").join(""); el.classList.toggle("show", warn.length > 0);
+  $("vNote").textContent = "Water at " + fmt(A.fl.T, 1) + " °C: ρ " + fmt(A.fl.rho, 1) + " kg/m³, ν " + fmt(A.fl.nu, 4) + " × 10⁻⁶ m²/s. Friction by Altshul–Tsal, fittings by K × ½ρv².";
+  $("vNote").classList.add("show");
+  /* table */
+  let t = "<thead><tr><th>No</th><th class=\"l\">Description</th><th class=\"l\">Pipe</th><th>Flow<br>L/s</th><th>ID<br>mm</th><th>v<br>m/s</th><th>Re</th><th>Pa/m</th><th>Length<br>m</th><th>ΣK</th><th>Pipe<br>kPa</th><th>Fittings<br>kPa</th><th>Equip.<br>kPa</th><th>Section<br>kPa</th><th>Running<br>kPa</th>" + (C ? "<th>Section at<br>" + fmt(pf(S.cf), 0) + " %</th>" : "") + "</tr></thead><tbody>";
+  S.rows.forEach((r, i) => {
+    const o = A.rows[i], c = C ? C.rows[i] : null;
+    if (r.kind === "e") t += '<tr class="eqr"><td>' + (i + 1) + '</td><td class="l">' + esc(r.desc || "Equipment") + '</td><td class="l">Equipment</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>' + fmt(o.eq, 2) + "</td><td>" + fmt(o.sect, 2) + "</td><td>" + fmt(o.cum, 2) + "</td>" + (C ? "<td>" + fmt(c.sect, 2) + "</td>" : "") + "</tr>";
+    else t += "<tr><td>" + (i + 1) + '</td><td class="l">' + esc(r.desc) + '</td><td class="l">' + esc(pipeText(r)) + "</td><td>" + fmt(pf(r.q), 2) + "</td><td>" + (o.g && o.g.id > 0 ? sig(o.g.id, 5) : "—") + "</td><td" + (o.flag.some(x => /velocity/.test(x)) ? ' class="bad"' : "") + ">" + (o.ok ? fmt(o.v, 2) : "—") + "</td><td>" + (o.ok ? Math.round(o.Re).toLocaleString("en-GB") : "—") + "</td><td" + (o.flag.some(x => /Pa\/m/.test(x)) ? ' class="bad"' : "") + ">" + (o.ok ? fmt(o.dpm, 1) : "—") + "</td><td>" + fmt(o.L || 0, 2) + "</td><td>" + (o.ok ? fmt(o.sk, 2) : "—") + "</td><td>" + fmt(o.pipe, 3) + "</td><td>" + fmt(o.fit, 3) + "</td><td></td><td>" + fmt(o.sect, 2) + "</td><td>" + fmt(o.cum, 2) + "</td>" + (C ? "<td>" + fmt(c.sect, 2) + "</td>" : "") + "</tr>";
+  });
+  const sp = C ? 16 : 15, span = n => ' colspan="' + n + '"';
+  t += "</tbody><tfoot>";
+  const trow = (lab, val, cv, b) => "<tr" + (b ? ' style="font-weight:700"' : "") + "><td" + span(13) + ' class="l">' + lab + "</td><td" + span(2) + ">" + val + "</td>" + (C ? "<td>" + cv + "</td>" : "") + "</tr>";
+  t += trow("Straight pipe" + (m === 2 ? " ×2" : ""), fmt(A.P * m, 2) + " kPa", C ? fmt(C.P * m, 2) : "");
+  t += trow("Fittings" + (m === 2 ? " ×2" : ""), fmt(A.Ft * m, 2) + " kPa", C ? fmt(C.Ft * m, 2) : "");
+  t += trow("Equipment", fmt(A.E, 2) + " kPa", C ? fmt(C.E, 2) : "");
+  t += trow("Subtotal", fmt(A.sub, 2) + " kPa", C ? fmt(C.sub, 2) : "", true);
+  t += trow("Design margin " + fmt(A.mg, 0) + " %", fmt(A.sub * A.mg / 100, 2) + " kPa", C ? fmt(C.sub * A.mg / 100, 2) : "");
+  t += trow("Design total", fmt(A.tot, 2) + " kPa", C ? fmt(C.tot, 2) : "", true);
+  t += trow("Head of water", fmt(A.head, 2) + " m", C ? fmt(C.head, 2) : "");
+  t += "</tfoot>";
+  $("prT").innerHTML = t;
+  $("prTitle").textContent = (S.j.title || "Pipework system pressure loss") + (S.j.num ? "  ·  " + S.j.num : "");
+  $("prMeta").textContent = [S.j.sys, S.j.date, S.j.rev ? "Rev " + S.j.rev : "", S.j.by ? "Prepared by " + S.j.by : "", S.j.chk ? "Checked by " + S.j.chk : ""].filter(Boolean).join("  ·  ");
+  $("prN").textContent = "Water at " + fmt(A.fl.T, 1) + " °C, ρ " + fmt(A.fl.rho, 1) + " kg/m³, ν " + fmt(A.fl.nu, 4) + " × 10⁻⁶ m²/s. Pipe roughness: " + roughText() + ". Pipe and fittings counted " + (m === 2 ? "twice (supply and return the same)" : "as listed") + ". Fitting K values from the table in the side bar.";
+  working(A); renderCompare();
+  save();
+  lastA = A; lastC = C;
+}
+let lastA = null, lastC = null;
+function renderCompare() {
+  const i = +$("cfit").value || 0, Re = pf($("cre").value) > 0 ? pf($("cre").value) : 1e5;
+  let t = "<thead><tr><th>DN</th><th>Reference K</th><th>3-K method K</th><th>Table compared with 3-K</th></tr></thead><tbody>";
+  KDN.forEach((dn, k) => {
+    const a = KT[k][i];
+    if (D3[i]) { const b = kd3(i, dn, Re), d = (a / b - 1) * 100; t += "<tr><th>" + dn + "</th><td>" + fmt(a, 3) + "</td><td>" + fmt(b, 3) + '</td><td class="' + (Math.abs(d) > 30 ? "bad" : "") + '">' + (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(0) + " %</td></tr>"; }
+    else t += "<tr><th>" + dn + "</th><td>" + fmt(a, 3) + "</td><td>no 3-K data</td><td>—</td></tr>";
+  });
+  $("cmpT").innerHTML = t + "</tbody>";
+  const T = evalAll(1, "t"), D = evalAll(1, "d"), m = T.m, dd = D.tot - T.tot;
+  $("cmpRes").innerHTML = box("Fittings, reference data", fmt(T.Ft * m, 2), "kPa") + box("Fittings, 3-K", fmt(D.Ft * m, 2), "kPa") + box("Design total, reference data", fmt(T.tot, 1), "kPa") + box("Design total, 3-K", fmt(D.tot, 1), "kPa") + box("Difference in the total", (dd >= 0 ? "+" : "−") + fmt(Math.abs(dd), 2), "kPa, " + (T.tot > 0 ? (dd >= 0 ? "+" : "−") + fmt(Math.abs(dd) / T.tot * 100, 1) : "—") + " %", Math.abs(dd) > 0.05 * T.tot ? "bad" : "ok");
+  $("cmpN").textContent = "Both totals use the same pipes, flows, equipment and margin. The sheet is using " + (S.ks === "d" ? "the 3-K method" : "our reference data") + " for the results above. Fittings are " + (T.sub > 0 ? fmt(T.Ft * m / T.sub * 100, 0) : "—") + " % of the subtotal in this circuit, so a difference in K moves the total only by that share.";
+}
+function roughText() { return S.rg === "" ? "from the pipe type (copper and plastic 0.0015 mm, steel 0.046 mm)" : (S.rg === "own" ? pf(S.rgv) : pf(S.rg)) + " mm"; }
+function pipeText(r) {
+  if (r.pt === "own") return "Own pipe, ID " + r.idown + " mm";
+  const so = serOpts(r.pt).find(o => o[0] === String(r.ps)), zo = sizeOpts(r.pt).find(o => o[0] === String(r.pp));
+  return TSHORT[r.pt] + " · " + (zo ? zo[1].split(" — ")[0].replace(" outside diameter", "") : r.pp) + " · " + (so ? so[1] : r.ps) + (r.ps === "own" ? " " + r.wown + " mm" : "");
+}
+
+/* ---- working in the side bar ---- */
+function working(A) {
+  const i = Math.min(activeRow, S.rows.length - 1), r = S.rows[i], o = A.rows[i], el = $("workS");
+  if (!r) { el.innerHTML = "<p class=\"si\">No sections yet.</p>"; return; }
+  let h = "<h3>Section " + (i + 1) + (r.desc ? ": " + esc(r.desc) : "") + "</h3>";
+  if (r.kind === "e") { h += "<p class=\"si\">Equipment. Pressure drop " + esc(r.dpe || "—") + " kPa" + (r.sc ? ", scaled by (flow ratio)² at a higher flow" : ", not scaled") + ".<br>Section = " + fmt(o.eq, 2) + " kPa. Running total " + fmt(o.cum, 2) + " kPa.</p>"; el.innerHTML = h; return; }
+  if (!o.ok) { h += "<p class=\"si\">" + esc(o.msg[0] || "Complete the section to see the working.") + "</p>"; el.innerHTML = h; return; }
+  const f = o.f, g = o.g;
+  h += "<p class=\"si\">" + esc(pipeText(r)) + "<br>Inside diameter D = " + sig(g.id, 5) + " mm; roughness ε = " + sig(o.eps, 4) + " mm<br>Q = " + fmt(pf(r.q), 3) + " L/s = " + sig(pf(r.q) / 1000, 5) + " m³/s<br>v = Q / A = " + fmt(f.v, 3) + " m/s<br>Re = v D / ν = " + Math.round(f.Re).toLocaleString("en-GB") + "<br>f′ = 0.11 (ε/D + 68/Re)^0.25 = " + sig(f.f1, 4) + (f.tsal ? "<br>f′ is below 0.018, so f = 0.85 f′ + 0.0028 = " + sig(f.f, 4) : "<br>f = f′ = " + sig(f.f, 4)) + "<br>½ρv² = " + fmt(f.dyn, 1) + " Pa<br>Δp per metre = (f / D) × ½ρv² = " + fmt(f.dpm, 2) + " Pa/m<br>Pipe loss = " + fmt(f.dpm, 2) + " × " + fmt(o.L, 2) + " m / 1000 = " + fmt(o.pipe, 3) + " kPa</p>";
+  h += "<p class=\"si\">Fittings (K " + (S.ks === "d" ? "by the 3-K method at this diameter and Reynolds number" : "from the DN" + o.kd + " row of our reference data") + "):<br>" + (o.kparts.length ? o.kparts.map(esc).join("<br>") : "none") + (pf(r.xk) > 0 ? "<br>extra K " + r.xk : "") + "<br>ΣK = " + fmt(o.sk, 3) + "<br>Fittings loss = ΣK × ½ρv² / 1000 = " + fmt(o.fit, 3) + " kPa</p>";
+  h += "<p class=\"si\"><b>Section = " + fmt(o.sect, 3) + " kPa; running total " + fmt(o.cum, 2) + " kPa</b></p>";
+  el.innerHTML = h;
+}
+
+/* ---- the specification service ---- */
+function applySpec(r) {
+  const i = parseInt(S.svc); if (isNaN(i) || r.kind !== "p") return;
+  const L = specList(i); if (!L.length) return;
+  const dn = r.pt === "own" ? NaN : nomDN(r.pt, r.pp);
+  const ent = isNaN(dn) ? (L.find(o => o[0] === "50") || L[0]) : L.reduce((m, o) => Math.abs(parseFloat(o[0]) - dn) < Math.abs(parseFloat(m[0]) - dn) ? o : m, L[0]);
+  setEnt(r, ent);
+}
+function setEnt(r, ent) {
+  const st = ent[3][6], pt = st.pt, prevPt = r.pt, prevS = r.ps;
+  r.pt = pt; r.pp = ent[0];
+  const a = pt === "sl" ? ASME.find(q => q[0] === parseInt(ent[0])) : null, near = a ? SLW.reduce((m, w) => Math.abs(w - a[2]) < Math.abs(m - a[2]) ? w : m, SLW[0]).toFixed(1) : null;
+  let want = st.ser || null;
+  if (!want) { if (pt === "st") want = "M"; else if (pt === "sl") want = near; else if (pt === prevPt && serOpts(pt).some(o => o[0] === prevS)) want = prevS; }
+  r.ps = want && serOpts(pt).some(o => o[0] === want) ? want : defSer(pt);
+  r.free = false;
+  if (st.galv && S.rg === "") S.rg = "0.15"; else if (!st.galv && S.rg === "0.15") S.rg = "";
+}
+function followAll() { S.rows.forEach(r => { if (r.kind === "p") { r.free = false; applySpec(r); } }); syncTop(); renderCards(); }
+
+/* ---- events ---- */
+function rowOf(e) { const c = e.target.closest(".sec"); return c ? +c.dataset.i : -1; }
+function onField(e) {
+  const t = e.target, i = rowOf(e); if (i < 0) return; const r = S.rows[i]; activeRow = i;
+  if (t.dataset.q != null) { r.fit = r.fit || {}; r.fit[t.dataset.q] = t.value; update(); return; }
+  const f = t.dataset.f; if (!f) return;
+  const v = t.type === "checkbox" ? t.checked : t.value;
+  r[f] = v;
+  if (f === "kind") { if (v === "e") { const d = newEq(r.desc); Object.keys(r).forEach(k => delete r[k]); Object.assign(r, d); } else { const d = newPipe({ desc: r.desc }); Object.keys(r).forEach(k => delete r[k]); Object.assign(r, d); if (S.follow) applySpec(r); } renderCards(); return; }
+  if (f === "pt") { r.free = true; r.pp = String((sizeOpts(v)[0] || [""])[0]); r.ps = defSer(v); if (S.follow && !r.free) applySpec(r); const c = $("secs").children[i]; c.outerHTML = cardHtml(i); setSelects($("secs").children[i], r); fixPp(i); update(); return; }
+  if (f === "pp") {
+    if (S.follow && !r.free) { const ent = specEnt(parseInt(S.svc), v); if (ent) { setEnt(r, ent); const c = $("secs").children[i]; c.outerHTML = cardHtml(i); setSelects($("secs").children[i], r); fixPp(i); syncTop(); } }
+    update(); return;
+  }
+  if (f === "ps") { r.free = true; if (v === "own" || t.closest(".sb").querySelector('[data-f="wown"]')) { const c = $("secs").children[i]; c.outerHTML = cardHtml(i); setSelects($("secs").children[i], r); } update(); return; }
+  if (f === "desc") { const h = t.closest(".sb") && t.closest(".sec").querySelector(".hint"); update(); return; }
+  update();
+}
+function fixPp(i) { const r = S.rows[i], c = $("secs").children[i], sp = c && c.querySelector('select[data-f="pp"]'); if (sp && sp.options.length && sp.value !== String(r.pp)) r.pp = sp.value; }
+function move(i, d) { const j = i + d; if (j < 0 || j >= S.rows.length) return; const x = S.rows.splice(i, 1)[0]; S.rows.splice(j, 0, x); activeRow = j; renderCards(); }
+function onClick(e) {
+  const st = e.target.closest("button[data-s]");
+  if (st) { const i = rowOf(e); if (i < 0) return; const r = S.rows[i], k = st.dataset.k; r.fit = r.fit || {}; const n = Math.max(0, (pf(r.fit[k]) || 0) + (+st.dataset.s)); r.fit[k] = n || ""; const inp = st.parentNode.querySelector("input"); inp.value = n || ""; activeRow = i; update(); return; }
+  const b = e.target.closest("button[data-a]"); if (!b) return; const i = rowOf(e); if (i < 0) return;
+  const a = b.dataset.a;
+  if (a === "typ" || a === "tbl") {
+    const r = S.rows[i];
+    if (a === "typ" && r.pt !== "own") { const g = pipeInfo(r); r.last = r.pt + "|" + r.pp + "|" + r.ps; r.pt = "own"; if (!(pf(r.idown) > 0) && g.id > 0) r.idown = String(g.id); r.free = true; }
+    else if (a === "tbl" && r.pt === "own") { const p = (r.last || "st|50|M").split("|"); r.pt = p[0]; r.pp = p[1]; r.ps = p[2]; if (S.follow) { r.free = false; applySpec(r); } }
+    renderCards(); fixPp(i); update(); return;
+  }
+  if (a === "up") move(i, -1); else if (a === "dn") move(i, 1);
+  else if (a === "dup") { S.rows.splice(i + 1, 0, JSON.parse(JSON.stringify(S.rows[i]))); activeRow = i + 1; renderCards(); }
+  else if (a === "rm") { S.rows.splice(i, 1); activeRow = Math.max(0, i - 1); renderCards(); }
+}
+function addPipe() {
+  const prev = S.rows.slice().reverse().find(r => r.kind === "p");
+  const r = newPipe(prev ? { pt: prev.pt, pp: prev.pp, ps: prev.ps, q: prev.q, free: prev.free } : {});
+  S.rows.push(r); if (S.follow && !r.free) applySpec(r);
+  activeRow = S.rows.length - 1; renderCards(); fixPp(S.rows.length - 1); update();
+  const c = $("secs").lastElementChild; if (c) c.scrollIntoView({ block: "nearest" });
+}
+function addEq(d) { S.rows.push(newEq(d)); activeRow = S.rows.length - 1; renderCards(); const c = $("secs").lastElementChild; if (c) c.scrollIntoView({ block: "nearest" }); }
+
+/* ---- top fields ---- */
+function syncTop() {
+  Object.keys(S.j).forEach(k => { const e = document.querySelector('[data-j="' + k + '"]'); if (e) e.value = S.j[k]; });
+  $("tw").value = S.T; const fl = fluid();
+  $("rho").value = S.own && S.rho !== "" ? S.rho : (isFinite(fl.rho) ? sig(fl.rho, 6) : ""); $("nu").value = S.own && S.nu !== "" ? S.nu : (isFinite(fl.nu) ? sig(fl.nu, 5) : "");
+  $("rg").value = S.rg; $("rgv").value = S.rgv; $("rgf").hidden = S.rg !== "own";
+  $("ks").value = S.ks; $("ksH").textContent = S.ks === "d" ? "K for each fitting is worked out from the inside diameter of the section and its Reynolds number. The reducer, expansion and Y-strainer keep the table values." : "K is read from the table by nominal size (the next size down for a size between two rows).";
+  $("mg").value = S.mg; $("mr").value = S.mr; $("ck").checked = !!S.ck; $("cf").value = S.cf; document.querySelector(".ckf").hidden = !S.ck;
+  $("svc").value = S.svc; $("svcF").hidden = S.svc === ""; $("svcFollow").checked = !!S.follow;
+  $("svcH").textContent = S.svc === "" ? "Pick a service to get the sizes and tubes of the pipework specification, as in sheet VI. You can still change any section." : (S.follow ? "Every pipe section now takes the tube the specification names, at the nearest size it allows, so a section can change size. Change the standard or the wall of a section and that section leaves the specification." : "The specification is not being followed. Tick the box to make the pipe sections take its tubes.");
+}
+function bindTop() {
+  $("rg").innerHTML = RG.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+  $("svc").innerHTML = '<option value="">No service chosen</option>' + SVC_CALC.map(i => '<option value="' + i + '">' + SVC[i] + "</option>").join("");
+  document.querySelectorAll("[data-j]").forEach(e => e.addEventListener("input", () => { S.j[e.dataset.j] = e.value; update(); }));
+  $("tw").addEventListener("input", () => { S.T = $("tw").value; S.own = false; S.rho = ""; S.nu = ""; const fl = fluid(); $("rho").value = isFinite(fl.rho) ? sig(fl.rho, 6) : ""; $("nu").value = isFinite(fl.nu) ? sig(fl.nu, 5) : ""; update(); });
+  ["rho", "nu"].forEach(id => $(id).addEventListener("input", () => { S.own = true; S.rho = $("rho").value; S.nu = $("nu").value; update(); }));
+  $("rg").addEventListener("change", () => { S.rg = $("rg").value; $("rgf").hidden = S.rg !== "own"; update(); });
+  $("rgv").addEventListener("input", () => { S.rgv = $("rgv").value; update(); });
+  $("ks").addEventListener("change", () => { S.ks = $("ks").value; syncTop(); update(); });
+  $("cfit").innerHTML = FIT.map((x, k) => '<option value="' + k + '">' + x + "</option>").join(""); $("cfit").value = "1";
+  ["cfit", "cre"].forEach(id => $(id).addEventListener("input", renderCompare));
+  $("mg").addEventListener("input", () => { S.mg = $("mg").value; update(); });
+  $("mr").addEventListener("change", () => { S.mr = $("mr").value; update(); });
+  $("ck").addEventListener("change", () => { S.ck = $("ck").checked; document.querySelector(".ckf").hidden = !S.ck; update(); });
+  $("cf").addEventListener("input", () => { S.cf = $("cf").value; update(); });
+  $("svc").addEventListener("change", () => { S.svc = $("svc").value; if (S.svc === "") S.follow = false; else S.follow = true; if (S.follow) followAll(); else { syncTop(); renderCards(); } });
+  $("svcFollow").addEventListener("change", () => { S.follow = $("svcFollow").checked; if (S.follow && S.svc !== "") followAll(); else { syncTop(); renderCards(); } });
+  $("secs").addEventListener("input", onField); $("secs").addEventListener("change", e => { if (e.target.tagName === "SELECT") onField(e); });
+  $("secs").addEventListener("click", onClick);
+  $("secs").addEventListener("focusin", e => { const i = rowOf(e); if (i >= 0 && i !== activeRow) { activeRow = i; if (lastA) working(lastA); } });
+  $("addP").addEventListener("click", addPipe);
+  document.querySelectorAll("[data-eq]").forEach(b => b.addEventListener("click", () => addEq(b.dataset.eq)));
+  $("ex").addEventListener("click", () => { if (S.rows.length > 1 && !confirm("Replace the sections on the sheet with the example?")) return; S = example(); activeRow = 0; syncTop(); renderCards(); });
+  $("clr").addEventListener("click", () => { if (S.rows.length && !confirm("Remove every section?")) return; S.rows = []; renderCards(); });
+  $("pr").addEventListener("click", () => window.print());
+  $("xl").addEventListener("click", downloadXlsx);
+  $("sv").addEventListener("click", () => download(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), fname("project") + ".json"));
+  $("ld").addEventListener("click", () => $("ldf").click());
+  $("ldf").addEventListener("change", () => { const f = $("ldf").files[0]; if (!f) return; f.text().then(t => { try { const o = JSON.parse(t); if (!o || !Array.isArray(o.rows)) throw 0; S = Object.assign(blank(), o); activeRow = 0; syncTop(); renderCards(); } catch (e) { alert("That file is not a project saved from this sheet."); } $("ldf").value = ""; }); });
+  const dl = document.createElement("datalist"); dl.id = "eqlist"; dl.innerHTML = ["Coil", "Strainer", "Chiller", "Heat exchanger", "Control valve", "Balancing valve", "Condenser", "Pump isolating valve"].map(x => '<option value="' + x + '">').join(""); document.body.appendChild(dl);
+}
+
+/* ---- file helpers ---- */
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+const fname = suffix => ((S.j.num || "") + " " + (S.j.title || "Pipework pressure loss")).trim().replace(/[^\w\- ]+/g, "").replace(/\s+/g, "_").slice(0, 60) + "_" + suffix;
+
+/* ---- Excel workbook: a small writer, formulas with their calculated values ---- */
+const colL = n => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const X = (() => {
+  const fonts = [], fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>'], borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>'], nf = [], xfs = [], map = {};
+  const idx = (arr, x) => { let i = arr.indexOf(x); if (i < 0) { arr.push(x); i = arr.length - 1; } return i; };
+  fonts.push('<font><sz val="10"/><name val="Calibri"/></font>');
+  const BUILT = { "General": 0, "0": 1, "0.00": 2, "#,##0": 3, "#,##0.00": 4 };
+  function sty(o) {
+    o = o || {}; const key = JSON.stringify(o); if (map[key] != null) return map[key];
+    const font = idx(fonts, '<font>' + (o.b ? "<b/>" : "") + (o.i ? "<i/>" : "") + '<sz val="' + (o.sz || 10) + '"/>' + (o.c ? '<color rgb="FF' + o.c + '"/>' : "") + '<name val="Calibri"/></font>');
+    const fill = o.fill ? idx(fills, '<fill><patternFill patternType="solid"><fgColor rgb="FF' + o.fill + '"/><bgColor indexed="64"/></patternFill></fill>') : 0;
+    const bd = o.bd ? idx(borders, '<border><left style="thin"><color rgb="FFBFB8A5"/></left><right style="thin"><color rgb="FFBFB8A5"/></right><top style="thin"><color rgb="FFBFB8A5"/></top><bottom style="thin"><color rgb="FFBFB8A5"/></bottom><diagonal/></border>') : 0;
+    let nid = 0; if (o.fmt) { if (BUILT[o.fmt] != null) nid = BUILT[o.fmt]; else nid = 164 + idx(nf, o.fmt); }
+    const al = (o.h || o.wrap || o.v) ? '<alignment' + (o.h ? ' horizontal="' + o.h + '"' : "") + (o.v ? ' vertical="' + o.v + '"' : "") + (o.wrap ? ' wrapText="1"' : "") + "/>" : "";
+    xfs.push('<xf numFmtId="' + nid + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + bd + '" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"' + (al ? ' applyAlignment="1">' + al + "</xf>" : "/>"));
+    map[key] = xfs.length; return xfs.length;   /* index 0 is the default xf */
+  }
+  const xml = () => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + (nf.length ? '<numFmts count="' + nf.length + '">' + nf.map((f, i) => '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + esc(f) + '"/>').join("") + "</numFmts>" : "") + '<fonts count="' + fonts.length + '">' + fonts.join("") + '</fonts><fills count="' + fills.length + '">' + fills.join("") + '</fills><borders count="' + borders.length + '">' + borders.join("") + '</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + (xfs.length + 1) + '"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' + xfs.join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return { sty, xml };
+})();
+function sheetXml(sh) {
+  let rows = "";
+  sh.rows.forEach((row, ri) => {
+    if (!row) return; let cx = "";
+    row.forEach((c, ci) => {
+      if (c == null) return; const ref = colL(ci) + (ri + 1), s = c.s ? ' s="' + c.s + '"' : "";
+      if (c.f != null) { const v = c.v; if (typeof v === "string") cx += '<c r="' + ref + '"' + s + ' t="str"><f>' + esc(c.f) + "</f><v>" + esc(v) + "</v></c>"; else cx += '<c r="' + ref + '"' + s + "><f>" + esc(c.f) + "</f>" + (typeof v === "number" && isFinite(v) ? "<v>" + v + "</v>" : "") + "</c>"; }
+      else if (typeof c.v === "number") { if (isFinite(c.v)) cx += '<c r="' + ref + '"' + s + "><v>" + c.v + "</v></c>"; }
+      else if (c.v != null && c.v !== "") cx += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + "</t></is></c>";
+      else if (s) cx += '<c r="' + ref + '"' + s + "/>";
+    });
+    rows += '<row r="' + (ri + 1) + '"' + (sh.ht && sh.ht[ri] ? ' ht="' + sh.ht[ri] + '" customHeight="1"' : "") + ">" + cx + "</row>";
+  });
+  const cols = sh.cols ? "<cols>" + sh.cols.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("") + "</cols>" : "";
+  const pane = sh.freeze ? '<pane xSplit="' + sh.freeze[0] + '" ySplit="' + sh.freeze[1] + '" topLeftCell="' + colL(sh.freeze[0]) + (sh.freeze[1] + 1) + '" activePane="bottomRight" state="frozen"/>' : "";
+  const merges = sh.merges && sh.merges.length ? '<mergeCells count="' + sh.merges.length + '">' + sh.merges.map(m => '<mergeCell ref="' + m + '"/>').join("") + "</mergeCells>" : "";
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"' + (sh.first ? ' tabSelected="1"' : "") + ' showGridLines="0">' + pane + "</sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14\"/>" + cols + "<sheetData>" + rows + "</sheetData>" + merges + '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+}
+const CRCT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRCT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), sz = data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    cen.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+  });
+  const cs = cen.reduce((a, x) => a + x.length, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cen, [new Uint8Array(end.buffer)]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+function buildXlsx() {
+  const A = evalAll(1), cfac = Math.max(pf(S.cf), 0) / 100, Cc = evalAll(cfac), fl = A.fl, n = S.rows.length;
+  const sty = X.sty, BL = "0000FF", GR = "2E7D32";
+  const H = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "center", v: "center", wrap: 1, bd: 1 }), HL = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "left", v: "center", wrap: 1, bd: 1 });
+  const GRP = sty({ b: 1, fill: "E8DFC8", h: "center", bd: 1 });
+  const T1 = sty({ b: 1, sz: 14 }), T2 = sty({ b: 1, sz: 11 }), LAB = sty({ b: 1 }), TXT = sty({}), NOTE = sty({ i: 1, c: "555555", wrap: 1, v: "top" });
+  const inT = sty({ c: BL, bd: 1 }), in0 = sty({ c: BL, bd: 1, fmt: "0" }), in2 = sty({ c: BL, bd: 1, fmt: "0.00" }), in3 = sty({ c: BL, bd: 1, fmt: "0.000" }), inE = sty({ c: BL, bd: 1, fmt: "0.000E+00" }), in4 = sty({ c: BL, bd: 1, fmt: "0.0000" }), in1 = sty({ c: BL, bd: 1, fmt: "0.0" });
+  const c0 = sty({ bd: 1, fmt: "0" }), c1 = sty({ bd: 1, fmt: "0.0" }), c2 = sty({ bd: 1, fmt: "0.00" }), c3 = sty({ bd: 1, fmt: "0.000" }), c4 = sty({ bd: 1, fmt: "0.0000" }), cN = sty({ bd: 1, fmt: "#,##0" }), cT = sty({ bd: 1 });
+  const c2b = sty({ bd: 1, fmt: "0.00", b: 1 }), c2bf = sty({ bd: 1, fmt: "0.00", b: 1, fill: "E7EFE4" }), rf = sty({ c: GR, bd: 1, fmt: "0.00" }), rfH = sty({ c: GR, bd: 1, b: 1, h: "center" });
+  const nS = "Calculation", R0 = 6, RL = R0 + Math.max(n, 1) - 1;   /* first and last data rows, 1-based */
+  /* sheet: Fittings K */
+  const fk = [[{ v: "Fitting K values by nominal size", s: T1 }], [{ v: "From our reference data. Not checked against the design guide.", s: NOTE }], [], [{ v: "DN", s: rfH }].concat(FIT.map(x => ({ v: x, s: H })))];
+  KDN.forEach((d, i) => fk.push([{ v: d, s: rf }].concat(KT[i].map(k => ({ v: k, s: rf })))));
+  fk[18] = [{ v: "Darby 3-K constants: K = K1 / Re + Kinf × (1 + Kd / D^0.3), D = inside diameter in inches (used when the K source on the Summary sheet is 3K)", s: T2 }];
+  fk[19] = [{ v: "As given by Neutrium, flanged or welded steel pipework. Where there are no constants the table above is used (last row = 1).", s: NOTE }];
+  fk[20] = [{ v: "Constant", s: rfH }].concat(FIT.map(x => ({ v: x, s: H })));
+  fk[21] = [{ v: "K1", s: rfH }].concat(FIT.map((x, i) => ({ v: D3[i] ? D3[i][0] : 0, s: rf })));
+  fk[22] = [{ v: "Kinf", s: rfH }].concat(FIT.map((x, i) => ({ v: D3[i] ? D3[i][1] : 0, s: rf })));
+  fk[23] = [{ v: "Kd", s: rfH }].concat(FIT.map((x, i) => ({ v: D3[i] ? D3[i][2] : 0, s: rf })));
+  fk[24] = [{ v: "Use table", s: rfH }].concat(FIT.map((x, i) => ({ v: D3[i] ? 0 : 1, s: rf })));
+  const FK = "'Fittings K'!", KR = FK + "$B$5:$L$18", KD = FK + "$A$5:$A$18", K1R = FK + "$B$22:$L$22", KIR = FK + "$B$23:$L$23", KDR = FK + "$B$24:$L$24", MKR = FK + "$B$25:$L$25", ksRef = "Summary!$B$19";
+  const sumK = (rr, zc) => 'IF(' + ksRef + '="3K",IFERROR(SUMPRODUCT(J' + rr + ':T' + rr + ',' + K1R + ')/' + zc + rr + ',0)+IFERROR(SUMPRODUCT(J' + rr + ':T' + rr + ',' + KIR + '*(1+' + KDR + '/(F' + rr + '/25.4)^0.3)),0)+IFERROR(SUMPRODUCT(J' + rr + ':T' + rr + ',' + MKR + ',INDEX(' + KR + ',MATCH(I' + rr + ',' + KD + ',0),0)),0),IFERROR(SUMPRODUCT(J' + rr + ':T' + rr + ',INDEX(' + KR + ',MATCH(I' + rr + ',' + KD + ',0),0)),0))+U' + rr;
+  /* sheet: Summary */
+  const SM = "Summary!";
+  const rhoRef = SM + "$B$13", nuRef = SM + "$B$14", mrRef = SM + "$B$17", cfRef = SM + "$B$18";
+  const rowsC = [];
+  rowsC[0] = [{ v: "Pipework system pressure loss: section calculation", s: T1 }];
+  rowsC[1] = [{ v: "Blue = input. Black = calculated. Each pipe section: velocity, Reynolds number, Altshul–Tsal friction factor, Darcy–Weisbach friction, then fittings as ΣK × ½ρv². Equipment is entered in kPa from the maker’s data.", s: NOTE }];
+  const grp = (a, b, t) => ({ a, b, t });
+  rowsC[3] = []; [[0, 8, "Section"], [9, 21, "Fittings (number of each, K from the Fittings K sheet)"], [22, 23, "Equipment"], [24, 33, "At the design flow"], [34, 43, "At the check flow"]].forEach(g => { for (let c = g[0]; c <= g[1]; c++) rowsC[3][c] = { v: c === g[0] ? g[2] : "", s: GRP }; });
+  const hd = ["No", "Description", "Kind", "Pipe", "Flow\nL/s", "Inside dia.\nmm", "Roughness\nmm", "Length\nm", "DN for K"].concat(FIT, ["Extra K", "ΣK", "Pressure drop\nkPa", "Varies with flow²\n(1 yes, 0 no)", "Velocity\nm/s", "Reynolds\nnumber", "f′", "f", "Pa/m", "Pipe\nkPa", "Fittings\nkPa", "Equipment\nkPa", "Section\nkPa", "Running\ntotal kPa", "Velocity\nm/s", "Reynolds\nnumber", "f′", "f", "Pa/m", "Pipe\nkPa", "Fittings\nkPa", "Equipment\nkPa", "Section\nkPa", "ΣK at the\ncheck flow"]);
+  rowsC[4] = hd.map((t, i) => ({ v: t, s: i === 1 || i === 3 ? HL : H }));
+  S.rows.forEach((r, i) => {
+    const rr = R0 + i, row = [], isP = r.kind === "p", o = A.rows[i], c = Cc.rows[i], g = o.g;
+    const L = x => x + rr;
+    row[0] = { v: i + 1, s: c0 };
+    row[1] = { v: r.desc || "", s: inT };
+    row[2] = { v: isP ? "Pipe" : "Equipment", s: inT };
+    row[3] = { v: isP ? pipeText(r) : "", s: inT };
+    if (isP) {
+      row[4] = { v: pf(r.q) || 0, s: in3 };
+      row[5] = { v: g && g.id > 0 ? g.id : 0, s: in2 };
+      row[6] = { v: o.eps != null ? o.eps : 0, s: in4 };
+      row[7] = { v: o.L || 0, s: in2 };
+      row[8] = { v: o.kd || 0, s: in0 };
+      FIT.forEach((nm, k) => { row[9 + k] = { v: pf(r.fit && r.fit[k]) > 0 ? pf(r.fit[k]) : 0, s: in0 }; });
+      row[20] = { v: pf(r.xk) > 0 ? pf(r.xk) : 0, s: in2 };
+      row[21] = { f: sumK(rr, "Z"), v: o.sk || 0, s: c3 };
+      row[22] = { v: 0, s: in2 }; row[23] = { v: 0, s: in0 };
+    } else {
+      for (let k = 4; k <= 21; k++) row[k] = { v: 0, s: k === 21 ? c3 : in2 }; row[4] = { v: 0, s: in3 }; row[8] = { v: 0, s: in0 };
+      for (let k = 9; k <= 19; k++) row[k] = { v: 0, s: in0 }; row[21] = { f: "0", v: 0, s: c3 };
+      row[22] = { v: pf(r.dpe) || 0, s: in2 }; row[23] = { v: r.sc ? 1 : 0, s: in0 };
+    }
+    /* design flow */
+    const E = L("E"), F = L("F"), G = L("G"), Hh = L("H"), V = L("V"), Y = L("Y"), Z = L("Z"), AA = L("AA"), AB = L("AB"), AC = L("AC");
+    row[24] = { f: 'IF(AND(C' + rr + '="Pipe",' + E + '>0,' + F + '>0),' + E + '/1000/(PI()*(' + F + '/1000)^2/4),0)', v: o.v || 0, s: c3 };
+    row[25] = { f: 'IF(Y' + rr + '>0,Y' + rr + '*' + F + '/1000/' + nuRef + ',0)', v: o.Re || 0, s: cN };
+    row[26] = { f: 'IF(Z' + rr + '>0,0.11*(' + G + '/' + F + '+68/Z' + rr + ')^0.25,0)', v: o.f ? o.f.f1 : 0, s: c4 };
+    row[27] = { f: 'IF(AA' + rr + '>0,IF(AA' + rr + '<0.018,0.85*AA' + rr + '+0.0028,AA' + rr + '),0)', v: o.f ? o.f.f : 0, s: c4 };
+    row[28] = { f: 'IF(Y' + rr + '>0,AB' + rr + '/(' + F + '/1000)*0.5*' + rhoRef + '*Y' + rr + '^2,0)', v: o.dpm || 0, s: c2 };
+    row[29] = { f: 'AC' + rr + '*' + Hh + '/1000', v: o.pipe, s: c3 };
+    row[30] = { f: V + '*0.5*' + rhoRef + '*Y' + rr + '^2/1000', v: o.fit, s: c3 };
+    row[31] = { f: 'IF(C' + rr + '="Equipment",W' + rr + ',0)', v: o.eq, s: c3 };
+    row[32] = { f: 'AD' + rr + '+AE' + rr + '+AF' + rr, v: o.sect, s: c2b };
+    row[33] = { f: i === 0 ? 'AG' + rr : 'AH' + (rr - 1) + '+AG' + rr, v: o.cum, s: c2bf };
+    /* check flow */
+    row[34] = { f: 'Y' + rr + '*' + cfRef, v: (o.v || 0) * cfac, s: c3 };
+    row[35] = { f: 'Z' + rr + '*' + cfRef, v: (o.Re || 0) * cfac, s: cN };
+    row[36] = { f: 'IF(AJ' + rr + '>0,0.11*(' + G + '/' + F + '+68/AJ' + rr + ')^0.25,0)', v: c.f ? c.f.f1 : 0, s: c4 };
+    row[37] = { f: 'IF(AK' + rr + '>0,IF(AK' + rr + '<0.018,0.85*AK' + rr + '+0.0028,AK' + rr + '),0)', v: c.f ? c.f.f : 0, s: c4 };
+    row[38] = { f: 'IF(AI' + rr + '>0,AL' + rr + '/(' + F + '/1000)*0.5*' + rhoRef + '*AI' + rr + '^2,0)', v: c.dpm || 0, s: c2 };
+    row[39] = { f: 'AM' + rr + '*' + Hh + '/1000', v: c.pipe, s: c3 };
+    row[40] = { f: 'AR' + rr + '*0.5*' + rhoRef + '*AI' + rr + '^2/1000', v: c.fit, s: c3 };
+    row[41] = { f: 'IF(C' + rr + '="Equipment",W' + rr + '*IF(X' + rr + '=1,' + cfRef + '^2,1),0)', v: c.eq, s: c3 };
+    row[42] = { f: 'AN' + rr + '+AO' + rr + '+AP' + rr, v: c.sect, s: c2b };
+    row[43] = isP ? { f: sumK(rr, "AJ"), v: c.sk || 0, s: c3 } : { f: "0", v: 0, s: c3 };
+    rowsC[rr - 1] = row;
+  });
+  /* the formulas above name columns by letter; keep the letter map honest */
+  /* columns: A No, B Desc, C Kind, D Pipe, E Flow, F ID, G eps, H Len, I DN, J..T fittings, U Extra K, V SumK, W Equip dP, X scales, Y v, Z Re, AA f', AB f, AC Pa/m, AD pipe, AE fit, AF equip, AG section, AH running, AI v', AJ Re', AK f', AL f, AM Pa/m, AN pipe, AO fit, AP equip, AQ section */
+  const rng = c => "Calculation!$" + c + "$" + R0 + ":$" + c + "$" + RL;
+  const sm = [];
+  const put = (r, c, cell) => { sm[r - 1] = sm[r - 1] || []; sm[r - 1][c] = cell; };
+  put(1, 0, { v: S.j.title ? S.j.title : "Pipework system pressure loss", s: T1 });
+  put(2, 0, { v: "Pipework system pressure loss: summary for submission", s: T2 });
+  [["Job title", S.j.title], ["Job number", S.j.num], ["System", S.j.sys], ["Prepared by", S.j.by], ["Checked by", S.j.chk], ["Date", S.j.date], ["Revision", S.j.rev]].forEach((p, k) => { put(3 + k, 0, { v: p[0], s: LAB }); put(3 + k, 1, { v: p[1] || "", s: inT }); });
+  put(11, 0, { v: "Design basis", s: T2 });
+  put(12, 0, { v: "Water temperature, °C", s: LAB }); put(12, 1, { v: fl.T, s: in1 });
+  put(13, 0, { v: "Density ρ, kg/m³", s: LAB }); put(13, 1, { v: fl.rho, s: in2 });
+  put(14, 0, { v: "Kinematic viscosity ν, m²/s", s: LAB }); put(14, 1, { v: fl.nu * 1e-6, s: inE });
+  put(15, 0, { v: "Pipe roughness", s: LAB }); put(15, 1, { v: roughText(), s: inT });
+  put(16, 0, { v: "Design margin, %", s: LAB }); put(16, 1, { v: A.mg, s: in1 });
+  put(17, 0, { v: "Pipe and fittings counted ×", s: LAB }); put(17, 1, { v: A.m, s: in0 }); put(17, 2, { v: A.m === 2 ? "supply and return the same" : "as listed", s: TXT });
+  put(18, 0, { v: "Flow at the check (ratio)", s: LAB }); put(18, 1, { v: cfac, s: in2 }); put(18, 2, { v: S.ck ? "" : "check not used", s: TXT });
+  put(19, 0, { v: "Fitting K values from (Table or 3K)", s: LAB }); put(19, 1, { v: S.ks === "d" ? "3K" : "Table", s: inT }); put(19, 2, { v: S.ks === "d" ? "Darby 3-K method" : "fitting table by nominal size", s: TXT });
+  put(20, 0, { v: "Result", s: T2 });
+  put(21, 0, { v: "Item", s: HL }); put(21, 1, { v: "At the design flow, kPa", s: H }); put(21, 2, { v: "At the check flow, kPa", s: H });
+  const sumv = (k, mult) => (A[k] * mult), ck = (k, mult) => (Cc[k] * mult);
+  put(22, 0, { v: "Straight pipe friction", s: cT }); put(22, 1, { f: "SUM(" + rng("AD") + ")*B17", v: A.P * A.m, s: c2 }); put(22, 2, { f: "SUM(" + rng("AN") + ")*B17", v: Cc.P * A.m, s: c2 });
+  put(23, 0, { v: "Fittings", s: cT }); put(23, 1, { f: "SUM(" + rng("AE") + ")*B17", v: A.Ft * A.m, s: c2 }); put(23, 2, { f: "SUM(" + rng("AO") + ")*B17", v: Cc.Ft * A.m, s: c2 });
+  put(24, 0, { v: "Equipment", s: cT }); put(24, 1, { f: "SUM(" + rng("AF") + ")", v: A.E, s: c2 }); put(24, 2, { f: "SUM(" + rng("AP") + ")", v: Cc.E, s: c2 });
+  put(25, 0, { v: "Subtotal", s: sty({ b: 1, bd: 1 }) }); put(25, 1, { f: "SUM(B22:B24)", v: A.sub, s: c2b }); put(25, 2, { f: "SUM(C22:C24)", v: Cc.sub, s: c2b });
+  put(26, 0, { v: "Design margin", s: cT }); put(26, 1, { f: "B25*B16/100", v: A.sub * A.mg / 100, s: c2 }); put(26, 2, { f: "C25*B16/100", v: Cc.sub * A.mg / 100, s: c2 });
+  put(27, 0, { v: "Design total", s: sty({ b: 1, bd: 1 }) }); put(27, 1, { f: "B25+B26", v: A.tot, s: c2bf }); put(27, 2, { f: "C25+C26", v: Cc.tot, s: c2bf });
+  put(28, 0, { v: "Head of water, m", s: cT }); put(28, 1, { f: "B27*1000/(B13*9.80665)", v: A.head, s: c2 }); put(28, 2, { f: "C27*1000/(B13*9.80665)", v: Cc.head, s: c2 });
+  put(29, 0, { v: "Pipe length listed, m", s: cT }); put(29, 1, { f: "SUM(" + rng("H") + ")", v: A.L, s: c2 });
+  put(31, 0, { v: "Notes", s: T2 });
+  const notes = ["Method: Darcy–Weisbach with the Altshul–Tsal friction factor (f′ = 0.11(ε/D + 68/Re)^0.25, with f = 0.85f′ + 0.0028 where f′ is below 0.018). Fittings loss = ΣK × ½ρv².", "Pipe inside diameters are from the BS, AS, ASME and plastic pipe tables of the web sheet (sheet VI); each section carries the diameter the table gave.", "Fitting K values are on the Fittings K sheet. Equipment pressure drops are from the manufacturers’ data at the design flow.", "Static head, the pump, control valve authority and ageing of the pipe are not included.", "Water at " + sig(fl.T, 4) + " °C: density and viscosity interpolated from tables for water at atmospheric pressure."];
+  notes.forEach((t, k) => { put(32 + k, 0, { v: t, s: NOTE }); });
+  const sheets = [
+    { name: "Summary", rows: sm, cols: [32, 24, 24, 20, 12, 12], merges: notes.map((t, k) => "A" + (32 + k) + ":F" + (32 + k)), ht: (() => { const h = []; notes.forEach((t, k) => h[31 + k] = 30); return h; })(), first: true },
+    { name: nS, rows: rowsC, cols: [5, 28, 11, 34, 9, 10, 10, 9, 8].concat([9, 9, 11, 9, 11, 9, 9, 9, 10, 9, 10], [8, 9, 12, 14], [9, 11, 8, 8, 9, 9, 9, 10, 10, 11], [9, 11, 8, 8, 9, 9, 9, 10, 10, 11]), freeze: [2, 5], ht: { 4: 44 }, merges: [] },
+    { name: "Fittings K", rows: fk, cols: [8, 11, 11, 13, 10, 11, 11, 11, 11, 14, 11, 11], ht: { 3: 40 } }
+  ];
+  const wbx = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>').join("") + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+  const files = [
+    { name: "[Content_Types].xml", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((s, i) => '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("") + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: "_rels/.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", text: wbx },
+    { name: "xl/_rels/workbook.xml.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>').join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' }
+  ];
+  const sx = sheets.map(s => sheetXml(s));   /* styles are registered while the sheets are written */
+  files.push({ name: "xl/styles.xml", text: X.xml() });
+  sx.forEach((t, i) => files.push({ name: "xl/worksheets/sheet" + (i + 1) + ".xml", text: t }));
+  return zip(files);
+}
+function downloadXlsx() { if (!S.rows.length) { alert("Add at least one section first."); return; } download(buildXlsx(), fname("pressure_loss") + ".xlsx"); }
+
+/* ---- data tab ---- */
+function fillData() {
+  $("k3T").innerHTML = "<thead><tr><th>Fitting</th><th>Used for</th><th>K₁</th><th>K∞</th><th>K<sub>d</sub></th></tr></thead><tbody>" + FIT.map((x, i) => D3[i] ? "<tr><th>" + x + "</th><td>" + D3NOTE[i] + "</td><td>" + D3[i][0] + "</td><td>" + D3[i][1] + "</td><td>" + D3[i][2] + "</td></tr>" : "").join("") + "</tbody>";
+  $("kT").innerHTML = "<thead><tr><th>DN</th>" + FIT.map(x => "<th>" + x + "</th>").join("") + "</tr></thead><tbody>" + KDN.map((d, i) => "<tr><th>" + d + "</th>" + KT[i].map(k => "<td>" + k + "</td>").join("") + "</tr>").join("") + "</tbody>";
+}
+
+/* ---- start ---- */
+S = load() || example();
+bindTop(); fillData(); syncTop(); renderCards();
+window.__sys = { get S() { return S; }, evalAll, buildXlsx };
+})();
+</script>
+</body>
+</html>

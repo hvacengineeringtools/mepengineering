@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Pressure drop per metre in a round pipe by Darcy–Weisbach with the Altshul–Tsal friction factor: flow entered or worked out from load and temperature difference, optional safety factor, your own pressure limit, and every step in the side bar." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet VI — Pipe friction loss</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet VI</div>
+  <h1>Pipe friction loss</h1>
+  <div class="sub">Darcy–Weisbach with the Altshul–Tsal friction factor · flow from load and ΔT, or entered · your own pressure limit</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a class="on" href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Gives the velocity, Reynolds number, friction factor and pressure drop per metre for water (or any liquid you give the density and viscosity of) in a round pipe. The flow can be entered, or worked out from a load and a temperature difference with an optional safety factor. The pipe is chosen from the British or Australian tube tables (copper BS EN 1057 or AS 1432, steel BS EN 10255 or AS 1074, and BS EN 10216/10217 steel with a wall of your choice), or typed in. The pipework specification you supplied is in section 3, and the sheet can check your pipe against it. The pressure limit is yours: leave it blank and nothing is judged against a limit. The one notice that always shows is for a velocity outside what the friction formula covers. Every step of the working is in the side bar.</p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Calculator</a><a href="#s2">2 Pipe sizes at this flow</a><a href="#s3">3 Pipework specification</a></nav>
+
+<h2 id="s1">1. Calculator</h2>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+
+<h5 class="vh">Fluid</h5>
+<div class="fields two">
+  <div class="field wide"><label for="fl">Fluid</label><select id="fl"></select><div class="hint" id="flH"></div></div>
+  <div class="field ftw" hidden><label for="tw">Water temperature</label><div class="pair"><input id="tw" type="number" inputmode="decimal" step="any" min="0" max="200" value="10" /><span>°C</span></div></div>
+  <div class="field"><label for="rho">Density ρ</label><div class="pair"><input id="rho" type="number" inputmode="decimal" step="any" min="0" value="999.73" /><span>kg/m³</span></div></div>
+  <div class="field"><label for="nu">Kinematic viscosity ν</label><div class="pair"><input id="nu" type="number" inputmode="decimal" step="any" min="0" value="1.306" /><span>10⁻⁶ m²/s</span></div></div>
+</div>
+
+<h5 class="vh">Flow</h5>
+<div class="fields two">
+  <div class="field wide"><label for="fm">Flow is</label><select id="fm"><option value="q">Entered directly</option><option value="l">Worked out from a load and ΔT (ṁ c ΔT)</option></select></div>
+  <div class="field fq"><label for="fq">Water flow</label><div class="pair"><input id="fq" type="number" inputmode="decimal" step="any" min="0" value="1" /><select id="fqu" aria-label="Unit"><option value="L">L/s</option><option value="H">m³/h</option><option value="S">m³/s</option></select></div></div>
+  <div class="field fl"><label for="ld">Load</label><div class="pair"><input id="ld" type="number" inputmode="decimal" step="any" min="0" value="100" /><span>kW</span></div></div>
+  <div class="field fl"><label for="dt">Temperature difference ΔT</label><div class="pair"><input id="dt" type="number" inputmode="decimal" step="any" min="0" value="8" /><span>K</span></div></div>
+  <div class="field fl"><label for="cp">Specific heat c</label><div class="pair"><input id="cp" type="number" inputmode="decimal" step="any" min="0" value="4.2" /><span>kJ/kg·K</span></div></div>
+  <div class="field wide"><label class="chk"><input type="checkbox" id="sfOn" /> Add a flow safety factor</label></div>
+  <div class="field sf" hidden><label for="sf">Safety factor on the flow</label><div class="pair"><input id="sf" type="number" inputmode="decimal" step="any" min="0" value="15" /><span>%</span></div></div>
+</div>
+
+<h5 class="vh">Pipe</h5>
+<div class="fields two">
+  <div class="field wide"><label for="svc">Service (optional)</label><select id="svc"></select><label class="chk" id="svcF" hidden><input type="checkbox" id="svcFollow" /> Follow the specification: pick the tube for each size I choose</label><div class="hint" id="svcH"></div><button type="button" class="lbtn" id="svcApply" hidden>Use the specified tube</button></div>
+  <div class="field wide"><label for="pt">Pipe and standard</label><select id="pt"></select><div class="hint" id="ptH"></div></div>
+  <div class="field wide pps"><label for="pp">Size</label><select id="pp"></select></div>
+  <div class="field wide pss"><label for="ps">Wall series</label><select id="ps"></select><div class="hint" id="psH"></div></div>
+  <div class="field odw"><label for="od">Outside diameter</label><div class="pair"><input id="od" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
+  <div class="field odw"><label for="wt">Wall thickness</label><div class="pair"><input id="wt" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
+  <div class="field"><label for="dia">Inside diameter D</label><div class="pair"><input id="dia" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div></div>
+  <div class="field wide"><label for="rg">Roughness source</label><select id="rg"></select></div>
+  <div class="field"><label for="eps">Roughness ε</label><div class="pair"><input id="eps" type="number" inputmode="decimal" step="any" min="0" value="" /><span>mm</span></div><div class="hint" id="ppH"></div></div>
+  <div class="field"><label for="len">Pipe length (optional)</label><div class="pair"><input id="len" type="number" inputmode="decimal" step="any" min="0" value="" placeholder="blank" /><span>m</span></div></div>
+</div>
+
+<h5 class="vh">Pressure limit (optional)</h5>
+<div class="fields two">
+  <div class="field"><label for="lim">Limit on the pressure drop</label><div class="pair"><input id="lim" type="number" inputmode="decimal" step="any" min="0" value="" placeholder="blank" /><span>Pa/m</span></div><div class="hint">Your own figure, from the brief or the code. Left blank, no limit is applied.</div></div>
+</div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="perm" id="vNote" role="status"></div>
+<div class="warn" id="pWarn" role="status"></div>
+<div class="results" id="pRes"></div>
+</div></div>
+
+<h2 id="s2">2. Pipe sizes at this flow</h2>
+<p class="lead" style="margin-top:6px">The same flow and fluid in every size of the pipe table you chose above, at the wall series you chose. Click a row to use that size. Every row uses the roughness chosen under “Roughness source” above; if none is chosen, copper rows use 0.0015 mm and steel rows 0.046 mm. A row outside the range of the friction formula is marked and not judged.</p>
+<div class="table-scroll"><table class="cmp" id="szT"></table></div>
+<p class="si" id="szNote"></p>
+
+<h2 id="s3">3. Pipework specification</h2>
+<p class="lead" style="margin-top:6px">The tube and fittings the specification names for each service and nominal bore. Choose a service under “Pipe” above and the sheet selects the tube the specification names for the size you pick, switching between BS EN 10255 and BS EN 10216/10217 as the size changes. You can still change the pipe standard, the wall series or the size by hand; the sheet then stops following and checks your pipe against the specification instead.</p>
+<div class="table-scroll"><table class="cmp" id="spT"></table></div>
+<h3 style="margin-top:22px">Above ground sanitation and rainwater services (Table 13)</h3>
+<div class="table-scroll"><table class="cmp" id="spT2"></table></div>
+<h3 style="margin-top:22px">Specified tubes at each size, at this flow</h3>
+<div class="fields two"><div class="field"><label for="sw">Wall for the BS EN 10216/10217 rows</label><select id="sw"></select><div class="hint">These standards leave the wall to the buyer. The table uses the ASME wall you pick here.</div></div></div>
+<div class="table-scroll"><table class="cmp" id="spS"></table></div>
+<p class="si" id="spSN"></p>
+<p class="si">The condensate and pumped drainage copper rows, the pumped drainage polyethylene row and the rainwater and sanitary HDPE rows can be selected as a service above. The stainless steel, ductile iron and vitrified clay rows are copied here for reference: the sheet holds no friction data for them. The first table was copied from the table supplied with the brief. The natural gas rows at the foot of that table are not here, as the sheet is for liquid flow, and the asterisk on MTHW has no note in the picture. HTHW, MTHW and LTHW are high, medium and low temperature hot water. The two API 5L rows under HTHW have no bore in the table; they read as alternatives. “BS 1640 ASTMA A.106 Grade B” is as printed. “Over 150mm” is taken as DN200 and above, the sizes the sheet holds.</p>
+
+<footer>Preliminary checking only. The friction factor is an approximation to the Colebrook equation and holds for turbulent flow. Fittings, valves, elevation and the pump are not included. Formulae, the working and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Pipe and fluid data</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
+      <div id="workP"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>0. Inside diameter from a tube table</h3>
+      <div id="fxPI" role="math"></div>
+      <ul id="fxPDI"></ul>
+      <h3>1. Flow from a load (optional)</h3>
+      <div id="fxP1" role="math"></div>
+      <ul id="fxPD1"></ul>
+      <h3>2. Safety factor (optional)</h3>
+      <div id="fxP2" role="math"></div>
+      <h3>3. Velocity</h3>
+      <div id="fxP3" role="math"></div>
+      <ul id="fxPD3"></ul>
+      <h3>4. Reynolds number</h3>
+      <div id="fxP4" role="math"></div>
+      <ul id="fxPD4"></ul>
+      <h3>5. Friction factor (Altshul–Tsal)</h3>
+      <div id="fxP5" role="math"></div>
+      <ul id="fxPD5"></ul>
+      <h3>6. Pressure drop (Darcy–Weisbach)</h3>
+      <div id="fxP6" role="math"></div>
+      <ul id="fxPD6"></ul>
+      <h3>7. Range the friction formula covers</h3>
+      <div id="fxP7" role="math"></div>
+      <ul id="fxPD7"></ul>
+      <p class="tn">Conversions: 1 m³/s = 1000 L/s = 3600 m³/h. 1 Pa/m = 1 kPa per 1000 m, so 100 Pa/m is 10 kPa per 100 m.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <p>The tube tables, roughness values and fluid properties the sheet starts from. The tube dimensions are from the British and Australian standards named in the notes, read from supplier and reference tables, not from the standards themselves. Inside diameter = outside diameter − 2 × wall. Replace any figure with your own on the sheet.</p>
+      <h3>Copper tube, BS EN 1057</h3>
+      <div class="table-scroll"><table class="cmp" id="cuT"></table></div>
+      <h3>Polyethylene pressure pipe, BS EN 12201 (PE80, PE100)</h3>
+      <div class="table-scroll"><table class="cmp" id="peT"></table></div>
+      <h3>HDPE drainage pipe, BS EN 1519 (Geberit PE sizes)</h3>
+      <div class="table-scroll"><table class="cmp" id="hdT"></table></div>
+      <h3>UPVC pressure pipe, BS EN 1452 (reference)</h3>
+      <div class="table-scroll"><table class="cmp" id="pvcT"></table></div>
+      <h3>Steel tube, BS EN 10255 (replaced BS 1387)</h3>
+      <div class="table-scroll"><table class="cmp" id="stT"></table></div>
+      <h3>Copper tube, AS 1432 (Australia)</h3>
+      <div class="table-scroll"><table class="cmp" id="auT"></table></div>
+      <h3>Steel pipe, ASME B36.10M sizes (API 5L, BS 1600)</h3>
+      <div class="table-scroll"><table class="cmp" id="asmT"></table></div>
+      <h3>Steel tube, AS 1074 (Australia), against the sheet figures</h3>
+      <div class="table-scroll"><table class="cmp" id="asT"></table></div>
+      <p class="tn" id="asN"></p>
+      <h3>Steel tube to BS EN 10216 and 10217, outside diameters from BS EN 10220</h3>
+      <div class="table-scroll"><table class="cmp" id="slT"></table></div>
+      <h3>Roughness</h3>
+      <div class="table-scroll"><table class="cmp" id="rT"></table></div>
+      <h3>Water density by temperature</h3>
+      <div class="table-scroll"><table class="cmp" id="wdT"></table></div>
+      <h3>Water kinematic viscosity by temperature</h3>
+      <div class="table-scroll"><table class="cmp" id="wvT"></table></div>
+      <p class="tn">Water at 1 atm to 100 °C and at saturation pressure above. Between the rows the sheet interpolates: density linearly, viscosity as ln ν against 1/T (a held-out test against the rows gave 0.1 % at worst for density and under 1.6 % for viscosity, which moves a pressure drop by under 0.4 %).</p>
+      <h3>Fluid properties</h3>
+      <div class="table-scroll"><table class="cmp" id="fT"></table></div>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>What the sheet does</h3>
+      <p>It finds the pressure lost to friction in a straight length of round pipe running full of liquid. The loss is given per metre of pipe, and over a length if you enter one. The method is the Darcy–Weisbach equation, with the friction factor from the Altshul–Tsal formula. Flow is either entered or worked out from a load, a temperature difference and a specific heat.</p>
+      <h3>Choices left to you</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>The flow safety factor, the specific heat, the temperature difference and the pressure limit are all yours. None is fixed in the sheet. A blank limit means no limit; a blank safety factor box (unticked) means none is added.</li>
+        <li>No limit on velocity is applied. The only velocity notice is for a velocity where the friction formula itself does not hold, and it stays on the sheet whenever it applies.</li>
+        <li>The pipe is yours to pick: copper to BS EN 1057 or AS 1432, steel to BS EN 10255 or AS 1074, BS EN 10216/10217 steel with a wall you choose, or any outside diameter, wall or inside diameter you type. Roughness, density and viscosity can all be typed over too.</li>
+      </ul>
+      <h3>What the friction formula covers</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>The Altshul–Tsal formula is an explicit approximation to the Colebrook equation for <b>turbulent</b> flow. The sheet treats it as valid from Reynolds number 4000 up to 10⁸, and for relative roughness ε/D up to 0.05 (the range of the Moody chart). Below Reynolds number 2300 the flow is laminar and f = 64/Re applies instead; between 2300 and 4000 the flow is transitional and no friction factor is reliable.</li>
+        <li>These limits are the usual ones for this kind of formula. They are not taken from a particular clause, so use your own where a standard gives different ones.</li>
+        <li>I checked the formula against the full Colebrook equation for sizes DN25 to DN450 at 0.5, 1.5 and 3 m/s. The pressure drop agreed within about 3 %, and within 1 % for most of the steel sizes.</li>
+      </ul>
+      <h3>Source and standing</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Darcy–Weisbach is the standard friction-loss equation behind pipe sizing guidance generally.</li>
+        <li>The Altshul–Tsal friction factor is published in the ASHRAE Handbook, Fundamentals, duct design chapter (the 2001 edition, chapter 34, is the one cited by the sources I could read). It is written there for ducts. Applying it to water pipes is mathematically sound, but it is not the form a pipe chapter prints, which I understand to be Colebrook–White. I could not open the CIBSE Guide C or the ASHRAE pipe chapter to confirm.</li>
+        <li>Its fixed velocity limits and fixed pressure limits from the earlier project are not carried over.</li>
+      </ul>
+      <h3>What the British Standards cover</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Copper, BS EN 1057.</b> Round copper tube for water, gas and heating. The supplier tables I read run from 6 mm to 267 mm outside diameter, in half-hard (R250) and hard (R290) temper, with annealed coils (R220) in the small sizes. The standard’s own Table 3 is “Standardized dimensions”: the outside diameters (6 to 267 mm) against the walls (0.5 to 3.0 mm), with the combinations recommended for national codes marked R. In the text I could read, the marks had lost their column positions, so I could not list the recommended walls for each size from it. The sheet therefore offers the three wall series UK suppliers still list under the old BS 2871 names: Table X (standard), Table Y (thicker) and Table Z (thinnest). Table Y is not listed above 108 mm, and Table Z is not listed for 219 and 267 mm, in the tables I read. The number of R marks per size matches X, Y and Z at 15, 35 and 42 mm but not at every size (22 mm has five), so other walls exist; use “My own wall” for one the sheet does not list. The sheet lists 15 mm to 267 mm. Your specification’s condensate and pumped drainage rows name “BS EN 1057 R250, Table 3”.</li>
+        <li><b>Polyethylene pressure pipe, BS EN 12201</b> (it replaced the old MDPE and HDPE water pipe standards; ISO 4427 is the international equivalent). The pumped drainage row names MDPE (PE-80) and HPPE (PE-100) to it. The sheet lists 40 to 315 mm in SDR 41, 26, 17, 13.6 and 11, using the minimum walls of the ISO 161 series. The pressure class depends on the grade: SDR 17 is PN 10 and SDR 11 is PN 16 in PE100, and lower in PE80, so check the maker’s data. The row’s “80mm and above” is read as outside diameter 90 mm and above.</li>
+        <li><b>HDPE drainage pipe, BS EN 1519</b>. Polyethylene soil and waste pipe inside buildings. The rainwater and sanitary rows name Geberit HDPE; the sheet uses the outside diameters and walls of Geberit PE pipe from the maker’s data sheet (40 to 315 mm, walls 3.0 mm up to 75 mm, then 3.5, 4.3, 4.9, 6.2, 6.2, 7.8 and 9.8 mm). I could not read BS EN 1519 itself, so check the walls against it.</li>
+        <li><b>UPVC pressure pipe, BS EN 1452</b> (for reference; it is not in your specification). Plastics piping for water supply, sized by outside diameter and by SDR (outside diameter divided by minimum wall). The sheet lists 20 to 315 mm in SDR 41, 33, 26, 21, 17, 13.6 and 11. The pressure class (PN) depends on the design coefficient: the tables up to 90 mm use 2.5 (SDR 21 is PN 10) and those from 110 mm use 2.0 (SDR 26 is PN 10), so the sheet labels PN at 2.5 only. The wall in the tables is the minimum wall, so the real bore is slightly smaller than the sheet’s.</li>
+        <li><b>Steel, BS EN 10255</b> (it replaced BS 1387). Threaded or welded steel tube, outside diameter 10.2 mm to 165.1 mm, which is DN6 to DN150 (1/8 in to 6 in). Light, medium and heavy walls. Light stops at DN100. The sheet lists DN8 to DN150. For DN8 and DN10 the table I read gave only one outside diameter (the maximum), so those two inside diameters are slightly small, which errs on the high side for pressure drop.</li>
+        <li><b>Steel to BS EN 10216 and 10217.</b> BS EN 10255 stops at DN150. Above that, steel pipe for pressure services is made to BS EN 10216 (seamless) or BS EN 10217 (welded), with outside diameters from BS EN 10220. The pipework specification also names them for hot water from DN50. Those standards do not fix one wall for each size: the buyer chooses it. So for DN50 to DN450 the sheet gives the outside diameter and you pick the wall.</li>
+        <li>These are product standards. They fix the tube dimensions and quality. They do not set a velocity or pressure-drop limit; that comes from your brief or the design guide you use.</li>
+        <li>I could not open the standards, which are paid documents. The dimensions come from supplier and reference tables that agree with each other, and the sheet lets you type any outside diameter, wall or inside diameter to override them. Check them against the standard before you issue anything.</li>
+        <li>For BS EN 10255 the outside diameter used is the middle of the maximum and minimum in the table, so the inside diameter is nominal; the tolerance on the wall is not applied.</li>
+      </ul>
+      <h3>The Australian standards</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Copper, AS 1432</b>, <i>Copper tubes for plumbing, gasfitting and drainage applications</i>. Round seamless tube. Types A and B run from DN6 to DN200, Type C from DN10 to DN25 and Type D from DN32 to DN150, with Type A the heaviest wall and Type D the lightest. Nominal sizes follow the old inch outside diameters (DN15 is 12.70 mm, DN20 is 19.05 mm, DN25 is 25.40 mm). Editions of 1990, 1996 and 2004 are listed by the sellers, so check which one your project cites. The sheet lists DN15 to DN200.</li>
+        <li><b>Steel, AS 1074-1989 (R2018)</b>, <i>Steel tubes and tubulars for ordinary service</i>. Threaded tube, DN8 to DN150, in light, medium and heavy walls. In the ACADS-BSG table its inside diameters agree with the BS EN 10255 figures within about 0.1 mm, apart from DN80 heavy (79.1 mm in that table against 78.75 mm worked out here), so the sheet uses the same outside diameters and walls for both. The comparison is in the Pipe and fluid data tab. The sheet lists DN15 to DN150.</li>
+        <li><b>Larger steel water pipe, AS 1579-2001 (R2018)</b>, <i>Arc welded steel pipes and fittings for water and waste water</i>. It covers DN100 and larger, for water and waste water up to 6.8 MPa. I could not find its dimension tables, so the sheet does not list AS 1579 sizes: use the BS EN 10216/10217 choice, or type the outside diameter and wall from your supplier’s table.</li>
+        <li>I could not open AS 1432 or AS 1074, which are paid documents. The outside diameters and walls for AS 1432 are from Austral Wright Metals’ tube list, and the inside diameters from the ACADS-BSG help page. Both are secondary sources; check them against the standard before you issue anything.</li>
+        <li>Like the British tubes, these are product standards. They fix dimensions and quality, not a velocity or pressure-drop limit.</li>
+      </ul>
+      <h3>Data to check</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Roughness is chosen on the sheet: from the pipe type (0.0015 mm copper, 0.046 mm steel), commercial steel 0.046 mm, galvanised iron 0.15 mm, drawn tubing 0.0015 mm, or your own. The published values carry real uncertainty; the source suggests allowing 30 % to 50 % on typical figures. Ageing and scale are not included, and an old pipe can be much rougher.</li>
+        <li>The three listed fluids are water at about 10, 30 and 40 °C. The sheet can also take water at any temperature from 0 to 200 °C. It is for plain water: glycol or other mixtures need their own density and viscosity.</li>
+        <li>BS EN 1057 copper has thinner walls than AS 1432 Type B, so its inside diameters are larger. Choosing between them changes the result. Use the standard your project calls for.</li>
+      </ul>
+      <h3>Where the data came from</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Water density and kinematic viscosity by temperature: the Engineering ToolBox tables for water, which cover 0 to 360 °C along the saturation line. The sheet uses 0 to 200 °C.</li>
+        <li>Roughness: Engineers Edge’s table, which quotes the Hydraulic Institute and F. M. White (commercial steel 0.046 mm, new galvanised iron 0.15 mm, drawn tubing 0.0015 mm). I did not have CIBSE Guide C, which gives its own figures.</li>
+        <li>ASME B36.10M pipe: the Engineering ToolBox tables. The metric table gives DN15 to DN200 in standard weight, Schedule 40 and Schedule 80. For DN250 to DN450 the page gave inches only: standard weight from that table, and the Schedule 40 walls (10.31, 11.13, 12.70 and 14.27 mm for DN300 to DN450) are the ASME inch walls converted, cross-checked against a second table that rounds them to 0.41, 0.44, 0.50 and 0.56 in. Schedule 80 above DN200 is not in the sheet.</li>
+        <li>BS EN 10255 DN8 and DN10: the Engineering ToolBox BS 1387 table.</li>
+        <li>BS EN 10216/10217 outside diameters (60.3, 76.1, 88.9, 114.3, 139.7 and 168.3 mm for DN50 to DN150): the usual BS EN 10220 and ISO series, which I have not checked against a published table here. They match the ASME outside diameters for DN50, DN80, DN100 and DN150, and differ at DN65 (76.1 against 73.0 mm) and DN125 (139.7 against 141.3 mm).</li>
+        <li>BS EN 1057 sizes and Tables X, Y, Z: the Engineering ToolBox pages for EN 1057 and for BS 2871 (which EN 1057 replaced), and a Mueller Europe data sheet. The text of EN 1057 itself (a public copy) gave the layout of Table 3, the tempers by size and the temper limits: R220 to 54 mm, R250 and R290 to 159 mm (R290 to 267 mm). One supplier table gave R250 only to 66.7 mm, so check the range your supplier makes in R250 above that.</li>
+        <li>UPVC: the Engineering ToolBox EN 1452 tables. The page prints 45.3 mm for 400 mm at PN 10, which is plainly a typo, so the sheet stops at 315 mm. HDPE pipe above 315 mm and the PE pressure pipe SDR 33, 21 and 9 are not in the sheet. Solvent-weld UPVC waste pipe (BS EN 1329-1 and BS 5255, 32 to 315 mm outside diameter) is the pipe often used for condensate; I found its outside diameters but no wall table, so it is not in the sheet.</li>
+        <li>Polyethylene pipe walls: the Engineering ToolBox ISO 161 table of thermoplastic pipe walls by series (the series EN 12201 and ISO 4427 use), with 180 mm taken from the EN 1452 table, which uses the same series. They agree with the one PE100 catalogue I could read (SDR 17 from 40 to 315 mm). That catalogue gives 2.0 mm for 32 mm SDR 17, where the ISO table gives 1.9 mm, so the minimum wall of small PE pipe can differ from the series value; the sheet starts at 40 mm.</li>
+        <li>HDPE drainage pipe: the Geberit PE specification sheet from Reece (outside diameter, inside diameter and wall for DN 40 to DN 300, which is outside diameter 40 to 315 mm). It cites no standard. The walls match the usual BS EN 1519 values, but I have not checked them against the standard.</li>
+        <li>Plastic pipe roughness: the Neutrium table gives 0.0015 to 0.01 mm for drawn tubing, glass and plastic, and the sheet uses 0.0015 mm for UPVC.</li>
+        <li>All of these are secondary sources. The standards themselves are paid documents I could not open.</li>
+      </ul>
+      <h3>Not included</h3>
+      <p>Fittings, valves, strainers, coils and elevation changes, the pump head, ageing of the pipe, and a flow that changes along the pipe. The sheet gives straight pipe friction only. Fittings and valves can be added by equivalent length or loss coefficient if wanted.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const grp = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
+const sci = (x, n) => { if (!(x > 0)) return "—"; const e = Math.floor(Math.log10(x)); return sig(x / Math.pow(10, e), n) + " × 10^{" + e + "}"; };
+const dp = x => x < 10 ? fmt(x, 2) : x < 100 ? fmt(x, 1) : fmt(x, 0);
+
+const EPS = { c: 0.0015, s: 0.046, p: 0.0015 };
+/* name, density kg/m3, kinematic viscosity 1e-6 m2/s, water at about these temperatures */
+const FLUIDS = [["Chilled water, about 10 °C", 999.73, 1.306], ["Condenser water, about 30 °C", 995.6, 0.8005], ["Heating hot water, about 40 °C", 992.2, 0.6561]];
+
+/* ---- British Standard tube tables (from supplier and reference tables, not from the standards) ---- */
+/* BS EN 1057 copper: outside diameter mm, wall Table X, wall Table Y (null = not listed) */
+const CU = [[15, 0.7, 1.0, 0.5], [22, 0.9, 1.2, 0.6], [28, 0.9, 1.2, 0.6], [35, 1.2, 1.5, 0.7], [42, 1.2, 1.5, 0.8], [54, 1.2, 2.0, 0.9], [66.7, 1.2, 2.0, 1.0], [76.1, 1.5, 2.0, 1.2], [108, 1.5, 2.5, 1.2], [133, 1.5, null, 1.5], [159, 2.0, null, 1.5], [219, 3.0, null, null], [267, 3.0, null, null]];
+/* UPVC pressure pipe, BS EN 1452-2 (Engineering ToolBox tables): outside diameter, minimum wall for SDR 41, 33, 26, 21, 17, 13.6, 11 (null = not listed). Up to 90 mm the table is design coefficient 2.5, from 110 mm design coefficient 2.0 */
+const PSDR = ["41", "33", "26", "21", "17", "13.6", "11"];
+const PSDRN = { 41: "SDR 41", 33: "SDR 33 (PN 6)", 26: "SDR 26 (PN 8)", 21: "SDR 21 (PN 10)", 17: "SDR 17 (PN 12.5)", 13.6: "SDR 13.6 (PN 16)", 11: "SDR 11 (PN 20)" };
+/* polyethylene pressure pipe, BS EN 12201 / ISO 4427: outside diameter, minimum wall for SDR 41, 26, 17, 13.6, 11 (ISO 161 series 20, 12.5, 8, 6.3, 5; null = not listed). PN is for PE100; PE80 is lower. */
+const PESDR = ["41", "26", "17", "13.6", "11"];
+const PESDRN = { 41: "SDR 41", 26: "SDR 26", 17: "SDR 17 (PE100 PN 10)", 13.6: "SDR 13.6 (PE100 PN 12.5)", 11: "SDR 11 (PE100 PN 16)" };
+const PE = [[40, null, 1.6, 2.4, 3.0, 3.7], [50, 1.3, 2.0, 3.0, 3.7, 4.6], [63, 1.6, 2.5, 3.8, 4.7, 5.8], [75, 1.9, 2.9, 4.5, 5.6, 6.8], [90, 2.2, 3.5, 5.4, 6.7, 8.2], [110, 2.7, 4.2, 6.6, 8.1, 10.0], [125, 3.1, 4.8, 7.4, 9.2, 11.4], [140, 3.5, 5.4, 8.3, 10.3, 12.7], [160, 4.0, 6.2, 9.5, 11.8, 14.6], [180, 4.4, 6.9, 10.7, 13.3, 16.4], [200, 4.9, 7.7, 11.9, 14.7, 18.2],
+  [225, 5.5, 8.6, 13.4, 16.6, 20.5], [250, 6.2, 9.6, 14.8, 18.4, 22.7], [280, 6.9, 10.7, 16.6, 20.6, 25.4], [315, 7.7, 12.1, 18.7, 23.2, 28.6]];
+/* HDPE drainage pipe, Geberit PE (BS EN 1519): outside diameter, wall (manufacturer's data sheet) */
+const HD = [[40, 3.0], [50, 3.0], [56, 3.0], [63, 3.0], [75, 3.0], [90, 3.5], [110, 4.3], [125, 4.9], [160, 6.2], [200, 6.2], [250, 7.8], [315, 9.8]];
+const PVC = [[20, null, null, null, null, null, 1.5, 1.9], [25, null, null, null, null, 1.5, 1.9, 2.3], [32, null, null, 1.5, 1.6, 1.9, 2.4, 2.9], [40, null, 1.5, 1.6, 1.9, 2.4, 3.0, 3.7], [50, null, 1.6, 2.0, 2.4, 3.0, 3.7, 4.6], [63, null, 2.0, 2.5, 3.0, 3.8, 4.7, 5.8], [75, null, 2.3, 2.9, 3.6, 4.5, 5.6, 6.8], [90, null, 2.8, 3.5, 4.3, 5.4, 6.7, 8.2],
+  [110, 2.7, 3.4, 4.2, 5.3, 6.6, 8.1, 10.0], [125, 3.1, 3.9, 4.8, 6.0, 7.4, 9.2, 11.4], [140, 3.5, 4.3, 5.4, 6.7, 8.3, 10.3, 12.7], [160, 4.0, 4.9, 6.2, 7.7, 9.5, 11.8, 14.6], [180, 4.4, 5.5, 6.9, 8.6, 10.7, 13.3, 16.4], [200, 4.9, 6.2, 7.7, 9.6, 11.9, 14.7, 18.2],
+  [225, 5.5, 6.9, 8.6, 10.8, 13.4, 16.6, null], [250, 6.2, 7.7, 9.6, 11.9, 14.8, 18.4, null], [280, 6.9, 8.6, 10.7, 13.4, 16.6, 20.6, null], [315, 7.7, 9.7, 12.1, 15.0, 18.7, 23.2, null]];
+/* BS EN 10255 steel: DN, light OD max, min, medium/heavy OD max, min, wall light, medium, heavy (DN8 and DN10: only the maximum outside diameter was in the table I read, used for both) */
+const ST = [[8, 13.6, 13.6, 13.9, 13.9, 1.8, 2.3, 2.9], [10, 17.1, 17.1, 17.4, 17.4, 1.8, 2.3, 2.9], [15, 21.4, 21.0, 21.8, 21.0, 2.0, 2.6, 3.2], [20, 26.9, 26.4, 27.3, 26.5, 2.3, 2.6, 3.2], [25, 33.8, 33.2, 34.2, 33.3, 2.6, 3.2, 4.0], [32, 42.5, 41.9, 42.9, 42.0, 2.6, 3.2, 4.0],
+  [40, 48.4, 47.8, 48.8, 47.9, 2.9, 3.2, 4.0], [50, 60.2, 59.6, 60.8, 59.7, 2.9, 3.6, 4.5], [65, 76.0, 75.2, 76.6, 75.3, 3.2, 3.6, 4.5], [80, 88.7, 87.9, 89.5, 88.0, 3.2, 4.0, 5.0],
+  [100, 113.9, 113.0, 115.0, 113.1, 3.6, 4.5, 5.4], [125, null, null, 140.8, 138.5, null, 5.0, 5.4], [150, null, null, 166.5, 163.9, null, 5.0, 5.4]];
+/* BS EN 10216 / 10217 steel: DN, outside diameter from BS EN 10220; the wall is the buyer's choice */
+const SL = [[50, 60.3], [65, 76.1], [80, 88.9], [100, 114.3], [125, 139.7], [150, 168.3], [200, 219.1], [250, 273.0], [300, 323.9], [350, 355.6], [400, 406.4], [450, 457.0]];
+/* AS 1432 copper (Australia), outside diameters and walls as listed by Austral Wright Metals: nominal size, OD, wall Type A, B, C, D (null = not made) */
+const AUCU = [[15, 12.70, 1.02, 0.91, 0.71, null], [18, 15.88, 1.22, 1.02, 0.91, null], [20, 19.05, 1.42, 1.02, 0.91, null], [25, 25.40, 1.63, 1.22, 0.91, null], [32, 31.75, 1.63, 1.22, null, 0.91], [40, 38.10, 1.63, 1.22, null, 0.91],
+  [50, 50.80, 1.63, 1.22, null, 0.91], [65, 63.50, 1.63, 1.22, null, 0.91], [80, 76.20, 2.03, 1.63, null, 1.22], [90, 88.90, 2.03, 1.63, null, 1.22], [100, 101.60, 2.03, 1.63, null, 1.22], [125, 127.00, 2.03, 1.63, null, 1.42],
+  [150, 152.40, 2.64, 2.03, null, 1.63], [200, 203.20, 2.64, 2.03, null, null]];
+/* inside diameters in the ACADS-BSG table "internal pipe diameters" , mm, by nominal size */
+const ACADS = {
+  B: { 15: 10.84, 18: null, 20: 16.97, 25: 22.91, 32: 29.26, 40: 35.61, 50: 48.30, 65: 60.99, 80: 72.85, 90: 85.54, 100: 98.22, 125: 123.62, 150: 148.19, 200: 198.9 },
+  A: { 15: 10.62, 20: 16.17, 25: 22.09, 32: 28.44, 40: 34.79, 50: 47.48, 65: 60.17, 80: 72.05, 90: 84.74, 100: 97.42, 125: 122.82, 150: 148.97, 200: 197.7 },
+  D: { 32: 29.98, 40: 36.23, 50: 48.92, 65: 61.61, 80: 73.76, 90: 86.36, 100: 99.04, 125: 124.04, 150: 148.99 },
+  C: { 15: 11.24, 20: 17.19, 25: 23.52 },
+  SL: { 15: 17.2, 20: 22.0, 25: 28.3, 32: 37.0, 40: 42.3, 50: 54.1, 65: 69.2, 80: 81.9, 100: 106.2 },
+  SM: { 15: 16.2, 20: 21.7, 25: 27.4, 32: 36.1, 40: 42.0, 50: 53.1, 65: 68.8, 80: 80.8, 100: 105.1, 125: 129.7, 150: 155.1 },
+  SH: { 15: 15.0, 20: 20.5, 25: 25.8, 32: 34.5, 40: 40.4, 50: 51.3, 65: 67.0, 80: 79.1, 100: 103.3, 125: 128.9 }
+};
+/* ASME B36.10M steel pipe (API 5L, BS 1600 sizes): DN, OD mm, wall Sch 40, Sch 80, standard weight (null = not in the tables I read) */
+const ASME = [[15, 21.336, 2.769, 3.734, 2.769], [20, 26.670, 2.870, 3.912, 2.870], [25, 33.401, 3.378, 4.547, 3.378], [32, 42.164, 3.556, 4.851, 3.556], [40, 48.260, 3.683, 5.080, 3.683], [50, 60.325, 3.912, 5.537, 3.912],
+  [65, 73.025, 5.156, 7.010, 5.156], [80, 88.900, 5.486, 7.620, 5.486], [90, 101.600, 5.740, 8.077, 5.740], [100, 114.300, 6.020, 8.560, 6.020], [125, 141.300, 6.553, 9.525, 6.553], [150, 168.275, 7.112, 10.973, 7.112],
+  [200, 219.075, 8.179, 12.700, 8.179], [250, 273.050, 9.271, null, 9.271], [300, 323.850, 10.312, null, 9.525], [350, 355.600, 11.138, null, 9.525], [400, 406.400, 12.700, null, 9.525], [450, 457.200, 14.275, null, 9.525]];
+/* water at saturation pressure (1 atm to 100 °C): temperature °C, density kg/m3 */
+const WRHO = [[0.1, 999.85], [1, 999.90], [4, 999.97], [10, 999.70], [15, 999.10], [20, 998.21], [25, 997.05], [30, 995.65], [35, 994.03], [40, 992.22], [45, 990.21], [50, 988.04], [55, 985.69], [60, 983.20], [65, 980.55], [70, 977.76], [75, 974.84], [80, 971.79], [85, 968.61], [90, 965.31], [95, 961.89], [100, 958.35], [110, 950.95], [120, 943.11], [140, 926.13], [160, 907.45], [180, 887.00], [200, 864.66]];
+/* kinematic viscosity, 1e-6 m2/s */
+const WNU = [[0.01, 1.7918], [10, 1.3065], [20, 1.0035], [25, 0.8927], [30, 0.8007], [40, 0.6579], [50, 0.5531], [60, 0.4740], [70, 0.4127], [80, 0.3643], [90, 0.3255], [100, 0.2938], [110, 0.2677], [120, 0.2460], [140, 0.2123], [160, 0.1878], [180, 0.1695], [200, 0.1556]];
+function wInterp(tab, T, lg) {
+  if (!(T >= 0 && T <= 200)) return NaN;
+  for (let i = 0; i < tab.length - 1; i++) {
+    const a = tab[i], b = tab[i + 1];
+    if (T >= a[0] && T <= b[0]) {
+      if (!lg) return a[1] + (b[1] - a[1]) * (T - a[0]) / (b[0] - a[0]);
+      const x0 = 1 / (a[0] + 273.15), x1 = 1 / (b[0] + 273.15), x = 1 / (T + 273.15);
+      return Math.exp(Math.log(a[1]) + (Math.log(b[1]) - Math.log(a[1])) * (x - x0) / (x1 - x0));
+    }
+  }
+  return T < tab[0][0] ? tab[0][1] : tab[tab.length - 1][1];
+}
+const rhoAt = T => wInterp(WRHO, T, false), nuAt = T => wInterp(WNU, T, true);
+/* roughness choices, mm (Hydraulic Institute and F. M. White values, as listed by Engineers Edge) */
+const RG = [["", "From the pipe type"], ["0.046", "Commercial steel, new, 0.046 mm"], ["0.15", "Galvanised iron, new, 0.15 mm"], ["0.0015", "Drawn tubing (copper), 0.0015 mm"], ["own", "My own value"]];
+const SLW = [2.9, 3.2, 3.6, 4.0, 4.5, 5.0, 5.6, 6.3, 7.1, 8.0, 8.8, 10.0, 11.0, 12.5];
+const TYPES = [["cu", "Copper tube, BS EN 1057, UK (15 to 267 mm)"], ["st", "Steel tube, BS EN 10255, UK (DN8 to DN150)"], ["sl", "Steel tube, BS EN 10216/10217 (DN50 to DN450, wall of your choice)"], ["aucu", "Copper tube, AS 1432, Australia (DN15 to DN200)"], ["aust", "Steel tube, AS 1074, Australia (DN8 to DN150)"], ["asme", "Steel pipe, ASME B36.10M: Sch 40, Sch 80, standard weight (API 5L, BS 1600) DN15 to DN450"], ["pe", "Polyethylene pressure pipe, BS EN 12201: PE80, PE100 (OD 40 to 315 mm)"], ["hd", "HDPE drainage pipe, BS EN 1519, Geberit PE sizes (OD 40 to 315 mm)"], ["pvc", "UPVC pressure pipe, BS EN 1452, for reference (OD 20 to 315 mm)"], ["own", "My own pipe"]];
+const optText = id => { const e = $(id), o = e.options[e.selectedIndex]; return o ? o.text : ""; };
+const r3 = x => Math.round(x * 1000) / 1000;
+const mid = (a, b) => (a + b) / 2;
+
+/* the geometry of one tube: type, size key, series, wall typed by the user */
+function geomFor(pt, k, sv, wOwn) {
+  let od = NaN, wt = NaN, eps = NaN, lab = "", miss = "", id = NaN;
+  if (pt === "cu") {
+    const r = CU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.c; lab = "Cu " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = sv === "Y" ? r[2] : sv === "Z" ? r[3] : r[1]; if (w == null) miss = "Table " + sv + " has no tube of this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "pe") {
+    const r = PE.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.p; lab = "PE " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = r[1 + PESDR.indexOf(sv)]; if (w == null) miss = "SDR " + sv + " is not listed for this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "hd") {
+    const r = HD.find(x => String(x[0]) === k);
+    if (r) { od = r[0]; eps = EPS.p; lab = "HDPE " + r[0] + " mm"; wt = sv === "own" ? wOwn : r[1]; }
+  } else if (pt === "pvc") {
+    const r = PVC.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[0]; eps = EPS.p; lab = "UPVC " + r[0] + " mm";
+      if (sv === "own") wt = wOwn; else { const w = r[1 + PSDR.indexOf(sv)]; if (w == null) miss = "SDR " + sv + " is not listed for this size in the tables I read."; else wt = w; }
+    }
+  } else if (pt === "aucu") {
+    const r = AUCU.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.c; lab = "Cu DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = r[2 + "ABCD".indexOf(sv)]; if (w == null) miss = sv === "C" ? "Type C is made only from DN10 to DN25." : sv === "D" ? "Type D is made only from DN32 to DN150." : "Not listed in this size."; else wt = w; }
+    }
+  } else if (pt === "st" || pt === "aust") {
+    const r = ST.find(x => String(x[0]) === k);
+    if (r) {
+      eps = EPS.s; lab = "St DN" + r[0];
+      const L = sv === "L", noL = L && r[1] == null;
+      od = L && !noL ? mid(r[1], r[2]) : mid(r[3], r[4]);
+      if (noL) miss = "The light series is not made above DN100."; else wt = sv === "own" ? wOwn : sv === "L" ? r[5] : sv === "M" ? r[6] : r[7];
+    }
+  } else if (pt === "sl") {
+    const r = SL.find(x => String(x[0]) === k);
+    if (r) { od = r[1]; eps = EPS.s; lab = "St DN" + r[0]; wt = sv === "own" ? wOwn : parseFloat(sv); }
+  } else if (pt === "asme") {
+    const r = ASME.find(x => String(x[0]) === k);
+    if (r) {
+      od = r[1]; eps = EPS.s; lab = "St DN" + r[0];
+      if (sv === "own") wt = wOwn; else { const w = sv === "S" ? r[4] : sv === "40" ? r[2] : r[3]; if (w == null) miss = "Schedule 80 above DN200 is not in the tables I read."; else wt = w; }
+    }
+  }
+  if (od > 0 && wt > 0 && od > 2 * wt) id = r3(od - 2 * wt);
+  return { od, wt, id, eps, lab, miss };
+}
+function sizeOpts(pt) {
+  if (pt === "cu") return CU.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "pe") return PE.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "hd") return HD.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "pvc") return PVC.map(r => [String(r[0]), r[0] + " mm outside diameter"]);
+  if (pt === "st" || pt === "aust") return ST.map(r => [String(r[0]), "DN" + r[0]]);
+  if (pt === "asme") return ASME.map(r => [String(r[0]), "DN" + r[0] + " — outside " + sig(r[1], 5) + " mm"]);
+  if (pt === "aucu") return AUCU.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  if (pt === "sl") return SL.map(r => [String(r[0]), "DN" + r[0] + " — outside " + r[1] + " mm"]);
+  return [];
+}
+function serOpts(pt) {
+  if (pt === "cu") return [["X", "Table X"], ["Y", "Table Y (thicker wall)"], ["Z", "Table Z (thinnest wall)"], ["own", "My own wall"]];
+  if (pt === "pe") return PESDR.map(s => [s, PESDRN[s]]).concat([["own", "My own wall"]]);
+  if (pt === "hd") return [["S", "Standard wall (BS EN 1519, Geberit)"], ["own", "My own wall"]];
+  if (pt === "pvc") return PSDR.map(s => [s, PSDRN[s]]).concat([["own", "My own wall"]]);
+  if (pt === "asme") return [["S", "Standard weight (STD)"], ["40", "Schedule 40"], ["80", "Schedule 80 (to DN200)"], ["own", "My own wall"]];
+  if (pt === "aucu") return [["A", "Type A (heaviest wall)"], ["B", "Type B"], ["C", "Type C (DN10 to DN25 only)"], ["D", "Type D (DN32 to DN150 only)"], ["own", "My own wall"]];
+  if (pt === "st" || pt === "aust") return [["L", "Light"], ["M", "Medium"], ["H", "Heavy"], ["own", "My own wall"]];
+  if (pt === "sl") return SLW.map(w => [w.toFixed(1), w.toFixed(1) + " mm wall"]).concat([["own", "My own wall"]]);
+  return [];
+}
+const optHtml = a => a.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+$("fl").innerHTML = FLUIDS.map((f, i) => '<option value="' + i + '">' + f[0] + "</option>").join("") + '<option value="T">Water temperature (maker input)</option><option value="own">Enter my own density and viscosity</option>';
+$("rg").innerHTML = RG.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+$("pt").innerHTML = optHtml(TYPES);
+
+/* the pipework specification table supplied with the brief: service, bore from, bore to (null = open or not stated), bore as printed, tube, fittings, structured form for the check */
+const SVC = ["Chilled water", "Condenser water (Open circuit GALV)", "HTHW", "LTHW", "MTHW*", "Condensate", "Internal drainage (pumped)", "Internal drainage (rainwater)", "Internal drainage (sanitary plumbing)", "External drainage – gravity"];
+const SVC_CALC = [0, 1, 2, 3, 4, 5, 6, 7, 8];   /* services the sheet can calculate; the others are in the table for reference */
+const API = ["API Std 5L Grade B Sched 40 BS1600", "BS 1640 ASTMA A.106 Grade B"];
+const SPEC = [
+  [0, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [0, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [0, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [1, 15, 50, "15mm to 50mm", "BS EN 10255 GALV", "BS 143 &amp; 1256", { pt: "st", galv: 1 }],
+  [1, 65, 150, "65mm to 150mm", "BS EN 10255 GALV", "BS EN 10253 GALV", { pt: "st", galv: 1 }],
+  [1, 151, null, "Over 150mm", "BS EN 10216 or 10217 Grade ERW430", "BS EN 10253 Heavy", { pt: "sl" }],
+  [2, 15, 40, "15mm to 40mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy Grade S410", { pt: "st", ser: "H" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [2, 50, 300, "50mm to 300mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }],
+  [2, null, null, "(not stated)", API[0], API[1], null],
+  [3, 15, 50, "15mm to 50mm", "BS EN 10255 Medium", "BS 143 &amp; 1256", { pt: "st", ser: "M" }],
+  [3, 65, 150, "65mm to 150mm", "BS EN 10255 Medium", "BS EN 10253 Medium", { pt: "st", ser: "M" }],
+  [3, 151, null, "Over 150mm", "BS EN 10216-1:2002, BS EN 10217-1:2002", "BS EN 10253 Heavy", { pt: "sl" }],
+  [4, 15, 150, "15mm to 150mm", "BS EN 10255 Heavy", "BS EN 10253 Heavy", { pt: "st", ser: "H" }],
+  [4, 151, null, "Above 150mm", "BS EN 10216 or 10217 Grade HFS430", "BS EN 10253 Heavy Grade S410", { pt: "sl" }],
+  /* Table 13, above ground sanitation and rainwater services. Copper is sized by outside diameter, so the bore limits are in mm of outside diameter; 66 lets the 66.7 mm tube count as “67” */
+  [5, 15, 54, "15 to 54mm", "BS EN 1057 R250, table 3", "BS EN 1254-1 (capillary)", { pt: "cu" }],
+  [6, 66, 159, "67 to 159mm", "Copper Pipes to BS EN 1057 R250, Table 3", "BS EN 1254-1 (capillary)<br>Brazed with silver alloy", { pt: "cu" }],
+  [6, 50, null, "50mm and above", "Stainless steel complete with dimples and clamps", "Max. 3 bar<br>2.5 bar for 250Ø", { ref: 1 }],
+  [6, 80, null, "80mm and above", "Ductile iron to BS EN 598 (red)", "Flanged (PN16)", { ref: 1 }],
+  [6, 80, null, "80mm and above", "MDPE (PE-80) and HPPE (PE-100) to BS EN 12201 (black)<br>GPS PE80 black and Excel (PE100) black", "Electrofusion couplers<br>Butt welding is prohibited", { pt: "pe" }],
+  [7, 110, null, "110mm and above", "HDPE to BS EN 1519<br>Products include Geberit HDPE – Fusion Coupled Welding (acoustically dampened if required)", "Electrofusion fittings<br>Butt welding is prohibited", { pt: "hd" }],
+  [7, 110, null, "110mm and above", "Stainless steel to BS EN 1124-1 and BS EN 1124-2<br>Products include Blucher Europipe", "Spigot and socket c/w Blucher anchor clip on all joints", { ref: 1 }],
+  [8, 40, null, "40mm and above", "High density Polyethylene (HDPE) to BS EN 1519<br>Products include Geberit HDPE – Fusion Coupled Welding (acoustically dampened if required)", "Electrofusion fittings<br>Butt welding is prohibited", { pt: "hd" }],
+  [9, 100, null, "100mm and above", "Ductile iron to BS EN 598<br>Products include PAM St Gobain Timesaver Drain and Ensign Drain", "Mechanical coupler<br>PN16 flanged joint", { ref: 1 }],
+  [9, 100, null, "100mm and above", "Vitrified clay to BS EN 295 (external only)<br>Products include Hepworth SuperSleve up to 300mm", "Polypropylene couplers (100mm)<br>Factory fitted couplings (150mm to 300mm)", { ref: 1 }]
+];
+(function () {
+  const build = (id, idx) => {
+    let h = "<thead><tr><th>Service</th><th>Nominal bore</th><th>Tube / pipe</th><th>Fittings</th></tr></thead><tbody>";
+    idx.forEach(i => { const rs = SPEC.filter(r => r[0] === i); rs.forEach((r, j) => { h += "<tr>" + (j === 0 ? '<th rowspan="' + rs.length + '">' + SVC[i] + "</th>" : "") + "<td>" + r[3] + "</td><td>" + r[4] + "</td><td>" + r[5] + "</td></tr>"; }); });
+    $(id).innerHTML = h + "</tbody>";
+  };
+  build("spT", [0, 1, 2, 3, 4]); build("spT2", [5, 6, 7, 8, 9]);
+  $("svc").innerHTML = '<option value="">No service chosen</option>' + SVC_CALC.map(i => '<option value="' + i + '">' + SVC[i] + "</option>").join("");
+})();
+const SERN = { L: "light", M: "medium", H: "heavy" };
+const nomDN = (pt, k) => { if (pt === "cu" || pt === "pe" || pt === "hd") return parseFloat(k); if (pt === "st" || pt === "aust" || pt === "sl" || pt === "asme") return parseInt(k); return null; };
+let specHit = null;
+const FAM = pt => pt === "cu" || pt === "aucu" ? "cu" : pt === "pe" ? "pe" : pt === "hd" ? "hd" : (pt === "st" || pt === "aust") ? "st" : (pt === "sl" || pt === "asme") ? "sl" : null;
+function specCheck(pt, k, sv) {
+  const H = $("svcH"), B = $("svcApply"), si = $("svc").value; specHit = null; B.hidden = true; $("svcF").hidden = si === "";
+  if (si === "") { H.textContent = "Pick a service to check this pipe against the pipework specification table in section 3."; return; }
+  const i = parseInt(si), calcRows = SPEC.filter(r => r[0] === i && r[6] && r[6].pt), fam = FAM(pt), flat = t => t.replace(/<br>/g, "; ");
+  if (pt === "pvc") { H.textContent = "UPVC is not in the specification table. It is here for reference only."; return; }
+  if (fam && !calcRows.some(r => FAM(r[6].pt) === fam)) {
+    H.textContent = "The specification does not list this pipe for this service. It names " + Array.from(new Set(calcRows.map(r => flat(r[4].split("<br>")[0])))).join("; ") + ".";
+    return;
+  }
+  if (pt === "aucu") { H.innerHTML = '<b style="color:#9b1c1c">You have chosen AS 1432 copper; the specification calls for copper to BS EN 1057 R250, Table 3.</b>'; specHit = {}; B.hidden = false; return; }
+  const dn = nomDN(pt, k);
+  if (dn == null) { H.textContent = "Choose a tube above to check it against the specification."; return; }
+  const inRange = calcRows.filter(r => dn >= r[1] && (r[2] == null || dn <= r[2])), mm = ["cu", "pe", "hd"].indexOf(fam) >= 0;
+  if (!inRange.length) {
+    const rf = SPEC.filter(r => r[0] === i && r[6] && r[6].ref && dn >= r[1] && (r[2] == null || dn <= r[2]));
+    H.textContent = rf.length ? "For " + (mm ? dn + " mm" : "DN" + dn) + " in " + SVC[i] + " the specification names " + rf.map(r => r[4].replace(/<br>/g, " ")).join("; or ") + ". This sheet has no friction data for that pipe." : "The specification table has no row for " + (mm ? dn + " mm" : "DN" + dn) + " in " + SVC[i] + ".";
+    return;
+  }
+  const r = inRange.find(x => FAM(x[6].pt) === fam) || inRange[0], st = r[6], f = FAM(st.pt), alt = SPEC.filter(x => x[0] === i && x[1] == null);
+  const unit = ["cu", "pe", "hd"].indexOf(f) >= 0 ? dn + " mm" : "DN" + dn;
+  let m = "<b>Specification, " + unit + ", " + SVC[i] + ":</b> tube " + flat(r[4]) + "; fittings " + flat(r[5]) + ".";
+  if (alt.length) m += " The table also gives, with no bore stated: tube " + alt[0][4] + "; fittings " + alt[0][5] + ".";
+  const bad = [];
+  if (f === "cu" || f === "pe" || f === "hd") {
+    if (fam !== f) bad.push("You have chosen " + optText("pt") + "; the specification calls for " + flat(r[4].split("<br>")[0]) + ".");
+    else if (f === "cu") m += " BS EN 1057 Table 3 lists the standard walls for each size; the sheet offers the usual ones as Tables X, Y and Z, or you can type a wall.";
+    else if (f === "pe") m += " BS EN 12201 leaves the wall to the pressure class: choose the SDR your design needs. The bore limit “80mm and above” is read as outside diameter 90 mm and above.";
+    else m += " The sheet uses the wall of the Geberit PE pipe for each size.";
+  } else if (st.pt === "st") {
+    if (pt === "sl") bad.push("You have chosen BS EN 10216/10217 tube; the specification calls for BS EN 10255.");
+    else if (pt === "asme") bad.push("You have chosen ASME-size pipe; the specification calls for BS EN 10255.");
+    else {
+      if (pt === "aust") m += " You have chosen AS 1074, which has the same dimensions as BS EN 10255 within about 0.1 mm in the table I checked.";
+      if (st.ser && sv !== st.ser) bad.push(sv === "own" ? "The wall is typed by you; the specification says " + SERN[st.ser] + "." : "You have chosen " + SERN[sv] + "; the specification says " + SERN[st.ser] + ".");
+    }
+  } else if (st.pt === "sl") {
+    if (pt === "st" || pt === "aust") bad.push("You have chosen " + (pt === "st" ? "BS EN 10255" : "AS 1074") + " tube; the specification calls for BS EN 10216/10217, with the wall set by the buyer.");
+    else if (pt === "asme" && i === 2) m += " ASME pipe in Schedule 40 is the API 5L Grade B Sched 40 alternative the table gives for HTHW.";
+  }
+  if (st.galv) m += " Galvanised: the sheet uses the plain tube’s inside diameter, and galvanised steel is rougher than plain steel (commonly taken as about 0.15 mm), so type the roughness you want.";
+  if (bad.length) { m += ' <b style="color:#9b1c1c">' + bad.join(" ") + "</b>"; specHit = {}; B.hidden = false; }
+  else m += " <b>This pipe agrees with it.</b>";
+  if (follow) m += " The sheet is following the specification: change the size and the tube changes with it. Change the standard or the wall yourself and it stops.";
+  H.innerHTML = m;
+}
+$("sw").innerHTML = '<option value="40">Schedule 40</option><option value="S">Standard weight</option><option value="80">Schedule 80 (to DN200)</option>';
+/* following the specification: a service chosen, the tube switches with the size; the maker can leave it at any time */
+let follow = false, wallPick = false;   /* wallPick: the maker chose a BS EN 10216/10217 wall, keep it across sizes */
+const SIZES = { st: ST.map(x => x[0]), sl: SL.map(x => x[0]), cu: CU.map(x => x[0]), pe: PE.map(x => x[0]), hd: HD.map(x => x[0]) };
+/* the sizes a service allows, each with its row of the specification: [key, label, pipe type, row] */
+function specEnts(i) {
+  const out = [], seen = {};
+  SPEC.filter(r => r[0] === i && r[1] != null && r[6] && r[6].pt).forEach(r => (SIZES[r[6].pt] || []).forEach(d => {
+    if (d >= r[1] && (r[2] == null || d <= r[2]) && !seen[d]) { seen[d] = 1; out.push([String(d), r[6].pt, r]); }
+  }));
+  return out.sort((a, b) => a[0] - b[0]).map(o => {
+    const pt = o[1], r = o[2], t = r[4].split("<br>")[0];
+    const lab = pt === "cu" ? o[0] + " mm — copper, " + t.replace(/^Copper Pipes to /, "") : pt === "pe" ? o[0] + " mm — PE pipe, BS EN 12201" : pt === "hd" ? o[0] + " mm — HDPE, BS EN 1519" : "DN" + o[0] + " — " + t.replace(/ GALV$/, " galvanised");
+    return [o[0], lab, pt, r];
+  });
+}
+const specList = i => specEnts(i);
+const specEnt = (i, d) => specEnts(i).find(o => o[0] === String(d));
+const ppOpts = pt => follow && $("svc").value !== "" ? specList(parseInt($("svc").value)) : sizeOpts(pt);
+function setFollow(on) { if (!on) wallPick = false; follow = on; $("svcFollow").checked = on; }
+function unfollow() {   /* the size list goes back to the chosen pipe's own sizes, the pipe stays as it is */
+  if (!follow) return; setFollow(false);
+  const pt = $("pt").value, prev = $("pp").value; if (pt === "own") return;
+  $("pp").innerHTML = optHtml(sizeOpts(pt)); if (sizeOpts(pt).some(o => o[0] === prev)) $("pp").value = prev;
+}
+function useSpec(dn) {
+  const i = parseInt($("svc").value); if (isNaN(i)) return;
+  const ent = specEnt(i, dn); if (!ent) return; const r = ent[3];
+  const st = r[6], pt = st.pt, prevPt = $("pt").value, prevS = $("ps").value;
+  setFollow(true);
+  $("pt").value = pt;
+  $("pp").innerHTML = optHtml(ppOpts(pt)); $("pp").value = String(dn);
+  $("ps").innerHTML = optHtml(serOpts(pt));
+  const a = pt === "sl" ? ASME.find(q => q[0] === parseInt(dn)) : null, near = a ? SLW.reduce((m, w) => Math.abs(w - a[2]) < Math.abs(m - a[2]) ? w : m, SLW[0]).toFixed(1) : null;
+  let want = st.ser || null;
+  if (!want) { if (pt === "st") want = "M"; else if (pt === "sl") want = prevPt === "sl" && wallPick ? prevS : near; else if (pt === prevPt && serOpts(pt).some(o => o[0] === prevS)) want = prevS; }
+  $("ps").value = want && serOpts(pt).some(o => o[0] === want) ? want : defSer(pt);
+  const rg = $("rg").value; if (st.galv) { if (rg === "") $("rg").value = "0.15"; } else if (rg === "0.15") $("rg").value = "";
+  showPipeFields(); setPipe();
+}
+function startFollow() {
+  const i = parseInt($("svc").value), L = specList(i); if (!L.length) return;
+  const dn = nomDN($("pt").value, $("pp").value);
+  useSpec(dn == null ? (L.some(o => o[0] === "50") ? "50" : L[0][0]) : L.reduce((m, o) => Math.abs(parseFloat(o[0]) - dn) < Math.abs(parseFloat(m[0]) - dn) ? o : m, L[0])[0]);
+}
+$("svc").addEventListener("change", () => { if ($("svc").value === "") unfollow(); else startFollow(); calc(); });
+$("svcFollow").addEventListener("change", () => { if (!$("svcFollow").checked) unfollow(); else if ($("svc").value !== "") startFollow(); calc(); });
+$("svcApply").addEventListener("click", () => { if (!specHit) return; startFollow(); calc(); });
+
+/* the friction calculation, one pipe */
+function fric(Vd, Dmm, eps, rho, nu) {
+  const D = Dmm / 1000, A = Math.PI * D * D / 4, v = Vd / A, Re = v * D / nu, rr = eps / Dmm;
+  const f1 = 0.11 * Math.pow(rr + 68 / Re, 0.25), tsal = f1 < 0.018, f = tsal ? 0.85 * f1 + 0.0028 : f1;
+  const dyn = 0.5 * rho * v * v, dpm = f / D * dyn;
+  const zone = !(Re > 0) ? "none" : Re < 2300 ? "lam" : Re < 4000 ? "trans" : Re > 1e8 ? "hi" : rr > 0.05 ? "rough" : "ok";
+  return { D, A, v, Re, rr, f1, tsal, f, dyn, dpm, zone, vmin: 4000 * nu / D, vlam: 2300 * nu / D, vmax: 1e8 * nu / D };
+}
+
+let W = null;           /* working for the side bar */
+function calc() {
+  const w = [], rho = num("rho"), nu = num("nu") * 1e-6;
+  const mode = $("fm").value;
+  document.querySelectorAll(".fq").forEach(e => e.hidden = mode !== "q");
+  document.querySelectorAll(".fl").forEach(e => e.hidden = mode !== "l");
+  document.querySelector(".sf").hidden = !$("sfOn").checked;
+  const sfp = $("sfOn").checked ? num("sf") : 0;
+  const pt = $("pt").value, sv = $("ps").value;
+  const pg = geomFor(pt, $("pp").value, sv, num("wt"));
+  specCheck(pt, $("pp").value, sv);
+  $("ppH").textContent = $("rg").value === "own" ? "Roughness typed by you." : $("rg").value !== "" ? "Roughness chosen above." : pt === "own" || sv === "own" ? "Roughness is yours to type." : "From the pipe type: " + pg.eps + " mm, " + (pt === "cu" || pt === "aucu" ? "copper" : pt === "pvc" ? "UPVC" : pt === "pe" || pt === "hd" ? "polyethylene" : "steel") + ".";
+  const fl = FLUIDS[parseInt($("fl").value)], isT = $("fl").value === "T";
+  document.querySelectorAll(".ftw").forEach(e => e.hidden = !isT);
+  $("flH").textContent = isT ? (isFinite(rhoAt(num("tw"))) ? "Water at " + sig(num("tw"), 4) + " °C from the tables in the side bar: density " + sig(rhoAt(num("tw")), 6) + " kg/m³, kinematic viscosity " + sig(nuAt(num("tw")), 5) + " × 10⁻⁶ m²/s. Above 100 °C the system must be pressurised. Typing a density or viscosity switches to your own." : "Enter a temperature from 0 to 200 °C.") : fl ? "Water at about this temperature, from the water tables in the side bar. Typing a new value switches to your own." : "Enter the density and the kinematic viscosity of the liquid at its working temperature.";
+
+  /* flow */
+  let V = NaN, qm = NaN, Q = NaN, dT = NaN, cp = NaN, q0 = NaN, qu = "L";
+  if (mode === "q") { q0 = num("fq"); qu = $("fqu").value; V = q0 * (qu === "L" ? 0.001 : qu === "H" ? 1 / 3600 : 1); }
+  else { Q = num("ld"); dT = num("dt"); cp = num("cp"); qm = Q / (cp * dT); V = qm / rho; }
+  if (!(rho > 0)) w.push("Enter the density.");
+  if (!(nu > 0)) w.push("Enter the kinematic viscosity.");
+  if (mode === "q" && !(q0 > 0)) w.push("Enter the water flow.");
+  if (mode === "l" && !(Q > 0 && dT > 0 && cp > 0)) w.push("Enter the load, the temperature difference and the specific heat, all above zero.");
+  if ($("sfOn").checked && !(sfp >= 0)) w.push("Enter the safety factor, or untick it.");
+  const sf = $("sfOn").checked && sfp >= 0 ? sfp / 100 : 0;
+  const Vd = V * (1 + sf);
+  const D = num("dia"), eps = num("eps"), L = num("len"), lim = num("lim");
+  if (!(D > 0)) w.push("Enter the inside diameter.");
+  if (!(eps >= 0)) w.push("Enter the roughness (0 for a smooth pipe).");
+  warnBox("pWarn", w);
+
+  /* the range note is always on the sheet */
+  let R = null;
+  const note = $("vNote");
+  if (D > 0 && nu > 0) {
+    const vmin = 4000 * nu / (D / 1000), vmax = 1e8 * nu / (D / 1000);
+    note.innerHTML = "<b>Range of the friction formula for this pipe and fluid:</b> velocity from " + sig(vmin, 3) + " m/s (Reynolds number 4 000)" + (vmax < 100 ? " to " + sig(vmax, 3) + " m/s (10<sup>8</sup>)" : " upward") + ".";
+    note.className = "perm";
+  } else { note.innerHTML = "<b>Range of the friction formula:</b> turbulent flow only, Reynolds number 4 000 to 10<sup>8</sup>."; note.className = "perm"; }
+
+  if (Vd > 0 && D > 0 && eps >= 0 && rho > 0 && nu > 0) {
+    R = fric(Vd, D, eps, rho, nu);
+    const z = R.zone;
+    if (z !== "ok") {
+      let m;
+      if (z === "lam") { const fl_ = 64 / R.Re, d_ = fl_ / R.D * R.dyn; m = "Velocity " + fmt(R.v, 3) + " m/s is <b>outside the range of the friction formula</b>: Reynolds number " + grp(R.Re, 0) + " is laminar (below 2 300) and the formula does not apply. Laminar flow would use f = 64 / Re = " + sig(fl_, 3) + ", about " + dp(d_) + " Pa/m. The formula needs more than " + sig(R.vmin, 3) + " m/s in this pipe."; }
+      else if (z === "trans") m = "Velocity " + fmt(R.v, 3) + " m/s is <b>outside the range of the friction formula</b>: Reynolds number " + grp(R.Re, 0) + " is transitional (2 300 to 4 000) and no friction factor is reliable. The formula needs more than " + sig(R.vmin, 3) + " m/s in this pipe. The figures below are not to be relied on.";
+      else if (z === "hi") m = "Velocity " + fmt(R.v, 1) + " m/s is <b>outside the range of the friction formula</b>: Reynolds number " + sig(R.Re, 3) + " is above 10<sup>8</sup>.";
+      else m = "Relative roughness ε/D = " + sig(R.rr, 3) + " is <b>outside the range of the friction formula</b> (above 0.05). Check the roughness and the diameter.";
+      note.innerHTML += '<div class="pn">' + m + "</div>"; note.className = "perm bad";
+    }
+  }
+
+  let h = "";
+  if (R) {
+    const bad = R.zone !== "ok", lim_ok = lim > 0 ? R.dpm <= lim : null;
+    h += box("Water flow" + (sf > 0 ? " with safety factor" : ""), fmt(Vd * 1000, 3), "L/s · " + grp(Vd * 3600, 2) + " m³/h" + (sf > 0 ? " (" + fmt(sfp, 1) + " % added)" : ""));
+    h += box("Velocity", fmt(R.v, 2), "m/s");
+    h += box("Reynolds number", grp(R.Re, 0), R.zone === "ok" ? "turbulent" : R.zone === "lam" ? "laminar" : R.zone === "trans" ? "transitional" : "out of range", bad ? "bad" : "");
+    h += box("Friction factor f", sig(R.f, 4), "f′ = " + sig(R.f1, 4) + (R.tsal ? ", corrected as f′ < 0.018" : ", no correction"));
+    h += box("Pressure drop", dp(R.dpm), "Pa/m · " + fmt(R.dpm / 10, 2) + " kPa per 100 m", bad ? "bad key" : lim_ok === null ? "key" : lim_ok ? "ok key" : "bad key");
+    if (L > 0) h += box("Over " + sig(L, 4) + " m of pipe", fmt(R.dpm * L / 1000, 3), "kPa · " + fmt(R.dpm * L / 9806.65, 3) + " m of water");
+    if (lim > 0) h += box("Against your limit", lim_ok ? "Within" : "Above", "limit " + sig(lim, 4) + " Pa/m · " + (lim_ok ? fmt(100 * (1 - R.dpm / lim), 0) + " % below it" : fmt(100 * (R.dpm / lim - 1), 0) + " % over it"), lim_ok ? "ok" : "bad");
+  }
+  $("pRes").innerHTML = h;
+  sizes(Vd, rho, nu, lim);
+  specSizes(Vd, rho, nu, lim);
+  const od = num("od"), wt = num("wt");
+  const desc = pt === "own" ? "Pipe: inside diameter and roughness typed by you." :
+    "Pipe: " + optText("pt") + ", " + pg.lab + (sv === "own" ? ", wall typed by you." : ", " + optText("ps") + ".");
+  W = { T: $("fl").value === "T" ? num("tw") : null, mode, rho, nu, V, qm, Q, dT, cp, q0, qu, sf, sfp, Vd, D, eps, L, lim, R, od, wt, desc, byTube: od > 0 && wt > 0 && Math.abs(od - 2 * wt - D) < 0.0015 };
+  working(W);
+}
+
+/* every size at the same flow */
+let lastSz = null;   /* redraw only when the table changes, or a click that follows a blur is lost */
+function setSz(h) { if (h !== lastSz) { $("szT").innerHTML = h; lastSz = h; } }
+function sizes(Vd, rho, nu, lim) {
+  const T = $("szT"), pt = $("pt").value, sv = $("ps").value, cur = $("pp").value;
+  if (!(Vd > 0 && rho > 0 && nu > 0)) { setSz(""); $("szNote").textContent = "Enter the flow and the fluid to see the sizes."; return; }
+  if (pt === "own") { setSz(""); $("szNote").textContent = "Choose copper or steel under “Pipe and standard” to see the table of sizes."; return; }
+  /* the series the table uses: your own wall is shown on the chosen size only, so the table uses the first series */
+  const ts = sv === "own" ? defSer(pt) : sv;
+  /* a roughness source chosen above applies to every row; otherwise each row uses its own pipe material */
+  const rgv = $("rg").value, rgE = rgv === "" ? null : rgv === "own" ? (num("eps") >= 0 ? num("eps") : null) : parseFloat(rgv);
+  let n = 0, cnt = 0;
+  const rows = sizeOpts(pt).map(o => {
+    const g = geomFor(pt, o[0], ts, NaN);
+    if (!(g.id > 0)) return '<tr class="pickrow" data-p="' + o[0] + '" tabindex="0"><th>' + g.lab + "</th><td colspan=\"6\">" + (g.miss || "—") + "</td></tr>";
+    const r = fric(Vd, g.id, rgE !== null ? rgE : g.eps, rho, nu), ok = r.zone === "ok";
+    cnt++; if (ok && lim > 0 && r.dpm <= lim) n++;
+    const st = !ok ? "outside the formula range" : lim > 0 ? (r.dpm <= lim ? "within the limit" : "above the limit") : "—";
+    return '<tr class="pickrow' + (cur === o[0] ? " on" : "") + '" data-p="' + o[0] + '" tabindex="0"><th>' + g.lab + "</th><td>" + (g.od > 0 ? sig(g.od, 4) : "—") + "</td><td>" + (g.wt > 0 ? sig(g.wt, 3) : "—") + "</td><td>" + sig(g.id, 5) + "</td><td>" + fmt(r.v, 2) + "</td><td>" + (ok ? dp(r.dpm) : '<span class="na2">' + dp(r.dpm) + "</span>") + "</td><td>" + st + "</td></tr>";
+  }).join("");
+  setSz("<thead><tr><th>Size</th><th>Outside mm</th><th>Wall mm</th><th>Inside mm</th><th>Velocity m/s</th><th>Pa/m</th><th>Against the formula and your limit</th></tr></thead><tbody>" + rows + "</tbody>");
+  const tsTxt = " Series used in the table: " + (pt === "pe" ? "SDR " + ts : pt === "hd" ? "standard wall" : pt === "pvc" ? "SDR " + ts : pt === "cu" ? "Table " + ts : pt === "aucu" ? "Type " + ts : pt === "asme" ? ({ S: "standard weight", 40: "Schedule 40", 80: "Schedule 80" })[ts] : (pt === "st" || pt === "aust") ? ({ L: "light", M: "medium", H: "heavy" })[ts] : ts + " mm wall") + ".";
+  $("szNote").textContent = "Roughness in every row: " + (rgE !== null ? sig(rgE, 3) + " mm, as set under “Roughness source” above." : "from the pipe material (copper 0.0015 mm, steel 0.046 mm).") + " " + (lim > 0 ? n + " of " + cnt + " sizes are within " + sig(lim, 4) + " Pa/m and inside the formula range at this flow." : "Enter a pressure limit above to see which sizes are within it.") + tsTxt;
+}
+function pickSize(tr) {
+  const d = tr.dataset.p;
+  if (follow) { if (specList(parseInt($("svc").value)).some(o => o[0] === d)) { useSpec(d); calc(); return; } unfollow(); }
+  $("pp").value = d; if ($("ps").value === "own") { $("ps").value = defSer($("pt").value); } setPipe(); calc();
+}
+$("szT").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) pickSize(tr); });
+$("szT").addEventListener("keydown", e => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-p]"); if (tr) pickSize(tr); } });
+
+/* the specified tubes at each size, at this flow */
+let lastSp = null;
+function setSp(h) { if (h !== lastSp) { $("spS").innerHTML = h; lastSp = h; } }
+function specSizes(Vd, rho, nu, lim) {
+  const N = $("spSN"), si = $("svc").value;
+  if (si === "") { setSp(""); N.textContent = "Choose a service under “Pipe” above to see the specified tubes at each size and the pressure drop at this flow."; return; }
+  if (!(Vd > 0 && rho > 0 && nu > 0)) { setSp(""); N.textContent = "Enter the flow and the fluid to see the specified tubes."; return; }
+  const i = parseInt(si), sw = $("sw").value, rows = [], seen = {};
+  const wallOf = a => sw === "S" ? a[4] : sw === "80" ? a[3] : a[2];
+  SPEC.filter(r => r[0] === i).forEach(r => {
+    const st = r[6];
+    if (!st) {
+      if (seen[r[4]]) return; seen[r[4]] = 1;
+      ASME.filter(a => a[0] >= 15 && a[0] <= 300).forEach(a => rows.push({ pt: "asme", dn: a[0], ser: "40", tube: r[4] + " (alternative, bore not stated)", od: a[1], wt: a[2], eps: EPS.s }));
+    } else if (st.pt === "st") {
+      ST.filter(x => x[0] >= Math.max(15, r[1]) && (r[2] == null || x[0] <= r[2])).forEach(x => { const ser = st.ser || "M", g = geomFor("st", String(x[0]), ser, NaN); rows.push({ pt: "st", dn: x[0], ser, tube: r[4] + (st.galv ? " (series not stated, medium shown)" : ""), od: g.od, wt: g.wt, eps: st.galv ? 0.15 : EPS.s }); });
+    } else if (st.pt === "cu") {
+      CU.filter(x => x[0] >= r[1] && (r[2] == null || x[0] <= r[2])).forEach(x => ["X", "Y", "Z"].forEach(s => { const g = geomFor("cu", String(x[0]), s, NaN); if (g.wt > 0) rows.push({ pt: "cu", dn: String(x[0]), lab: x[0] + " mm", ser: s, tube: r[4].replace(/^Copper Pipes to /, "Copper to ") + ", Table " + s + " wall", od: g.od, wt: g.wt, eps: EPS.c }); }));
+    } else if (st.pt === "pe") {
+      PE.filter(x => x[0] >= r[1] && (r[2] == null || x[0] <= r[2])).forEach(x => PESDR.forEach(s => { const g = geomFor("pe", String(x[0]), s, NaN); if (g.wt > 0) rows.push({ pt: "pe", dn: String(x[0]), lab: x[0] + " mm", ser: s, tube: "PE pipe to BS EN 12201, SDR " + s, od: g.od, wt: g.wt, eps: EPS.p }); }));
+    } else if (st.pt === "hd") {
+      HD.filter(x => x[0] >= r[1] && (r[2] == null || x[0] <= r[2])).forEach(x => { const g = geomFor("hd", String(x[0]), "S", NaN); rows.push({ pt: "hd", dn: String(x[0]), lab: x[0] + " mm", ser: "S", tube: "HDPE to BS EN 1519 (Geberit PE sizes)", od: g.od, wt: g.wt, eps: EPS.p }); });
+    } else if (st.pt === "sl") {
+      SL.filter(x => x[0] >= r[1] && (r[2] == null || x[0] <= r[2])).forEach(x => { const a = ASME.find(q => q[0] === x[0]), w = a ? wallOf(a) : null; rows.push({ pt: "sl", dn: x[0], ser: "own", tube: r[4] + " (wall as " + (sw === "S" ? "standard weight" : "Sch " + sw) + ")", od: x[1], wt: w == null ? NaN : w, eps: EPS.s }); });
+    }
+  });
+  let n = 0, cnt = 0;
+  const body = rows.map(x => {
+    const id = x.od > 0 && x.wt > 0 ? r3(x.od - 2 * x.wt) : NaN;
+    const at = ' class="pickrow" data-d="' + x.dn + '" data-pt="' + x.pt + '" data-ser="' + x.ser + '" data-wt="' + (x.wt > 0 ? x.wt : "") + '" data-eps="' + x.eps + '" tabindex="0"';
+    if (!(id > 0)) return "<tr" + at + "><th>" + (x.lab || "DN" + x.dn) + "</th><td>" + x.tube + '</td><td colspan="7">no wall data for this size</td></tr>';
+    const r = fric(Vd, id, x.eps, rho, nu), ok = r.zone === "ok"; cnt++; if (ok && lim > 0 && r.dpm <= lim) n++;
+    const stt = !ok ? "outside the formula range" : lim > 0 ? (r.dpm <= lim ? "within the limit" : "above the limit") : "—";
+    return "<tr" + at + "><th>" + (x.lab || "DN" + x.dn) + "</th><td>" + x.tube + "</td><td>" + sig(x.od, 5) + "</td><td>" + sig(x.wt, 4) + "</td><td>" + sig(id, 5) + "</td><td>" + x.eps + "</td><td>" + fmt(r.v, 2) + "</td><td>" + (ok ? dp(r.dpm) : '<span class="na2">' + dp(r.dpm) + "</span>") + "</td><td>" + stt + "</td></tr>";
+  }).join("");
+  setSp("<thead><tr><th>Size</th><th>Tube as specified</th><th>Outside mm</th><th>Wall mm</th><th>Inside mm</th><th>ε mm</th><th>Velocity m/s</th><th>Pa/m</th><th>Against the formula and your limit</th></tr></thead><tbody>" + body + "</tbody>");
+  N.textContent = SVC[i] + ": " + rows.length + " size and tube combinations from the specification" + (lim > 0 ? ", " + n + " of " + cnt + " within " + sig(lim, 4) + " Pa/m and inside the formula range at this flow." : ". Enter a pressure limit above to see which are within it.") + " Click a row to use it above.";
+}
+$("spS").addEventListener("click", e => { const tr = e.target.closest("tr[data-d]"); if (tr) applyRow(tr); });
+$("spS").addEventListener("keydown", e => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-d]"); if (tr) applyRow(tr); } });
+function applyRow(tr) {
+  const pt = tr.dataset.pt, dn = tr.dataset.d, ser = tr.dataset.ser;
+  if (pt === "asme") setFollow(false);
+  $("pt").value = pt; fillType();
+  if (ppOpts(pt).some(o => o[0] === dn)) $("pp").value = dn;
+  if (ser !== "own" && serOpts(pt).some(o => o[0] === ser)) $("ps").value = ser; else { $("ps").value = "own"; $("wt").value = tr.dataset.wt; }
+  if (tr.dataset.eps === "0.15") $("rg").value = "0.15"; else if ($("rg").value === "0.15") $("rg").value = "";
+  setPipe(); calc();
+}
+
+/* the working, for the side bar */
+function working(W) {
+  const s = [], R = W.R;
+  if (!R) { MX.steps($("workP"), s, "Enter the flow, the fluid and the pipe to see the working."); return; }
+  s.push({ t: "Fluid", n: W.T != null ? "Water at " + sig(W.T, 4) + " °C: density and kinematic viscosity from the water table in the side bar (density interpolated linearly, viscosity interpolated in ln ν against 1/T)." : "", m: ["$ρ$ = **" + sig(W.rho, 6) + " kg/m³**", "$ν$ = " + sig(W.nu * 1e6, 5) + " × 10^{-6} = **" + sci(W.nu, 5) + " m²/s**"] });
+  if (W.mode === "l") {
+    s.push({ t: "Mass flow from the load", m: ["$q$_{m} = @frac{" + sig(W.Q, 6) + "}{" + sig(W.cp, 5) + " × " + sig(W.dT, 5) + "} = **" + sig(W.qm, 5) + " kg/s**"], n: "Load in kW and specific heat in kJ/kg·K give kg/s." });
+    s.push({ t: "Volume flow", m: ["$q$_{v} = @frac{" + sig(W.qm, 5) + "}{" + sig(W.rho, 6) + "} = **" + sig(W.V, 5) + " m³/s** = " + sig(W.V * 1000, 5) + " L/s"] });
+  } else s.push({ t: "Volume flow", m: ["$q$_{v} = " + sig(W.q0, 6) + " " + (W.qu === "L" ? "L/s" : W.qu === "H" ? "m³/h" : "m³/s") + " = **" + sig(W.V, 5) + " m³/s**"], n: "Entered directly." });
+  if (W.sf > 0) s.push({ t: "Flow with the safety factor", m: ["$q$_{v,d} = " + sig(W.V, 5) + " × ( 1 + @frac{" + sig(W.sfp, 5) + "}{100} ) = **" + sig(W.Vd, 5) + " m³/s** = " + sig(W.Vd * 1000, 5) + " L/s"] });
+  else s.push({ t: "Safety factor", m: ["none added, $q$_{v,d} = **" + sig(W.Vd, 5) + " m³/s**"] });
+  if (W.byTube) s.push({ t: "Inside diameter of the tube", m: ["$D$ = $d$_{o} − 2 $t$ = " + sig(W.od, 5) + " − 2 × " + sig(W.wt, 4) + " = **" + sig(W.D, 5) + " mm**"], n: W.desc });
+  else s.push({ t: "Inside diameter", m: ["$D$ = **" + sig(W.D, 6) + " mm**"], n: W.desc });
+  s.push({ t: "Pipe area and relative roughness", m: ["$D$ = " + sig(W.D, 6) + " mm = " + sig(R.D, 6) + " m", "$A$ = @frac{π × " + sig(R.D, 6) + "^{2}}{4} = **" + sig(R.A, 5) + " m²**", "@frac{$ε$}{$D$} = @frac{" + sig(W.eps, 5) + "}{" + sig(W.D, 6) + "} = **" + sig(R.rr, 4) + "**"] });
+  s.push({ t: "Velocity", m: ["$v$ = @frac{" + sig(W.Vd, 5) + "}{" + sig(R.A, 5) + "} = **" + sig(R.v, 4) + " m/s**"] });
+  s.push({ t: "Reynolds number", m: ["$Re$ = @frac{" + sig(R.v, 4) + " × " + sig(R.D, 6) + "}{" + sci(W.nu, 5) + "} = **" + grp(R.Re, 0) + "**"], bad: R.zone !== "ok", n: R.zone === "ok" ? "Within 4 000 to 10^8, so the friction formula applies." : "Outside the range of the friction formula (see the notice on the sheet)." });
+  s.push({ t: "Friction factor, first step", m: ["$f$′ = 0.11 ( " + sig(R.rr, 4) + " + @frac{68}{" + grp(R.Re, 0) + "} )^{0.25} = **" + sig(R.f1, 5) + "**"] });
+  s.push({ t: "Friction factor, correction", m: R.tsal ? ["$f$′ = " + sig(R.f1, 5) + " is below 0.018, so", "$f$ = 0.85 × " + sig(R.f1, 5) + " + 0.0028 = **" + sig(R.f, 5) + "**"] : ["$f$′ = " + sig(R.f1, 5) + " is not below 0.018, so", "$f$ = $f$′ = **" + sig(R.f, 5) + "**"] });
+  s.push({ t: "Dynamic pressure", m: ["$p$_{d} = @frac{" + sig(W.rho, 6) + " × " + sig(R.v, 4) + "^{2}}{2} = **" + sig(R.dyn, 5) + " Pa**"] });
+  s.push({ t: "Pressure drop per metre", m: ["Δ$p$/$L$ = @frac{" + sig(R.f, 5) + "}{" + sig(R.D, 6) + "} × " + sig(R.dyn, 5) + " = **" + sig(R.dpm, 5) + " Pa/m**", "= " + sig(R.dpm / 10, 4) + " kPa per 100 m"], bad: R.zone !== "ok" });
+  if (W.L > 0) s.push({ t: "Pressure drop over the length", m: ["Δ$p$ = " + sig(R.dpm, 5) + " × " + sig(W.L, 5) + " = " + sig(R.dpm * W.L, 5) + " Pa = **" + sig(R.dpm * W.L / 1000, 4) + " kPa**"] });
+  s.push({ t: "Range of the friction formula", m: ["$v$_{min} = @frac{4000 × " + sci(W.nu, 5) + "}{" + sig(R.D, 6) + "} = **" + sig(R.vmin, 4) + " m/s**", "$v$ = " + sig(R.v, 4) + " m/s is " + (R.v >= R.vmin ? "at or above" : "below") + " $v$_{min}"], bad: R.zone !== "ok", n: R.zone === "ok" ? "" : "The result above is outside what the formula covers." });
+  if (W.lim > 0) s.push({ t: "Your pressure limit", m: [sig(R.dpm, 4) + " Pa/m " + (R.dpm <= W.lim ? "≤" : ">") + " " + sig(W.lim, 5) + " Pa/m", "**" + (R.dpm <= W.lim ? "within the limit" : "above the limit") + "**"], bad: R.dpm > W.lim });
+  MX.steps($("workP"), s, "Enter the flow, the fluid and the pipe to see the working.");
+}
+
+/* formulae */
+MX.formula($("fxPI"), ["$D$ = $d$_{o} − 2 $t$"]);
+MX.defs($("fxPDI"), [["$d$_{o}", "outside diameter of the tube, mm"], ["$t$", "wall thickness, mm"], ["$D$", "inside diameter, mm (the figure the rest of the sheet uses)"]]);
+MX.formula($("fxP1"), ["$Q$ = $q$_{m} × $c$ × Δ$T$", "$q$_{m} = @frac{$Q$}{$c$ × Δ$T$}", "$q$_{v} = @frac{$q$_{m}}{$ρ$}"]);
+MX.defs($("fxPD1"), [["$Q$", "load, kW"], ["$q$_{m}", "mass flow, kg/s"], ["$c$", "specific heat, kJ/kg·K (4.2 for water)"], ["Δ$T$", "temperature difference across the load, K"], ["$q$_{v}", "volume flow, m³/s"], ["$ρ$", "density, kg/m³"]]);
+MX.formula($("fxP2"), ["$q$_{v,d} = $q$_{v} × ( 1 + @frac{$SF$}{100} )"]);
+MX.formula($("fxP3"), ["$A$ = @frac{π $D$^{2}}{4}", "$v$ = @frac{$q$_{v,d}}{$A$}"]);
+MX.defs($("fxPD3"), [["$q$_{v,d}", "design flow, m³/s (the volume flow if no safety factor is added)"], ["$SF$", "flow safety factor, %"], ["$D$", "inside diameter, m"], ["$v$", "velocity, m/s"]]);
+MX.formula($("fxP4"), ["$Re$ = @frac{$v$ × $D$}{$ν$}"]);
+MX.defs($("fxPD4"), [["$ν$", "kinematic viscosity, m²/s"], ["$Re$", "Reynolds number"]]);
+MX.formula($("fxP5"), ["$f$′ = 0.11 ( @frac{$ε$}{$D$} + @frac{68}{$Re$} )^{0.25}", "$f$ = $f$′   if $f$′ ≥ 0.018", "$f$ = 0.85 $f$′ + 0.0028   if $f$′ < 0.018"]);
+MX.defs($("fxPD5"), [["$ε$", "absolute roughness of the pipe wall, same unit as $D$"], ["$f$", "Darcy friction factor"]]);
+MX.formula($("fxP6"), ["$p$_{d} = @frac{$ρ$ $v$^{2}}{2}", "Δ$p$/$L$ = @frac{$f$}{$D$} × $p$_{d}", "Δ$p$ = ( Δ$p$/$L$ ) × $L$"]);
+MX.defs($("fxPD6"), [["$p$_{d}", "dynamic pressure, Pa"], ["Δ$p$/$L$", "pressure drop per metre of pipe, Pa/m"], ["$L$", "pipe length, m"]]);
+MX.formula($("fxP7"), ["4000 ≤ $Re$ ≤ 10^{8}", "$v$_{min} = @frac{4000 $ν$}{$D$}", "@frac{$ε$}{$D$} ≤ 0.05"]);
+MX.defs($("fxPD7"), [["$v$_{min}", "lowest velocity for which the formula holds in this pipe, m/s"]]);
+
+/* data tables in the side bar */
+const n1 = x => x == null ? "—" : String(x), idf = (od, w) => w == null ? "—" : sig(od - 2 * w, 5);
+$("cuT").innerHTML = "<thead><tr><th>Outside mm</th><th>Table X wall</th><th>Table X inside</th><th>Table Y wall</th><th>Table Y inside</th><th>Table Z wall</th><th>Table Z inside</th></tr></thead><tbody>" + CU.map(r => "<tr><th>" + r[0] + "</th><td>" + n1(r[1]) + "</td><td>" + idf(r[0], r[1]) + "</td><td>" + n1(r[2]) + "</td><td>" + idf(r[0], r[2]) + "</td><td>" + n1(r[3]) + "</td><td>" + idf(r[0], r[3]) + "</td></tr>").join("") + "</tbody>";
+$("peT").innerHTML = "<thead><tr><th>Outside mm</th>" + PESDR.map(s => "<th>" + PESDRN[s] + " wall</th><th>inside</th>").join("") + "</tr></thead><tbody>" + PE.map(r => "<tr><th>" + r[0] + "</th>" + PESDR.map((s, q) => "<td>" + n1(r[1 + q]) + "</td><td>" + idf(r[0], r[1 + q]) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+$("hdT").innerHTML = "<thead><tr><th>Outside mm</th><th>Wall mm</th><th>Inside mm</th></tr></thead><tbody>" + HD.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td><td>" + idf(r[0], r[1]) + "</td></tr>").join("") + "</tbody>";
+$("pvcT").innerHTML = "<thead><tr><th>Outside mm</th>" + PSDR.map(s => "<th>" + PSDRN[s] + " wall</th><th>inside</th>").join("") + "</tr></thead><tbody>" + PVC.map(r => "<tr><th>" + r[0] + "</th>" + PSDR.map((s, q) => "<td>" + n1(r[1 + q]) + "</td><td>" + idf(r[0], r[1 + q]) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+const stOD = (mx, mn) => mx == null ? "—" : mx + " / " + mn, stID = (mx, mn, w) => mx == null ? "—" : sig(mid(mx, mn) - 2 * w, 5);
+$("stT").innerHTML = "<thead><tr><th>DN</th><th>Light OD max / min</th><th>Light wall</th><th>Light inside</th><th>Medium and heavy OD max / min</th><th>Medium wall</th><th>Medium inside</th><th>Heavy wall</th><th>Heavy inside</th></tr></thead><tbody>" + ST.map(r => "<tr><th>" + r[0] + "</th><td>" + stOD(r[1], r[2]) + "</td><td>" + n1(r[5]) + "</td><td>" + stID(r[1], r[2], r[5]) + "</td><td>" + stOD(r[3], r[4]) + "</td><td>" + r[6] + "</td><td>" + stID(r[3], r[4], r[6]) + "</td><td>" + r[7] + "</td><td>" + stID(r[3], r[4], r[7]) + "</td></tr>").join("") + "</tbody>";
+const slw = [4.0, 6.3, 8.0, 10.0, 12.5];
+$("slT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th>" + slw.map(w => "<th>Inside, " + w.toFixed(1) + " mm wall</th>").join("") + "</tr></thead><tbody>" + SL.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td>" + slw.map(w => "<td>" + sig(r[1] - 2 * w, 5) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+/* Australian tables */
+const dd = (a, b) => (a == null || b == null) ? "—" : (a - b >= 0 ? "+" : "−") + Math.abs(a - b).toFixed(2);
+$("auT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th>" + "ABCD".split("").map(t => "<th>Type " + t + " wall</th><th>Type " + t + " inside</th>").join("") + "<th>Type B inside, ACADS-BSG table</th><th>Type B: table minus (OD − 2 × wall)</th></tr></thead><tbody>" +
+  AUCU.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td>" + [2, 3, 4, 5].map(i => "<td>" + n1(r[i]) + "</td><td>" + idf(r[1], r[i]) + "</td>").join("") + "<td>" + n1(ACADS.B[r[0]]) + "</td><td>" + dd(ACADS.B[r[0]], r[1] - 2 * r[3]) + "</td></tr>").join("") + "</tbody>";
+let asH = "<thead><tr><th>DN</th><th>Series</th><th>Inside mm, from OD and wall (sheet)</th><th>Inside mm, ACADS-BSG table for AS 1074</th><th>Table minus sheet, mm</th></tr></thead><tbody>", asMax = 0, asWorst = "";
+ST.forEach(r => [["L", "SL", 1, 2, 5], ["M", "SM", 3, 4, 6], ["H", "SH", 3, 4, 7]].forEach(q => {
+  const a = ACADS[q[1]][r[0]], w = r[q[4]]; if (a == null || w == null || r[q[2]] == null) return;
+  const mine = r3(mid(r[q[2]], r[q[3]]) - 2 * w), d = a - mine;
+  if (Math.abs(d) > asMax) { asMax = Math.abs(d); asWorst = "DN" + r[0] + " " + ({ L: "light", M: "medium", H: "heavy" })[q[0]]; }
+  asH += "<tr><th>" + r[0] + "</th><td>" + ({ L: "Light", M: "Medium", H: "Heavy" })[q[0]] + "</td><td>" + sig(mine, 5) + "</td><td>" + a + "</td><td>" + dd(a, mine) + "</td></tr>";
+}));
+$("asT").innerHTML = asH + "</tbody>";
+$("asN").textContent = "Largest difference between that table and the sheet's figures: " + asMax.toFixed(2) + " mm (" + asWorst + ").";
+
+$("rT").innerHTML = "<thead><tr><th>Material</th><th>Roughness ε mm</th></tr></thead><tbody>" + RG.slice(1, 4).map(o => "<tr><th>" + o[1].replace(/, [0-9.]+ mm$/, "") + "</th><td>" + o[0] + "</td></tr>").join("") + "</tbody>";
+$("fT").innerHTML = "<thead><tr><th>Fluid</th><th>ρ kg/m³</th><th>ν 10⁻⁶ m²/s</th></tr></thead><tbody>" + FLUIDS.map(f => "<tr><th>" + f[0] + "</th><td>" + f[1] + "</td><td>" + f[2] + "</td></tr>").join("") + "</tbody>";
+$("wdT").innerHTML = "<thead><tr><th>Temperature °C</th><th>Density kg/m³</th></tr></thead><tbody>" + WRHO.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("wvT").innerHTML = "<thead><tr><th>Temperature °C</th><th>Kinematic viscosity 10⁻⁶ m²/s</th></tr></thead><tbody>" + WNU.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("asmT").innerHTML = "<thead><tr><th>DN</th><th>Outside mm</th><th>Standard weight wall</th><th>Standard weight inside</th><th>Sch 40 wall</th><th>Sch 40 inside</th><th>Sch 80 wall</th><th>Sch 80 inside</th></tr></thead><tbody>" + ASME.map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td><td>" + r[4] + "</td><td>" + sig(r[1] - 2 * r[4], 6) + "</td><td>" + r[2] + "</td><td>" + sig(r[1] - 2 * r[2], 6) + "</td><td>" + n1(r[3]) + "</td><td>" + (r[3] == null ? "—" : sig(r[1] - 2 * r[3], 6)) + "</td></tr>").join("") + "</tbody>";
+/* linked inputs */
+const defSer = pt => pt === "pe" ? "17" : pt === "hd" ? "S" : pt === "pvc" ? "13.6" : pt === "cu" ? "X" : pt === "aucu" ? "B" : pt === "asme" ? "40" : (pt === "st" || pt === "aust") ? "M" : "8.0";
+function showPipeFields() {
+  const pt = $("pt").value, tube = ["cu", "st", "sl", "aucu", "aust", "asme", "pvc", "pe", "hd"].indexOf(pt) >= 0;
+  document.querySelector(".pps").hidden = pt === "own";
+  document.querySelector(".pss").hidden = !tube;
+  document.querySelectorAll(".odw").forEach(e => e.hidden = !(tube || pt === "own"));
+  const h = { cu: "Round copper tube for water, gas and heating. The standard covers 6 to 267 mm outside diameter; this list starts at 15 mm. The condensate row of your specification names BS EN 1057 R250, Table 3; the Table X, Y and Z walls below are the usual ones from it.", pe: "Polyethylene (MDPE, HDPE) pressure pipe to BS EN 12201: the pumped drainage row of your specification (PE80 and PE100). The wall comes from the SDR series, using the ISO 161 minimum walls; the PN shown is for PE100 and PE80 is lower. Roughness 0.0015 mm.", hd: "HDPE drainage pipe to BS EN 1519, the sizes and walls of Geberit PE pipe (the product your specification names for rainwater and sanitary drainage). Roughness 0.0015 mm. Gravity drains run part full, so check the note on flow before relying on a pressure drop.", pvc: "UPVC pressure pipe to BS EN 1452, for reference: it is not in your specification. The wall comes from the SDR series; PN is shown at design coefficient 2.5 (at 2.0 the same SDR carries a higher PN). The wall is the minimum wall, so the real bore is slightly smaller. Roughness of plastic pipe is 0.0015 to 0.01 mm; the sheet uses 0.0015 mm.", st: "Threaded or welded steel tube. The standard covers outside diameters 10.2 to 165.1 mm (DN6 to DN150); this list starts at DN8.", sl: "BS EN 10216 (seamless) and 10217 (welded) tube, outside diameters from BS EN 10220. The standards leave the wall to the buyer, so choose one. BS EN 10255 stops at DN150.", aucu: "Australian copper tube for plumbing, gasfitting and drainage. The standard covers Types A and B from DN6 to DN200, Type C DN10 to DN25 and Type D DN32 to DN150; this list starts at DN15.", aust: "Australian threaded steel tube, DN8 to DN150 in light, medium and heavy walls. The dimensions agree with BS EN 10255 within about 0.1 mm in the table I checked; see the notes.", asme: "American pipe sizes in standard weight, Schedule 40 and Schedule 80 (Schedule 80 to DN200 only). The pipework specification names API 5L Grade B Sched 40 to BS 1600 for HTHW; BS 1600 is, as I understand it, the British standard for these dimensions.", own: "Type the inside diameter and roughness, or an outside diameter and wall, of your own pipe." };
+  $("ptH").textContent = h[pt] || "";
+}
+function fillType(keep) {
+  const pt = $("pt").value, prev = $("pp").value;
+  $("pp").innerHTML = optHtml(ppOpts(pt));
+  if (ppOpts(pt).some(o => o[0] === prev)) $("pp").value = prev; else if (pt === "cu") $("pp").value = "54"; else if (pt === "st" || pt === "aust" || pt === "aucu" || pt === "asme" || pt === "pvc") $("pp").value = "50"; else if (pt === "pe" || pt === "hd") $("pp").value = "110"; else if (pt === "sl") $("pp").value = "200";
+  $("ps").innerHTML = optHtml(serOpts(pt));
+  if (serOpts(pt).length) $("ps").value = keep && serOpts(pt).some(o => o[0] === keep) ? keep : defSer(pt);
+  showPipeFields(); setPipe();
+}
+/* roughness: from the pipe type unless a roughness source is chosen; a typed value stays */
+function setEps(def) { const r = $("rg").value; if (r === "own") return; $("eps").value = r === "" ? def : r; }
+function setPipe() {
+  const pt = $("pt").value; if (pt === "own") { $("psH").textContent = ""; setEps($("eps").value); return; }
+  const g = geomFor(pt, $("pp").value, $("ps").value, num("wt"));
+  $("psH").textContent = g.miss;
+  const own = $("ps").value === "own";
+  if (!own) $("wt").value = isFinite(g.wt) ? g.wt : "";
+  $("od").value = isFinite(g.od) ? g.od : "";
+  setEps(g.eps);
+  if (own && !(num("wt") > 0)) return;   /* an inside diameter you typed stays */
+  $("dia").value = isFinite(g.id) ? g.id : "";
+}
+function fromOdWall() { const od = num("od"), wt = num("wt"); if (od > 0 && wt > 0 && od > 2 * wt) $("dia").value = r3(od - 2 * wt); }
+function setFluid() {
+  if ($("fl").value === "T") { const T = num("tw"); if (isFinite(rhoAt(T))) { $("rho").value = r3(rhoAt(T)); $("nu").value = parseFloat(nuAt(T).toPrecision(5)); } return; }
+  const f = FLUIDS[parseInt($("fl").value)]; if (f) { $("rho").value = f[1]; $("nu").value = f[2]; }
+}
+$("tw").addEventListener("input", () => { setFluid(); });
+$("pt").addEventListener("change", () => { setFollow(false); fillType(); calc(); });
+$("pp").addEventListener("change", () => { if (follow) useSpec($("pp").value); else setPipe(); calc(); });
+$("ps").addEventListener("change", () => {
+  if (follow && $("pt").value === "sl") wallPick = true;
+  if (follow) { const en = specEnt(parseInt($("svc").value), $("pp").value), r = en && en[3]; if (r && r[6].ser && $("ps").value !== r[6].ser) unfollow(); }
+  setPipe(); calc();
+});
+$("fl").addEventListener("change", () => { setFluid(); calc(); });
+/* typing an outside diameter or wall: the series becomes “my own wall” (or the pipe becomes my own) and the inside diameter follows */
+["od", "wt"].forEach(id => $(id).addEventListener("input", () => { unfollow(); if ($("pt").value !== "own" && $("ps").options.length) $("ps").value = "own"; fromOdWall(); }));
+/* typing an inside diameter or roughness: the tube table no longer drives them */
+$("rg").addEventListener("change", () => { setPipe(); calc(); });
+$("eps").addEventListener("input", () => { $("rg").value = "own"; });
+["dia", "eps"].forEach(id => $(id).addEventListener("input", () => {
+  const pt = $("pt").value;
+  if (id === "dia") unfollow();
+  if (id === "dia" && pt !== "own" && $("ps").options.length) { $("ps").value = "own"; $("wt").value = ""; }
+}));
+["rho", "nu"].forEach(id => $(id).addEventListener("input", () => { $("fl").value = "own"; }));
+document.querySelectorAll("input,select").forEach(e => { e.addEventListener("input", calc); e.addEventListener("change", calc); });
+$("fl").value = "0"; setFluid(); $("pt").value = "cu"; fillType();
+calc();
+})();
+</script>
+</body>
+</html>
