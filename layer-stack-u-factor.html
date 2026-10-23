@@ -531,6 +531,9 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
       <ul id="fxLDefs2"></ul>
       <h3>Heat flow</h3>
       <div id="fxL3" role="math"></div>
+      <h3>Air space layer</h3>
+      <div id="fxL4" role="math"></div>
+      <ul id="fxLDefs4"></ul>
       <p class="tn">With the layers in series the same heat flows through every layer, so the resistances add. This holds only where no framing, fastener or other path bypasses the insulation. For framed walls, 90.1 Appendix A uses a parallel-path method that this sheet does not do.</p>
     </div>
     <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
@@ -544,6 +547,9 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
         <tr><td>All exterior surfaces</td><td>0.03</td></tr><tr><td>All semiexterior surfaces</td><td>0.08</td></tr><tr><td>Interior horizontal, heat flow up</td><td>0.11</td></tr><tr><td>Interior horizontal, heat flow down</td><td>0.17</td></tr><tr><td>Interior vertical</td><td>0.12</td></tr></tbody></table></div>
       <h3>Building materials, Table A9.4.4-1 (p. 323) and Appendix A</h3>
       <div class="scroll"><table class="ref"><thead><tr><th>Material</th><th>Size, mm</th><th>R</th></tr></thead><tbody id="libT"></tbody></table></div>
+      <h3>Air spaces, calculated by ISO 6946 Annex B</h3>
+      <p class="tn">Unventilated air space, m²·K/W, at a mean temperature of 10 °C. “Up” is heat flowing upward (roof or ceiling in winter), “Horiz.” through a wall, “Down” through a floor in winter. For ordinary surfaces the figures agree with the standard’s printed table (for example 0.16, 0.18 and 0.19 for 25 mm).</p>
+      <div class="scroll"><table class="ref" id="airT"></table></div>
       <h3>Maximum U and minimum R, roof, wall and floor rows</h3>
       <p class="tn">Tables 5.5-0 to 5.5-8, the “insulation entirely above deck” roof, “mass” wall and “mass” floor rows, by zone and space category. The full tables are on <a href="envelope.html">sheet XXV</a>.</p>
       <div class="scroll"><table class="ref" id="limT"></table></div>
@@ -567,11 +573,22 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
         <li><b>Floor film.</b> A5.2.1 (p. 296) says R 0.16 for the interior film, heat flow down, but A9.4.1 gives R 0.17. The sheet offers 0.17, the A9.4.1 value; the difference to the U-factor of an insulated floor is under 0.2 %.</li>
         <li><b>Mass wall base assembly.</b> A3.1.1 (p. 279) assumes R 0.03 and R 0.12 films, 200 mm concrete, and R 0.08 for 13 mm gypsum board on insulated walls.</li>
         <li><b>Rated R.</b> Insulation R-values are rated at a mean temperature of 24 °C by the maker’s test; a conductivity taken from a datasheet at 10 °C will be a little better than the rated figure.</li>
-        <li><b>Not covered.</b> Framed walls and roofs, metal buildings, attics, below-grade walls, slabs, thermal bridging at fasteners, and air spaces. For an air space, add an “Other layer” with the R from Table A9.4.2-1.</li>
+        <li><b>Not covered.</b> Framed walls and roofs, metal buildings, attics, below-grade walls, slabs, thermal bridging at fasteners, and ventilated air spaces.</li>
         <li><b>Material list.</b> Only materials with a value in the standard are listed as fixed layers. Insulation and any other product need a value from the maker.</li>
       </ul>
+      <h3>Air spaces</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Method.</b> The “Air space, unventilated” layer gives R by the calculation in EN ISO 6946 Annex B. It depends on the thickness, the direction of heat flow and the emittance of the two faces. The result is not a 90.1 table value.</li>
+        <li><b>Check.</b> For ordinary surfaces the calculation reproduces the printed ISO 6946 table to within its rounding. For a 13 mm space it gives 0.16 m²·K/W; the ASHRAE Handbook – Fundamentals value for a 13 mm space bounded by building materials is 0.90 ft²·h·°F/Btu, which is 0.158 m²·K/W.</li>
+        <li><b>Thickness.</b> R rises quickly up to about 25 mm and then hardly changes. Above 25 mm a wider space does not insulate much more, because the air moves. Below 5 mm the space is easily bridged.</li>
+        <li><b>Choices.</b> “Ordinary faces” means building surfaces of emittance 0.9 on both sides. “One face foil” and “Both faces foil” mean bright aluminium foil of emittance 0.05 on one or both faces. Horizontal heat flow is for a wall, upward for a roof or ceiling in winter, downward for a floor in winter.</li>
+        <li><b>Direction.</b> A downward heat flow (a floor in winter) has the highest R, because warm air stays on top. An upward flow (a roof or ceiling in winter) has the lowest.</li>
+        <li><b>Bright foil.</b> It cuts the radiant part of the heat flow, so one bright face can more than triple R. The foil must face the air space and stay bright. Dust and condensation raise its emittance and the benefit is lost over time.</li>
+        <li><b>Conditions.</b> The space must be sealed and unventilated, with width and height at least ten times its thickness and no air leakage, and with no bridging. A cavity with open vents is a ventilated space. ISO 6946 treats a well-ventilated space by leaving out the air space and every layer outside it.</li>
+        <li><b>Compliance.</b> 90.1 Appendix A lists its own air-space values (Section A9.4.2). If the assembly is to be submitted for compliance, use the standard’s value, entered as an “Other layer”, and compare it with this calculation.</li>
+      </ul>
       <h3>Sources</h3>
-      <p>ANSI/ASHRAE/IES Standard 90.1-2025 (SI): Tables 5.5-0 to 5.5-8, Section 5.5.3, Appendix A (A2.2, A3.1, A5.2, A9.4.1, Table A9.4.4-1). Check results against the licensed standard.</p>
+      <p>ANSI/ASHRAE/IES Standard 90.1-2025 (SI): Tables 5.5-0 to 5.5-8, Section 5.5.3, Appendix A (A2.2, A3.1, A5.2, A9.4.1, Table A9.4.4-1). Air spaces: EN ISO 6946 (Annex B), compared with the ASHRAE Handbook – Fundamentals plane air space table. Check results against the licensed standard.</p>
     </div>
   </div>
 </aside>
@@ -748,6 +765,7 @@ const LIB = [
   { id: "brick", n: "Brick, cavity wall", kind: "fixed", R: 0.13, t: 90, h: "mass", src: "A3.1.1" },
   { id: "ci",   n: "Continuous insulation, from k", kind: "k", k: 0.025, t: 135, ci: true, h: "ins", src: "maker’s k" },
   { id: "cir",  n: "Continuous insulation, rated R", kind: "rated", R: 5.3, t: 100, ci: true, h: "ins", src: "maker’s R" },
+  { id: "air",  n: "Air space, unventilated, by thickness", kind: "air", t: 25, ci: false, h: "air", src: "ISO 6946" },
   { id: "oth",  n: "Other layer, R typed", kind: "rated", R: 0.1, t: 10, ci: false, h: "air", src: "typed" }
 ];
 const byId = id => LIB.find(m => m.id === id);
@@ -759,9 +777,21 @@ const PRESET = {
 };
 let layers = PRESET.roof.L.map(l => ({ id: l[0], t: l[1], v: l[2] }));
 
+/* unventilated air space, ISO 6946 Annex B: R = 1 / (ha + E hro) */
+const SIGMA = 5.670374e-8, HRO = 4 * SIGMA * Math.pow(283.15, 3);
+const AIRDIR = { h: "horizontal", u: "upward", d: "downward" };
+const AIRDIRN = { h: "Heat flow horizontal", u: "Heat flow upward", d: "Heat flow downward" };
+const AIREM = { o: ["Ordinary faces", 1 / (1 / 0.9 + 1 / 0.9 - 1)], f1: ["One face foil", 1 / (1 / 0.9 + 1 / 0.05 - 1)], f2: ["Both faces foil", 1 / (1 / 0.05 + 1 / 0.05 - 1)] };
+function airParts(l) {
+  const d = Math.max(0, l.t || 0) / 1000, dir = AIRDIR[l.dir] ? l.dir : "h", E = (AIREM[l.em] || AIREM.o)[1];
+  if (!(d > 0)) return { R: 0, ha: NaN, E, d };
+  const ha = dir === "u" ? Math.max(0.025 / d, 1.95) : dir === "d" ? Math.max(0.025 / d, 0.12 * Math.pow(d, -0.44)) : Math.max(0.025 / d, 1.25);
+  return { R: 1 / (ha + E * HRO), ha, E, d };
+}
 function layerR(l) {
   const m = byId(l.id); if (!m) return NaN;
   const t = Math.max(0, l.t || 0);
+  if (m.kind === "air") return airParts(l).R;
   if (m.kind === "fixed") return m.R;
   if (m.kind === "perMM") return m.r * t;
   if (m.kind === "k") return l.v > 0 ? t / 1000 / l.v : NaN;
@@ -778,9 +808,10 @@ function renderRows() {
     const pos = layers.map((_, k) => '<option value="' + k + '"' + (k === i ? " selected" : "") + ">" + (k + 1) + (k === 0 ? " (outside)" : k === n - 1 ? " (inside)" : "") + "</option>").join("");
     const tin = m.kind === "fixed" ? '<input data-i="' + i + '" data-f="t" type="number" value="' + m.t + '" disabled aria-label="Thickness mm" /><span class="u">mm, fixed</span>'
       : '<input data-i="' + i + '" data-f="t" type="number" inputmode="decimal" step="any" min="0" value="' + (l.t ?? "") + '" aria-label="Thickness mm, layer ' + (i + 1) + '" /><span class="u">mm</span>';
-    const vin = (m.kind === "k" || m.kind === "rated") ? '<input data-i="' + i + '" data-f="v" type="number" inputmode="decimal" step="any" min="0" value="' + (l.v ?? "") + '" aria-label="' + (m.kind === "k" ? "Conductivity" : "R value") + ', layer ' + (i + 1) + '" /><span class="u">' + (m.kind === "k" ? "W/(m·K)" : "m²·K/W") + "</span>" : '<span class="fixedv">' + (m.kind === "perMM" ? "R " + m.r + " per mm" : "R fixed by 90.1") + "</span>";
+    const airSel = (f, o, cur) => '<select style="width:100%" data-i="' + i + '" data-f="' + f + '" aria-label="' + (f === "dir" ? "Heat flow direction" : "Surfaces") + ', layer ' + (i + 1) + '">' + Object.keys(o).map(k => '<option value="' + k + '"' + (k === cur ? " selected" : "") + ">" + esc(Array.isArray(o[k]) ? o[k][0] : o[k]) + "</option>").join("") + "</select>";
+    const vin = m.kind === "air" ? '<div style="display:flex;flex-direction:column;gap:6px;width:100%;min-width:0">' + airSel("dir", AIRDIRN, l.dir || "h") + airSel("em", AIREM, l.em || "o") + "</div>" : (m.kind === "k" || m.kind === "rated") ? '<input data-i="' + i + '" data-f="v" type="number" inputmode="decimal" step="any" min="0" value="' + (l.v ?? "") + '" aria-label="' + (m.kind === "k" ? "Conductivity" : "R value") + ', layer ' + (i + 1) + '" /><span class="u">' + (m.kind === "k" ? "W/(m·K)" : "m²·K/W") + "</span>" : '<span class="fixedv">' + (m.kind === "perMM" ? "R " + m.r + " per mm" : "R fixed by 90.1") + "</span>";
     return '<div class="lcard' + (i === sel ? " sel" : "") + '" data-i="' + i + '" id="lc' + i + '"><div class="lch"><span class="no">' + (i + 1) + '</span><select data-i="' + i + '" data-f="id" aria-label="Material, layer ' + (i + 1) + '">' + opts + '</select><label class="posl">Position <select data-i="' + i + '" data-f="pos" aria-label="Position of layer ' + (i + 1) + '">' + pos + '</select></label></div>' +
-      '<div class="lcb"><div class="lf"><span class="lk">Thickness</span><div class="lin">' + tin + '</div></div><div class="lf"><span class="lk">' + (m.kind === "k" ? "Conductivity k" : m.kind === "rated" ? "Rated R" : "Resistance") + '</span><div class="lin">' + vin + '</div></div><div class="lf"><span class="lk">Layer R</span><div class="lr" id="lr' + i + '">—</div></div></div>' +
+      '<div class="lcb"><div class="lf"><span class="lk">Thickness</span><div class="lin">' + tin + '</div></div><div class="lf"><span class="lk">' + (m.kind === "air" ? "Heat flow and surfaces" : m.kind === "k" ? "Conductivity k" : m.kind === "rated" ? "Rated R" : "Resistance") + '</span><div class="lin">' + vin + '</div></div><div class="lf"><span class="lk">Layer R</span><div class="lr" id="lr' + i + '">—</div></div></div>' +
       '<div class="lca"><button type="button" data-i="' + i + '" data-a="up"' + (i === 0 ? " disabled" : "") + '>↑ Move up</button><button type="button" data-i="' + i + '" data-a="dn"' + (i === n - 1 ? " disabled" : "") + '>↓ Move down</button><button type="button" data-i="' + i + '" data-a="ia">Insert above</button><button type="button" data-i="' + i + '" data-a="ib">Insert below</button><button type="button" data-i="' + i + '" data-a="dup">Duplicate</button><button type="button" data-i="' + i + '" data-a="rm">Remove</button></div></div>';
   }).join("");
   drawStack();
@@ -791,12 +822,14 @@ function focusCard(i) { const el = $("lc" + i); if (el) el.scrollIntoView({ bloc
 $("lCards").addEventListener("change", e => {
   const t = e.target, i = +t.dataset.i, f = t.dataset.f;
   if (f === "pos") { moveTo(i, +t.value); renderRows(); calc(); focusCard(sel); return; }
+  if (f === "dir" || f === "em") { layers[i][f] = t.value; calc(); drawStack(); return; }
   if (f !== "id") return;
   const m = byId(t.value); layers[i] = { id: m.id, t: m.t, v: m.kind === "k" ? m.k : m.kind === "rated" ? m.R : null };
+  if (m.kind === "air") { layers[i].dir = "h"; layers[i].em = "o"; }
   sel = i; renderRows(); calc();
 });
 $("lCards").addEventListener("input", e => {
-  const t = e.target, i = +t.dataset.i, f = t.dataset.f; if (!f || f === "id" || f === "pos") return;
+  const t = e.target, i = +t.dataset.i, f = t.dataset.f; if (!f || f === "id" || f === "pos" || f === "dir" || f === "em") return;
   layers[i][f] = t.value === "" ? null : parseFloat(t.value); calc(); drawStack();
 });
 $("lCards").addEventListener("click", e => {
@@ -886,6 +919,10 @@ function calc() {
   const w = [];
   const rows = layers.map(l => ({ l, m: byId(l.id), R: layerR(l) }));
   rows.forEach((r, i) => { const c = $("lr" + i); if (c) c.textContent = isFinite(r.R) ? fmt(r.R, 3) : "—"; if (!isFinite(r.R)) w.push("Layer " + (i + 1) + ": enter a " + (r.m.kind === "k" ? "conductivity above zero." : "value.")); });
+  rows.forEach((r, i) => { if (r.m.kind !== "air") return; const t = r.l.t || 0;
+    if (!(t > 0)) w.push("Layer " + (i + 1) + ": enter the air space thickness.");
+    else if (t < 5) w.push("Layer " + (i + 1) + ": an air space under 5 mm is easily bridged by unevenness and fasteners. Treat the value with caution.");
+    else if (t > 300) w.push("Layer " + (i + 1) + ": the method is for air spaces up to 300 mm. Beyond that, take the value for 300 mm only as a guide."); });
   if (!rows.length) w.push("Add at least one layer.");
   const ext = parseFloat($("fext").value), int = parseFloat($("fint").value);
   const ok = rows.length && rows.every(r => isFinite(r.R));
@@ -944,12 +981,28 @@ MX.defs($("fxLDefs2"), [
   ["$R$_{min}", "minimum rated R of continuous insulation, same tables"]
 ]);
 MX.formula($("fxL3"), ["$Q$ = $U$ · $A$ · Δ$T$"]);
+MX.formula($("fxL4"), [
+  "$R$_{air} = @frac{1}{$h$_{a} + $E$ · $h$_{ro}}",
+  "$E$ = 1 / ( 1/$ε$_{1} + 1/$ε$_{2} − 1 )",
+  "$h$_{ro} = 4 $σ$ $T$_{m}^{3}",
+  "$h$_{a} = max( 0.025/$d$ , 1.25 )      horizontal",
+  "$h$_{a} = max( 0.025/$d$ , 1.95 )      upward",
+  "$h$_{a} = max( 0.025/$d$ , 0.12 $d$^{−0.44} )      downward"
+]);
+MX.defs($("fxLDefs4"), [
+  ["$R$_{air}", "resistance of the air space, m²·K/W"],
+  ["$d$", "thickness of the air space, m"],
+  ["$h$_{a}", "conduction and convection coefficient, W/(m²·K)"],
+  ["$h$_{ro}", "black-body radiation coefficient, 5.15 W/(m²·K) at a mean temperature $T$_{m} of 10 °C (283.15 K)"],
+  ["$E$", "combined emittance of the two faces"],
+  ["$ε$_{1}, $ε$_{2}", "emittance of the two faces: 0.9 for ordinary building surfaces, 0.05 for bright aluminium foil"]
+]);
 
 function working() {
   const s = [], c = S;
   if (c) {
     s.push({ t: "Surface films", m: ["$R$_{out} = **" + fmt(c.ext, 2) + "**, $R$_{in} = **" + fmt(c.int, 2) + "** m²·K/W"] });
-    s.push({ t: "Layers", m: c.rows.map((r, i) => (i + 1) + ". " + r.m.n + ": " + (r.m.kind === "k" ? fmt(r.l.t, 0) + " mm ÷ 1000 ÷ " + r.l.v + " = " : r.m.kind === "perMM" ? fmt(r.l.t, 0) + " mm × " + r.m.r + " = " : "") + "**" + fmt(r.R, 3) + "**") });
+    s.push({ t: "Layers", m: c.rows.map((r, i) => (i + 1) + ". " + r.m.n + ": " + (r.m.kind === "air" ? (a => fmt(r.l.t, 0) + " mm, " + AIRDIR[r.l.dir || "h"] + " heat flow, E = " + fmt(a.E, 3) + ": 1 ÷ (" + fmt(a.ha, 2) + " + " + fmt(a.E, 3) + " × " + fmt(HRO, 2) + ") = ")(airParts(r.l)) : r.m.kind === "k" ? fmt(r.l.t, 0) + " mm ÷ 1000 ÷ " + r.l.v + " = " : r.m.kind === "perMM" ? fmt(r.l.t, 0) + " mm × " + r.m.r + " = " : "") + "**" + fmt(r.R, 3) + "**") });
     s.push({ t: "Total resistance", m: ["$R$_{total} = " + fmt(c.ext, 2) + " + " + fmt(c.sum, 3) + " + " + fmt(c.int, 2) + " = **" + fmt(c.Rt, 3) + "**"] });
     s.push({ t: "U-factor", m: ["$U$ = 1 / " + fmt(c.Rt, 3) + " = **" + fmt(c.U, 4) + "** W/(m²·K)"] });
     if (c.lim) s.push({ t: "90.1 check", m: ["$U$_{max} = **" + fmt(c.lim[0], 3) + "**" + (c.lim[1] == null ? ", no R requirement" : ", $R$_{min} = **" + fmt(c.lim[1], 1) + "** c.i."), "Σ $R$_{c.i.} = **" + fmt(c.ciR, 3) + "**"], n: "Table 5.5-" + c.zi + ", " + CATN[c.ci] + "." });
@@ -959,6 +1012,12 @@ function working() {
 }
 
 /* reference tables in the drawer */
+(function () {
+  const T = [5, 7, 10, 13, 15, 20, 25, 40, 50, 90, 100, 150, 300], D = ["u", "h", "d"];
+  let h = '<thead><tr><th rowspan="2">Thickness, mm</th><th colspan="3">Ordinary surfaces</th><th colspan="3">One face bright foil</th></tr><tr>' + [0, 1].map(() => ["Up", "Horiz.", "Down"].map(x => "<th>" + x + "</th>").join("")).join("") + "</tr></thead><tbody>";
+  T.forEach(t => { h += "<tr><th>" + t + "</th>" + ["o", "f1"].map(e => D.map(d => "<td>" + fmt(airParts({ t, dir: d, em: e }).R, 2) + "</td>").join("")).join("") + "</tr>"; });
+  $("airT").innerHTML = h + "</tbody>";
+})();
 $("libT").innerHTML = LIB.filter(m => m.kind === "fixed" || m.kind === "perMM").map(m => "<tr><td>" + esc(m.n) + "</td><td>" + (m.kind === "perMM" ? "per mm" : m.t) + "</td><td>" + (m.kind === "perMM" ? m.r : m.R) + "</td></tr>").join("");
 (function () {
   let h = '<thead><tr><th rowspan="2">Zone</th>';
