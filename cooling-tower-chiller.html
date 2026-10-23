@@ -553,9 +553,6 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
 <h3 class="sub3">Evaporation by the three estimates</h3>
 <div class="table-scroll"><table class="cmp" id="evTable"></table></div>
 <p class="si" id="evNote"></p>
-<h3 class="sub3">Formulae used</h3>
-<div id="fxW2" role="math"></div>
-<ul id="fxWDefs2"></ul>
 
 <footer>Preliminary checking only. The 90.1 tower rating (Table 6.8.1-7) is recorded for reference. Formulae, working and notes are in the Notes and formulae bar.</footer>
 <div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Table values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI), © ASHRAE, and are shown for reference only; confirm against a licensed copy of the standard. Standards and handbooks cited are the copyright of their publishers.</div>
@@ -883,11 +880,6 @@ function fxDraw() {
   const EF = { emp: "$E$ = 0.00085 · 1.8 · $V$ · $R$", thumb: "$E$ = 0.0018 · $V$ · $R$", lat: "$E$ = @frac{$f$ · $Q$}{$h$_{fg}} × 3.6" }[meth] || "$E$ = 0.00085 · 1.8 · $V$ · $R$";
   const BF = dc ? "$B$ = @frac{$E$}{$N$ − 1} − $D$" : "$B$ = @frac{$E$}{$N$ − 1}";
   MX.formula($("fxT1"), ["$R$ = $T$_{in} − $T$_{out}", "$A$ = $T$_{out} − $T$_{wb}", "$Q$ = $ṁ$ · $c$_{w} · $R$", "$η$ = @frac{$R$}{$R$ + $A$}", EF, BF]);
-  MX.formula($("fxW2"), [EF, BF, "$D$ = $V$ · @frac{$δ$}{100}", "$M$ = $E$ + $B$ + $D$"]);
-  const d = [["$V$", "circulating flow, m³/h (= 3.6 × L/s)"], ["$R$", "range, K"], ["$E$, $B$, $D$, $M$", "evaporation, bleed-off, drift, make-up, m³/h"], ["$N$, $δ$", "cycles of concentration; drift, % of flow"]];
-  if (meth === "thumb") d.splice(2, 0, ["0.0018", "0.18 % of the flow for each K of range (0.1 % for each °F)"]);
-  if (meth === "lat") d.splice(2, 0, ["$f$", "share of the heat removed by evaporation, 0 to 1"], ["$Q$, $h$_{fg}", "heat rejected, kW; latent heat of water, 2430 kJ/kg (× 3.6 changes kg/s to m³/h)"]);
-  MX.defs($("fxWDefs2"), d);
 }
 fxDraw();
 
