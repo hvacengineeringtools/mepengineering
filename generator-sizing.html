@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Standby generator kVA from a schedule of essential loads: starting kVA by starting method, peak motor load, transient load, minimum genset rating after the overload, power-factor and step-load allowances, and the next standard size, with hotel examples and an Excel export." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XXVII — Standby generator sizing</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<style>
+.sec { border:1px solid var(--rule); background:var(--panel); margin:12px 0; padding:0; }
+.sec.eq { background:#f4efe3; }
+.sec .sh { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid var(--rule); }
+.sec .sn { min-width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:var(--ink); color:var(--paper); font-size:13px; }
+.sec .sh select.kd { width:auto; min-height:36px; font-size:14px; }
+.sec .sh input.dsc { flex:1 1 220px; min-width:160px; min-height:36px; font-size:14px; }
+.sec .sh .lca { margin:0; display:flex; gap:4px; }
+.sec .sb { padding:10px; }
+.sec .sb .fields { gap:10px 14px; }
+.sec details.fit { margin:10px 0 0; border:1px solid var(--faint); background:var(--paper); }
+.sec details.fit summary { cursor:pointer; padding:7px 10px; font-size:13px; font-weight:600; min-height:36px; display:flex; align-items:center; }
+.sec details.fit .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px 12px; padding:8px 10px 10px; }
+.sec details.fit .fg label { font-size:12px; display:block; margin:0 0 2px; }
+.sec details.fit .fg input { min-height:34px; font-size:14px; }
+.sec .rs { display:flex; flex-wrap:wrap; gap:6px 18px; padding:8px 10px; border-top:1px solid var(--rule); font-size:13px; background:var(--tint); }
+.sec .rs b { font-weight:700; }
+.sec .rs .tot { margin-left:auto; font-weight:700; }
+.sec .wn { color:#8a3b12; font-size:12px; padding:4px 10px 8px; line-height:1.4; }
+.seg2 { display:flex; flex-wrap:wrap; gap:0; }
+.seg2 button { flex:1 1 150px; width:auto; min-height:40px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.seg2 button + button { border-left:0; }
+.seg2 button.on { background:var(--ink); color:var(--paper); }
+.fitq { margin:12px 0 0; }
+.fitq .fl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.fitq .fgrid, .fitq .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px 12px; }
+.stp label { font-size:12px; display:block; margin:0 0 2px; font-weight:600; }
+.stp .sc { display:flex; }
+.stp .sc input { flex:1 1 auto; min-width:0; width:100%; text-align:center; min-height:40px; font-size:15px; border-left:0; border-right:0; }
+.stp .sc button { width:40px; min-height:40px; flex:none; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 18px Georgia, serif; cursor:pointer; padding:0; }
+.stp small.kv { display:block; font-size:11px; color:var(--muted); margin-top:2px; min-height:13px; }
+table.cmp#cmpT td.bad { color:#9b1c1c; font-weight:700; }
+.sec details.fit { margin:10px 0 0; }
+.addrow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+.addrow button, .exrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.addrow button.pri, .exrow button.pri { background:var(--ink); color:var(--paper); }
+.exrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:5px 6px; }
+table.cmp#prT td.l, table.cmp#prT th.l { text-align:left; }
+table.cmp#prT tr.eqr td { background:#f4efe3; }
+table.cmp#prT td.bad { color:#9b1c1c; font-weight:700; }
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+.prhead { display:none; }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .sec, .mx-pull, .mx-scrim, .mx-drawer, header .sub, #s1, #s2h, .addrow, .exrow, footer, #s4, #s4 ~ ul, #s4 ~ div:not(.rights), #s4 ~ table, #s4 ~ h4, #s4 ~ p { display:none !important; }
+  .prhead { display:block; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+<style>
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.segu { display:flex; flex-wrap:wrap; }
+.segu button { flex:1 1 120px; width:auto; min-height:42px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.segu button + button { border-left:0; }
+.segu button.on { background:var(--ink); color:var(--paper); }
+.gl { border:1px solid var(--rule); background:var(--panel); margin:8px 0; }
+.gl .glh { display:flex; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px solid var(--rule); }
+.gl .glh .n { min-width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:var(--ink); color:var(--paper); font-size:13px; font-weight:700; }
+.gl .glh input.dsc { flex:1 1 auto; min-width:0; min-height:36px; font-size:14px; }
+.gl .glh button { width:auto; min-height:36px; padding:4px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 13px Georgia, serif; cursor:pointer; }
+.gl .glb { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px 10px; padding:8px; }
+.gl .glb label { font-size:12px; display:block; margin:0 0 2px; font-weight:600; }
+.gl .glb input, .gl .glb select { min-height:36px; font-size:14px; width:100%; }
+.gl .gl2 { display:flex; flex-wrap:wrap; gap:4px 18px; padding:6px 8px; border-top:1px solid var(--rule); background:var(--tint); font-size:13px; }
+.gl .gl2 b { font-weight:700; }
+.gl, .gl .glh, .gl .glb { min-width:0; max-width:100%; box-sizing:border-box; }
+.gl .gl2 span { white-space:normal; }
+.gl .glh input.dsc { width:auto; }
+.addrow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+.addrow button, .exrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.addrow button.pri, .exrow button.pri { background:var(--ink); color:var(--paper); }
+.exrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+.case { border:1px solid var(--rule); background:var(--panel); margin:12px 0; }
+table.cmp td.l, table.cmp th.l { text-align:left; }
+table.cmp td { white-space:normal; }
+table.cmp tr.k td { font-weight:700; background:var(--tint); }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:4px 6px; }
+.cmpnote { font-size:12.5px; color:var(--muted); line-height:1.45; margin:8px 0 0; }
+.prhead { display:none; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+#arT input { min-height:32px; font-size:13px; padding:2px 6px; width:100%; }
+#arT td, #arT th { padding:3px 4px; }
+#arT td.l input { min-width:150px; }
+.arw { max-height:420px; overflow:auto; border:1px solid var(--rule); }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .mx-pull, .mx-scrim, .mx-drawer, header .sub, .addrow, .exrow, footer, .fields, h5.vh, .gl, #lrs, #s0, #s1, #s2, #s3, #s5, #s5 ~ *, #arw, #cmpbox, h2:not(#s4) { display:none !important; }
+  .prhead { display:block; }
+  .big { display:grid; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+<article class="book">
+<header>
+  <div class="kicker">Sheet XXVII</div>
+  <h1>Standby generator sizing</h1>
+  <div class="sub">Essential load schedule · motor starting · transient load · genset kVA and nominal rating · export to Excel</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a class="on" href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Lighting</div><div class="nl">
+    <a href="light-sizing.html"><span>XXVIII</span>Lighting sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Works out the standby generator rating from a schedule of essential loads, by the usual load-step method: each load’s starting kVA from its starting method, the peak motor load, the transient load with the steady non-motor load added, then the minimum genset kVA after the overload, power-factor and step-load allowances. The nominal rating is the next standard size. Load one of the hotel examples to see a filled-in schedule.</p>
+<nav class="toc" aria-label="On this page"><a href="#s0">1 Factors</a><a href="#s1">2 Starting methods</a><a href="#s2">3 Loads</a><a href="#s3">4 Area schedule</a><a href="#s4">5 Result</a><a href="#s5">6 Check</a></nav>
+
+<h2 id="s0">1. Allowances</h2>
+<div class="fields two">
+  <div class="field"><label for="proj">Project / set</label><input id="proj" type="text" placeholder="e.g. Genset for podium" /></div>
+  <div class="field"><label for="pk">Peak motor factor</label><input id="pk" type="number" inputmode="decimal" step="any" min="0" /><div class="hint">Share of the total motor starting kVA taken as peak input power: motors starting together (0.75) × starting power factor (0.65) = 0.4875.</div></div>
+  <div class="field"><label for="ov">Overload factor</label><input id="ov" type="number" inputmode="decimal" step="any" min="0" /><div class="hint">Allowance for short-term overload of the set. Typically 1.1.</div></div>
+  <div class="field"><label for="pf">Generator power factor</label><input id="pf" type="number" inputmode="decimal" step="any" min="0" max="1" /><div class="hint">Rated power factor of the set. Typically 0.8.</div></div>
+  <div class="field"><label for="st">Step-load acceptance factor</label><input id="st" type="number" inputmode="decimal" step="any" min="0" max="1" /><div class="hint">Share of its rating the set can take in one step without too large a voltage or speed dip. Often 0.65 to 0.75: confirm with the manufacturer.</div></div>
+  <div class="field"><label for="sp">Spare on the area schedule</label><input id="sp" type="number" inputmode="decimal" step="any" min="0" /><div class="hint">1.15 = 15 % spare on essential lighting and small power.</div></div>
+</div>
+
+<h2 id="s1">2. Starting methods</h2>
+<p class="lead" style="margin-top:6px">Starting kVA = running kVA × the factor of the method. Pick a method from the list and its typical factor is filled in for you; change it to suit your starter. What each method is, and the range of factors, is under <b>Notes and formulae → Starting methods</b>.</p>
+<div class="table-scroll"><table class="cmp" id="mT"></table></div>
+<div class="addrow noprint"><label for="mSel" style="font-size:13px;font-weight:600">Add a method:</label><select id="mSel" style="min-height:40px;width:auto;max-width:100%"></select><button type="button" id="mAdd">Add</button></div>
+
+<h2 id="s2">3. Essential loads</h2>
+<div class="addrow noprint" style="margin-top:0">
+  <span style="font-size:13px;font-weight:600">Load an example:</span>
+  <button type="button" id="eS">Hotel tower SHT</button><button type="button" id="eH">Hotel tower HOT</button><button type="button" id="eP">Podium POD</button><button type="button" id="eB">Clear</button>
+</div>
+<div id="lrs"></div>
+<div class="addrow noprint"><button type="button" class="pri" id="rAdd">Add a load</button></div>
+
+<h2 id="s3">4. Area schedule (lighting and small power)</h2>
+<p class="lead" style="margin-top:6px">For lighting and small power by floor area: area × essential VA/m², all added up with the spare. A load row set to “Area schedule” takes this total.</p>
+<div class="arw" id="arw"><table class="cmp" id="arT" style="min-width:560px"></table></div>
+<div class="addrow noprint"><button type="button" id="aAdd">Add an area</button><button type="button" id="aClr">Clear the schedule</button></div>
+<p class="cmpnote" id="arN"></p>
+
+<h2 id="s4">5. Result</h2>
+<div class="warn" id="sWarn" role="status"></div>
+<div class="big" id="sRes"></div>
+<div class="prhead"><h3 id="prTitle" style="margin:0 0 4px">Standby generator sizing</h3><div id="prMeta" style="font-size:11px;margin-bottom:6px"></div></div>
+<div class="table-scroll" id="cmpbox"><table class="cmp" id="chT"></table></div>
+<div class="table-scroll"><table class="cmp" id="prT"></table></div>
+<table class="cmp prhead sig" style="margin-top:14px"><tbody><tr><td>Prepared by:</td><td>Checked by:</td><td>Approved by:</td></tr></tbody></table>
+<div class="fields two noprint" style="margin-top:12px">
+  <div class="field"><label for="sz">Standard generator sizes, kVA</label><input id="sz" type="text" /><div class="hint">Separated by commas. The nominal rating is the smallest size at or above the minimum.</div></div>
+  <div class="field"><label for="own">Nominal rating you choose (optional)</label><input id="own" type="number" inputmode="decimal" step="any" min="0" /><div class="hint">Type the size you propose to compare with the minimum.</div></div>
+</div>
+
+<div class="exrow noprint">
+  <button type="button" class="pri" id="xl">Download Excel workbook (.xlsx)</button>
+  <button type="button" id="pr">Print or save as PDF</button>
+  <button type="button" id="sv">Save the inputs (.json)</button>
+  <button type="button" id="ld">Open saved inputs</button>
+  <input type="file" id="ldf" accept=".json,application/json" hidden />
+</div>
+<p class="si noprint">The workbook keeps your inputs in blue and works out every row and the chain to the nominal rating with formulas, so a checker can follow each figure.</p>
+
+<h2 id="s5">6. Check against the examples</h2>
+<p class="lead" style="margin-top:6px">Each example above is a filled-in schedule from a real job. The table sets the minimum genset rating of the original calculation against this sheet’s result for the same inputs.</p>
+<div class="table-scroll"><table class="cmp" id="ckT"></table></div>
+<p class="cmpnote">The original types the nominal rating by hand (1600, 300 and 1200 kVA); this sheet picks the next size in the list above, which gives the same three answers.</p>
+
+<footer>Preliminary checking only. The method is the usual load-step method and is only as good as its allowances: the starting factors, the 0.75 diversity on motors starting together and the step-load acceptance factor all need the generator manufacturer’s confirmation, and the motors’ own data where known. Voltage dip and harmonics from drives are not checked here.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-start" data-tab="start" aria-controls="mxtab-start">Starting methods</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The working with the values now on the sheet.</p>
+      <div id="workS"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. One load</h3>
+      <p class="si">Given kVA: kW = kVA × pf. Given kW: kVA = kW ÷ pf. Area schedule: kVA = Σ(area × VA/m² ÷ 1000) × spare, kW = kVA × pf.<br>Starting kVA = kVA × starting factor.<br>A motor load adds its starting kVA to the motor total. A non-motor load adds its kW to the steady total.</p>
+      <h3>2. Peak motor load</h3>
+      <p class="si">P<sub>motor</sub> = peak motor factor × Σ motor starting kVA, in kW. The factor is 0.75 (motors starting together) × 0.65 (starting power factor) = 0.4875. Some designers round the product to 0.5.</p>
+      <h3>3. Transient load</h3>
+      <p class="si">P<sub>transient</sub> = P<sub>motor</sub> + Σ non-motor kW.</p>
+      <h3>4. Minimum genset rating</h3>
+      <p class="si">kVA<sub>min</sub> = P<sub>transient</sub> ÷ overload ÷ power factor ÷ step-load factor<br>Typical allowances: overload 1.1, power factor 0.8, step-load factor 0.65 to 0.75.</p>
+      <h3>5. Nominal rating</h3>
+      <p class="si">The smallest standard size not less than kVA<sub>min</sub>.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-start" aria-labelledby="mxt-start" hidden>
+      <p class="si">The factor is the starting kVA divided by the running kVA. The starting kVA of a motor is its locked-rotor kVA, which depends on the starter. The values are typical; where the maker gives the locked-rotor kVA or the code letter of the motor, use that.</p>
+      <div class="table-scroll"><table class="cmp" id="kbT"></table></div>
+      <h3>How the methods relate</h3>
+      <p class="si">Direct on line (DOL) is the reference: a standard induction motor draws about 6 to 8 times its full-load current, so 7 is a common figure.<br>Star-delta (Y/D) starts on one third of the voltage, which cuts the current to one third: 7 ÷ 3 ≈ 2.33.<br>An auto-transformer starter gives the factor of the DOL start times the tap setting squared: 65 % tap → 7 × 0.65² ≈ 2.96, 80 % tap → 4.5, 50 % tap → 1.75.<br>A soft starter limits the current, often to about 3 times full load.<br>A variable-speed drive (inverter) starts at close to full-load current.<br>ACVV is the variable-voltage, variable-frequency drive of a lift. Values from about 1.7 up to 2.5 are used; take the higher one when the lift maker has not given a figure.<br>Non-motor and electronic loads (lighting, small power, servers, heaters) have no starting surge: use 1.</p>
+      <h3>Choosing a method on a load</h3>
+      <p class="si">Pick the method on the load row. If it is not yet in the table in section 2, it is added there with its typical factor, which you can then change. Changing a factor in the table changes every load that uses the method. A load with the method <b>Static</b> is set to count as non-motor; any other method sets it to count as motor. Change “Counts as” if the load differs.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Per-load power factor</h3>
+      <p class="si">Pumps and lifts are often taken at 0.85, lighting at 0.9 and static loads at 0.8. Where kW is given, kVA = kW ÷ efficiency ÷ power factor, for example 0.85 × 0.8 = 0.68. Set the factor on each row.</p>
+      <h3>Loads that start but count as steady</h3>
+      <p class="si">A load can have a motor starter but still be counted in the steady total, for example a CRAC unit that runs all the time. Set “Counts as” to choose which total a row goes into.</p>
+      <h3>What is not included</h3>
+      <p class="si">Voltage dip, harmonics, derating for altitude and temperature, sequencing of the starts, and the manufacturer’s transient data. The step-load acceptance factor should be confirmed with the manufacturer.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pf = v => { const x = parseFloat(v); return isFinite(x) ? x : NaN; };
+const colL = n => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const X = (() => {
+  const fonts = [], fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>'], borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>'], nf = [], xfs = [], map = {};
+  const idx = (arr, x) => { let i = arr.indexOf(x); if (i < 0) { arr.push(x); i = arr.length - 1; } return i; };
+  fonts.push('<font><sz val="10"/><name val="Calibri"/></font>');
+  const BUILT = { "General": 0, "0": 1, "0.00": 2, "#,##0": 3, "#,##0.00": 4 };
+  function sty(o) {
+    o = o || {}; const key = JSON.stringify(o); if (map[key] != null) return map[key];
+    const font = idx(fonts, '<font>' + (o.b ? "<b/>" : "") + (o.i ? "<i/>" : "") + '<sz val="' + (o.sz || 10) + '"/>' + (o.c ? '<color rgb="FF' + o.c + '"/>' : "") + '<name val="Calibri"/></font>');
+    const fill = o.fill ? idx(fills, '<fill><patternFill patternType="solid"><fgColor rgb="FF' + o.fill + '"/><bgColor indexed="64"/></patternFill></fill>') : 0;
+    const bd = o.bd ? idx(borders, '<border><left style="thin"><color rgb="FFBFB8A5"/></left><right style="thin"><color rgb="FFBFB8A5"/></right><top style="thin"><color rgb="FFBFB8A5"/></top><bottom style="thin"><color rgb="FFBFB8A5"/></bottom><diagonal/></border>') : 0;
+    let nid = 0; if (o.fmt) { if (BUILT[o.fmt] != null) nid = BUILT[o.fmt]; else nid = 164 + idx(nf, o.fmt); }
+    const al = (o.h || o.wrap || o.v) ? '<alignment' + (o.h ? ' horizontal="' + o.h + '"' : "") + (o.v ? ' vertical="' + o.v + '"' : "") + (o.wrap ? ' wrapText="1"' : "") + "/>" : "";
+    xfs.push('<xf numFmtId="' + nid + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + bd + '" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"' + (al ? ' applyAlignment="1">' + al + "</xf>" : "/>"));
+    map[key] = xfs.length; return xfs.length;   /* index 0 is the default xf */
+  }
+  const xml = () => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + (nf.length ? '<numFmts count="' + nf.length + '">' + nf.map((f, i) => '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + esc(f) + '"/>').join("") + "</numFmts>" : "") + '<fonts count="' + fonts.length + '">' + fonts.join("") + '</fonts><fills count="' + fills.length + '">' + fills.join("") + '</fills><borders count="' + borders.length + '">' + borders.join("") + '</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + (xfs.length + 1) + '"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' + xfs.join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return { sty, xml };
+})();
+function sheetXml(sh) {
+  let rows = "";
+  sh.rows.forEach((row, ri) => {
+    if (!row) return; let cx = "";
+    row.forEach((c, ci) => {
+      if (c == null) return; const ref = colL(ci) + (ri + 1), s = c.s ? ' s="' + c.s + '"' : "";
+      if (c.f != null) { const v = c.v; if (typeof v === "string") cx += '<c r="' + ref + '"' + s + ' t="str"><f>' + esc(c.f) + "</f><v>" + esc(v) + "</v></c>"; else cx += '<c r="' + ref + '"' + s + "><f>" + esc(c.f) + "</f>" + (typeof v === "number" && isFinite(v) ? "<v>" + v + "</v>" : "") + "</c>"; }
+      else if (typeof c.v === "number") { if (isFinite(c.v)) cx += '<c r="' + ref + '"' + s + "><v>" + c.v + "</v></c>"; }
+      else if (c.v != null && c.v !== "") cx += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + "</t></is></c>";
+      else if (s) cx += '<c r="' + ref + '"' + s + "/>";
+    });
+    rows += '<row r="' + (ri + 1) + '"' + (sh.ht && sh.ht[ri] ? ' ht="' + sh.ht[ri] + '" customHeight="1"' : "") + ">" + cx + "</row>";
+  });
+  const cols = sh.cols ? "<cols>" + sh.cols.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("") + "</cols>" : "";
+  const pane = sh.freeze ? '<pane xSplit="' + sh.freeze[0] + '" ySplit="' + sh.freeze[1] + '" topLeftCell="' + colL(sh.freeze[0]) + (sh.freeze[1] + 1) + '" activePane="bottomRight" state="frozen"/>' : "";
+  const merges = sh.merges && sh.merges.length ? '<mergeCells count="' + sh.merges.length + '">' + sh.merges.map(m => '<mergeCell ref="' + m + '"/>').join("") + "</mergeCells>" : "";
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"' + (sh.first ? ' tabSelected="1"' : "") + ' showGridLines="0">' + pane + "</sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14\"/>" + cols + "<sheetData>" + rows + "</sheetData>" + merges + '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+}
+const CRCT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRCT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), sz = data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    cen.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+  });
+  const cs = cen.reduce((a, x) => a + x.length, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cen, [new Uint8Array(end.buffer)]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+const PRE = {"sht":{"name":"Hotel tower, SHT (rev. C3)","pk":"0.5","ov":"1.1","pf":"0.8","st":"0.73","acvv":"1.7","rows":[{"d":"ESS. LIGHTING","t":"FSI","m":"area","v":"","pf":"0.9","me":"Static","k":"n"},{"d":"FS BOOSTER PUMP 1","t":"FSI","m":"kva","v":"64.71","pf":"0.85","me":"Y/D","k":"m"},{"d":"FS BOOSTER PUMP 2","t":"FSI","m":"kva","v":"88.24","pf":"0.85","me":"AUTO TX","k":"m"},{"d":"FS TRANSFER PUMP 1","t":"FSI","m":"kva","v":"12.94","pf":"0.85","me":"Y/D","k":"m"},{"d":"FS TRANSFER PUMP 2","t":"FSI","m":"kva","v":"6.47","pf":"0.85","me":"Y/D","k":"m"},{"d":"FS PUMP","t":"FSI","m":"kva","v":"17.65","pf":"0.85","me":"Y/D","k":"m"},{"d":"SPKR TRANSFER PUMP","t":"FSI","m":"kva","v":"12.94","pf":"0.85","me":"Y/D","k":"m"},{"d":"SPKR PUMP","t":"FSI","m":"kva","v":"129.41","pf":"0.85","me":"AUTO TX","k":"m"},{"d":"SPKR BOOSTER PUMP","t":"FSI","m":"kva","v":"129.41","pf":"0.85","me":"AUTO TX","k":"m"},{"d":"DRENCHER TRANSFER PUMP","t":"FSI","m":"kva","v":"25.88","pf":"0.85","me":"AUTO TX","k":"m"},{"d":"DRENCHER BOOSTER PUMP","t":"FSI","m":"kva","v":"64.71","pf":"0.85","me":"AUTO TX","k":"m"},{"d":"DRENCHER PUMP","t":"FSI","m":"kva","v":"35.29","pf":"0.85","me":"Y/D","k":"m"},{"d":"VAC CONTROL","t":"FSI","m":"kva","v":"12","pf":"0.85","me":"Static","k":"m"},{"d":"2 FIREMAN LIFTS","t":"FSI","m":"kva","v":"47","pf":"0.85","me":"ACVV","k":"m"},{"d":"3 PASSENGER LIFTS HOMING","t":"FSI","m":"kva","v":"155.28","pf":"0.85","me":"ACVV","k":"m"}],"area":[["Hotel tower","Essential lighting",23066.0,5.0]],"exp":1528.51307596513,"nom":1600},"hot":{"name":"Hotel tower, HOT","pk":"0.4875","ov":"1.1","pf":"0.8","st":"0.65","acvv":"2.5","rows":[{"d":"ESS. LIGHTING & SMALL POWER","t":"FSI","m":"kw","v":"11","pf":"0.68","me":"Static","k":"n"},{"d":"SPKR PUMP","t":"FSI","m":"kw","v":"22","pf":"0.68","me":"Y/D","k":"m"},{"d":"FS PUMP","t":"FSI","m":"kw","v":"37","pf":"0.68","me":"Y/D","k":"m"},{"d":"1 FIREMAN LIFT","t":"FSI","m":"kw","v":"15","pf":"0.68","me":"ACVV","k":"m"},{"d":"1 PASSENGER LIFT HOMING","t":"","m":"kw","v":"15","pf":"0.68","me":"ACVV","k":"m"}],"area":[],"exp":285.528396236117,"nom":300},"pod":{"name":"Podium, POD (rev. C3)","pk":"0.5","ov":"1.1","pf":"0.8","st":"0.73","acvv":"1.7","rows":[{"d":"SECURITY & BMS","t":"NON-FSI","m":"kva","v":"48","pf":"0.8","me":"Static","k":"n"},{"d":"KITCHEN WASTE WATER PUMP","t":"NON-FSI","m":"kva","v":"21.8","pf":"0.85","me":"Y/D","k":"m"},{"d":"FOUL WATER SUMP PUMP 1","t":"NON-FSI","m":"kva","v":"15","pf":"0.85","me":"Y/D","k":"m"},{"d":"FOUL WATER SUMP PUMP 2","t":"NON-FSI","m":"kva","v":"11","pf":"0.85","me":"Y/D","k":"m"},{"d":"FOUL WATER SUMP PUMP 3","t":"NON-FSI","m":"kva","v":"11","pf":"0.85","me":"Y/D","k":"m"},{"d":"SUB-SOIL WATER SUMP PUMP 1","t":"NON-FSI","m":"kva","v":"5.5","pf":"0.85","me":"Y/D","k":"m"},{"d":"SUB-SOIL WATER SUMP PUMP 2","t":"NON-FSI","m":"kva","v":"5.5","pf":"0.85","me":"Y/D","k":"m"},{"d":"SUB-SOIL WATER SUMP PUMP 3","t":"NON-FSI","m":"kva","v":"5.5","pf":"0.85","me":"Y/D","k":"m"},{"d":"FTNS","t":"NON-FSI","m":"kva","v":"80","pf":"0.8","me":"Static","k":"n"},{"d":"PABX","t":"NON-FSI","m":"kva","v":"126.72","pf":"0.8","me":"Static","k":"n"},{"d":"ATC & OIL HEATER","t":"NON-FSI","m":"kva","v":"38","pf":"0.8","me":"Static","k":"n"},{"d":"MAIN SERVERS","t":"NON-FSI","m":"kva","v":"200","pf":"0.8","me":"Static","k":"n"},{"d":"CRAC UNITS","t":"NON-FSI","m":"kva","v":"50","pf":"0.8","me":"Y/D","k":"n"},{"d":"SECURITY & BMS (2)","t":"NON-FSI","m":"kva","v":"89","pf":"0.8","me":"Static","k":"n"},{"d":"SMALL POWER FOR PODIUM FUNCTION AREA","t":"NON-FSI","m":"area","v":"","pf":"0.8","me":"Static","k":"n"}],"area":[["Second Floor","Grand Ball room",580.0,5.0],["Second Floor","Bride's room",66.0,5.0],["Second Floor","Store",80.0,0.0],["Second Floor","Kitchen",300.0,50.0],["Second Floor","Foyer / Pre-Function area",353.0,5.0],["Second Floor","Pre-Function area",273.0,5.0],["Second Floor","Function room 1",96.0,10.0],["Second Floor","Function room 2",78.0,10.0],["Second Floor","Function room 3",80.0,10.0],["Second Floor","Function room 4",35.0,10.0],["Second Floor","Business centre",160.0,10.0],["Second Floor","Pantry",25.0,10.0],["Second Floor","Lift Lobby (HOT)",20.0,5.0],["Second Floor","Male Lav.",22.0,0.0],["Second Floor","Female Lav.",35.0,0.0],["Second Floor","E&M plant room",120.0,0.0],["Third Floor","Store",250.0,0.0],["Third Floor","Kitchen",260.0,50.0],["Third Floor","Lift lobby (HOT)",15.0,5.0],["Third Floor","AV control room",40.0,10.0],["Third Floor","Restaurant Lobby",140.0,5.0],["Third Floor","Chinese Restaurant",542.0,5.0],["Third Floor","Kitchen",135.0,50.0],["Third Floor","Male Lav.",22.0,0.0],["Third Floor","Lift Lobby (HOT)",20.0,5.0],["Third Floor","Female Lav.",35.0,0.0],["Third Floor","BOH",50.0,5.0],["Third Floor","E&M plant room",130.0,0.0],["Third Floor Mezzanine","Staff Canteen",251.0,5.0],["Third Floor Mezzanine","E & M plant room",130.0,0.0],["Fourth Floor","Store",115.0,0.0],["Fourth Floor","Junior Ball room",464.0,5.0],["Fourth Floor","Pre-function area",202.0,5.0],["Fourth Floor","Meeting rooms",180.0,10.0],["Fourth Floor","Male Lav.",45.0,0.0],["Fourth Floor","Female Lav.",50.0,0.0],["Fourth Floor","Lift Lobby (HOT)",60.0,5.0],["Fourth Floor","Japanese Resturant",180.0,5.0],["Fourth Floor","Kitchen",75.0,50.0],["Fourth Floor","Shop 1",45.0,0.0],["Fourth Floor","Shop 2",165.0,0.0],["Fourth Floor","VIP room 1",58.0,10.0],["Fourth Floor","VIP room 2",59.0,10.0],["Fourth Floor","Lift Lobby (SHT)",35.0,5.0],["Fourth Floor","BOH",70.0,5.0],["Fourth Floor","Personnel office",160.0,10.0],["Fourth Floor","E&M plant room",50.0,0.0],["Fourth Floor Mezzanine","Store",75.0,0.0],["Fourth Floor Mezzanine","Meeting room 1 & 2",135.0,10.0],["Fourth Floor Mezzanine","Meeting room 3",50.0,10.0],["Fourth Floor Mezzanine","Pre-function area",202.0,5.0],["Fourth Floor Mezzanine","Lift Lobby (HOT)",60.0,5.0],["Fourth Floor Mezzanine","Health Club",169.0,5.0],["Fourth Floor Mezzanine","Filtration plant room",450.0,0.0],["Fourth Floor Mezzanine","Repair and maintenance",650.0,0.0],["Fourth Floor Mezzanine","Hotel operatings",65.0,20.0],["Fourth Floor Mezzanine","Lift Lobby (SHT)",35.0,5.0],["Fourth Floor Mezzanine","Male Lav.",36.0,0.0],["Fourth Floor Mezzanine","Female Lav.",18.0,0.0],["Fourth Floor Mezzanine","Staff operation",410.0,10.0],["Fourth Floor Mezzanine","Staff training",298.0,0.0],["Fourth Floor Mezzanine","Tennis court",684.0,0.0],["Fourth Floor Mezzanine","BOH",30.0,0.0],["Fourth Floor Mezzanine","E&M plant room",90.0,0.0],["Fifth Floor","Store",46.0,0.0],["Fifth Floor","Signature Restaurant",363.0,5.0],["Fifth Floor","Kitchen",124.0,50.0],["Fifth Floor","Staff Canteen",301.0,5.0],["Fifth Floor","Lift Lobby (HOT)",200.0,5.0],["Fifth Floor","Bars",98.0,0.0],["Fifth Floor","Indoor swimming pool",444.0,0.0],["Fifth Floor","SPA",250.0,0.0],["Fifth Floor","Aerobics",62.0,0.0],["Fifth Floor","Weights",30.0,0.0],["Fifth Floor","Siting area",94.0,0.0],["Fifth Floor","Exercise facilities",190.0,0.0],["Fifth Floor","Beauty Salon",89.0,0.0],["Fifth Floor","Sauna",15.0,10.0],["Fifth Floor","Steam",8.0,10.0],["Fifth Floor","Male changing room",100.0,0.0],["Fifth Floor","Female changing room",130.0,0.0],["Fifth Floor","Group treatment 1 & 2",120.0,5.0],["Fifth Floor","BOH",100.0,0.0],["Fifth Floor","E&M plant room",135.0,0.0],["Basement 2","Chiller plant room",1135.0,0.0],["Basement 2","Chiller water pump control rm",50.0,0.0],["Basement 2","LV Switch room",120.0,5.0],["Basement 2","Laundry 1",300.0,10.0],["Basement 2","Laundry 2",550.0,10.0],["Basement 2","Sprinkler pump room",210.0,0.0],["Basement 2","Male Staff room",160.0,0.0],["Basement 2","Female Staff room",160.0,0.0],["Basement 2","Grease interceptor room",117.0,0.0],["Basement 2","BOH",200.0,0.0],["Basement 2","M&E plant room",70.0,0.0],["Basement 1","Transformer room",140.0,0.0],["Basement 1","Water pump room",177.0,0.0],["Basement 1","Gas kiosk",33.0,0.0],["Basement 1","F&B main kitchen",780.0,50.0],["Basement 1","Calorifier room",200.0,0.0],["Basement 1","Cousumer LV Switch room",110.0,5.0],["Basement 1","TBE room 1",65.0,0.0],["Basement 1","TBE room 2",70.0,0.0],["Basement 1","TBE room 3",50.0,0.0],["Basement 1","LV Switch room",112.0,5.0],["Basement 1","BOH",200.0,0.0],["Basement 1","M&E plant room",70.0,0.0],["Ground Floor","VIP drop off area",260.0,0.0],["Ground Floor","Loading and Unloading bay",650.0,0.0],["Ground Floor","Refuse collection chamber",54.0,0.0],["Ground Floor","E&M plant room",140.0,0.0],["Ground Floor","Transformer room No.1",110.0,0.0],["Ground Floor","Transformer room No.2",120.0,0.0],["Ground Floor","Transformer room No.3",110.0,0.0],["Ground Floor","Transformer room No.4",150.0,0.0],["Ground Floor","LV Switch room No. 1",54.0,5.0],["Ground Floor","LV Switch room No. 2",54.0,5.0],["Ground Floor","LV Switch room No. 3",54.0,5.0],["Ground Floor","HEC switch room No.1",45.0,0.0],["Ground Floor","HEC switch room No.2",45.0,0.0],["Ground Floor","HEC switch room No.3",32.0,0.0],["Ground Floor","HEC switch room No.4",32.0,0.0],["Ground Floor","Staff entrance security",60.0,5.0],["Ground Floor","Purchasing office",42.0,5.0],["Ground Floor","BOH",100.0,0.0],["Ground Floor","Tx auxillary area",70.0,0.0],["First Floor","Bar",160.0,0.0],["First Floor","Lobby Lounge",385.0,0.0],["First Floor","Kitchen",204.0,50.0],["First Floor","Male Lav.",50.0,0.0],["First Floor","Female Lav.",40.0,0.0],["First Floor","Hotel Lobby (HOT)",750.0,10.0],["First Floor","Lift Lobby (HOT)",60.0,5.0],["First Floor","Hotel Lobby (SHT)",220.0,10.0],["First Floor","Shop",108.0,0.0],["First Floor","Shop",22.0,0.0],["First Floor","Pastry shop",30.0,0.0],["First Floor","Flower shop",18.0,0.0],["First Floor","Estate Management Rm",60.0,10.0],["First Floor","FS control centre",36.0,5.0],["First Floor","E&M plant room",125.0,0.0],["First Floor","Mail box room",24.0,0.0],["First Floor","SHT front office",100.0,5.0],["First Floor","Arcade area",100.0,5.0],["First Floor","Driveway",1750.0,0.0],["First Floor","Lift Lobby (SHT)",27.0,5.0],["First Floor","BOH",60.0,0.0],["First Floor","EVA & Drop-off area",780.0,0.0],["First Floor Mezzanine","Hotel Administration",25.0,10.0],["First Floor Mezzanine","Hotel operatings",330.0,10.0],["First Floor Mezzanine","Laundry",132.0,10.0],["First Floor Mezzanine","Male Lav.",22.0,0.0],["First Floor Mezzanine","Female Lav.",18.0,0.0],["First Floor Mezzanine","FS pump room",55.0,0.0],["First Floor Mezzanine","Lift Lobby (HOT)",60.0,5.0],["First Floor Mezzanine","E&M plant room",55.0,0.0]],"exp":1157.49641967621,"nom":1200}};
+const SAVE_KEY = "nv-sheet-xxvi-v1";
+const SIZES = "20, 30, 40, 50, 60, 80, 100, 125, 150, 200, 250, 300, 350, 400, 500, 600, 650, 800, 1000, 1200, 1250, 1500, 1600, 1800, 2000, 2250, 2500, 3000";
+/* typical starting factors (starting kVA / running kVA) */
+const KB = [
+  { n: "Static", f: 1, r: "1", w: "No starting surge: lighting, small power, servers, heaters, electronic loads." },
+  { n: "DOL", f: 7, r: "6 to 8", w: "Direct on line: full voltage across the motor at start." },
+  { n: "Y/D", f: 2.33, r: "2 to 2.5", w: "Star-delta: the motor starts in star on one third of the voltage, then changes to delta." },
+  { n: "AUTO TX", f: 2.96, r: "1.75 to 4.5", w: "Auto-transformer starter: reduced voltage from a tapping (65 % tap gives 2.96, 80 % gives 4.5, 50 % gives 1.75)." },
+  { n: "Soft starter", f: 3, r: "2 to 4", w: "Solid-state starter that ramps the voltage and limits the current." },
+  { n: "VSD", f: 1.1, r: "1 to 1.5", w: "Variable-speed drive (inverter): current limited to about full load." },
+  { n: "ACVV", f: 2, r: "1.7 to 2.5", w: "Variable-voltage, variable-frequency lift drive." }
+];
+const kbFind = n => KB.find(k => k.n.toLowerCase() === String(n).trim().toLowerCase());
+const METH = (acvv) => [["Static", "1"], ["DOL", "7"], ["Y/D", "2.33"], ["AUTO TX", "2.33"], ["ACVV", acvv || "2"]];
+const blank = () => ({ proj: "", pk: "0.4875", ov: "1.1", pf: "0.8", st: "0.73", sp: "1.15", methods: METH(), rows: [], area: [], sz: SIZES, own: "", ex: "" });
+let S = blank();
+function load() { try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.rows) return Object.assign(blank(), o); } } catch (e) {} return null; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+const newRow = () => ({ d: "", t: "", m: "kva", v: "", pf: "0.85", me: "Y/D", k: "m" });
+
+/* ---- the calculation ---- */
+function areaTotal(s) {
+  let a = 0; (s.area || []).forEach(r => { const x = pf(r[2]), y = pf(r[3]); if (x > 0 && y > 0) a += x * y / 1000; });
+  return a * (pf(s.sp) > 0 ? pf(s.sp) : 1);
+}
+function calcS(s) {
+  const o = { msg: [], rows: [] }, at = areaTotal(s); o.area = at;
+  const mf = {}; s.methods.forEach(m => { mf[m[0]] = pf(m[1]); });
+  let mot = 0, nm = 0, any = false;
+  s.rows.forEach((r, i) => {
+    const q = { ok: false }, p = pf(r.pf), v = pf(r.v), f = mf[r.me];
+    let kva = NaN, kw = NaN;
+    if (r.m === "area") { kva = at; kw = kva * p; }
+    else if (r.m === "kw") { kw = v; kva = v / p; }
+    else { kva = v; kw = v * p; }
+    q.kva = kva; q.kw = kw; q.f = f; q.st = kva * f; q.mot = 0; q.nm = 0;
+    if (isFinite(kva) && isFinite(kw) && p > 0 && isFinite(f)) {
+      q.ok = true; any = true;
+      if (r.k === "m") { q.mot = q.st; mot += q.st; } else { q.nm = kw; nm += kw; }
+    } else if (r.v !== "" || r.m === "area") {
+      o.msg.push("Row " + (i + 1) + (r.d ? " (" + r.d + ")" : "") + (!isFinite(f) ? ": the starting method is not in the list." : ": check the value and the power factor."));
+    }
+    o.rows.push(q);
+  });
+  o.mot = mot; o.nm = nm; o.any = any;
+  const pk = pf(s.pk), ov = pf(s.ov), g = pf(s.pf), st = pf(s.st);
+  o.pm = pk * mot; o.pt = o.pm + nm;
+  o.ok = any && pk >= 0 && ov > 0 && g > 0 && st > 0;
+  o.kmin = o.ok ? o.pt / ov / g / st : NaN;
+  const list = String(s.sz || "").split(/[,;\s]+/).map(parseFloat).filter(x => isFinite(x) && x > 0).sort((a, b) => a - b);
+  o.list = list; o.nom = NaN;
+  if (o.ok) { const n = list.find(x => x >= o.kmin - 1e-9); if (n != null) o.nom = n; else if (list.length) o.msg.push("The minimum rating is above the largest size in your list (" + list[list.length - 1] + " kVA). Use two or more sets, or add a larger size."); }
+  const ow = pf(s.own); o.ownv = ow > 0 ? ow : NaN;
+  if (o.ok && ow > 0 && ow < o.kmin) o.msg.push("The rating you typed (" + ow + " kVA) is below the minimum of " + fmt(o.kmin, 1) + " kVA.");
+  if (s.rows.some(r => r.m === "area") && !(at > 0)) o.msg.push("A load uses the area schedule, which is empty.");
+  o.use = isFinite(o.ownv) ? o.ownv : o.nom;
+  o.util = isFinite(o.use) && o.use > 0 ? o.kmin / o.use * 100 : NaN;
+  return o;
+}
+const calc = () => calcS(S);
+
+/* ---- screen ---- */
+function box(k, v, u, cls) { return '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>"; }
+function methOpts(sel) {
+  const have = S.methods.map(m => m[0]), extra = KB.filter(k => !have.some(h => h.toLowerCase() === k.n.toLowerCase()));
+  const o = n => '<option' + (n === sel ? " selected" : "") + ' value="' + esc(n) + '">' + esc(n) + "</option>";
+  return have.map(o).join("") + (have.includes(sel) ? "" : '<option selected value="' + esc(sel) + '">' + esc(sel) + " (missing)</option>") + (extra.length ? '<optgroup label="Add from the typical list">' + extra.map(k => '<option value="' + esc(k.n) + '">' + esc(k.n) + " (" + k.f + ")</option>").join("") + "</optgroup>" : "");
+}
+function renderRows() {
+  $("lrs").innerHTML = S.rows.map((r, i) => '<div class="gl" data-i="' + i + '"><div class="glh"><span class="n">' + (i + 1) + '</span><input class="dsc" data-f="d" type="text" placeholder="Description" value="' + esc(r.d) + '" aria-label="Description of load ' + (i + 1) + '" /><button type="button" data-a="dup" title="Copy this load">Copy</button><button type="button" data-a="del" title="Delete this load">Delete</button></div>' +
+    '<div class="glb"><div><label>Type</label><input data-f="t" type="text" placeholder="FSI" value="' + esc(r.t) + '" /></div>' +
+    '<div><label>Given as</label><select data-f="m"><option value="kva"' + (r.m === "kva" ? " selected" : "") + '>kVA</option><option value="kw"' + (r.m === "kw" ? " selected" : "") + '>kW</option><option value="area"' + (r.m === "area" ? " selected" : "") + '>Area schedule</option></select></div>' +
+    '<div><label>Value</label><input data-f="v" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.v) + '"' + (r.m === "area" ? " disabled" : "") + " /></div>" +
+    '<div><label>kW ÷ kVA</label><input data-f="pf" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.pf) + '" /></div>' +
+    '<div><label>Starting method</label><select data-f="me">' + methOpts(r.me) + '</select></div>' +
+    '<div><label>Counts as</label><select data-f="k"><option value="m"' + (r.k === "m" ? " selected" : "") + '>Motor</option><option value="n"' + (r.k === "n" ? " selected" : "") + '>Non-motor</option></select></div></div>' +
+    '<div class="gl2" id="lr' + i + '"></div></div>').join("") || '<p class="cmpnote">No loads yet. Press “Add a load”, or load one of the examples.</p>';
+}
+function renderMeth() {
+  $("mT").innerHTML = "<thead><tr><th class=\"l\">Method</th><th>Factor on running kVA</th><th class=\"l\">Typical</th><th></th></tr></thead><tbody>" + S.methods.map((m, i) => { const k = kbFind(m[0]); return '<tr data-i="' + i + '"><td class="l"><input data-f="n" type="text" list="kbl" value="' + esc(m[0]) + '" style="width:100%;min-height:34px" /></td><td><input data-f="f" type="number" inputmode="decimal" step="any" min="0" value="' + esc(m[1]) + '" style="width:100%;min-height:34px;text-align:right" /></td><td class="l" style="font-size:12.5px">' + (k ? k.f + " (" + k.r + ")" : "—") + '</td><td style="white-space:nowrap">' + (k && String(k.f) !== String(m[1]) ? '<button type="button" data-a="typ" style="min-height:34px;padding:2px 10px;margin-right:4px">Use typical</button>' : "") + '<button type="button" data-a="del" style="min-height:34px;padding:2px 10px">Delete</button></td></tr>'; }).join("") + "</tbody>" + '<datalist id="kbl">' + KB.map(k => '<option value="' + esc(k.n) + '">').join("") + "</datalist>";
+}
+function renderArea() {
+  $("arT").innerHTML = "<thead><tr><th class=\"l\">Floor</th><th class=\"l\">Description</th><th>Area, m²</th><th>Essential VA/m²</th><th>kVA</th><th></th></tr></thead><tbody>" +
+    S.area.map((r, i) => '<tr data-i="' + i + '"><td class="l"><input data-f="0" type="text" value="' + esc(r[0]) + '" /></td><td class="l"><input data-f="1" type="text" value="' + esc(r[1]) + '" /></td><td><input data-f="2" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r[2]) + '" style="text-align:right" /></td><td><input data-f="3" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r[3]) + '" style="text-align:right" /></td><td id="ak' + i + '"></td><td><button type="button" data-a="del" style="min-height:30px;padding:2px 8px">×</button></td></tr>').join("") + "</tbody>";
+}
+function update() {
+  const R = calc();
+  S.rows.forEach((r, i) => { const q = R.rows[i], el = $("lr" + i); if (!el) return; el.innerHTML = q.ok ? "<span>kVA <b>" + fmt(q.kva, 2) + "</b></span><span>kW <b>" + fmt(q.kw, 2) + "</b></span><span>factor <b>" + fmt(q.f, 2) + "</b></span><span>starting kVA <b>" + fmt(q.st, 2) + "</b></span><span>" + (r.k === "m" ? "to motor total" : "to non-motor kW") + " <b>" + fmt(r.k === "m" ? q.mot : q.nm, 2) + "</b></span>" : "<span>Enter the value to see the result.</span>"; });
+  S.area.forEach((r, i) => { const el = $("ak" + i); if (el) { const a = pf(r[2]) * pf(r[3]) / 1000; el.textContent = isFinite(a) ? fmt(a, 2) : "—"; } });
+  $("arN").textContent = S.area.length ? "Sum " + fmt(R.area / (pf(S.sp) > 0 ? pf(S.sp) : 1), 2) + " kVA × spare " + (pf(S.sp) > 0 ? pf(S.sp) : 1) + " = " + fmt(R.area, 2) + " kVA essential lighting and small power." : "";
+  const w = $("sWarn"); w.innerHTML = R.msg.map(t => "<div>" + esc(t) + "</div>").join(""); w.classList.toggle("show", R.msg.length > 0);
+  if (!R.ok) { $("sRes").innerHTML = ""; $("chT").innerHTML = ""; $("prT").innerHTML = ""; $("workS").innerHTML = '<p class="si">Add the loads to see the working.</p>'; ck(); save(); return; }
+  $("sRes").innerHTML = box("Total motor starting", fmt(R.mot, 1), "kVA") + box("Peak motor load", fmt(R.pm, 1), "kW") + box("Transient load", fmt(R.pt, 1), "kW") + box("Minimum genset", fmt(R.kmin, 1), "kVA", isFinite(R.nom) ? "" : "bad") +
+    box(isFinite(R.ownv) ? "Your rating" : "Nominal rating", isFinite(R.use) ? String(R.use) : "—", isFinite(R.util) ? "kVA · minimum is " + fmt(R.util, 0) + " % of it" : "kVA", "ok");
+  const ch = [["Total motor starting kVA", fmt(R.mot, 2), "kVA"], ["A. Peak motor load = " + S.pk + " × total motor starting", fmt(R.pm, 2), "kW"], ["Non-motor (steady) total", fmt(R.nm, 2), "kW"], ["B. Transient load = A + non-motor", fmt(R.pt, 2), "kW"],
+    ["C. Minimum genset = B ÷ " + S.ov + " ÷ " + S.pf + " ÷ " + S.st, fmt(R.kmin, 1), "kVA"], ["D. Nominal rating", isFinite(R.use) ? String(R.use) : "—", "kVA"]];
+  $("chT").innerHTML = "<tbody>" + ch.map((c, i) => "<tr" + (i === 4 || i === 5 ? ' class="k"' : "") + '><td class="l">' + c[0] + "</td><td>" + c[1] + "</td><td class=\"l\">" + c[2] + "</td></tr>").join("") + "</tbody>";
+  const rows = S.rows.map((r, i) => { const q = R.rows[i]; return "<tr><td>" + (i + 1) + '</td><td class="l">' + esc(r.d) + '</td><td class="l">' + esc(r.t) + "</td><td>" + fmt(q.kva, 2) + "</td><td>" + fmt(q.kw, 2) + '</td><td class="l">' + esc(r.me) + "</td><td>" + fmt(q.f, 2) + "</td><td>" + fmt(q.st, 2) + "</td><td>" + (r.k === "m" ? fmt(q.mot, 2) : "") + "</td><td>" + (r.k === "m" ? "" : fmt(q.nm, 2)) + "</td></tr>"; }).join("");
+  $("prT").innerHTML = '<thead><tr><th>No.</th><th class="l">Description</th><th class="l">Type</th><th>kVA</th><th>kW</th><th class="l">Starting method</th><th>Factor</th><th>Starting kVA</th><th>Motor starting kVA</th><th>Non-motor kW</th></tr></thead><tbody>' + rows +
+    '<tr class="k"><td colspan="8" class="l">Total</td><td>' + fmt(R.mot, 2) + "</td><td>" + fmt(R.nm, 2) + "</td></tr>" + ch.map((c, i) => '<tr class="k"><td colspan="8" class="l">' + c[0] + '</td><td colspan="2">' + c[1] + " " + c[2] + "</td></tr>").join("") + "</tbody>";
+  $("prTitle").textContent = (S.proj || "Standby generator sizing"); $("prMeta").textContent = "Sheet XXVII · overload " + S.ov + " · power factor " + S.pf + " · step-load factor " + S.st + " · peak motor factor " + S.pk;
+  working(R); ck(); save();
+}
+function working(R) {
+  const L = [];
+  L.push("<p><b>1. Loads.</b> " + S.rows.length + " rows. Total motor starting kVA = <b>" + fmt(R.mot, 2) + "</b>; non-motor steady load = <b>" + fmt(R.nm, 2) + " kW</b>.</p>");
+  L.push("<p><b>2. Peak motor load.</b> " + S.pk + " × " + fmt(R.mot, 2) + " = <b>" + fmt(R.pm, 2) + " kW</b>.</p>");
+  L.push("<p><b>3. Transient load.</b> " + fmt(R.pm, 2) + " + " + fmt(R.nm, 2) + " = <b>" + fmt(R.pt, 2) + " kW</b>.</p>");
+  L.push("<p><b>4. Minimum genset.</b> " + fmt(R.pt, 2) + " ÷ " + S.ov + " ÷ " + S.pf + " ÷ " + S.st + " = <b>" + fmt(R.kmin, 2) + " kVA</b>.</p>");
+  L.push("<p><b>5. Nominal rating.</b> " + (isFinite(R.nom) ? "next size in the list: <b>" + R.nom + " kVA</b>" : "no size in the list is large enough") + (isFinite(R.ownv) ? "; you chose " + R.ownv + " kVA" : "") + ".</p>");
+  $("workS").innerHTML = L.join("");
+}
+function ck() {
+  const ks = ["sht", "hot", "pod"];
+  $("ckT").innerHTML = '<thead><tr><th class="l">Example</th><th>Original, minimum kVA</th><th>This sheet, minimum kVA</th><th>Original, nominal kVA</th><th>This sheet, nominal kVA</th></tr></thead><tbody>' + ks.map(k => {
+    const s = fromPre(k), o = calcS(s), d = PRE[k]; return '<tr><td class="l">' + esc(d.name) + "</td><td>" + fmt(d.exp, 2) + "</td><td>" + fmt(o.kmin, 2) + "</td><td>" + d.nom + "</td><td>" + (isFinite(o.nom) ? o.nom : "—") + "</td></tr>";
+  }).join("") + "</tbody>";
+}
+function fromPre(k) {
+  const d = PRE[k], s = blank();
+  s.proj = d.name; s.pk = d.pk; s.ov = d.ov; s.pf = d.pf; s.st = d.st; s.methods = METH(d.acvv);
+  s.rows = d.rows.map(r => Object.assign({}, r)); s.area = d.area.map(r => r.slice());
+  return s;
+}
+function setS(s, keepSz) { const keep = S.sz; S = s; if (keepSz && keep) S.sz = keep; syncTop(); renderMeth(); renderRows(); renderArea(); update(); }
+function syncTop() { ["proj", "pk", "ov", "pf", "st", "sp", "sz", "own"].forEach(k => { $(k).value = S[k]; }); }
+
+/* ---- events ---- */
+function bind() {
+  ["proj", "pk", "ov", "pf", "st", "sp", "sz", "own"].forEach(k => $(k).addEventListener("input", () => { S[k] = $(k).value; update(); }));
+  $("lrs").addEventListener("input", e => { const t = e.target, f = t.dataset.f, c = t.closest(".gl"); if (!f || !c) return; if (t.tagName === "SELECT") return; S.rows[+c.dataset.i][f] = t.value; update(); });
+  $("lrs").addEventListener("change", e => { const t = e.target, f = t.dataset.f, c = t.closest(".gl"); if (!f || !c || t.tagName !== "SELECT") return; const r = S.rows[+c.dataset.i]; r[f] = t.value; if (f === "me") { const k = kbFind(t.value); if (k && !S.methods.some(m => m[0].toLowerCase() === k.n.toLowerCase())) { S.methods.push([k.n, String(k.f)]); r.me = k.n; renderMeth(); } r.k = (r.me.toLowerCase() === "static") ? "n" : "m"; renderRows(); } if (f === "m") { renderRows(); } update(); });
+  $("lrs").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (!b) return; const i = +b.closest(".gl").dataset.i; if (b.dataset.a === "del") S.rows.splice(i, 1); else S.rows.splice(i + 1, 0, Object.assign({}, S.rows[i])); renderRows(); update(); });
+  $("rAdd").addEventListener("click", () => { const l = S.rows[S.rows.length - 1]; const r = newRow(); if (l) { r.me = l.me; } S.rows.push(r); renderRows(); update(); const x = $("lrs").querySelector(".gl:last-child input.dsc"); if (x) x.focus(); });
+  $("mT").addEventListener("change", e => { const t = e.target, tr = t.closest("tr"); if (!tr) return; const m = S.methods[+tr.dataset.i]; if (t.dataset.f === "n") { const old = m[0]; m[0] = t.value.trim() || old; S.rows.forEach(r => { if (r.me === old) r.me = m[0]; }); const k = kbFind(m[0]), ko = kbFind(old); if (k && (!ko || String(ko.f) === String(m[1]))) m[1] = String(k.f); } else m[1] = t.value; renderMeth(); renderRows(); update(); });
+  $("mT").addEventListener("input", e => { const t = e.target, tr = t.closest("tr"); if (!tr || t.dataset.f !== "f") return; S.methods[+tr.dataset.i][1] = t.value; update(); });
+  $("mT").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (!b) return; const i = +b.closest("tr").dataset.i; if (b.dataset.a === "typ") { const k = kbFind(S.methods[i][0]); if (k) S.methods[i][1] = String(k.f); } else S.methods.splice(i, 1); renderMeth(); renderRows(); update(); });
+  $("mSel").innerHTML = KB.map(k => '<option value="' + esc(k.n) + '">' + esc(k.n) + " — typical " + k.f + "</option>").join("") + '<option value="">My own method</option>';
+  $("mAdd").addEventListener("click", () => { const v = $("mSel").value, k = kbFind(v); if (k) { if (S.methods.some(m => m[0].toLowerCase() === k.n.toLowerCase())) return; S.methods.push([k.n, String(k.f)]); } else S.methods.push(["Method " + (S.methods.length + 1), "1"]); renderMeth(); renderRows(); update(); });
+  $("kbT").innerHTML = '<thead><tr><th class="l">Method</th><th class="l">What it is</th><th>Typical factor</th><th>Range</th></tr></thead><tbody>' + KB.map(k => '<tr><td class="l"><b>' + esc(k.n) + '</b></td><td class="l">' + esc(k.w) + "</td><td>" + k.f + "</td><td>" + k.r + "</td></tr>").join("") + "</tbody>";
+  $("arT").addEventListener("input", e => { const t = e.target, tr = t.closest("tr"); if (!tr || t.dataset.f == null) return; S.area[+tr.dataset.i][+t.dataset.f] = t.dataset.f >= 2 ? t.value : t.value; update(); });
+  $("arT").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (!b) return; S.area.splice(+b.closest("tr").dataset.i, 1); renderArea(); update(); });
+  $("aAdd").addEventListener("click", () => { const l = S.area[S.area.length - 1]; S.area.push([l ? l[0] : "", "", "", l ? l[3] : ""]); renderArea(); update(); });
+  $("aClr").addEventListener("click", () => { S.area = []; renderArea(); update(); });
+  $("eS").addEventListener("click", () => setS(fromPre("sht"), 1)); $("eH").addEventListener("click", () => setS(fromPre("hot"), 1)); $("eP").addEventListener("click", () => setS(fromPre("pod"), 1));
+  $("eB").addEventListener("click", () => { setS(blank(), 1); });
+  $("pr").addEventListener("click", () => window.print());
+  $("xl").addEventListener("click", () => { const R = calc(); if (!R.ok) { alert("Add the loads first, or load one of the examples."); return; } download(buildXlsx(), "genset_sizing.xlsx"); });
+  $("sv").addEventListener("click", () => download(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), "genset_sizing.json"));
+  $("ld").addEventListener("click", () => $("ldf").click());
+  $("ldf").addEventListener("change", () => { const f = $("ldf").files[0]; if (!f) return; f.text().then(t => { try { const o = JSON.parse(t); if (!o || !o.rows) throw 0; setS(Object.assign(blank(), o)); } catch (e) { alert("That file is not a saved set of inputs from this sheet."); } $("ldf").value = ""; }); });
+}
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+
+/* ---- Excel workbook ---- */
+function buildXlsx() {
+  const R = calc(), sty = X.sty, BL = "0000FF";
+  const H = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "center", v: "center", wrap: 1, bd: 1 }), HL = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "left", v: "center", wrap: 1, bd: 1 });
+  const T1 = sty({ b: 1, sz: 14 }), NOTE = sty({ i: 1, c: "555555", wrap: 1, v: "top" }), TXT = sty({ bd: 1 }), LABB = sty({ b: 1, bd: 1 });
+  const inT = sty({ c: BL, bd: 1 }), inN = sty({ c: BL, bd: 1, fmt: "0.0000" }), in2 = sty({ c: BL, bd: 1, fmt: "0.00" }), inP = sty({ c: BL, bd: 1, fmt: "0.00" });
+  const c2 = sty({ bd: 1, fmt: "0.00" }), c1b = sty({ bd: 1, fmt: "0.0", b: 1, fill: "E7EFE4" }), c2b = sty({ bd: 1, fmt: "0.00", b: 1 }), c0b = sty({ bd: 1, fmt: "0", b: 1, fill: "E7EFE4" });
+  const nm = S.methods.length, nr = S.rows.length;
+  const rows = []; const put = (r, c, o) => { (rows[r - 1] = rows[r - 1] || [])[c] = o; };
+  put(1, 0, { v: S.proj || "Standby generator sizing", s: T1 });
+  put(2, 0, { v: "Standard load-step method. Inputs in blue; everything else is a formula.", s: NOTE });
+  const hdr = (r, a, b) => { put(r, 0, { v: a, s: HL }); put(r, 1, { v: b, s: H }); };
+  hdr(4, "Allowances", "Value");
+  [["Peak motor factor", S.pk], ["Overload factor", S.ov], ["Generator power factor", S.pf], ["Step-load acceptance factor", S.st], ["Spare on the area schedule", S.sp]].forEach((a, i) => { put(5 + i, 0, { v: a[0], s: TXT }); put(5 + i, 1, { v: pf(a[1]), s: inN }); });
+  const mh = 11; put(mh, 0, { v: "Starting method", s: HL }); put(mh, 1, { v: "Factor", s: H });
+  S.methods.forEach((m, i) => { put(mh + 1 + i, 0, { v: m[0], s: inT }); put(mh + 1 + i, 1, { v: pf(m[1]), s: in2 }); });
+  const mr1 = mh + 1, mr2 = mh + nm, th = mr2 + 2, r1 = th + 1, r2 = th + nr, tot = r2 + 1;
+  const heads = ["No.", "Description", "Type", "Given as", "Value", "kW ÷ kVA", "Starting method", "Counts as", "kVA", "kW", "Factor", "Starting kVA", "Motor starting kVA", "Non-motor kW"];
+  heads.forEach((h, i) => put(th, i, { v: h, s: i === 1 ? HL : H }));
+  S.rows.forEach((r, i) => {
+    const q = R.rows[i], x = r1 + i, ok = q.ok;
+    put(x, 0, { v: i + 1, s: TXT }); put(x, 1, { v: r.d, s: inT }); put(x, 2, { v: r.t, s: inT });
+    put(x, 3, { v: r.m === "kw" ? "kW" : r.m === "area" ? "Area schedule" : "kVA", s: inT });
+    put(x, 4, r.m === "area" ? { v: "", s: TXT } : { v: pf(r.v), s: in2 }); put(x, 5, { v: pf(r.pf), s: inP }); put(x, 6, { v: r.me, s: inT }); put(x, 7, { v: r.k === "m" ? "Motor" : "Non-motor", s: inT });
+    put(x, 8, { f: 'IF(D' + x + '="kW",E' + x + '/F' + x + ',IF(D' + x + '="kVA",E' + x + ",'Area schedule'!$E$2))", v: q.kva, s: c2 });
+    put(x, 9, { f: 'IF(D' + x + '="kW",E' + x + ",I" + x + "*F" + x + ")", v: q.kw, s: c2 });
+    put(x, 10, { f: "VLOOKUP(G" + x + ",$A$" + mr1 + ":$B$" + mr2 + ",2,FALSE)", v: q.f, s: c2 });
+    put(x, 11, { f: "I" + x + "*K" + x, v: q.st, s: c2 });
+    put(x, 12, { f: 'IF(H' + x + '="Motor",L' + x + ",0)", v: q.mot, s: c2 });
+    put(x, 13, { f: 'IF(H' + x + '="Motor",0,J' + x + ")", v: q.nm, s: c2 });
+  });
+  put(tot, 1, { v: "Total", s: LABB });
+  put(tot, 12, { f: "SUM(M" + r1 + ":M" + r2 + ")", v: R.mot, s: c2b }); put(tot, 13, { f: "SUM(N" + r1 + ":N" + r2 + ")", v: R.nm, s: c2b });
+  const c0 = tot + 2; hdr(c0, "Genset rating", "Value"); put(c0, 2, { v: "Unit", s: H });
+  const ch = [
+    ["A. Peak motor load = peak motor factor × total motor starting", "B5*M" + tot, R.pm, "kW", c2], ["Non-motor (steady) total", "N" + tot, R.nm, "kW", c2], ["B. Transient load = A + non-motor", "B" + (c0 + 1) + "+B" + (c0 + 2), R.pt, "kW", c2],
+    ["C. Minimum genset rating = B ÷ overload ÷ power factor ÷ step-load factor", "B" + (c0 + 3) + "/B6/B7/B8", R.kmin, "kVA", c1b],
+    ["D. Nominal rating (next size in the list)", 'IFERROR(SMALL($P$' + (th + 1) + ":$P$" + (th + R.list.length) + ',COUNTIF($P$' + (th + 1) + ":$P$" + (th + R.list.length) + ',"<"&(B' + (c0 + 4) + "-0.000001))+1),\"above the list\")", R.nom, "kVA", c0b],
+    ["Minimum as a share of the nominal rating", 'IFERROR(B' + (c0 + 4) + "/B" + (c0 + 5) + ',"")', R.kmin / R.nom, "", sty({ bd: 1, fmt: "0.0%" })]];
+  ch.forEach((a, i) => { put(c0 + 1 + i, 0, { v: a[0], s: i === 3 || i === 4 ? LABB : TXT }); put(c0 + 1 + i, 1, { f: a[1], v: isFinite(a[2]) ? a[2] : "", s: a[4] }); put(c0 + 1 + i, 2, { v: a[3], s: TXT }); });
+  put(th, 15, { v: "Standard sizes, kVA", s: H });
+  R.list.forEach((z, i) => put(th + 1 + i, 15, { v: z, s: in2 }));
+  const ar = [[{ v: "Essential lighting and small power by area", s: T1 }], [{ v: "Total kVA with spare", s: LABB }, { v: "", s: TXT }, { v: "", s: TXT }, { v: "", s: TXT }, { f: "SUM(E5:E" + (4 + Math.max(1, S.area.length)) + ")*Genset!$B$9", v: R.area, s: c1b }], [], [{ v: "Floor", s: HL }, { v: "Description", s: HL }, { v: "Area, m²", s: H }, { v: "Essential VA/m²", s: H }, { v: "kVA", s: H }]];
+  S.area.forEach((r, i) => ar.push([{ v: r[0], s: inT }, { v: r[1], s: inT }, { v: pf(r[2]), s: in2 }, { v: pf(r[3]), s: in2 }, { f: "C" + (5 + i) + "*D" + (5 + i) + "/1000", v: pf(r[2]) * pf(r[3]) / 1000, s: c2 }]));
+  const nt = [[{ v: "Notes", s: T1 }],
+    [{ v: "Method: each load’s starting kVA = kVA × the factor of its starting method. Motor loads add their starting kVA to the motor total; non-motor loads add their kW to the steady total. Peak motor load = peak motor factor × total motor starting kVA. Transient load = peak motor load + non-motor kW. Minimum genset = transient ÷ overload ÷ power factor ÷ step-load factor. The nominal rating is the smallest standard size not below the minimum.", s: NOTE }],
+    [{ v: "The step-load acceptance factor, the starting factors and the diversity on motors starting together are assumptions to be confirmed with the generator manufacturer. Voltage dip, harmonics and derating are not checked.", s: NOTE }]];
+  const sheets = [{ name: "Genset", rows, cols: [58, 30, 14, 14, 11, 10, 16, 13, 11, 11, 9, 12, 14, 12, 3, 16], first: true, ht: { 1: 30, 2: 20 } }, { name: "Area schedule", rows: ar, cols: [24, 34, 12, 16, 12], ht: {} }, { name: "Notes", rows: nt, cols: [120], ht: { 1: 80, 2: 40 } }];
+  const wbx = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>').join("") + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+  const files = [
+    { name: "[Content_Types].xml", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((s, i) => '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("") + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: "_rels/.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", text: wbx },
+    { name: "xl/_rels/workbook.xml.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>').join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' }
+  ];
+  const sx = sheets.map(s => sheetXml(s));
+  files.push({ name: "xl/styles.xml", text: X.xml() });
+  sx.forEach((t, i) => files.push({ name: "xl/worksheets/sheet" + (i + 1) + ".xml", text: t }));
+  return zip(files);
+}
+S = load() || fromPre("sht");
+bind(); setS(S);
+window.__gn = { get S() { return S; }, calc, calcS, fromPre, setS, buildXlsx, PRE };
+})();
+</script>
+</body>
+</html>

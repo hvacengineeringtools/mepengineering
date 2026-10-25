@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="ASHRAE/IES 90.1-2025 (SI) Section 6 minimum chiller COP and IPLV with the Kadj adjustment, and a manufacturer’s selection checked against changed water temperatures." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet III — Chiller efficiency</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet III</div>
+  <h1>Chiller efficiency</h1>
+  <div class="sub">ASHRAE/IES 90.1-2025 (SI) Section 6 · minimum COP and IPLV · Kadj for the water temperatures</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a class="on" href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Lighting</div><div class="nl">
+    <a href="light-sizing.html"><span>XXVIII</span>Lighting sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Looks up the 90.1 minimum chiller COP and IPLV.SI for the chiller type and size, adjusts a centrifugal chiller for the evaporator and condenser water temperatures with Kadj, and lets you enter a manufacturer’s selection to see how its COP and IPLV move with those temperatures. The cooling tower is on <a href="cooling-tower-chiller.html">sheet II</a>; its water temperatures can be passed here with the link under its operating point. <button class="mx-open" type="button" data-mxopen="chiller">Formulae</button> · <button class="mx-open" type="button" data-mxopen="steps">Calculation steps</button> · <button class="mx-open" type="button" data-mxopen="notes">Notes</button> · <button class="mx-open" type="button" data-mxopen="rating">90.1 rating conditions</button></p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Minimum COP and IPLV</a><a href="#s2">2 Maker’s selection</a></nav>
+
+<h2 id="s1">1. Minimum chiller efficiency, ASHRAE 90.1 Section 6</h2>
+<p class="lead">Finds the minimum full-load COP and IPLV.SI in Table 6.8.1-3 or 6.8.1-16 for the chiller type and size. For a liquid-cooled centrifugal chiller the table values are adjusted by <i>K</i><sub>adj</sub> = <i>A</i>·<i>B</i> (§6.4.1.2.1) for the lift between the leaving condenser and leaving evaporator water.</p>
+<div class="fields three">
+  <div class="field wide"><label for="ctype">Chiller type</label>
+    <select id="ctype"></select></div>
+  <div class="field"><label for="ccap">Cooling capacity (full load, net)</label>
+    <div class="pair"><input id="ccap" type="number" inputmode="decimal" step="any" value="1500" min="1" /><span>kW</span></div>
+    <div class="hint" id="ccapHint"></div></div>
+  <div class="field"><label for="cpath">Compliance path</label>
+    <select id="cpath"><option value="A">Path A</option><option value="B">Path B</option></select>
+    <div class="hint" id="cpathHint"></div></div>
+</div>
+<div class="fields three">
+  <div class="field"><label for="cevin">Chilled water entering the evaporator</label>
+    <div class="pair"><input id="cevin" type="number" inputmode="decimal" step="any" value="12" /><span>°C</span></div>
+    <div class="hint">AHRI 551/591 standard: 12.00 °C.</div></div>
+  <div class="field"><label for="cevap">Chilled water leaving the evaporator</label>
+    <div class="pair"><input id="cevap" type="number" inputmode="decimal" step="any" value="7" /><span>°C</span></div>
+    <div class="hint">AHRI standard: 7.00 °C. This sets <i>B</i> and the lift.</div></div>
+  <div class="field"><label for="cevdt">Evaporator temperature difference</label>
+    <div class="pair"><input id="cevdt" type="number" inputmode="decimal" step="any" /><span>K</span></div>
+    <div class="hint" id="cevflow"></div></div>
+  <div class="field"><label for="ccin">Condenser water entering the chiller</label>
+    <div class="pair"><input id="ccin" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div>
+    <div class="hint">AHRI standard: 30.00 °C. The cold water from the cooling tower.</div></div>
+  <div class="field"><label for="ccond">Condenser water leaving the chiller</label>
+    <div class="pair"><input id="ccond" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div>
+    <div class="hint">AHRI standard: 35.00 °C. The hot water to the cooling tower. This sets the lift.</div></div>
+  <div class="field"><label for="ccdt">Condenser temperature difference</label>
+    <div class="pair"><input id="ccdt" type="number" inputmode="decimal" step="any" /><span>K</span></div></div>
+</div>
+<div class="box-note" id="twNote" hidden></div>
+<div class="fields three">
+  <div class="field"><label>Lift</label>
+    <div class="pair"><input id="clift" type="text" readonly /><span>K</span></div>
+    <div class="hint">Leaving condenser − leaving evaporator.</div></div>
+</div>
+<div class="warn" id="cWarn" role="status"></div>
+<div class="results" id="cRes"></div>
+<svg id="kChart" class="chart" viewBox="0 0 700 260" role="img" aria-label="Kadj against lift"></svg>
+
+<h2 id="s2">2. Optional: the manufacturer’s selection data</h2>
+<label class="chk"><input type="checkbox" id="uOn" /> I have a manufacturer’s selection and want to see how the water temperatures above change its COP and IPLV</label>
+<div id="uBox" hidden>
+  <p class="lead" style="margin-top:14px"><b>Step 1.</b> Enter what the maker selected the unit at. The values shown are examples; replace them. The conditions of section 1 above are “your conditions”.</p>
+  <div class="fields four">
+    <div class="field"><label for="mevin">Maker: chilled water in</label>
+      <div class="pair"><input id="mevin" type="number" inputmode="decimal" step="any" value="12" /><span>°C</span></div></div>
+    <div class="field"><label for="mevout">Maker: chilled water out</label>
+      <div class="pair"><input id="mevout" type="number" inputmode="decimal" step="any" value="7" /><span>°C</span></div></div>
+    <div class="field"><label for="mcin">Maker: condenser water in</label>
+      <div class="pair"><input id="mcin" type="number" inputmode="decimal" step="any" value="30" /><span>°C</span></div></div>
+    <div class="field"><label for="mcout">Maker: condenser water out</label>
+      <div class="pair"><input id="mcout" type="number" inputmode="decimal" step="any" value="35" /><span>°C</span></div></div>
+  </div>
+  <div class="fields three" style="margin-top:12px">
+    <div class="field"><label for="mcap">Maker: cooling capacity</label>
+      <div class="pair"><input id="mcap" type="number" inputmode="decimal" step="any" /><span>kW</span></div>
+      <div class="hint">Blank = the capacity in section 1.</div></div>
+    <div class="field"><label for="mcop">Maker: full-load COP</label>
+      <div class="pair"><input id="mcop" type="number" inputmode="decimal" step="any" value="6.4" /><span>W/W</span></div></div>
+    <div class="field"><label for="mkw">or: full-load input power</label>
+      <div class="pair"><input id="mkw" type="number" inputmode="decimal" step="any" /><span>kW</span></div>
+      <div class="hint">COP = capacity ÷ input power. Either box; the other follows.</div></div>
+  </div>
+  <p class="lead" style="margin-top:16px"><b>Step 2.</b> IPLV.SI of the unit.</p>
+  <div class="fields three">
+    <div class="field"><label for="miplv">Maker: IPLV.SI</label>
+      <div class="pair"><input id="miplv" type="number" inputmode="decimal" step="any" value="9.8" /><span>W/W</span></div>
+      <div class="hint" id="miplvHint"></div></div>
+    <div class="field wide"><label class="chk"><input type="checkbox" id="mpl" /> I have the four part-load COPs. Work out the IPLV.SI from them</label>
+      <div class="hint" id="mplCond"></div></div>
+  </div>
+  <div id="mplBox" hidden>
+    <div class="fields four">
+      <div class="field"><label for="mpa">100 % load, <i>A</i></label><div class="pair"><input id="mpa" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpaH"></div></div>
+      <div class="field"><label for="mpb">75 % load, <i>B</i></label><div class="pair"><input id="mpb" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpbH"></div></div>
+      <div class="field"><label for="mpc">50 % load, <i>C</i></label><div class="pair"><input id="mpc" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpcH"></div></div>
+      <div class="field"><label for="mpd">25 % load, <i>D</i></label><div class="pair"><input id="mpd" type="number" inputmode="decimal" step="any" /><span>W/W</span></div><div class="hint" id="mpdH"></div></div>
+    </div>
+    <p class="hint">IPLV.SI = 0.01<i>A</i> + 0.42<i>B</i> + 0.45<i>C</i> + 0.12<i>D</i> (AHRI 551/591 SI). Use the maker’s COP at each load, rated at the part-load conditions listed.</p>
+  </div>
+  <div class="warn" id="uWarn" role="status"></div>
+  <div id="uRes"></div>
+  <div class="step3">
+  <p class="lead" style="margin-top:0"><b>Step 3 (optional).</b> The maker’s own figures at your conditions, if you have asked for them. The sheet then compares them with the 90.1 curve. Leave blank if you do not have them.</p>
+  <div class="fields three">
+    <div class="field"><label for="ncop">Maker at your conditions: full-load COP</label>
+      <div class="pair"><input id="ncop" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
+    <div class="field"><label for="niplv">Maker at your conditions: IPLV.SI</label>
+      <div class="pair"><input id="niplv" type="number" inputmode="decimal" step="any" /><span>W/W</span></div></div>
+  </div>
+  <div id="uRes3"></div>
+  </div>
+  <h3 class="sub3">Try other water temperatures</h3>
+  <div class="fields three">
+    <div class="field"><label for="umat">Show</label>
+      <select id="umat"><option value="cop">Estimated full-load COP, W/W</option><option value="pct">Change in COP from the maker’s selection, %</option><option value="k">Kadj of the new conditions ÷ Kadj of the maker’s</option><option value="kw">Estimated full-load input power, kW</option></select></div>
+  </div>
+  <div class="table-scroll"><table class="cmp" id="uMat"></table></div>
+  <p class="si" id="uMatNote"></p>
+</div>
+
+<footer>Preliminary checking only. Uses ANSI/ASHRAE/IES Standard 90.1-2025 (SI), §6.4.1.2 and Tables 6.8.1-3 and 6.8.1-16. Formulae, working, the recorded tables and the notes are in the Notes and formulae bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Table values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI), © ASHRAE, and are shown for reference only; confirm against a licensed copy of the standard. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-chiller" data-tab="chiller" aria-controls="mxtab-chiller">Formulae</button>
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-rating" data-tab="rating" aria-controls="mxtab-rating">Rating conditions</button>
+    <button role="tab" type="button" id="mxt-tables" data-tab="tables" aria-controls="mxtab-tables">Tables</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-chiller" aria-labelledby="mxt-chiller" hidden>
+      <h3>Adjustment, §6.4.1.2.1</h3>
+      <div id="fxC1" role="math"></div>
+      <ul id="fxCDefs"></ul>
+      <h3>Part-load value and the maker’s selection</h3>
+      <div id="fxC2" role="math"></div>
+      <ul id="fxCDefs2"></ul>
+      <p class="tn">Section 2 scales the maker’s COP and IPLV by the ratio of the 90.1 factors at your conditions and at the maker’s conditions. 90.1 applies <i>K</i><sub>adj</sub> to the IPLV requirement in the same way, so an adjusted IPLV is the standard’s NPLV. The factor is a curve for the minimum requirement; it is not the maker’s data for the unit, and it ignores any change in capacity, flow or compressor limits. Ask the maker for a selection at the new conditions and enter it in step 3 to see the difference.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
+      <div id="workC"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-rating" aria-labelledby="mxt-rating" hidden>
+      <p>What each 90.1-2025 (SI) table assumes when it states a minimum efficiency: the chilled water, the heat-rejection side, the outdoor air and the part-load points. “Standard” conditions are those of AHRI 551/591 (SI), which Table 6.8.1-3 and 6.8.1-16 refer to. The tables in 90.1 give the requirement; the conditions behind IPLV.SI are in AHRI 551/591 (SI) Tables 4 and 6, not in 90.1 itself.</p>
+      <div id="rtNow" class="box-note"></div>
+      <h3>Chillers, Tables 6.8.1-3 and 6.8.1-16</h3>
+      <div class="scroll"><table class="ref" id="rtChill"></table></div>
+      <p class="tn">Full-load rating: 7.00 °C leaving and 12.00 °C entering chilled water (§6.4.1.2.1). Water-cooled condenser: 30.00 °C entering and 35.00 °C leaving. Air-cooled: 35.0 °C entering dry-bulb. IPLV.SI = 0.01<i>A</i> + 0.42<i>B</i> + 0.45<i>C</i> + 0.12<i>D</i>, where <i>A</i>, <i>B</i>, <i>C</i>, <i>D</i> are the COPs at 100, 75, 50 and 25 % load. In AHRI 551/591 the condenser water flow is held at its full-load value at every part-load point, and the chilled water leaves at 7.00 °C throughout.</p>
+      <h3>Part-load points of the IPLV.SI rating</h3>
+      <div class="scroll"><table class="ref" id="rtPL"></table></div>
+      <p class="tn">At part load the heat-rejection temperature falls with the load, which is why IPLV.SI is higher than the full-load COP. Water-cooled units are rated with condenser water falling from 30.0 to 19.0 °C (it stops falling at 19.0 °C between 50 and 25 % load); air-cooled units with ambient falling from 35.0 to 13.0 °C. A plant whose tower or ambient does not follow that pattern will not see the IPLV.SI in service.</p>
+      <h3>Heat-rejection equipment</h3>
+      <p class="tn">The tower’s own rating conditions (Table 6.8.1-7: 35.0 °C in, 29.4 °C out, 23.9 °C wet-bulb for an open-circuit tower, a range of 5.6 K and an approach of 5.5 K) are on <a href="cooling-tower-chiller.html">sheet II</a>. The chiller standard condition of 30.00 / 35.00 °C is a range of 5.0 K, and its 30.00 °C entering water is 0.6 K warmer than the tower’s rating outlet. The two ratings are separate. Your site’s wet-bulb, tower approach and chiller lift decide the real conditions.</p>
+      <h3>What distinguishes the unit types</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Air-cooled:</b> rated on outdoor dry-bulb (35.0 °C). The condenser leaving temperature does not exist as a water condition, so no <i>K</i><sub>adj</sub> applies. Ambient is the variable that changes performance.</li>
+        <li><b>Liquid-cooled, positive displacement and absorption:</b> rated at 30.00 / 35.00 °C condenser water. No <i>K</i><sub>adj</sub>; other water temperatures need the maker’s data.</li>
+        <li><b>Liquid-cooled centrifugal:</b> the same standard point, but 90.1 allows the requirement to be adjusted by <i>K</i><sub>adj</sub> for a design outside it, between 2.20 and 21.10 °C leaving evaporator water, 15.56 to 57.00 °C leaving condenser water and a lift of 11.00 to 44.00 K.</li>
+        <li><b>Heat pumps and heat recovery (Table 6.8.1-16):</b> the cooling rating is the same as above. Heating has its own rating points: air-source 8.00 °C db / 6.00 °C wb and −8.00 °C db / −9.00 °C wb; liquid-source with the source water leaving at 7.00 °C (19.00 °C for the boost point), and heating water at 35/40, 42/50, 50/60 °C (low, medium, high) or 50/60 °C (boost).</li>
+        <li><b>Evaporatively cooled chillers:</b> AHRI 551/591 rates them on 24.00 °C entering wet-bulb (part load 24.0, 20.5, 17.0, 13.5 °C). They are not a row in Table 6.8.1-3.</li>
+      </ul>
+      <p class="tn">Sources: ANSI/ASHRAE/IES Standard 90.1-2025 (SI) §6.4.1.2.1 and Tables 6.8.1-3, 6.8.1-7 and 6.8.1-16; AHRI Standard 551/591 (SI) 2020, Tables 4 and 6 and Equation 18 (published by AHRI; not in the standard PDF supplied). Confirm against your licensed copies.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-tables" aria-labelledby="mxt-tables" hidden>
+      <p>The row for the chiller type and capacity chosen is marked. Values are transcribed from ANSI/ASHRAE/IES Standard 90.1-2025 (SI). COP is in W/W. FL is full load. Both FL and IPLV.SI must be met (Table 6.8.1-3 note b), by Path A or by Path B.</p>
+      <h3>Table 6.8.1-3 Liquid-chilling packages, minimum efficiency</h3>
+      <div class="scroll"><table class="ref" id="tb3"></table></div>
+      <p class="tn">Note a: centrifugal requirements are adjusted for nonstandard rating conditions by §6.4.1.2.1 and apply only within the ranges listed there. Air-cooled, liquid-cooled positive displacement and absorption are at the standard rating conditions of the test procedure. Note d: NA means only Path A can be used. Air-cooled chillers without condenser must be rated with matching condensers and meet the air-cooled chiller requirements.</p>
+      <h3>Table 6.8.1-16 Heat pump and heat recovery water-chilling packages, cooling operation</h3>
+      <div class="scroll"><table class="ref" id="tb16"></table></div>
+      <p class="tn">Only the cooling-operation columns are recorded. The heating columns (COP<sub>H</sub>, COP<sub>SHC</sub>, COP<sub>HR</sub>) are not on this sheet. Liquid-source rows are at 7.00 °C leaving evaporator water and use <i>K</i><sub>adj</sub> if centrifugal. Size is the net refrigerating capacity (note n).</p>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Chiller</h3>
+      <p>§6.4.1.2.1: <i>K</i><sub>adj</sub> applies to liquid-cooled centrifugal chillers not designed for the AHRI 551/591 standard conditions (7.00 °C leaving and 12.00 °C entering evaporator water, 30.00 °C entering and 35.00 °C leaving condenser water). At exactly 7.00 and 35.00 °C the sheet applies no adjustment; the formula gives 0.9995. The adjusted values are valid only for LvgEvap 2.20 to 21.10 °C, LvgCond 15.56 to 57.00 °C and lift 11.00 to 44.00 K; outside them the standard does not cover the chiller. Other types in Table 6.8.1-3 have no adjustment: they are rated at the test standard’s conditions.</p>
+      <p>The standard’s text calls the adjusted figures “maximum”; they are minimum COP values.</p>
+      <h3>Manufacturer’s selection (section 2)</h3>
+      <p>Enter the maker’s selection at its rated water temperatures and change “your conditions” in section 1. The sheet estimates the COP, input power and IPLV at your conditions from the 90.1 factor, shows the change, and checks both the maker’s figures and the estimate against the 90.1 minimum at the corresponding conditions. The matrix underneath gives the estimated COP for a range of condenser and evaporator leaving temperatures. Only the leaving temperatures enter <i>K</i><sub>adj</sub>; the entering temperatures give the temperature differences and the chilled-water flow. The factor applies to liquid-cooled centrifugal units; for other types, enter the maker’s own figures at your conditions in step 3.</p>
+      <h3>Unit already selected</h3>
+      <p>If the maker’s COP is quoted at the same water temperatures as the new conditions, compare it directly with the adjusted requirement. If the conditions changed after the unit was rated, the sheet estimates the unit’s new COP as COP × <i>K</i><sub>adj</sub>(new) ÷ <i>K</i><sub>adj</sub>(rated). <i>K</i><sub>adj</sub> is a curve for the minimum requirement and is not the maker’s data for the unit, so treat that as a guide.</p>
+      <h3>Points to check in the standard’s tables</h3>
+      <p>Table 6.8.1-3 gives the last positive-displacement size as “≥2100 kW” while the row above ends at 2110 kW; the sheet uses 2110 kW. Table 6.8.1-16 prints the IPLV.SI for liquid-source positive displacement, 1055 to 2110 kW, as “≤6.432” and “≤8.157”; every other row is “≥”, so the sheet treats them as minimums. The first liquid-source centrifugal row prints “&lt;39.57 and &lt;528”; the sheet reads it as 39.57 to 528 kW (note q).</p>
+      <h3>Sources</h3>
+      <p>ANSI/ASHRAE/IES Standard 90.1-2025 (SI), §6.4.1.2 and Tables 6.8.1-3 and 6.8.1-16. AHRI Standard 551/591 (SI) 2020 for the rating and part-load conditions. Check results against the licensed standard.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const K = 4.186;                               /* kJ/(kg·K), water at 1 kg/L */
+const num = id => parseFloat($(id).value);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const sg = (x, d) => !isFinite(x) ? "—" : (x < -0.5 * Math.pow(10, -d) ? "−" : "+") + Math.abs(x).toFixed(d);
+const esc = s => String(s).replace(/[&<>]/g, c => c === "&" ? "&amp;" : c === "<" ? "&lt;" : "&gt;");
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+function warnBox(id, msgs) { const el = $(id); el.innerHTML = msgs.map(m => "<div>" + m + "</div>").join(""); el.classList.toggle("show", msgs.length > 0); }
+
+/* ============================================================
+   PART 2. Chiller, ASHRAE 90.1 Section 6
+   ============================================================ */
+/* values handed over from the cooling tower page (sheet II) in the address: ?cin=&cout=&wb=&app= */
+const TWP = (function () {
+  try {
+    const q = new URLSearchParams(location.search), g = k => q.has(k) ? parseFloat(q.get(k)) : NaN;
+    const o = { cin: g("cin"), cout: g("cout"), W: g("wb"), A: g("app") };
+    return isFinite(o.cin) && isFinite(o.cout) ? o : null;
+  } catch (e) { return null; }
+})();
+const INF = Infinity;
+/* row: [lo, hi, A_FL, A_IPLV, B_FL, B_IPLV]  (kW) */
+const CT = {
+  air:  { g: "3", name: "Air-cooled, electrically operated", adj: false, rows: [[0, 528, 2.985, 4.048, 2.866, 4.669], [528, INF, 2.985, 4.137, 2.866, 4.758]] },
+  pd:   { g: "3", name: "Liquid-cooled, electrically operated, positive displacement", adj: false, rows: [[0, 264, 4.694, 5.867, 4.513, 7.041], [264, 528, 4.889, 6.286, 4.694, 7.184], [528, 1055, 5.334, 6.519, 5.177, 8.001], [1055, 2110, 5.771, 6.770, 5.633, 8.586], [2110, INF, 6.286, 7.041, 6.018, 9.264]] },
+  cent: { g: "3", name: "Liquid-cooled, electrically operated, centrifugal", adj: true, rows: [[0, 528, 5.771, 6.401, 5.065, 8.001], [528, 1055, 5.771, 6.401, 5.544, 8.801], [1055, 1407, 6.286, 6.770, 5.917, 9.027], [1407, 2110, 6.286, 7.041, 6.018, 9.264], [2110, INF, 6.286, 7.041, 6.018, 9.264]] },
+  ab1a: { g: "3", name: "Air-cooled absorption, single effect", adj: false, rows: [[0, INF, 0.600, null, null, null]] },
+  ab1l: { g: "3", name: "Liquid-cooled absorption, single effect", adj: false, rows: [[0, INF, 0.700, null, null, null]] },
+  ab2i: { g: "3", name: "Absorption double effect, indirect-fired", adj: false, rows: [[0, INF, 1.000, 1.050, null, null]] },
+  ab2d: { g: "3", name: "Absorption double effect, direct-fired", adj: false, rows: [[0, INF, 1.000, 1.000, null, null]] },
+  hpa:  { g: "16", name: "Heat pump / heat recovery, air-source (cooling operation)", adj: false, rows: [[0, 527, 2.836, 3.846, 2.723, 4.436], [527, INF, 2.836, 3.930, 2.723, 4.520]] },
+  hpp:  { g: "16", name: "Heat pump / heat recovery, liquid-source, positive displacement (cooling operation)", adj: false, rows: [[39.57, 264, 4.459, 5.574, 4.287, 6.689], [264, 528, 4.645, 5.972, 4.459, 6.825], [528, 1055, 5.067, 6.193, 4.918, 7.601], [1055, 2110, 5.482, 6.432, 5.351, 8.157], [2110, INF, 5.972, 6.689, 5.717, 8.801]] },
+  hpc:  { g: "16", name: "Heat pump / heat recovery, liquid-source, centrifugal (cooling operation)", adj: true, rows: [[39.57, 528, 5.482, 6.081, 4.812, 7.601], [528, 1055, 5.482, 6.081, 5.267, 8.361], [1055, 1407, 5.972, 6.432, 5.621, 8.576], [1407, 2110, 5.972, 6.689, 5.717, 8.801], [2110, INF, 5.972, 6.689, 5.717, 8.801]] }
+};
+const sizeLbl = r => r[0] <= 0 && r[1] === INF ? "All capacities" : r[0] <= 0 ? "<" + r[1] : r[1] === INF ? "≥" + r[0] : "≥" + r[0] + " and <" + r[1];
+(function fillTypes() {
+  const s = $("ctype");
+  const g3 = document.createElement("optgroup"); g3.label = "Table 6.8.1-3, liquid-chilling packages";
+  const g16 = document.createElement("optgroup"); g16.label = "Table 6.8.1-16, heat pump and heat recovery";
+  Object.keys(CT).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = CT[k].name; (CT[k].g === "3" ? g3 : g16).appendChild(o); });
+  s.appendChild(g3); s.appendChild(g16); s.value = "cent";
+})();
+function kadjOf(le, lc) {
+  const L = lc - le;
+  const A = 0.00000153181 * Math.pow(L, 4) - 0.000202076 * Math.pow(L, 3) + 0.0101800 * L * L - 0.264958 * L + 3.93073;
+  const B = 0.0027 * le + 0.982;
+  return { L, A, B, K: A * B };
+}
+const isStd = (le, lc) => Math.abs(le - 7) < 1e-9 && Math.abs(lc - 35) < 1e-9;
+const kUse = (le, lc) => { const k = kadjOf(le, lc); k.used = isStd(le, lc) ? 1 : k.K; k.std = isStd(le, lc); return k; };
+function rangeMsgs(le, lc) {
+  const L = lc - le, m = [];
+  if (le < 2.2 || le > 21.1) m.push("Evaporator leaving water " + fmt(le, 2) + " °C is outside 2.20 to 21.10 °C. §6.4.1.2.1 does not cover a centrifugal chiller designed outside these ranges.");
+  if (lc < 15.56 || lc > 57) m.push("Condenser leaving water " + fmt(lc, 2) + " °C is outside 15.56 to 57.00 °C.");
+  if (L < 11 || L > 44) m.push("Lift " + fmt(L, 2) + " K is outside 11.00 to 44.00 K.");
+  return m;
+}
+const coolOf = k => ["air", "ab1a", "hpa"].indexOf(k) >= 0 ? "air" : "water";
+function curRow() {
+  const t = CT[$("ctype").value], cap = num("ccap");
+  if (!(cap > 0)) return { t, idx: -1 };
+  let idx = t.rows.findIndex(r => cap >= r[0] && cap < r[1]);
+  return { t, idx, cap };
+}
+/* temperature differences are tied to the entering and leaving boxes */
+function dtSync(from) {
+  const act = document.activeElement && document.activeElement.id;
+  const ev = num("cevap"), ei = num("cevin"), cl = num("ccond"), ci = num("ccin");
+  if (from === "cevdt") { const d = num("cevdt"); if (isFinite(d) && isFinite(ev)) $("cevin").value = (ev + d).toFixed(2); }
+  else if (act !== "cevdt" && isFinite(ev) && isFinite(ei)) $("cevdt").value = (ei - ev).toFixed(2);
+  if (from === "ccdt") { const d = num("ccdt"); if (isFinite(d) && isFinite(cl)) $("ccin").value = (cl - d).toFixed(2); }
+  else if (act !== "ccdt" && isFinite(cl) && isFinite(ci)) $("ccdt").value = (cl - ci).toFixed(2);
+}
+const CHIN = ["ctype", "ccap", "cpath", "cevap", "cevin", "ccond", "ccin", "uOn", "mevin", "mevout", "mcin", "mcout", "mcap", "miplv", "mpl", "mpa", "mpb", "mpc", "mpd", "ncop", "niplv", "umat"];
+CHIN.forEach(id => $(id).addEventListener("input", () => { if (id === "ccap" || id === "mcap") syncPow(); dtSync(); chiller(); working(); }));
+["ctype", "cpath", "uOn", "mpl"].forEach(id => $(id).addEventListener("change", () => { $("uBox").hidden = !$("uOn").checked; $("mplBox").hidden = !$("mpl").checked; $("miplv").readOnly = $("mpl").checked; chiller(); working(); }));
+$("cevdt").addEventListener("input", () => { dtSync("cevdt"); chiller(); working(); });
+$("ccdt").addEventListener("input", () => { dtSync("ccdt"); chiller(); working(); });
+let uDrv = "cop";
+$("mcop").addEventListener("input", () => { uDrv = "cop"; syncPow(); chiller(); working(); });
+$("mkw").addEventListener("input", () => { uDrv = "pow"; syncPow(); chiller(); working(); });
+function makerCap() { const c = num("mcap"); return c > 0 ? c : num("ccap"); }
+function syncPow() {
+  const cap = makerCap();
+  if (!(cap > 0)) return;
+  if (uDrv === "cop") { const c = num("mcop"); if (c > 0 && document.activeElement !== $("mkw")) $("mkw").value = (cap / c).toFixed(1); }
+  else { const p = num("mkw"); if (p > 0 && document.activeElement !== $("mcop")) $("mcop").value = (cap / p).toFixed(3); }
+}
+let lastC = null;
+
+function chiller() {
+  const { t, idx, cap } = curRow(), le = num("cevap"), lc = num("ccond");
+  const cw = [];
+  const sel = $("ctype").value;
+  const hasB = idx >= 0 && t.rows[idx][4] != null;
+  const pathSel = $("cpath"); pathSel.options[1].disabled = !hasB;
+  if (!hasB && pathSel.value === "B") pathSel.value = "A";
+  $("cpathHint").textContent = hasB ? "Either path may be used, but both FL and IPLV.SI must be met." : (idx >= 0 ? "No Path B for this type; only Path A applies (note d)." : "");
+  $("clift").value = isFinite(le) && isFinite(lc) ? fmt(lc - le, 2) : "";
+  dtSync();
+  { const dt = num("cevdt"), q = num("ccap"); $("cevflow").textContent = dt > 0 && q > 0 ? "Chilled-water flow at this capacity: " + fmt(q / (K * dt), 1) + " L/s" : ""; }
+  ratingNow();
+  if (!(cap > 0)) { $("ccapHint").textContent = ""; $("cRes").innerHTML = ""; $("kChart").innerHTML = ""; warnBox("cWarn", ["Enter a cooling capacity above 0 kW."]); lastC = null; return; }
+  if (idx < 0) { $("cRes").innerHTML = ""; $("kChart").innerHTML = ""; warnBox("cWarn", ["This capacity is below the table: water-to-water heat pumps under 39.57 kW are in Table 6.8.1-15."]); lastC = null; return; }
+  const r = t.rows[idx], P = $("cpath").value === "B" && hasB;
+  const FL = P ? r[4] : r[2], IP = P ? r[5] : r[3];
+  $("ccapHint").textContent = "Size category: " + sizeLbl(r) + (r[0] <= 0 && r[1] === INF ? "" : " kW");
+  const useAdj = t.adj && isFinite(le) && isFinite(lc);
+  const k = useAdj ? kUse(le, lc) : null;
+  const f = k ? k.used : 1;
+  const FLa = FL * f, IPa = IP != null ? IP * f : null;
+  if (t.adj && useAdj) rangeMsgs(le, lc).forEach(m => cw.push(m));
+  if (!t.adj && isFinite(le) && isFinite(lc)) cw.push("No Kadj applies to this type. Table 6.8.1-3 and 6.8.1-16 give its requirement at the standard rating conditions of the test procedure (AHRI 551/591 or 560).");
+  if (k && k.std) cw.push("Conditions are the AHRI standard 7.00 / 35.00 °C. No adjustment applies (the formula would give " + fmt(k.K, 4) + ").");
+  warnBox("cWarn", cw);
+  const maxP = cap / FLa;
+  let h = box("Table value, full load", fmt(FL, 3) + " W/W", "Path " + (P ? "B" : "A") + ", standard conditions") +
+    (IP != null ? box("Table value, IPLV.SI", fmt(IP, 3) + " W/W", "Path " + (P ? "B" : "A")) : "");
+  if (k) h += box("Kadj = A × B", fmt(k.used, 4), "A " + fmt(k.A, 4) + " · B " + fmt(k.B, 4) + " · lift " + fmt(k.L, 2) + " K");
+  h += box("Minimum full-load COP", fmt(FLa, 3) + " W/W", k ? "adjusted for the water temperatures" : "") +
+    (IPa != null ? box("Minimum IPLV.SI", fmt(IPa, 3) + " W/W", k ? "adjusted (NPLV.SI)" : "") : "") +
+    box("Largest input power at full load", fmt(maxP, 0) + " kW", "= " + fmt(cap, 0) + " kW ÷ " + fmt(FLa, 3) + " · " + fmt(1 / FLa, 3) + " kW/kW · " + fmt(3.517 / FLa, 3) + " kW/RT");
+  $("cRes").innerHTML = h;
+  lastC = { t, idx, r, P, FL, IP, FLa, IPa, k, le, lc, cap };
+  drawK(k, le, lc);
+  unitCheck();
+  markTables();
+}
+function drawK(k, le, lc) {
+  const svg = $("kChart"); if (!k) { svg.innerHTML = '<text x="350" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">Kadj applies to liquid-cooled centrifugal chillers only.</text>'; return; }
+  const W = 700, H = 260, L = 52, R = 18, T = 14, B = 44, pw = W - L - R, ph = H - T - B, x0 = 8, x1 = 48;
+  const ycv = l => kadjOf(le, le + l).K;
+  let ymin = 0.4, ymax = 2.4;
+  const X = x => L + (x - x0) / (x1 - x0) * pw, Y = y => T + (ymax - y) / (ymax - ymin) * ph;
+  let g = '<rect x="' + X(11) + '" y="' + T + '" width="' + (X(44) - X(11)) + '" height="' + ph + '" fill="var(--tint)" opacity=".6"/>';
+  for (let y = 0.5; y <= 2.4; y += 0.25) g += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + Y(y) + '" y2="' + Y(y) + '" stroke="var(--faint)"/><text x="' + (L - 6) + '" y="' + (Y(y) + 4) + '" text-anchor="end" font-size="11" fill="var(--muted)">' + y.toFixed(2) + "</text>";
+  for (let x = 10; x <= 45; x += 5) g += '<text x="' + X(x) + '" y="' + (T + ph + 16) + '" text-anchor="middle" font-size="11" fill="var(--muted)">' + x + "</text>";
+  g += '<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="var(--rule)"/>';
+  const pts = []; for (let l = x0; l <= x1; l += 0.5) { const y = ycv(l); if (y >= ymin && y <= ymax) pts.push(X(l).toFixed(1) + "," + Y(y).toFixed(1)); }
+  g += '<polyline fill="none" stroke="var(--ink)" stroke-width="2" points="' + pts.join(" ") + '"/>';
+  const mark = (l, y, lab, filled, dy) => '<circle cx="' + X(l) + '" cy="' + Y(y) + '" r="5" fill="' + (filled ? "var(--ink)" : "var(--panel)") + '" stroke="var(--ink)" stroke-width="1.6"/><text x="' + (X(l) + 9) + '" y="' + (Y(y) + dy) + '" font-size="11.5" stroke="var(--paper)" stroke-width="3" paint-order="stroke">' + lab + "</text>";
+  if (k.L >= x0 && k.L <= x1) g += mark(k.L, k.K, "this case, Kadj " + fmt(k.used, 3), true, -8);
+  if (lastUnitRated && lastUnitRated.L >= x0 && lastUnitRated.L <= x1) g += mark(lastUnitRated.L, lastUnitRated.K, "maker, " + fmt(lastUnitRated.used, 3), false, 16);
+  g += '<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12">Lift, leaving condenser − leaving evaporator water, K (shaded: valid range 11 to 44)</text><text transform="translate(13 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="12">Kadj at evaporator leaving ' + fmt(le, 1) + ' °C</text>';
+  svg.innerHTML = g;
+}
+let lastUnitRated = null;
+
+let lastU = null;
+const PLPTS = { water: { lab: "°C entering condenser water", v: [30, 24.5, 19, 19] }, air: { lab: "°C entering air, dry-bulb", v: [35, 27, 19, 13] } };
+const IPLV_W = [0.01, 0.42, 0.45, 0.12];
+function unitCheck() {
+  const el = $("uRes"), mat = $("uMat"); lastUnitRated = null; lastU = null;
+  const clearAll = () => { el.innerHTML = ""; $("uRes3").innerHTML = ""; mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); };
+  /* part-load condition labels follow the chiller type */
+  if (lastC) {
+    const pc = PLPTS[coolOf($("ctype").value)];
+    ["mpa", "mpb", "mpc", "mpd"].forEach((id, i) => $(id + "H").textContent = fmt(pc.v[i], 1) + " " + pc.lab);
+    $("mplCond").textContent = "Rated at: " + pc.v.map((x, i) => ["100", "75", "50", "25"][i] + " % load at " + fmt(x, 1)).join(", ") + " " + pc.lab.split(" ")[0] + ". AHRI 551/591 (SI) Table 6.";
+  }
+  if (!$("uOn").checked || !lastC) { clearAll(); return; }
+  const c = lastC, w = [];
+  const cap = makerCap(), cop = num("mcop");
+  syncPow();
+  if (!(cop > 0) || !(cap > 0)) { mat.innerHTML = ""; $("uMatNote").textContent = ""; warnBox("uWarn", []); el.innerHTML = '<p class="hint">Enter the maker’s COP or input power.</p>'; $("uRes3").innerHTML = ""; return; }
+  /* IPLV of the unit */
+  let iplv = num("miplv"), iplvFrom = "entered";
+  if ($("mpl").checked) {
+    const p = ["mpa", "mpb", "mpc", "mpd"].map(num);
+    if (p.every(x => x > 0)) { iplv = p.reduce((a, x, i) => a + x * IPLV_W[i], 0); $("miplv").value = iplv.toFixed(3); iplvFrom = "from the four part-load COPs"; }
+    else { iplv = NaN; iplvFrom = "waiting for all four part-load COPs"; }
+  }
+  $("miplvHint").textContent = $("mpl").checked ? "Calculated: " + iplvFrom + "." : "Leave blank if the maker does not give it.";
+  const me = num("mevout"), mc = num("mcout"), le = c.le, lc = c.lc;
+  const adj = c.t.adj && isFinite(me) && isFinite(mc) && isFinite(le) && isFinite(lc);
+  const mk = adj ? kUse(me, mc) : null, yk = adj ? c.k : null;
+  const ratio = adj ? yk.used / mk.used : null;
+  if (adj) { rangeMsgs(me, mc).forEach(m => w.push("Maker’s conditions: " + m)); lastUnitRated = mk; }
+  if (!c.t.adj) w.push("No adjustment factor exists in 90.1 for this chiller type (§6.4.1.2.1 covers liquid-cooled centrifugal only). The unit’s COP at other temperatures has to come from the maker: enter it in step 3.");
+  if (adj && Math.abs(me - num("cevap")) < 1e-9 && Math.abs(mc - num("ccond")) < 1e-9) w.push("Your conditions are the same as the maker’s selection, so nothing changes. Change the water temperatures in section 1 above.");
+  warnBox("uWarn", w);
+  const duty = c.cap, powM = cap / cop;
+  const est = adj ? cop * ratio : null, estPow = est ? duty / est : null, estI = adj && iplv > 0 ? iplv * ratio : NaN;
+  const pct = x => sg((x - 1) * 100, 1) + " %";
+  const chk = (val_, req, lab) => { const ok = val_ >= req - 1e-9; return box(lab, sg(val_ - req, 3) + " W/W", (ok ? "meets " : "below ") + fmt(req, 3) + " minimum", ok ? "ok" : "bad"); };
+  /* three groups, in the order of the steps */
+  let hA = "", hB = "", hC = "";
+  const reqM = adj ? c.FL * mk.used : c.FL, reqMI = c.IP != null ? (adj ? c.IP * mk.used : c.IP) : null;
+  /* steps 1 and 2: the maker's selection, at the maker's own conditions */
+  hA += box("Maker’s full-load COP", fmt(cop, 3) + " W/W", "input power " + fmt(powM, 0) + " kW at " + fmt(cap, 0) + " kW");
+  if (iplv > 0) hA += box("Maker’s IPLV.SI", fmt(iplv, 3) + " W/W", iplvFrom);
+  hA += chk(cop, reqM, "COP against the 90.1 minimum" + (adj ? " at the maker’s conditions" : ""));
+  if (iplv > 0 && reqMI != null) hA += chk(iplv, reqMI, "IPLV.SI against the 90.1 minimum" + (adj ? " at the maker’s conditions" : ""));
+  /* steps 1 and 2: carried to your conditions with the 90.1 factor */
+  if (adj) {
+    hB += box("Kadj, maker’s conditions", fmt(mk.used, 4), "lift " + fmt(mk.L, 2) + " K · A " + fmt(mk.A, 3) + " · B " + fmt(mk.B, 3) + (mk.std ? " · standard, none applied" : ""));
+    hB += box("Kadj, your conditions", fmt(yk.used, 4), "lift " + fmt(yk.L, 2) + " K · A " + fmt(yk.A, 3) + " · B " + fmt(yk.B, 3) + (yk.std ? " · standard, none applied" : ""));
+    hB += box("Factor on COP and IPLV", fmt(ratio, 4), pct(ratio) + " from the maker’s selection", ratio >= 1 ? "ok" : "");
+    hB += box("Full-load COP, maker → yours", fmt(cop, 3) + " → " + fmt(est, 3), "estimate · " + pct(ratio));
+    hB += box("Input power at " + fmt(duty, 0) + " kW", fmt(powM * duty / cap, 0) + " → " + fmt(estPow, 0) + " kW", "estimate · " + sg(estPow - powM * duty / cap, 0) + " kW");
+    if (iplv > 0) hB += box("IPLV.SI, maker → yours", fmt(iplv, 3) + " → " + fmt(estI, 3), "estimate (NPLV.SI) · " + pct(ratio));
+    hB += chk(est, c.FLa, "Estimated COP against the 90.1 minimum at your conditions");
+    if (estI > 0 && c.IPa != null) hB += chk(estI, c.IPa, "Estimated IPLV.SI against the 90.1 minimum at your conditions");
+  }
+  /* step 3: the maker's own figures at your conditions */
+  const ncop = num("ncop"), niplv = num("niplv");
+  if (ncop > 0) {
+    hC += box("Maker’s COP at your conditions", fmt(ncop, 3), pct(ncop / cop) + " from the maker’s selection", "");
+    if (adj) hC += box("90.1 curve against the maker", sg(est - ncop, 3) + " W/W", "curve gives " + fmt(est, 3) + " (" + pct(ratio) + ") against the maker’s " + pct(ncop / cop));
+    if (c.FLa) hC += chk(ncop, adj ? c.FLa : c.FL, "Maker’s COP against the 90.1 minimum at your conditions");
+  }
+  if (niplv > 0) {
+    hC += box("Maker’s IPLV.SI at your conditions", fmt(niplv, 3), iplv > 0 ? pct(niplv / iplv) + " from the maker’s selection" : "");
+    if (c.IPa != null && adj) hC += chk(niplv, c.IPa, "Maker’s IPLV.SI against the 90.1 minimum at your conditions");
+  }
+  const grp = (t, sub, body) => '<h4 class="grp">' + t + '</h4><p class="hint grpsub">' + sub + '</p><div class="results">' + body + "</div>";
+  const h = grp("Result of steps 1 and 2: the maker’s selection", "As the maker rated it, at the maker’s own water temperatures, checked against the 90.1 minimum at those temperatures.", hA) +
+    (hB ? grp("Carried to your conditions with the 90.1 factor", "Still from steps 1 and 2. An estimate: the maker’s figures multiplied by Kadj(yours) ÷ Kadj(maker’s).", hB) : "");
+  $("uRes3").innerHTML = hC ? grp("Result of step 3: the maker’s own figures at your conditions", "Compared with the 90.1 minimum at your conditions and with the estimate above.", hC) : '<p class="hint">Enter the maker’s COP or IPLV.SI at your conditions above to see this comparison.</p>';
+  el.innerHTML = h;
+  lastU = { adj, mk, yk, ratio, cop, est, iplv, estI, cap, duty, powM, estPow, me, mc };
+  drawK(c.k, c.le, c.lc);
+  unitMatrix(adj, c, cop, mk, me, mc, le, lc);
+}
+function unitMatrix(adj, c, cop, mk, me, mc, le, lc) {
+  const mat = $("uMat"), note = $("uMatNote");
+  if (!adj) { mat.innerHTML = ""; note.textContent = "The matrix needs the 90.1 factor, which applies to liquid-cooled centrifugal chillers only."; return; }
+  const uniq = (arr) => { const o = []; arr.filter(isFinite).map(x => Math.round(x * 100) / 100).sort((a, b) => a - b).forEach(x => { if (!o.length || Math.abs(o[o.length - 1] - x) > 1e-9) o.push(x); }); return o; };
+  const cs = uniq([28, 30, 32, 34, 36, 38, 40, 42].concat([lc, mc])), es = uniq([5, 6, 7, 8, 9, 10].concat([le, me]));
+  const mode = $("umat").value, duty = c.cap;
+  const same = (a, b) => Math.abs(a - b) < 0.005;
+  const rows = cs.map(cv => "<tr><th>" + fmt(cv, 2) + "</th>" + es.map(ev => {
+    const L = cv - ev;
+    if (ev < 2.2 || ev > 21.1 || cv < 15.56 || cv > 57 || L < 11 || L > 44) return '<td class="na">–</td>';
+    const r = kUse(ev, cv).used / mk.used, e = cop * r;
+    const t = mode === "cop" ? fmt(e, 3) : mode === "pct" ? sg((r - 1) * 100, 1) : mode === "k" ? fmt(r, 4) : fmt(duty / e, 0);
+    const cls = same(cv, lc) && same(ev, le) ? "on" : same(cv, mc) && same(ev, me) ? "mk" : "";
+    return "<td" + (cls ? ' class="' + cls + '"' : "") + ">" + t + "</td>";
+  }).join("") + "</tr>").join("");
+  mat.innerHTML = "<thead><tr><th>Condenser leaving ↓<br>Evaporator leaving →</th>" + es.map(e => "<th>" + fmt(e, 2) + " °C</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody>";
+  note.textContent = "Condenser leaving water down the side, °C; evaporator leaving water across the top, °C. Shaded: your conditions. Outlined: the maker’s selection. A dash is outside the 90.1 range (evaporator 2.20 to 21.10 °C, condenser 15.56 to 57.00 °C, lift 11.00 to 44.00 K). Estimates from Kadj(new) ÷ Kadj(maker); capacity is taken as unchanged.";
+}
+/* ---------- rating conditions (drawer) ---------- */
+function ratingNow() {
+  const el = $("rtNow"); if (!el) return;
+  const le = num("cevap"), lc = num("ccond"), ei = num("cevin"), ci = num("ccin");
+  if (![le, lc, ei, ci].every(isFinite)) { el.textContent = ""; return; }
+  const L = lc - le, d = L - 28;
+  el.innerHTML = "<b>Your conditions (section 1):</b> chilled water " + fmt(ei, 1) + " → " + fmt(le, 1) + " °C, condenser water " + fmt(ci, 1) + " → " + fmt(lc, 1) + " °C, lift " + fmt(L, 1) + " K. The AHRI standard is 12.0 → 7.0 and 30.0 → 35.0 °C, a lift of 28.0 K. Yours is " + fmt(Math.abs(d), 1) + " K " + (d >= 0 ? "higher" : "lower") + (d >= 0 ? ", so a centrifugal unit is expected to have a lower COP." : ", so a centrifugal unit is expected to have a higher COP.") +
+    (TWP && isFinite(TWP.W) && isFinite(TWP.A) ? " Tower on the cooling tower page: wet-bulb " + fmt(TWP.W, 1) + " °C, approach " + fmt(TWP.A, 1) + " K (the Table 6.8.1-7 rating is 23.9 °C and 5.5 K)." : "");
+}
+(function buildRating() {
+  const th = a => "<thead><tr>" + a.map(x => "<th>" + x + "</th>").join("") + "</tr></thead>";
+  const body = rows => "<tbody>" + rows.map(r => "<tr>" + r.map(x => "<td>" + x + "</td>").join("") + "</tr>").join("") + "</tbody>";
+  $("rtChill").innerHTML = th(["Unit type", "90.1 table", "Chilled water, in → out, °C", "Heat rejection, °C", "Adjustment"]) + body([
+    ["Air-cooled, electrically operated", "6.8.1-3", "12.00 → 7.00", "35.0 db entering air", "None. Rated at the standard conditions."],
+    ["Liquid-cooled, positive displacement", "6.8.1-3", "12.00 → 7.00", "Condenser water 30.00 in → 35.00 out", "None. Other temperatures need the maker’s data."],
+    ["Liquid-cooled, centrifugal", "6.8.1-3", "12.00 → 7.00 (standard)", "Condenser water 30.00 in → 35.00 out (standard)", "<i>K</i><sub>adj</sub> = <i>A</i>·<i>B</i> when designed outside the standard. Leaving evaporator 2.20 to 21.10, leaving condenser 15.56 to 57.00 °C, lift 11.00 to 44.00 K."],
+    ["Absorption, single and double effect", "6.8.1-3", "AHRI 560 rating conditions", "Air-cooled or liquid-cooled per AHRI 560", "None. Full-load COP; double effect also has IPLV.SI."],
+    ["Heat pump and heat recovery, air-source (cooling operation)", "6.8.1-16", "12.00 → 7.00", "35.0 db entering air. Heating rated at 8.00 db / 6.00 wb and −8.00 db / −9.00 wb outdoor air", "None."],
+    ["Heat pump and heat recovery, liquid-source, positive displacement (cooling operation)", "6.8.1-16", "12.00 → 7.00", "Condenser water 30.00 → 35.00 for cooling. Heating source water leaves at 7.00 °C (19.00 °C for boost; 24/19 °C at 2110 kW and above)", "None."],
+    ["Heat pump and heat recovery, liquid-source, centrifugal (cooling operation)", "6.8.1-16", "12.00 → 7.00 (standard)", "As above", "<i>K</i><sub>adj</sub> for cooling operation."],
+    ["Evaporatively cooled chillers", "Not in 6.8.1-3", "12.00 → 7.00", "24.00 entering wet-bulb (AHRI 551/591)", "—"]
+  ]);
+  $("rtPL").innerHTML = th(["Load", "IPLV.SI weight", "Water-cooled, entering condenser water, °C", "Air-cooled, entering air db, °C", "Evaporatively cooled, entering wb, °C"]) + body([
+    ["100 % (A)", "0.01", "30.0", "35.0", "24.0"], ["75 % (B)", "0.42", "24.5", "27.0", "20.5"], ["50 % (C)", "0.45", "19.0", "19.0", "17.0"], ["25 % (D)", "0.12", "19.0", "13.0", "13.5"]
+  ]);
+})();
+function buildTables() {
+  const rowsHTML = (keys, hasTest) => keys.map(key => {
+    const t = CT[key];
+    return t.rows.map((r, i) => {
+      const cells = [r[2], r[3], r[4], r[5]].map(v => v == null ? '<td class="na">NA</td>' : "<td>" + v.toFixed(3) + "</td>");
+      const f = (a, b) => a == null ? '<td class="na">—</td>' : "<td>" + a.toFixed(3) + "</td>";
+      return '<tr data-k="' + key + ":" + i + '">' + (i === 0 ? '<th rowspan="' + t.rows.length + '" class="nm">' + t.name + "</th>" : "") + "<td>" + sizeLbl(r) + "</td>" + "<td>" + r[2].toFixed(3) + "</td><td>" + (r[3] == null ? '<span class="na">—</span>' : r[3].toFixed(3)) + "</td><td>" + (r[4] == null ? '<span class="na">NA</span>' : r[4].toFixed(3)) + "</td><td>" + (r[5] == null ? '<span class="na">—</span>' : r[5].toFixed(3)) + "</td></tr>";
+    }).join("");
+  }).join("");
+  const head = "<thead><tr><th>Equipment type</th><th>Size, kW</th><th>Path A, FL</th><th>Path A, IPLV.SI</th><th>Path B, FL</th><th>Path B, IPLV.SI</th></tr></thead>";
+  $("tb3").innerHTML = head + "<tbody>" + rowsHTML(["air", "pd", "cent", "ab1a", "ab1l", "ab2i", "ab2d"]) + '<tr><td colspan="6" class="tn2">Air-cooled without condenser: all capacities, rated with matching condensers and held to the air-cooled chiller requirements.</td></tr></tbody>';
+  $("tb16").innerHTML = head + "<tbody>" + rowsHTML(["hpa", "hpp", "hpc"]) + "</tbody>";
+}
+function markTables() {
+  document.querySelectorAll("#tb3 tr.on, #tb16 tr.on").forEach(e => e.classList.remove("on"));
+  if (lastC) { const e = document.querySelector('tr[data-k="' + $("ctype").value + ":" + lastC.idx + '"]'); if (e) e.classList.add("on"); }
+}
+MX.formula($("fxC2"), [
+  "$IPLV$ = 0.01 $COP$_{100} + 0.42 $COP$_{75} + 0.45 $COP$_{50} + 0.12 $COP$_{25}",
+  "$COP$_{yours} = $COP$_{maker} · @frac{$K$_{adj,yours}}{$K$_{adj,maker}}",
+  "$P$_{yours} = @frac{$Q$}{$COP$_{yours}}"
+]);
+MX.defs($("fxCDefs2"), [
+  ["$COP$_{100…25}", "COP at 100, 75, 50 and 25 % load, at the part-load conditions of AHRI 551/591"],
+  ["$K$_{adj,maker}", "factor at the maker’s leaving evaporator and condenser temperatures"],
+  ["$K$_{adj,yours}", "factor at your leaving temperatures"]
+]);
+MX.formula($("fxC1"), [
+  "$FL$_{adj} = $FL$ · $K$_{adj}",
+  "$IPLV$_{adj} = $IPLV$.SI · $K$_{adj}",
+  "$K$_{adj} = $A$ · $B$",
+  "$A$ = 1.53181×10^{−6} $L$^{4} − 2.02076×10^{−4} $L$^{3} + 0.0101800 $L$^{2} − 0.264958 $L$ + 3.93073",
+  "$B$ = 0.0027 · $T$_{evap} + 0.982",
+  "$L$ = $T$_{cond} − $T$_{evap}",
+  "COP = @frac{$Q$_{evap}}{$P$_{in}}"
+]);
+MX.defs($("fxCDefs"), [
+  ["$FL$, $IPLV$", "table values at standard conditions (W/W)"],
+  ["$T$_{evap}", "full-load evaporator leaving liquid, °C"],
+  ["$T$_{cond}", "full-load condenser leaving liquid, °C"],
+  ["$L$", "lift, K"],
+  ["$Q$_{evap}, $P$_{in}", "net cooling capacity and electrical input, kW"]
+]);
+function working() {
+  const sC = [], c = lastC;
+  if (c) {
+    sC.push({ t: "Table value", m: ["Type: " + c.t.name, "Size: " + sizeLbl(c.r) + " kW, capacity " + fmt(c.cap, 0) + " kW", "$FL$ = **" + fmt(c.FL, 3) + "**" + (c.IP != null ? ", $IPLV$.SI = **" + fmt(c.IP, 3) + "**" : "") + " (Path " + (c.P ? "B" : "A") + ")"] });
+    if (c.k) {
+      sC.push({ t: "Lift", m: ["$L$ = " + fmt(c.lc, 2) + " − " + fmt(c.le, 2) + " = **" + fmt(c.k.L, 2) + " K**"] });
+      sC.push({ t: "Factors A and B", m: ["$A$ = **" + fmt(c.k.A, 4) + "**", "$B$ = 0.0027 × " + fmt(c.le, 2) + " + 0.982 = **" + fmt(c.k.B, 4) + "**", "$K$_{adj} = " + fmt(c.k.A, 4) + " × " + fmt(c.k.B, 4) + " = **" + fmt(c.k.K, 4) + "**"], n: c.k.std ? "At the AHRI standard 7.00 / 35.00 °C no adjustment applies, so 1.0000 is used." : "Valid for 2.20 ≤ T_evap ≤ 21.10 °C, 15.56 ≤ T_cond ≤ 57.00 °C and 11.00 ≤ L ≤ 44.00 K." });
+      sC.push({ t: "Adjusted requirement", m: ["$FL$_{adj} = " + fmt(c.FL, 3) + " × " + fmt(c.k.used, 4) + " = **" + fmt(c.FLa, 3) + "**"].concat(c.IP != null ? ["$IPLV$_{adj} = " + fmt(c.IP, 3) + " × " + fmt(c.k.used, 4) + " = **" + fmt(c.IPa, 3) + "**"] : []) });
+    } else sC.push({ t: "Adjustment", m: [], n: "No Kadj for this type; the table value is the requirement." });
+    if (lastU && lastU.adj) {
+      const U = lastU;
+      sC.push({ t: "Maker’s selection and your conditions", m: ["$K$_{adj,maker} = **" + fmt(U.mk.used, 4) + "** at " + fmt(U.me, 2) + " / " + fmt(U.mc, 2) + " °C (lift " + fmt(U.mk.L, 2) + " K)", "$K$_{adj,yours} = **" + fmt(U.yk.used, 4) + "** at " + fmt(c.le, 2) + " / " + fmt(c.lc, 2) + " °C (lift " + fmt(U.yk.L, 2) + " K)", "$COP$_{yours} = " + fmt(U.cop, 3) + " × " + fmt(U.yk.used, 4) + " ÷ " + fmt(U.mk.used, 4) + " = **" + fmt(U.est, 3) + "**", "$P$_{yours} = " + fmt(U.duty, 0) + " ÷ " + fmt(U.est, 3) + " = **" + fmt(U.estPow, 0) + " kW**"].concat(U.iplv > 0 ? ["$IPLV$_{yours} = " + fmt(U.iplv, 3) + " × " + fmt(U.ratio, 4) + " = **" + fmt(U.estI, 3) + "**"] : []), n: "Estimate from the 90.1 curve; not the maker’s data." });
+    }
+    sC.push({ t: "Power at full load", m: ["$P$_{in} ≤ " + fmt(c.cap, 0) + " ÷ " + fmt(c.FLa, 3) + " = **" + fmt(c.cap / c.FLa, 0) + " kW**"] });
+  }
+  MX.steps($("workC"), sC, "Enter a capacity and type in section 1 to see the working.");
+}
+
+/* ---------- start ---------- */
+buildTables();
+if (TWP) {
+  $("ccin").value = TWP.cin.toFixed(2); $("ccond").value = TWP.cout.toFixed(2);
+  $("twNote").hidden = false;
+  $("twNote").innerHTML = "<b>From the cooling tower page:</b> condenser water entering the chiller " + fmt(TWP.cin, 2) + " °C (tower water out) and leaving " + fmt(TWP.cout, 2) + " °C (tower water in)" + (isFinite(TWP.W) ? ", at a wet-bulb of " + fmt(TWP.W, 1) + " °C" : "") + ". Change them below if you wish.";
+}
+dtSync();
+syncPow();
+chiller();
+working();
+})();
+</script>
+</body>
+</html>

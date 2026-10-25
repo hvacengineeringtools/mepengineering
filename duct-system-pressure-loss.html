@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Pressure loss along an air path, section by section: straight duct friction as sheet XV, elbow, transition and tap loss coefficients from the duct-fitting tables, equipment entered case by case, a running total, and export to Excel for submission." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XVI — Duct system pressure loss</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<style>
+.sec { border:1px solid var(--rule); background:var(--panel); margin:12px 0; padding:0; }
+.sec.eq { background:#f4efe3; }
+.sec .sh { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid var(--rule); }
+.sec .sn { min-width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; background:var(--ink); color:var(--paper); font-size:13px; }
+.sec .sh select.kd { width:auto; min-height:36px; font-size:14px; }
+.sec .sh input.dsc { flex:1 1 220px; min-width:160px; min-height:36px; font-size:14px; }
+.sec .sh .lca { margin:0; display:flex; gap:4px; }
+.sec .sb { padding:10px; }
+.sec .sb .fields { gap:10px 14px; }
+.sec details.fit { margin:10px 0 0; border:1px solid var(--faint); background:var(--paper); }
+.sec details.fit summary { cursor:pointer; padding:7px 10px; font-size:13px; font-weight:600; min-height:36px; display:flex; align-items:center; }
+.sec details.fit .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px 12px; padding:8px 10px 10px; }
+.sec details.fit .fg label { font-size:12px; display:block; margin:0 0 2px; }
+.sec details.fit .fg input { min-height:34px; font-size:14px; }
+.sec .rs { display:flex; flex-wrap:wrap; gap:6px 18px; padding:8px 10px; border-top:1px solid var(--rule); font-size:13px; background:var(--tint); }
+.sec .rs b { font-weight:700; }
+.sec .rs .tot { margin-left:auto; font-weight:700; }
+.sec .wn { color:#8a3b12; font-size:12px; padding:4px 10px 8px; line-height:1.4; }
+.seg2 { display:flex; flex-wrap:wrap; gap:0; }
+.seg2 button { flex:1 1 150px; width:auto; min-height:40px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.seg2 button + button { border-left:0; }
+.seg2 button.on { background:var(--ink); color:var(--paper); }
+.fitq { margin:12px 0 0; }
+.fitq .fl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.fitq .fgrid, .fitq .fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px 12px; }
+.stp label { font-size:12px; display:block; margin:0 0 2px; font-weight:600; }
+.stp .sc { display:flex; }
+.stp .sc input { flex:1 1 auto; min-width:0; width:100%; text-align:center; min-height:40px; font-size:15px; border-left:0; border-right:0; }
+.stp .sc button { width:40px; min-height:40px; flex:none; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 18px Georgia, serif; cursor:pointer; padding:0; }
+.stp small.kv { display:block; font-size:11px; color:var(--muted); margin-top:2px; min-height:13px; }
+table.cmp#cmpT td.bad { color:#9b1c1c; font-weight:700; }
+.sec details.fit { margin:10px 0 0; }
+.addrow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+.addrow button, .exrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.addrow button.pri, .exrow button.pri { background:var(--ink); color:var(--paper); }
+.exrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:5px 6px; }
+table.cmp#prT td.l, table.cmp#prT th.l { text-align:left; }
+table.cmp#prT tr.eqr td { background:#f4efe3; }
+table.cmp#prT td.bad { color:#9b1c1c; font-weight:700; }
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+.prhead { display:none; }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .sec, .mx-pull, .mx-scrim, .mx-drawer, header .sub, #s1, #s2h, .addrow, .exrow, footer, #s4, #s4 ~ ul, #s4 ~ div:not(.rights), #s4 ~ table, #s4 ~ h4, #s4 ~ p { display:none !important; }
+  .prhead { display:block; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+<style>
+.sec.fx { background:#eef2ee; }
+.sec .sh select.kd { min-width:150px; }
+.sec .sub2 { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:12px 0 6px; }
+.sec .cnote { font-size:12px; color:var(--muted); line-height:1.4; margin-top:4px; }
+.sec .cbox { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:flex-end; margin-top:8px; }
+.sec .cauto { font-size:14px; padding:6px 10px; background:var(--tint); border:1px solid var(--rule); }
+.sec .cauto b { font-size:17px; }
+@media print { #s0, h5.vh, .fields, #s3, #s1 ~ p.lead, header .kicker + h1 + .sub { display:none !important; } #s3 { display:none !important; } }
+</style>
+<article class="book">
+<header>
+  <div class="kicker">Sheet XVI</div>
+  <h1>Duct system pressure loss</h1>
+  <div class="sub">Section by section along the index run · duct friction as sheet XV · elbow, transition and tap coefficients from the duct-fitting tables · export to Excel</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a class="on" href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Lighting</div><div class="nl">
+    <a href="light-sizing.html"><span>XXVIII</span>Lighting sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Adds up the pressure loss along one air path, from the fan to the furthest outlet. Each section is a length of straight duct, a fitting (elbow, transition or tap), or an item of equipment with a pressure drop from the maker’s data. Straight duct uses the same equivalent-diameter and Altshul–Tsal friction as sheet XV. For elbows, transitions and taps the loss coefficient C is read from the duct-fitting tables once you give the sizes, angle and flow; you can type your own C instead. The running total is kept as you go, and the table can be downloaded as an Excel workbook that recalculates, or printed for submission.</p>
+<nav class="toc" aria-label="On this page"><a href="#s0">1 Design basis</a><a href="#s1">2 Sections</a><a href="#s3">3 Result and export</a></nav>
+
+<h2 id="s0">1. Design basis</h2>
+<h5 class="vh">Air and duct</h5>
+<div class="fields two">
+  <div class="field"><label for="ta">Air temperature</label><div class="pair"><input id="ta" type="number" inputmode="decimal" step="any" min="-40" max="80" value="20" /><span>°C</span></div><div class="hint">Sea-level pressure is assumed.</div></div>
+  <div class="field"><label for="rho">Density ρ</label><div class="pair"><input id="rho" type="number" inputmode="decimal" step="any" min="0" /><span>kg/m³</span></div></div>
+  <div class="field"><label for="nu">Kinematic viscosity ν</label><div class="pair"><input id="nu" type="number" inputmode="decimal" step="any" min="0" /><span>10⁻⁶ m²/s</span></div><div class="hint" id="fh">Worked out from the temperature. Type a value to use your own.</div></div>
+  <div class="field"><label for="rg">Duct roughness</label><select id="rg"></select></div>
+  <div class="field" id="rgf" hidden><label for="rgv">Roughness ε</label><div class="pair"><input id="rgv" type="number" inputmode="decimal" step="any" min="0" value="0.15" /><span>mm</span></div></div>
+</div>
+<h5 class="vh">Fittings and totals</h5>
+<div class="fields two">
+  <div class="field"><label for="sy">Duct system</label><select id="sy"><option value="s">Supply air (flow splits at a tap)</option><option value="r">Return or exhaust (flows join at a tap)</option></select><div class="hint">Decides which table is read for transitions and taps.</div></div>
+  <div class="field"><label for="mg">Design margin</label><div class="pair"><input id="mg" type="number" inputmode="decimal" step="any" min="0" value="15" /><span>%</span></div><div class="hint">Added to the total, for the accuracy of the information you have.</div></div>
+  <div class="field"><label for="fl">Friction flag</label><div class="pair"><input id="fl" type="number" inputmode="decimal" step="any" min="0" value="0.8" /><span>Pa/m</span></div><div class="hint">A straight duct above this is marked. Leave empty for no flag.</div></div>
+</div>
+
+<h2 id="s1">2. Sections along the index run</h2>
+<p class="lead" style="margin-top:6px">Add the sections in the order the air flows. A straight duct has a flow, a size and a length. A fitting takes its loss from the velocity at the size you give: enter the fitting’s own size and flow, then the angle or the second size it needs, and the coefficient C appears. Add equipment (coil, filter, attenuator, damper, grille) where it sits, with the pressure drop from the maker’s data at the design flow.</p>
+<div id="secs"></div>
+<div class="addrow">
+  <button type="button" class="pri" data-add="d">Add straight duct</button>
+  <button type="button" data-add="el">Add elbow</button>
+  <button type="button" data-add="tr">Add transition</button>
+  <button type="button" data-add="tp">Add tap (branch)</button>
+  <button type="button" data-add="ot">Add other fitting (type C)</button>
+  <button type="button" data-add="eq">Add equipment</button>
+</div>
+<div class="addrow noprint">
+  <button type="button" id="ex">Load an example</button>
+  <button type="button" id="clr">Clear all sections</button>
+</div>
+
+<h2 id="s3">3. Result and export</h2>
+<div id="vNote" class="perm" role="status"></div>
+<div class="warn" id="sWarn" role="status"></div>
+<div class="big" id="sRes"></div>
+
+<div class="prhead"><h3 id="prTitle" style="margin:0 0 4px">Duct system pressure loss</h3><div id="prMeta" style="font-size:11px;margin-bottom:6px"></div></div>
+<div class="table-scroll"><table class="cmp" id="prT"></table></div>
+<p class="si" id="prN"></p>
+<table class="cmp prhead sig" style="margin-top:14px"><tbody><tr><td>Prepared by:</td><td>Checked by:</td><td>Approved by:</td></tr></tbody></table>
+
+<div class="exrow noprint">
+  <button type="button" class="pri" id="xl">Download Excel workbook (.xlsx)</button>
+  <button type="button" id="pr">Print or save as PDF</button>
+  <button type="button" id="sv">Save the project (.json)</button>
+  <button type="button" id="ld">Open a saved project</button>
+  <input type="file" id="ldf" accept=".json,application/json" hidden />
+</div>
+<p class="si noprint" id="exN">The workbook keeps your inputs in blue and recalculates the equivalent diameter, friction, velocity pressure, section totals and running total with formulas. The fitting coefficients C are written as values (they come from interpolating the duct-fitting tables, which are not in the workbook), so a checker can see each C and the table it came from in the notes column.</p>
+
+<footer>Preliminary checking only. Straight duct friction is by Darcy–Weisbach; fittings are by C × ½ρv² with C from the duct-fitting tables or typed by you; equipment is as entered. Check the coefficients against the design guide and the maker’s data. Fan curve, system effect, leakage, duct insulation and dampers not entered are not included. Formulae, the working and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Fittings and limits</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The working for the section you last changed, with the values now on the sheet.</p>
+      <div id="workS"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. Air</h3>
+      <p class="si">ρ = 101325 / (287.05 T), μ = 1.458×10⁻⁶ T<sup>1.5</sup> / (T + 110.4), ν = μ / ρ, with T in kelvin</p>
+      <h3>2. Straight duct</h3>
+      <p class="si">Rectangular a × b: D<sub>e</sub> = 1.265 ((a b)³ / (a + b))<sup>0.2</sup><br>Round: D<sub>e</sub> = D<br>v<sub>e</sub> = Q / (π D<sub>e</sub>² / 4), Re = v<sub>e</sub> D<sub>e</sub> / ν<br>f′ = 0.11 (ε / D<sub>e</sub> + 68 / Re)<sup>0.25</sup>; f = f′ if f′ ≥ 0.018, otherwise 0.85 f′ + 0.0028<br>Δp per metre = (f / D<sub>e</sub>) × ½ ρ v<sub>e</sub>²<br>Duct loss = Δp per metre × length</p>
+      <h3>3. Fittings</h3>
+      <p class="si">Fitting loss = C × ½ ρ v², with v = Q / (area of the reference section), the actual duct area, not the equivalent circle.<br>Elbow and other fitting: the duct size you give.<br>Transition: the smaller end.<br>Tap: the common section, which is the main before the tap in supply air, and the main after the tap in return air.</p>
+      <h3>4. Coefficients C</h3>
+      <p class="si">Smooth rectangular elbow: C = C₀(r/W, H/W) × angle factor(θ)<br>Mitered elbow: C(θ, H/W) from the table, or a constant if it has turning vanes<br>Round smooth elbow: C = C₀(r/D) × angle factor(θ)<br>Transition: C(area ratio, included angle θ), θ = 2 atan((Δ / 2) / L), the larger of the width and the depth<br>Tap: C of the branch and C of the straight-through path, each by area ratio and flow ratio<br>Linear interpolation in the table; beyond the edge of the table the end value is used and the section is flagged.</p>
+      <h3>5. Equipment and totals</h3>
+      <p class="si">Equipment: the pressure drop in Pa as entered.<br>Section = duct + fitting + equipment<br>Running total = sum of the sections down to this one<br>Design total = total × (1 + margin)</p>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <h3>Limits used for the flags</h3>
+      <p class="si">Maximum velocity by duct type, from our reference data: riser 7.5 m/s, branch 7.5, zone 5.5, flex 2.5, branch FOH 5.5, zone FOH 3.5. The friction flag is the figure in section 1 (0.8 Pa/m from our reference data). A flag does not stop the section being counted.</p>
+      <h3>Roughness</h3>
+      <div class="table-scroll"><table class="cmp" id="rgT"></table></div>
+      <h3>Elbow table C₀ (smooth rectangular, r/W across, H/W down)</h3>
+      <div class="table-scroll"><table class="cmp" id="elT"></table></div>
+      <h3>Angle factors</h3>
+      <div class="table-scroll"><table class="cmp" id="afT"></table></div>
+      <p class="si">The other tables (transitions, taps, mitered and round elbows) follow the same layout and are read in the same way.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>How this sheet works</h3>
+      <ul>
+        <li>One card per duct, fitting or equipment item, with the running total and a design margin. The friction formula is the same as sheet XV.</li>
+        <li>The workbook this sheet writes uses ordinary formulas, so it opens and recalculates without macros.</li>
+        <li>Where a fitting’s coefficient C is typed, it replaces the table value, and the card says so.</li>
+      </ul>
+      <h3>How the fitting coefficients were checked</h3>
+<p class="si">I put 51 test fittings through the fitting calculation of our duct template and through this sheet, and compared the coefficient C each gave. <b>39 are identical.</b> <b>12 differ</b>, and in all 12 the template is the one that is wrong. This sheet uses the correct value.</p>
+<div class="table-scroll"><table class="cmp"><thead><tr><th class="l">Fitting</th><th>Cases</th><th class="l">What the template does wrong</th><th class="l">Example (template → this sheet)</th></tr></thead><tbody>
+<tr><td class="l">Mitered 90° elbow with turning vanes</td><td>2</td><td class="l">It tests the width in millimetres against limits written in inches (20 in and 36 in), so every width over 20 mm is treated as a large duct and gets the largest constant, 0.41.</td><td class="l">300 × 300 mm: 0.41 → 0.33<br>700 × 700 mm: 0.41 → 0.38</td></tr>
+<tr><td class="l">Round smooth elbow</td><td>6</td><td class="l">The interpolation reads the radius table one column out, so C is slightly high or low; one case returns an error (#REF!).</td><td class="l">Ø500, 90°, r = 850: 0.138 → 0.142</td></tr>
+<tr><td class="l">Return transition, round ↔ rectangular</td><td>2</td><td class="l">The included angle is worked from zeros, so the wrong row of the table is read. Some other cases of this kind give #VALUE!.</td><td class="l">Ø400 to 600 × 400: 0.314 → 0.210</td></tr>
+<tr><td class="l">Return tap on a small round main</td><td>2</td><td class="l">Same unit fault as the vanes: the main diameter in millimetres is tested against 10 in, so the wrong table (the one for mains over 10 in) is read.</td><td class="l">Ø200 main, Ø150 branch: 0.480 → 0.142 (branch)</td></tr>
+</tbody></table></div>
+<p class="si">The template’s own fitting-coefficient column is also empty, so with the template you must type each C by hand. This sheet fills it from the tables. Everything else (rectangular smooth and mitered elbows, supply and return transitions between rectangular sizes, and all the supply and rectangular return taps) agrees exactly.</p>
+<p class="si">The tables are the ASHRAE duct-fitting tables as laid out in the template. Confirm the coefficients you rely on against the ASHRAE Duct Fitting Database.</p>
+<h3>Reference velocity</h3>
+      <p class="si">The velocity pressure used for transitions (the smaller end) and for taps (the common section) follows the usual convention of the fitting database. Check it against the table you are quoting. If your design guide refers C to another section, type the C that matches.</p>
+      <h3>What is not included</h3>
+      <p class="si">Fan and system effect, air leakage, insulation and liner, dampers and grilles not entered as equipment, and the change in static regain across a tap.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pf = v => { const x = parseFloat(v); return isFinite(x) ? x : NaN; };
+/* ---- duct fitting loss coefficients: ASHRAE duct fitting tables as laid out in our duct template ---- */
+const TB = {"SR4_01":{"x":[0,3,5,10,15,20,30,45,60,90,120,150,180],"y":[0.1,0.167,0.25,0.5,1,2,4,6,10,16],"z":[[0,0.12,0.09,0.05,0.05,0.05,0.05,0.06,0.08,0.19,0.29,0.37,0.43],[0,0.11,0.09,0.05,0.04,0.04,0.04,0.06,0.07,0.19,0.28,0.36,0.42],[0,0.1,0.08,0.05,0.04,0.04,0.04,0.06,0.07,0.18,0.27,0.36,0.41],[0,0.08,0.09,0.06,0.04,0.04,0.04,0.06,0.07,0.12,0.17,0.2,0.22],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0.64,0.96,0.54,0.52,0.62,0.94,1.4,1.48,1.52,1.48,1.44,1.4],[0,4.16,4.64,2.72,3.09,4,6.72,9.6,10.88,11.2,11.2,10.88,10.56],[0,12.24,10.08,7.38,8.1,10.8,17.28,23.4,27.36,29.88,29.88,29.34,28.8],[0,40.5,27.2,23.3,25.1,34,52.84,69,82.5,93.5,93.5,92.4,91.3],[0,112.64,68.35,63.74,67.84,92.93,142.13,182.53,220.16,254.21,254.21,251.9,249.6]]},"SR4_02":{"x":[0,3,5,10,15,20,30,45,60,90,120,150,180],"y":[0.1,0.167,0.25,0.5,1,2,4,6,10,16],"z":[[0,0.12,0.09,0.05,0.05,0.05,0.05,0.06,0.08,0.19,0.29,0.37,0.43],[0,0.11,0.08,0.05,0.05,0.05,0.05,0.06,0.07,0.19,0.28,0.37,0.42],[0,0.1,0.07,0.05,0.05,0.05,0.05,0.06,0.07,0.17,0.27,0.35,0.41],[0,0.08,0.07,0.06,0.07,0.06,0.05,0.06,0.07,0.13,0.19,0.23,0.24],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0.57,0.55,0.61,0.87,1,1.2,1.3,1.3,1.3,1.28,1.24,1.2],[0,2.6,2.84,3.92,5.72,7.2,8.32,9.28,9.92,10.24,10.24,10.24,10.24],[0,6.57,6.75,10.62,15.84,18.9,22.5,25.74,27.9,28.44,28.44,28.35,28.26],[0,17.25,18.75,30,45,53,63.5,75,84,89,89,88.5,88],[0,42.75,48.13,77.57,116.74,136.45,164.1,196.86,224.26,241.92,241.92,240.38,238.59]]},"SR4_03":{"x":[0,3,5,10,15,20,30,45,60,90,120,150,180],"y":[0.1,0.167,0.25,0.5,1,2,4,6,10,16],"z":[[0,0.12,0.09,0.05,0.05,0.05,0.05,0.06,0.08,0.19,0.29,0.37,0.43],[0,0.11,0.08,0.05,0.05,0.05,0.05,0.06,0.07,0.19,0.28,0.37,0.42],[0,0.1,0.07,0.05,0.05,0.05,0.05,0.06,0.07,0.17,0.27,0.35,0.41],[0,0.08,0.07,0.06,0.07,0.06,0.05,0.06,0.07,0.13,0.19,0.23,0.24],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0.57,0.55,0.61,0.87,1,1.2,1.3,1.3,1.3,1.28,1.24,1.2],[0,2.6,2.84,3.92,5.72,7.2,8.32,9.28,9.92,10.24,10.24,10.24,10.24],[0,6.57,6.75,10.62,15.84,18.9,22.5,25.74,27.9,28.44,28.44,28.35,28.26],[0,17.25,18.75,30,45,53,63.5,75,84,89,89,88.5,88],[0,42.75,48.13,77.57,116.74,136.45,164.1,196.86,224.26,241.92,241.92,240.38,238.59]]},"SD4_01":{"x":[0,3,5,10,15,20,30,45,60,90,120,150,180],"y":[0.1,0.167,0.25,0.39,0.5,0.64,1,2,4,6,10,16],"z":[[0,0.12,0.09,0.05,0.05,0.05,0.05,0.06,0.08,0.19,0.29,0.37,0.43],[0,0.11,0.08,0.05,0.04,0.04,0.04,0.06,0.07,0.18,0.28,0.36,0.42],[0,0.1,0.07,0.05,0.04,0.04,0.04,0.06,0.07,0.17,0.27,0.35,0.41],[0,0.1,0.07,0.05,0.05,0.05,0.05,0.06,0.06,0.16,0.25,0.32,0.36],[0,0.07,0.06,0.05,0.05,0.05,0.05,0.06,0.07,0.13,0.18,0.23,0.24],[0,0.07,0.07,0.05,0.04,0.04,0.04,0.05,0.06,0.09,0.13,0.17,0.19],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0.59,0.51,0.43,0.52,0.76,1.26,1.32,1.3,1.26,1.23,1.21,1.19],[0,3.15,2.78,2.51,3.38,4.77,7.38,9.7,10.88,10.29,10.08,9.96,9.84],[0,6.55,6.08,6.44,9.14,11.92,17.35,23.58,27.58,26.71,26.32,26.15,25.99],[0,19.5,18.25,20,27.3,38,58.5,76,80,83.4,84,83.35,82.7],[0,45.82,44.8,50.18,73.73,96.77,153.6,215.04,225.28,225.28,225.28,225.28,225.28]]},"SD4_02":{"x":[0,3,5,10,15,20,30,45,60,90,120,150,180],"y":[0.1,0.167,0.25,0.5,1,2,4,6,10,16],"z":[[0,0.12,0.09,0.05,0.05,0.05,0.05,0.06,0.08,0.19,0.29,0.37,0.43],[0,0.11,0.08,0.05,0.05,0.05,0.05,0.06,0.07,0.19,0.28,0.37,0.42],[0,0.1,0.07,0.05,0.05,0.05,0.05,0.06,0.07,0.17,0.27,0.35,0.41],[0,0.08,0.07,0.06,0.07,0.06,0.05,0.06,0.07,0.13,0.19,0.23,0.24],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0.57,0.55,0.61,0.87,1,1.2,1.3,1.3,1.3,1.28,1.24,1.2],[0,2.6,2.84,3.92,5.72,7.2,8.32,9.28,9.92,10.24,10.24,10.24,10.24],[0,6.57,6.75,10.62,15.84,18.9,22.5,25.74,27.9,28.44,28.35,28.35,28.26],[0,17.25,18.75,30,45,53,63.5,75,84,89,88.5,88.5,88],[0,42.75,48.13,77.57,116.74,136.45,164.1,196.86,224.26,241.92,240.38,240.38,238.59]]},"ER4_01":{"x":[10,15,20,30,45,60,90,120,150,180],"y":[0.06,0.1,0.25,0.5,1,2,4,6,10],"z":[[0.26,0.27,0.4,0.56,0.71,0.86,1,0.99,0.98,0.98],[0.24,0.26,0.36,0.53,0.69,0.82,0.93,0.93,0.92,0.91],[0.17,0.19,0.22,0.42,0.6,0.68,0.7,0.69,0.67,0.66],[0.14,0.13,0.15,0.24,0.35,0.37,0.38,0.37,0.36,0.35],[0,0,0,0,0,0,0,0,0,0],[0.23,0.2,0.2,0.2,0.24,0.28,0.54,0.78,1.02,1.09],[0.81,0.64,0.64,0.64,0.88,1.12,2.78,4.38,5.65,6.6],[1.82,1.44,1.44,1.44,1.98,2.53,6.56,10.2,13,15.2],[5.03,5,5,5,6.5,8.02,19.1,29.1,37.1,43.1]]},"ER4_02":{"x":[10,15,20,30,45,60,90,120,150,180],"y":[0.06,0.1,0.25,0.5,1,2,4,6,10],"z":[[0.3,0.54,0.53,0.65,0.77,0.88,0.95,0.98,0.98,0.93],[0.3,0.5,0.53,0.64,0.75,0.84,0.89,0.91,0.91,0.88],[0.25,0.36,0.45,0.52,0.58,0.62,0.64,0.64,0.64,0.64],[0.15,0.21,0.25,0.3,0.33,0.33,0.33,0.32,0.31,0.3],[0,0,0,0,0,0,0,0,0,0],[0.24,0.28,0.26,0.2,0.22,0.24,0.49,0.73,0.97,1.04],[0.89,0.78,0.79,0.7,0.88,1.12,2.72,4.33,5.62,6.58],[1.89,1.67,1.59,1.49,1.98,2.52,6.51,10.14,13.05,15.14],[5.09,5.32,5.15,5.05,6.5,8.05,19.06,29.07,37.08,43.05]]},"ER4_03":{"x":[10,15,20,30,45,60,90,120,150,180],"y":[0.06,0.1,0.25,0.5,1,2,4,6,10],"z":[[0.3,0.54,0.53,0.65,0.77,0.88,0.95,0.98,0.98,0.93],[0.3,0.5,0.53,0.64,0.75,0.84,0.89,0.91,0.91,0.88],[0.25,0.36,0.45,0.52,0.58,0.62,0.64,0.64,0.64,0.64],[0.15,0.21,0.25,0.3,0.33,0.33,0.33,0.32,0.31,0.3],[0,0,0,0,0,0,0,0,0,0],[0.24,0.28,0.26,0.2,0.22,0.24,0.49,0.73,0.97,1.04],[0.89,0.78,0.79,0.7,0.88,1.12,2.72,4.33,5.62,6.58],[1.89,1.67,1.59,1.49,1.98,2.52,6.51,10.14,13.05,15.14],[5.09,5.32,5.15,5.05,6.5,8.05,19.06,29.07,37.08,43.05]]},"ED4_01":{"x":[10,15,20,30,45,60,90,120,150,180],"y":[0.06,0.1,0.25,0.5,1,2,4,6,10],"z":[[0.21,0.29,0.38,0.6,0.84,0.88,0.88,0.88,0.88,0.88],[0.21,0.28,0.38,0.59,0.76,0.8,0.83,0.84,0.83,0.83],[0.16,0.22,0.3,0.46,0.61,0.68,0.64,0.63,0.62,0.62],[0.11,0.13,0.19,0.32,0.33,0.33,0.32,0.31,0.3,0.3],[0,0,0,0,0,0,0,0,0,0],[0.2,0.2,0.2,0.2,0.22,0.24,0.48,0.72,0.96,1.04],[0.8,0.64,0.64,0.64,0.88,1.12,2.72,4.32,5.6,6.56],[1.8,1.44,1.44,1.44,1.98,2.52,6.48,10.1,13,15.1],[5,5,5,5,6.5,8,19,29,37,43]]},"ED4_02":{"x":[10,15,20,30,45,60,90,120,150,180],"y":[0.06,0.1,0.25,0.5,1,2,4,6,10],"z":[[0.3,0.54,0.53,0.65,0.77,0.88,0.95,0.98,0.98,0.93],[0.3,0.5,0.53,0.64,0.75,0.84,0.89,0.91,0.91,0.88],[0.25,0.36,0.45,0.52,0.58,0.62,0.64,0.64,0.64,0.64],[0.15,0.21,0.25,0.3,0.33,0.33,0.33,0.32,0.31,0.3],[0,0,0,0,0,0,0,0,0,0],[0.24,0.28,0.26,0.2,0.22,0.24,0.49,0.73,0.97,1.04],[0.89,0.78,0.79,0.7,0.88,1.12,2.72,4.33,5.62,6.58],[1.89,1.67,1.59,1.49,1.98,2.52,6.51,10.14,13.05,15.14],[5.09,5.32,5.15,5.05,6.5,8.05,19.06,29.07,37.08,43.05]]},"sr5_13b":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[0.2,0.2,0.2,0.2,0.2,0.32,0.47,0.47,0.47,0.48,0.48],[0.32,0.32,0.33,0.32,0.34,0.32,0.37,0.38,0.39,0.4,0.41],[0.31,0.31,0.32,0.41,0.34,0.32,0.32,0.33,0.34,0.35,0.36],[2.36,1.86,1.65,0.73,0.47,0.37,0.34,0.32,0.32,0.32,0.32],[4.58,3.56,3.1,1.28,0.73,0.51,0.41,0.36,0.34,0.32,0.32],[7.41,5.74,4.93,2.07,1.12,0.73,0.54,0.44,0.38,0.35,0.35],[10.96,8.48,7.24,3.1,1.65,1.03,0.73,0.56,0.47,0.41,0.38],[15.18,11.75,10,4.32,3.31,1.42,0.98,0.73,0.58,0.49,0.46],[20.12,15.57,13.22,5.74,3.1,1.9,1.28,0.94,0.73,0.6,0.59],[25.71,19.92,16.9,7.38,4.02,2.46,1.65,1.19,0.91,0.73,0.71],[31.87,24.69,21.03,9.02,4.94,3.1,2.07,1.49,1.12,0.9,0.88]]},"sr5_13m":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[2.36,0,0,0,0,0,0,0,0,0,0],[3.05,0.04,0.01,0,0,0,0,0,0,0,0],[11.18,0.98,0.04,0.01,0,0,0,0,0,0,0],[24.67,3.48,0.31,0.04,0.01,0,0,0,0,0,0],[37.37,7.55,0.98,0.18,0.04,0.02,0,0,0,0,0],[49.89,13.18,2.03,0.49,0.13,0.04,0,0.01,0,0,0],[85.59,20.38,3.48,0.98,0.31,0.1,0.04,0.02,0.01,0,0],[133,29.15,5.32,1.64,0.6,0.23,0.09,0.04,0.02,0.01,0],[164,39.48,7.55,2.47,0.98,0.42,0.18,0.08,0.04,0.02,0.01],[197,51.37,10.17,3.48,1.46,0.67,0.31,0.15,0.07,0.04,0.02],[252,64.83,13.18,4.66,2.04,0.99,0.48,0.24,0.12,0.06,0.03]]},"sr5_12b":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[0.75,0.75,0.75,0.49,0.1,0.66,0.4,0.35,0.24,0.24,0.24],[2.1,0.99,0.94,0.47,0.19,0.58,0.4,0.35,0.23,0.24,0.24],[5.17,3.27,0.99,0.62,0.37,0.57,0.41,0.35,0.25,0.25,0.25],[11.8,7.39,1.98,0.99,0.64,0.71,0.48,0.39,0.3,0.3,0.3],[22.65,14.07,3.27,1.62,0.99,0.69,0.62,0.48,0.38,0.36,0.36],[36.89,22.87,5.04,2.37,1.46,0.99,0.73,0.62,0.48,0.38,0.36],[52.82,32.68,7.39,3.27,1.98,1.36,0.99,0.76,0.64,0.48,0.46],[71.7,44.3,10.39,4.39,2.57,1.76,1.3,0.99,0.78,0.66,0.64],[93.51,57.71,14.07,5.75,3.27,2.21,1.62,1.25,0.99,0.81,0.79],[118,72.92,18.45,7.39,4.09,2.7,1.98,1.53,1.22,0.99,0.97],[146,89.93,22.87,9.09,4.95,3.37,2.43,1.84,1.48,1.19,1.17]]},"sr5_12m":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[2.36,0,0,0,0,0,0,0,0,0,0],[3.05,0.04,0.01,0,0,0,0,0,0,0,0],[11.18,0.98,0.04,0.01,0,0,0,0,0,0,0],[24.67,3.48,0.31,0.04,0.01,0,0,0,0,0,0],[37.37,7.55,0.98,0.18,0.04,0.02,0,0,0,0,0],[49.89,13.18,2.03,0.49,0.13,0.04,0,0.01,0,0,0],[85.59,20.38,3.48,0.98,0.31,0.1,0.04,0.02,0.01,0,0],[133,29.15,5.32,1.64,0.6,0.23,0.09,0.04,0.02,0.01,0],[164,39.48,7.55,2.47,0.98,0.42,0.18,0.08,0.04,0.02,0.01],[197,51.37,10.17,3.48,1.46,0.67,0.31,0.15,0.07,0.04,0.02],[252,64.83,13.18,4.66,2.04,0.99,0.48,0.24,0.12,0.06,0.03]]},"sd5_11b":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[0.43,7.82,35.1,82.03,149,235,341,466,612,777,961],[92.5,0.43,0.13,0.38,0.86,1.53,2.4,3.46,4.72,6.18,7.82],[384,2.7,0.43,0.14,0.13,0.22,0.38,0.6,0.86,1.17,1.53],[876,6.95,1.32,0.43,0.18,0.12,0.13,0.18,0.27,0.38,0.52],[1567,13.19,2.7,0.96,0.43,0.22,0.14,0.12,0.13,0.17,0.22],[2458,21.42,4.58,1.72,0.81,0.43,0.25,0.16,0.12,0.12,0.13],[3548,31.65,6.95,2.7,1.32,0.72,0.43,0.27,0.18,0.14,0.12],[4838,43.87,9.82,3.9,1.95,1.1,0.67,0.43,0.29,0.2,0.15],[6329,58.08,13.19,5.32,2.7,1.55,0.96,0.63,0.43,0.3,0.22],[8017,74.29,17.06,6.95,3.58,2.09,1.32,0.87,0.6,0.43,0.31],[9906,92.5,21.42,8.81,4.58,2.7,1.72,1.16,0.81,0.58,0.43]]},"sd5_11m":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[0.13,0.52,0.3,0.2,0.16,0.13,0.11,0.09,0.08,0.07,0.06],[45,0.13,0.24,0.57,0.74,0.74,0.7,0.65,0.6,0.56,0.52],[260,0.2,0.13,0.15,0.16,0.28,0.57,0.69,0.74,0.75,0.74],[702,0.9,0.14,0.13,0.14,0.15,0.16,0.2,0.42,0.57,0.66],[1248,2.88,0.2,0.14,0.13,0.14,0.15,0.15,0.16,0.34,0.28],[2000,6.25,0.38,0.17,0.14,0.13,0.14,0.14,0.15,0.15,0.16],[2880,11.88,0.9,0.2,0.14,0.14,0.13,0.14,0.14,0.15,0.15],[4165,18.62,1.72,0.33,0.18,0.16,0.14,0.13,0.15,0.14,0.16],[5440,26.88,2.88,0.5,0.2,0.15,0.14,0.13,0.13,0.14,0.14],[6885,36.45,4.46,0.9,0.3,0.19,0.16,0.15,0.14,0.13,0.15],[8500,45,6.25,1.44,0.38,0.2,0.17,0.12,0.13,0.14,0.13]]},"ed5_3b_L10":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[0.51,1.05,1.03,1.03,1.02,1.02,1.02,1.03,1.03,1.06,5291],[-97.87,0.74,1.15,1.18,1.17,1.17,1.18,1.2,1.25,1.43,38088],[-406,-1.33,0.89,1.16,1.21,1.22,1.22,1.24,1.29,1.46,37617],[-925,-5.3,0.15,0.9,1.08,1.11,1.11,1.09,1.06,0.99,-10310],[-1645,-10.31,-0.57,0.78,1.09,1.16,1.15,1.11,1.03,0.86,-28591],[-2572,-16.71,-1.47,0.64,1.13,1.24,1.22,1.15,1.03,0.74,-48374],[-3704,-24.56,-2.59,0.46,1.17,1.32,1.3,1.2,1.01,0.57,-74807],[-5043,-33.87,-3.93,0.23,1.2,1.41,1.38,1.24,0.97,0.34,-108687],[-6588,-44.64,-5.49,-0.05,1.22,1.51,1.46,1.27,0.91,0.05,-150814],[-8340,-56.89,-7.29,-0.38,1.24,1.59,1.54,1.28,0.82,-0.33,-201985],[-10298,-70.62,-9.32,-0.77,1.24,1.68,1.61,1.28,0.69,-0.8,-262998]]},"ed5_3m_L10":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[1999157,1935.86,232.45,65.61,26.02,12.28,6.36,3.44,1.84,0.9,0.31],[-23076,94.95,27.29,12.24,6.64,3.96,2.48,1.57,0.98,0.57,0.28],[-108901,-6.4,12.7,7.32,4.31,2.64,1.64,1,0.56,0.25,0.03],[-116776,-17.35,10.9,6.66,3.97,2.44,1.51,0.9,0.49,0.2,-0.01],[-105676,-11.05,11.02,6.5,3.82,2.32,1.41,0.83,0.43,0.15,-0.05],[-86986,2.15,11.91,6.54,3.74,2.23,1.33,0.76,0.38,0.1,-0.1],[-64501,18.8,13.18,6.67,3.7,2.16,1.26,0.7,0.32,0.06,-0.14],[-39847,37.42,14.67,6.86,3.68,2.09,1.19,0.63,0.26,0.01,-0.18],[-13839,57.27,16.3,7.09,3.67,2.03,1.12,0.57,0.21,-0.04,-0.22],[13074,77.95,18.02,7.35,3.66,1.97,1.06,0.51,0.15,-0.09,-0.26],[40619,99.2,19.8,7.61,3.67,1.92,1,0.45,0.1,-0.14,-0.3]]},"ed5_3b_G10":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[-0.21,0.98,1,1,1,1,1,1,1,1,18.8],[-66.2,0.09,0.75,0.89,0.94,0.97,0.98,0.99,1,1.01,1781],[-255,-1.54,0.39,0.74,0.87,0.92,0.95,0.97,0.99,1.03,7121],[-570,-3.75,0.03,0.64,0.83,0.9,0.94,0.97,1,1.08,16021],[-1018,-6.57,-0.32,0.61,0.85,0.93,0.97,0.99,1.03,1.16,28481],[-1602,-10.05,-0.65,0.64,0.94,1.02,1.03,1.04,1.08,1.26,44501],[-2330,-14.24,-0.98,0.74,1.1,1.16,1.15,1.13,1.16,1.4,64081],[-3205,-19.2,-1.32,0.91,1.33,1.37,1.31,1.26,1.27,1.57,87220],[-4234,-24.98,-1.69,1.14,1.63,1.63,1.53,1.43,1.41,1.78,113920],[-5421,-31.62,-2.1,1.42,2,1.96,1.8,1.64,1.59,2.02,144180],[-6772,-39.19,-2.55,1.76,2.43,2.35,2.12,1.9,1.81,2.3,178000]]},"ed5_3m_G10":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"y":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[1300984,1258.99,150.8,42.29,16.55,7.62,3.78,1.88,0.84,0.23,-0.15],[-164355,-73.14,2.79,3.92,2.68,1.7,1.04,0.58,0.26,0.03,-0.15],[-193659,-99.78,-0.17,3.15,2.4,1.58,0.98,0.56,0.25,0.02,-0.15],[-166863,-75.42,2.54,3.85,2.65,1.69,1.03,0.58,0.26,0.03,-0.15],[-126042,-38.31,6.66,4.92,3.04,1.86,1.11,0.62,0.28,0.03,-0.15],[-79611,3.9,11.35,6.14,3.48,2.04,1.2,0.66,0.29,0.04,-0.15],[-30375,48.66,16.32,7.43,3.94,2.24,1.29,0.7,0.31,0.04,-0.15],[20464,94.88,21.46,8.76,4.43,2.45,1.38,0.75,0.33,0.05,-0.15],[72305,142.01,26.7,10.12,4.92,2.66,1.48,0.79,0.35,0.06,-0.15],[124813,189.74,32,11.49,5.41,2.87,1.58,0.84,0.37,0.07,-0.15],[177789,237.9,37.35,12.88,5.92,3.08,1.68,0.88,0.39,0.07,-0.15]]},"er5_3b":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[-2440,-19.38,-3.75,-0.74,0.48,0.66,0.75,0.85,0.77,0.83,0.83]]},"er5_3m":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[38.2,22.15,11.91,6.54,3.74,2.23,1.33,0.76,0.38,0.1,0]]},"er5_2b":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[-1550,-14,-2.38,0.5,0.65,1.03,1.17,1.19,1.33,1.51,1.44]]},"er5_2m":{"x":[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],"z":[[38.2,22.15,11.91,6.54,3.74,2.23,1.33,0.76,0.38,0.1,0]]},"CR3_01":{"x":[0.25,0.5,0.75,1,1.5,2,3,4,5,6,8],"y":[0.5,0.75,1,1.5,2],"z":[[1.53,1.38,1.29,1.18,1.06,1,1,1.06,1.12,1.16,1.18],[0.57,0.52,0.48,0.44,0.4,0.39,0.39,0.4,0.42,0.43,0.44],[0.27,0.25,0.23,0.21,0.19,0.18,0.18,0.19,0.2,0.21,0.21],[0.22,0.2,0.19,0.17,0.15,0.14,0.14,0.15,0.16,0.17,0.17],[0.2,0.18,0.16,0.15,0.14,0.13,0.13,0.14,0.14,0.15,0.15]]},"CR3_01af":{"x":[0,20,30,45,60,75,90,110,130,150,180],"z":[[0,0.31,0.45,0.6,0.78,0.9,1,1.13,1.2,1.28,1.4]]},"CR3_06":{"x":[0.25,0.5,0.75,1,1.5,2,3,4,5,6,8],"y":[20,30,45,60,75,90],"z":[[0.08,0.08,0.08,0.07,0.07,0.07,0.06,0.06,0.05,0.05,0.05],[0.18,0.17,0.17,0.16,0.15,0.15,0.13,0.13,0.12,0.12,0.11],[0.38,0.37,0.36,0.34,0.33,0.31,0.28,0.27,0.26,0.25,0.24],[0.6,0.59,0.57,0.55,0.52,0.49,0.46,0.43,0.41,0.39,0.38],[0.89,0.87,0.84,0.81,0.77,0.73,0.67,0.63,0.61,0.58,0.57],[1.3,1.27,1.23,1.18,1.13,1.07,0.98,0.92,0.89,0.85,0.83]]},"CD3_01":{"x":[0.5,0.75,1,1.5,2,2.5],"z":[[0.71,0.33,0.22,0.15,0.13,0.12]]},"CD3_01af":{"x":[0,20,30,45,60,75,90,110,130,150,180],"z":[[0,0.31,0.45,0.6,0.78,0.9,1,1.13,1.2,1.28,1.4]]},"CR3_12":0.33,"CR3_14":0.38,"CR3_16":0.41};
+const DF = (function () {
+  function bracket(xs, v) {            /* index i with xs[i] <= v <= xs[i+1], and the weight; clamps outside the table */
+    const n = xs.length; let clamp = false;
+    if (v <= xs[0]) { clamp = v < xs[0]; return { i: 0, t: 0, clamp }; }
+    if (v >= xs[n - 1]) { clamp = v > xs[n - 1]; return { i: n - 2, t: 1, clamp }; }
+    let i = 0; while (xs[i + 1] < v) i++;
+    return { i, t: (v - xs[i]) / (xs[i + 1] - xs[i]), clamp };
+  }
+  function i1(T, x) { const b = bracket(T.x, x), z = T.z[0]; return { v: z[b.i] + b.t * (z[b.i + 1] - z[b.i]), clamp: b.clamp }; }
+  function i2(T, y, x) {
+    const by = bracket(T.y, y), bx = bracket(T.x, x), z = T.z;
+    const a = z[by.i][bx.i] + bx.t * (z[by.i][bx.i + 1] - z[by.i][bx.i]), b = z[by.i + 1][bx.i] + bx.t * (z[by.i + 1][bx.i + 1] - z[by.i + 1][bx.i]);
+    return { v: a + by.t * (b - a), clamp: by.clamp || bx.clamp };
+  }
+  const deg = r => r * 180 / Math.PI;
+  const area = s => s.round ? Math.PI * s.d * s.d / 4 : s.w * s.h;        /* mm2 */
+  /* ---- elbows ---- */
+  function elbow(o) {
+    /* o: {round, w, h, d, ang, kind: "smooth" | "miter" | "vane", rad (centre-line radius, mm)} */
+    if (!(o.ang > 0)) return { C: NaN, note: "Enter the angle." };
+    if (o.round) {
+      if (!(o.d > 0) || !(o.rad > 0)) return { C: NaN, note: "Enter the diameter and the centre-line radius." };
+      const a = i1(TB.CD3_01, o.rad / o.d), b = i1(TB.CD3_01af, o.ang);
+      return { C: a.v * b.v, clamp: a.clamp || b.clamp, note: "Round smooth-radius elbow: C₀ " + a.v.toFixed(3) + " at r/D " + (o.rad / o.d).toFixed(2) + " × angle factor " + b.v.toFixed(2), tbl: "CD3-01" };
+    }
+    if (!(o.w > 0) || !(o.h > 0)) return { C: NaN, note: "Enter the width and the depth." };
+    const hw = o.h / o.w;
+    if (o.kind === "vane") {
+      const inch = o.w / 25.4, C = inch < 20 ? TB.CR3_12 : inch < 36 ? TB.CR3_14 : TB.CR3_16;
+      return { C, note: "Mitered 90° elbow, constant " + C + " for a width of " + inch.toFixed(0) + " in", tbl: "CR3-12/14/16", nd: o.ang !== 90 ? "This constant is for a 90° elbow." : "" };
+    }
+    if (o.kind === "miter") {
+      const a = i2(TB.CR3_06, o.ang, hw);
+      return { C: a.v, clamp: a.clamp, note: "Mitered elbow without vanes: table by angle and H/W " + hw.toFixed(2), tbl: "CR3-06" };
+    }
+    if (!(o.rad > 0)) return { C: NaN, note: "Enter the centre-line radius." };
+    const a = i2(TB.CR3_01, o.rad / o.w, hw), b = i1(TB.CR3_01af, o.ang);
+    return { C: a.v * b.v, clamp: a.clamp || b.clamp, note: "Smooth-radius elbow: C₀ " + a.v.toFixed(3) + " at r/W " + (o.rad / o.w).toFixed(2) + " and H/W " + hw.toFixed(2) + " × angle factor " + b.v.toFixed(2), tbl: "CR3-01" };
+  }
+  /* ---- transitions ---- */
+  function transition(o) {
+    /* o: {sys: "s"|"r", inl: {round,w,h,d}, out: {...}, len mm}; inlet and outlet are in the direction of flow */
+    const I = o.inl, O = o.out, L = o.len;
+    const dim = s => s.round ? [s.d, s.d] : [s.w, s.h];
+    const [wi, hi] = dim(I), [wo, ho] = dim(O);
+    if (!(wi > 0 && hi > 0 && wo > 0 && ho > 0)) return { C: NaN, note: "Enter the inlet and outlet sizes." };
+    if (!(L > 0)) return { C: NaN, note: "Enter the length of the transition." };
+    const th = (a, b) => a === b ? NaN : 2 * deg(Math.atan(Math.abs(b - a) / 2 / L));
+    const tw = th(wi, wo), tH = th(hi, ho), tm = Math.max(isNaN(tw) ? 0 : tw, isNaN(tH) ? 0 : tH);
+    const Ai = area(I), Ao = area(O);
+    if (tm === 0 && Ai === Ao) return { C: 0, note: "Same size at both ends: no loss.", theta: 0 };
+    const ratio = o.sys === "s" ? Ao / Ai : Ai / Ao;
+    let key;
+    if (o.sys === "s") key = !I.round && !O.round ? (wi !== wo && hi !== ho ? "SR4_02" : "SR4_01") : I.round && !O.round ? "SR4_03" : !I.round && O.round ? "SD4_02" : "SD4_01";
+    else key = !I.round && !O.round ? (wi !== wo && hi !== ho ? "ER4_02" : "ER4_01") : I.round && !O.round ? "ED4_02" : !I.round && O.round ? "ER4_03" : "ED4_01";
+    const a = i2(TB[key], ratio, tm);
+    return { C: a.v, clamp: a.clamp, note: "Table " + key.replace("_", "-") + " at " + (o.sys === "s" ? "outlet/inlet" : "inlet/outlet") + " area ratio " + ratio.toFixed(2) + " and included angle " + tm.toFixed(0) + "°", tbl: key.replace("_", "-"), theta: tm, ratio };
+  }
+  /* ---- taps: a branch taken off a main ---- */
+  function tap(o) {
+    /* o: {sys, main: {...}, br: {...}, qm (flow in the main, m3/s), qb (flow in the branch)}, returns the straight-through (main) and the branch coefficients */
+    const M = o.main, Bn = o.br, Am = area(M), Ab = area(Bn), qm = o.qm, qb = o.qb;
+    if (!(Am > 0 && Ab > 0)) return { ok: false, note: "Enter the main and the branch sizes." };
+    if (!(qm > 0) || !(qb >= 0)) return { ok: false, note: "Enter the flow in the main and the flow in the branch." };
+    const rr = !M.round && !Bn.round, rc = !M.round && Bn.round, cc = M.round && Bn.round;
+    if (!rr && !rc && !cc) return { ok: false, note: "There is no table for a round main with a rectangular branch. Type the coefficient." };
+    let kb, km, tb, tm_, cl = false, n = "";
+    if (o.sys === "s") {
+      const qs = qm - qb; if (qs < 0) return { ok: false, note: "The branch flow is larger than the main flow." };
+      const nb = rr ? "sr5_13b" : rc ? "sr5_12b" : "sd5_11b", nm = rr ? "sr5_13m" : rc ? "sr5_12m" : "sd5_11m";
+      const a = i2(TB[nb], Ab / Am, qb / qm), b = i2(TB[nm], 1, qs / qm);
+      kb = a.v; km = b.v; cl = a.clamp || b.clamp; tb = nb; tm_ = nm; n = "branch: area ratio " + (Ab / Am).toFixed(2) + ", flow ratio " + (qb / qm).toFixed(2) + "; straight: flow ratio " + (qs / qm).toFixed(2);
+    } else {
+      const qc = qm + qb;
+      if (cc) {
+        const g = M.d / 25.4 > 10 ? "G10" : "L10";
+        const a = i2(TB["ed5_3b_" + g], Ab / Am, qb / qc), b = i2(TB["ed5_3m_" + g], Ab / Am, qm / qc);
+        kb = a.v; km = b.v; cl = a.clamp || b.clamp; tb = "ed5_3b_" + g; tm_ = "ed5_3m_" + g; n = "main " + (M.d / 25.4).toFixed(1) + " in, area ratio " + (Ab / Am).toFixed(2) + ", branch flow ratio " + (qb / qc).toFixed(2) + ", straight flow ratio " + (qm / qc).toFixed(2);
+      } else {
+        const nb = rr ? "er5_3b" : "er5_2b", nm = rr ? "er5_3m" : "er5_2m";
+        const a = i1(TB[nb], qb / qc), b = i1(TB[nm], qm / qc);
+        kb = a.v; km = b.v; cl = a.clamp || b.clamp; tb = nb; tm_ = nm; n = "branch flow ratio " + (qb / qc).toFixed(2) + ", straight flow ratio " + (qm / qc).toFixed(2);
+      }
+    }
+    return { ok: true, Cb: kb, Cm: km, clamp: cl, tbl: [tb, tm_], note: n };
+  }
+  return { elbow, transition, tap, i1, i2, area, bracket };
+})();
+
+const colL = n => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const X = (() => {
+  const fonts = [], fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>'], borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>'], nf = [], xfs = [], map = {};
+  const idx = (arr, x) => { let i = arr.indexOf(x); if (i < 0) { arr.push(x); i = arr.length - 1; } return i; };
+  fonts.push('<font><sz val="10"/><name val="Calibri"/></font>');
+  const BUILT = { "General": 0, "0": 1, "0.00": 2, "#,##0": 3, "#,##0.00": 4 };
+  function sty(o) {
+    o = o || {}; const key = JSON.stringify(o); if (map[key] != null) return map[key];
+    const font = idx(fonts, '<font>' + (o.b ? "<b/>" : "") + (o.i ? "<i/>" : "") + '<sz val="' + (o.sz || 10) + '"/>' + (o.c ? '<color rgb="FF' + o.c + '"/>' : "") + '<name val="Calibri"/></font>');
+    const fill = o.fill ? idx(fills, '<fill><patternFill patternType="solid"><fgColor rgb="FF' + o.fill + '"/><bgColor indexed="64"/></patternFill></fill>') : 0;
+    const bd = o.bd ? idx(borders, '<border><left style="thin"><color rgb="FFBFB8A5"/></left><right style="thin"><color rgb="FFBFB8A5"/></right><top style="thin"><color rgb="FFBFB8A5"/></top><bottom style="thin"><color rgb="FFBFB8A5"/></bottom><diagonal/></border>') : 0;
+    let nid = 0; if (o.fmt) { if (BUILT[o.fmt] != null) nid = BUILT[o.fmt]; else nid = 164 + idx(nf, o.fmt); }
+    const al = (o.h || o.wrap || o.v) ? '<alignment' + (o.h ? ' horizontal="' + o.h + '"' : "") + (o.v ? ' vertical="' + o.v + '"' : "") + (o.wrap ? ' wrapText="1"' : "") + "/>" : "";
+    xfs.push('<xf numFmtId="' + nid + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + bd + '" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"' + (al ? ' applyAlignment="1">' + al + "</xf>" : "/>"));
+    map[key] = xfs.length; return xfs.length;   /* index 0 is the default xf */
+  }
+  const xml = () => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + (nf.length ? '<numFmts count="' + nf.length + '">' + nf.map((f, i) => '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + esc(f) + '"/>').join("") + "</numFmts>" : "") + '<fonts count="' + fonts.length + '">' + fonts.join("") + '</fonts><fills count="' + fills.length + '">' + fills.join("") + '</fills><borders count="' + borders.length + '">' + borders.join("") + '</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + (xfs.length + 1) + '"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' + xfs.join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return { sty, xml };
+})();
+function sheetXml(sh) {
+  let rows = "";
+  sh.rows.forEach((row, ri) => {
+    if (!row) return; let cx = "";
+    row.forEach((c, ci) => {
+      if (c == null) return; const ref = colL(ci) + (ri + 1), s = c.s ? ' s="' + c.s + '"' : "";
+      if (c.f != null) { const v = c.v; if (typeof v === "string") cx += '<c r="' + ref + '"' + s + ' t="str"><f>' + esc(c.f) + "</f><v>" + esc(v) + "</v></c>"; else cx += '<c r="' + ref + '"' + s + "><f>" + esc(c.f) + "</f>" + (typeof v === "number" && isFinite(v) ? "<v>" + v + "</v>" : "") + "</c>"; }
+      else if (typeof c.v === "number") { if (isFinite(c.v)) cx += '<c r="' + ref + '"' + s + "><v>" + c.v + "</v></c>"; }
+      else if (c.v != null && c.v !== "") cx += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + "</t></is></c>";
+      else if (s) cx += '<c r="' + ref + '"' + s + "/>";
+    });
+    rows += '<row r="' + (ri + 1) + '"' + (sh.ht && sh.ht[ri] ? ' ht="' + sh.ht[ri] + '" customHeight="1"' : "") + ">" + cx + "</row>";
+  });
+  const cols = sh.cols ? "<cols>" + sh.cols.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("") + "</cols>" : "";
+  const pane = sh.freeze ? '<pane xSplit="' + sh.freeze[0] + '" ySplit="' + sh.freeze[1] + '" topLeftCell="' + colL(sh.freeze[0]) + (sh.freeze[1] + 1) + '" activePane="bottomRight" state="frozen"/>' : "";
+  const merges = sh.merges && sh.merges.length ? '<mergeCells count="' + sh.merges.length + '">' + sh.merges.map(m => '<mergeCell ref="' + m + '"/>').join("") + "</mergeCells>" : "";
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"' + (sh.first ? ' tabSelected="1"' : "") + ' showGridLines="0">' + pane + "</sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14\"/>" + cols + "<sheetData>" + rows + "</sheetData>" + merges + '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+}
+const CRCT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRCT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), sz = data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    cen.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+  });
+  const cs = cen.reduce((a, x) => a + x.length, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cen, [new Uint8Array(end.buffer)]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+const RG = [["0.15", "Galvanised steel (reference sheet) 0.15 mm"], ["0.09", "Galvanised steel, spiral 0.09 mm"], ["0.03", "Aluminium, stainless, PVC 0.03 mm"], ["0.9", "Glass-fibre duct liner 0.9 mm"], ["3", "Flexible duct, stretched 3 mm"], ["own", "My own value"]];
+const DT = [["Riser", 7.5], ["Branch", 7.5], ["Zone", 5.5], ["Flex", 2.5], ["Branch FOH", 5.5], ["Zone FOH", 3.5]];
+const KINDS = [["d", "Straight duct"], ["el", "Elbow"], ["tr", "Transition"], ["tp", "Tap (branch)"], ["ot", "Other fitting"], ["eq", "Equipment"]];
+const KN = { d: "Duct", el: "Elbow", tr: "Transition", tp: "Tap", ot: "Fitting", eq: "Equipment" };
+const SAVE_KEY = "nv-sheet-xxiv-v1";
+const blank = () => ({ T: "20", rho: "", nu: "", own: false, rg: "0.15", rgv: "0.15", sy: "s", mg: "15", fl: "0.8", rows: [] });
+const SZ = (p, o) => { o = o || {}; const x = {}; ["sh", "w", "h", "d"].forEach(k => { x[p + k] = o[k] != null ? o[k] : (k === "sh" ? "r" : ""); }); return x; };
+function newRow(k, o) {
+  o = o || {};
+  const base = { kind: k, desc: o.desc || "", q: o.q || "", xc: "" };
+  if (k === "d") return Object.assign(base, SZ("", o), { len: "", dt: "" });
+  if (k === "el") return Object.assign(base, SZ("", o), { ang: "90", ek: "smooth", rr: "1.5" });
+  if (k === "ot") return Object.assign(base, SZ("", o));
+  if (k === "tr") return Object.assign(base, SZ("i_", o.i), SZ("o_", o.o), { len: "" });
+  if (k === "tp") return Object.assign(base, SZ("m_", o.m), SZ("b_"), { qb: "", path: "m" });
+  return { kind: "eq", desc: o.desc || "", dpe: "" };
+}
+function example() {
+  const R = (k, o) => newRow(k, o), s = (w, h) => ({ sh: "r", w: String(w), h: String(h), d: "" });
+  const rows = [
+    Object.assign(R("eq", { desc: "Attenuator" }), { dpe: "40" }),
+    Object.assign(R("d", Object.assign({ desc: "Riser from the AHU", q: "1200" }, s(800, 500))), { len: "12", dt: "0" }),
+    R("el", Object.assign({ desc: "90° elbow at riser top", q: "1200" }, s(800, 500))),
+    Object.assign(R("d", Object.assign({ desc: "Main duct", q: "1200" }, s(800, 500))), { len: "8", dt: "0" }),
+    Object.assign(R("tp", { desc: "Branch to the zone", q: "1200", m: { sh: "r", w: "800", h: "500", d: "" } }), { b_w: "400", b_h: "300", qb: "300", path: "m" }),
+    Object.assign(R("tr", { desc: "Reduce 800×500 to 700×500", q: "900", i: { sh: "r", w: "800", h: "500", d: "" }, o: { sh: "r", w: "700", h: "500", d: "" } }), { len: "500" }),
+    Object.assign(R("d", Object.assign({ desc: "Main duct to the last outlet", q: "900" }, s(700, 500))), { len: "10", dt: "0" }),
+    Object.assign(R("eq", { desc: "Outlet grille" }), { dpe: "25" })
+  ];
+  return Object.assign(blank(), { rows });
+}
+function load() { try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && Array.isArray(o.rows)) return Object.assign(blank(), o); } } catch (e) {} return null; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+let S = blank(), activeRow = 0, lastA = null;
+
+/* ---- air ---- */
+function air(T) { const K = T + 273.15, rho = 101325 / (287.05 * K), mu = 1.458e-6 * Math.pow(K, 1.5) / (K + 110.4); return { rho, nu: mu / rho * 1e6 }; }
+function fluid() {
+  const T = pf(S.T), a = isFinite(T) && T > -50 && T < 100 ? air(T) : { rho: NaN, nu: NaN };
+  const rho = S.own && pf(S.rho) > 0 ? pf(S.rho) : a.rho, nu = S.own && pf(S.nu) > 0 ? pf(S.nu) : a.nu;
+  return { T, rho, nu };
+}
+const epsOf = () => S.rg === "own" ? pf(S.rgv) : pf(S.rg);
+const eqD = (a, b) => 1.265 * Math.pow(Math.pow(a * b, 3) / (a + b), 0.2);
+const sz = (r, p) => ({ round: r[p + "sh"] === "c", w: pf(r[p + "w"]), h: pf(r[p + "h"]), d: pf(r[p + "d"]) });
+const szOk = s => s.round ? s.d > 0 : (s.w > 0 && s.h > 0);
+const szTxt = s => !szOk(s) ? "—" : s.round ? "Ø" + sig(s.d, 5) : sig(s.w, 5) + "×" + sig(s.h, 5);
+function fric(Q, De, eps, rho, nu) {
+  const D = De / 1000, ve = Q / (Math.PI * D * D / 4), Re = ve * D / (nu * 1e-6), rr = eps / De, f1 = 0.11 * Math.pow(rr + 68 / Re, 0.25), f = f1 < 0.018 ? 0.85 * f1 + 0.0028 : f1;
+  return { ve, Re, rr, f1, f, dpm: f / D * 0.5 * rho * ve * ve };
+}
+
+/* ---- one row ---- */
+function evalRow(r, F) {
+  const o = { ok: false, msg: [], flag: [], duct: 0, fit: 0, eq: 0, sect: 0, C: NaN, Ca: NaN, src: "", note: "", tbl: "", q: NaN, s: null, ref: null };
+  if (r.kind === "eq") { const x = pf(r.dpe); if (x >= 0) { o.ok = true; o.eq = x; } else o.msg.push("Enter the pressure drop."); o.sect = o.eq; return o; }
+  const q = pf(r.q), Q = q / 1000; o.q = q;
+  if (!(q > 0)) { o.msg.push("Enter the flow."); return o; }
+  const refCalc = (areaMm2, Qref) => { const v = Qref / (areaMm2 / 1e6); return { A: areaMm2, Q: Qref, v, pv: 0.5 * F.rho * v * v }; };
+  if (r.kind === "d") {
+    const s = sz(r, ""); o.s = s; if (!szOk(s)) { o.msg.push("Enter the duct size."); return o; }
+    const De = s.round ? s.d : eqD(s.w, s.h), f = fric(Q, De, F.eps, F.rho, F.nu), L = pf(r.len) > 0 ? pf(r.len) : 0;
+    o.De = De; Object.assign(o, f); o.ref = refCalc(DF.area(s), Q); o.v = o.ref.v; o.dpm = f.dpm; o.L = L; o.duct = f.dpm * L; o.ok = true;
+    const lim = r.dt !== "" && DT[+r.dt] ? DT[+r.dt][1] : NaN;
+    if (lim > 0 && o.v > lim) o.flag.push("velocity " + fmt(o.v, 2) + " m/s is above " + lim + " m/s for a " + DT[+r.dt][0].toLowerCase() + " duct");
+    if (F.fl > 0 && f.dpm > F.fl) o.flag.push("friction " + fmt(f.dpm, 2) + " Pa/m is above " + F.fl + " Pa/m");
+    if (f.Re < 4000) o.msg.push("Reynolds number " + Math.round(f.Re) + " is below 4000: the friction formula is not reliable.");
+    o.sect = o.duct; return o;
+  }
+  let res = null, refS = null;
+  if (r.kind === "el" || r.kind === "ot") {
+    const s = sz(r, ""); o.s = s; if (!szOk(s)) { o.msg.push("Enter the duct size."); return o; }
+    refS = s; o.ref = refCalc(DF.area(s), Q);
+    if (r.kind === "el") {
+      const rad = (pf(r.rr) > 0 ? pf(r.rr) : NaN) * (s.round ? s.d : s.w);
+      res = DF.elbow({ round: s.round, w: s.w, h: s.h, d: s.d, ang: pf(r.ang), kind: s.round ? "smooth" : r.ek, rad });
+    }
+  } else if (r.kind === "tr") {
+    const I = sz(r, "i_"), O = sz(r, "o_"); o.s = I; o.s2 = O;
+    if (!szOk(I) || !szOk(O)) { o.msg.push("Enter the inlet and the outlet size."); return o; }
+    const small = DF.area(I) <= DF.area(O) ? I : O; refS = small; o.ref = refCalc(DF.area(small), Q);
+    res = DF.transition({ sys: F.sy, inl: I, out: O, len: pf(r.len) });
+  } else if (r.kind === "tp") {
+    const M = sz(r, "m_"), B = sz(r, "b_"); o.s = M; o.s2 = B; const qb = pf(r.qb) / 1000;
+    if (!szOk(M) || !szOk(B)) { o.msg.push("Enter the main and the branch size."); return o; }
+    const tp = DF.tap({ sys: F.sy, main: M, br: B, qm: Q, qb });
+    refS = M; o.ref = refCalc(DF.area(M), F.sy === "s" ? Q : Q + (qb > 0 ? qb : 0));
+    if (!tp.ok) res = { C: NaN, note: tp.note }; else { o.Cb = tp.Cb; o.Cm = tp.Cm; res = { C: r.path === "b" ? tp.Cb : tp.Cm, clamp: tp.clamp, note: tp.note, tbl: tp.tbl.join(", ") }; }
+  }
+  if (res) { o.Ca = res.C; o.note = res.note || ""; o.tbl = res.tbl || ""; if (res.clamp) o.flag.push("outside the table, the nearest value is used"); if (res.nd) o.msg.push(res.nd); }
+  const xc = pf(r.xc);
+  if (xc >= 0) { o.C = xc; o.src = "typed"; } else { o.C = o.Ca; o.src = "table"; }
+  if (!isFinite(o.C)) { o.msg.push(r.kind === "ot" ? "Enter the loss coefficient C." : (res && res.note) || "No coefficient."); return o; }
+  if (o.C < 0) o.flag.push("the table gives a negative coefficient (the faster stream gives energy to the slower one); it lowers the total, so check it or type your own C");
+  o.ok = true; o.v = o.ref.v; o.fit = o.C * o.ref.pv; o.sect = o.fit; return o;
+}
+function evalAll() {
+  const F = fluid(); F.eps = epsOf(); F.sy = S.sy; F.fl = pf(S.fl); const out = { F, rows: [], D: 0, Ft: 0, E: 0 };
+  let cum = 0;
+  S.rows.forEach(r => { const o = evalRow(r, F); cum += o.sect; o.cum = cum; out.rows.push(o); out.D += o.duct; out.Ft += o.fit; out.E += o.eq; });
+  out.sub = out.D + out.Ft + out.E; out.mg = pf(S.mg) > 0 ? pf(S.mg) : 0; out.tot = out.sub * (1 + out.mg / 100);
+  return out;
+}
+
+/* ---- cards ---- */
+const optH = (a, v) => a.map(o => '<option value="' + esc(o[0]) + '"' + (String(v) === String(o[0]) ? " selected" : "") + ">" + esc(o[1]) + "</option>").join("");
+const F_ = (lab, f, v, u, ph) => '<div class="field"><label>' + lab + '</label><div class="pair"><input data-f="' + f + '" type="number" inputmode="decimal" step="any" min="0" value="' + esc(v) + '"' + (ph ? ' placeholder="' + ph + '"' : "") + " />" + (u ? "<span>" + u + "</span>" : "") + "</div></div>";
+const S_ = (lab, f, v, opts) => '<div class="field"><label>' + lab + '</label><select data-f="' + f + '">' + optH(opts, v) + "</select></div>";
+function sizeBlock(r, p, title) {
+  const round = r[p + "sh"] === "c";
+  return (title ? '<div class="sub2">' + title + "</div>" : "") + '<div class="fields two">' + S_("Shape", p + "sh", r[p + "sh"] || "r", [["r", "Rectangular"], ["c", "Round"]]) + (round ? F_("Diameter", p + "d", r[p + "d"], "mm") : F_("Width", p + "w", r[p + "w"], "mm") + F_("Depth", p + "h", r[p + "h"], "mm")) + "</div>";
+}
+const coefBox = (extra) => '<div class="cbox"><div class="cauto">C from the tables <b data-ca>—</b></div>' + (extra || "") + '<div class="field"><label>Type your own C (optional)</label><input data-f="xc" type="number" inputmode="decimal" step="any" min="0" placeholder="use the tables" /></div></div><div class="cnote" data-cn></div>';
+function cardHtml(i) {
+  const r = S.rows[i], k = r.kind;
+  let h = '<div class="sec' + (k === "eq" ? " eq" : k === "d" ? "" : " fx") + '" data-i="' + i + '"><div class="sh"><b class="sn">' + (i + 1) + '</b><select class="kd" data-f="kind" aria-label="Kind of section">' + optH(KINDS, k) + '</select><input class="dsc" data-f="desc" type="text" placeholder="' + (k === "eq" ? "Equipment, e.g. attenuator" : "Description, e.g. riser to AHU-3") + '" value="' + esc(r.desc) + '" list="eqlist" />' +
+    '<span class="lca"><button type="button" data-a="up"' + (i === 0 ? " disabled" : "") + ' aria-label="Move up">↑</button><button type="button" data-a="dn"' + (i === S.rows.length - 1 ? " disabled" : "") + ' aria-label="Move down">↓</button><button type="button" data-a="dup">Copy</button><button type="button" data-a="rm" aria-label="Delete section">Delete</button></span></div><div class="sb">';
+  if (k === "eq") {
+    h += '<div class="fields two">' + F_("Pressure drop, from the maker’s data", "dpe", r.dpe, "Pa") + '</div><div class="cnote">At the design flow. Coil, filter, attenuator, damper, grille or louvre. Use the maker’s figure for the clean or the dirty filter as your design requires.</div>';
+  } else if (k === "d") {
+    h += '<div class="fields two">' + F_("Air flow", "q", r.q, "L/s") + F_("Length of duct", "len", r.len, "m") + S_("Duct type (velocity limit)", "dt", r.dt, [["", "No limit"]].concat(DT.map((d, j) => [String(j), d[0] + ", up to " + d[1] + " m/s"]))) + "</div>" + sizeBlock(r, "", "Duct size");
+  } else if (k === "el") {
+    const round = r.sh === "c";
+    h += '<div class="fields two">' + F_("Air flow", "q", r.q, "L/s") + F_("Turning angle", "ang", r.ang, "°") + "</div>" + sizeBlock(r, "", "Duct size");
+    h += '<div class="fields two">' + (round ? "" : S_("Type of elbow", "ek", r.ek, [["smooth", "Smooth radius"], ["miter", "Mitered, no vanes"], ["vane", "Mitered with turning vanes (90°)"]])) + (round || r.ek === "smooth" ? F_(round ? "Centre-line radius ÷ diameter (r/D)" : "Centre-line radius ÷ width (r/W)", "rr", r.rr, "", "1.5") : "") + "</div>" + coefBox();
+  } else if (k === "tr") {
+    h += '<div class="fields two">' + F_("Air flow", "q", r.q, "L/s") + F_("Length of the transition", "len", r.len, "mm") + "</div>" + sizeBlock(r, "i_", "Inlet size (where the air comes from)") + sizeBlock(r, "o_", "Outlet size") + coefBox() + '<div class="cnote">Loss is taken at the velocity in the smaller end. Enter the sizes in the direction of flow.</div>';
+  } else if (k === "tp") {
+    h += '<div class="fields two">' + F_("Air flow in the main, upstream of the tap", "q", r.q, "L/s") + F_("Air flow taken by the branch", "qb", r.qb, "L/s") + "</div>" + sizeBlock(r, "m_", "Main size") + sizeBlock(r, "b_", "Branch size");
+    h += coefBox(S_("The index run goes", "path", r.path, [["m", "Along the main (straight through)"], ["b", "Into the branch"]])) + '<div class="cnote">Loss is taken at the velocity in the common section: the main before the tap in supply air, the main after the tap in return air.</div>';
+  } else {
+    h += '<div class="fields two">' + F_("Air flow", "q", r.q, "L/s") + "</div>" + sizeBlock(r, "", "Duct size at the fitting") + '<div class="cbox"><div class="field"><label>Loss coefficient C</label><input data-f="xc" type="number" inputmode="decimal" step="any" min="0" value="' + esc(r.xc) + '" /></div></div><div class="cnote">For a fitting with no table here (damper, bellmouth, entry, exit, fire damper). C × ½ρv² at the velocity of the size above.</div>';
+  }
+  return h + '</div><div class="rs"></div><div class="wn"></div></div>';
+}
+function setCoef() { /* keep a typed C in its box after a redraw */
+  S.rows.forEach((r, i) => { const c = $("secs").children[i]; if (!c || r.kind === "ot") return; const e = c.querySelector('[data-f="xc"]'); if (e) e.value = r.xc; });
+}
+function renderCards() { $("secs").innerHTML = S.rows.map((r, i) => cardHtml(i)).join(""); setCoef(); update(); }
+function sizeText(r, o) {
+  if (r.kind === "eq") return "";
+  if (r.kind === "tr") return szTxt(sz(r, "i_")) + " → " + szTxt(sz(r, "o_"));
+  if (r.kind === "tp") return szTxt(sz(r, "m_")) + " / " + szTxt(sz(r, "b_"));
+  return szTxt(sz(r, ""));
+}
+function detailText(r, o) {
+  if (r.kind === "el") return (pf(r.ang) || "?") + "° " + (r.sh === "c" ? "round smooth" : r.ek === "smooth" ? "smooth" : r.ek === "miter" ? "mitered" : "vaned");
+  if (r.kind === "tp") return r.path === "b" ? "into branch" : "along main";
+  return "";
+}
+
+/* ---- results ---- */
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+function update() {
+  const A = evalAll(), cards = $("secs").children;
+  S.rows.forEach((r, i) => {
+    const o = A.rows[i], c = cards[i]; if (!c) return;
+    let rs = "";
+    if (r.kind === "d" && o.ok) rs = "<span>Velocity <b>" + fmt(o.v, 2) + " m/s</b></span><span>Re <b>" + Math.round(o.Re).toLocaleString("en-GB") + "</b></span><span>Equivalent Ø <b>" + sig(o.De, 4) + " mm</b></span><span>Friction <b>" + fmt(o.dpm, 3) + " Pa/m</b></span><span>Duct <b>" + fmt(o.duct, 1) + " Pa</b></span>";
+    else if (r.kind !== "d" && r.kind !== "eq" && o.ok) rs = "<span>Velocity <b>" + fmt(o.v, 2) + " m/s</b></span><span>½ρv² <b>" + fmt(o.ref.pv, 1) + " Pa</b></span><span>C <b>" + fmt(o.C, 3) + "</b> (" + o.src + ")</span><span>Fitting <b>" + fmt(o.fit, 1) + " Pa</b></span>";
+    if (o.ok) rs += '<span class="tot">Section ' + fmt(o.sect, 1) + " Pa · running total " + fmt(o.cum, 1) + " Pa</span>";
+    c.querySelector(".rs").innerHTML = rs;
+    const w = o.msg.concat(o.flag.length ? ["Flag: " + o.flag.join("; ") + "."] : []);
+    c.querySelector(".wn").innerHTML = w.map(esc).join("<br>");
+    const ca = c.querySelector("[data-ca]");
+    if (ca) ca.textContent = r.kind === "tp" && o.Cb != null ? "branch " + fmt(o.Cb, 3) + " · straight " + fmt(o.Cm, 3) : (o.Ca >= 0 ? fmt(o.Ca, 3) : "—");
+    const cn = c.querySelector("[data-cn]");
+    if (cn) cn.textContent = o.src === "typed" ? "Your own C is used. The table value is shown for comparison." : (o.note ? o.note + (o.tbl ? " (table " + o.tbl + ")" : "") : "");
+  });
+  const nF = S.rows.reduce((a, r, i) => a + (A.rows[i].flag.length ? 1 : 0), 0);
+  $("sRes").innerHTML = box("Design total", fmt(A.tot, 1), "Pa, with " + fmt(A.mg, 0) + " % margin", "ok") + box("Subtotal", fmt(A.sub, 1), "Pa before the margin") + box("Straight duct", fmt(A.D, 1), "Pa") + box("Fittings", fmt(A.Ft, 1), "Pa") + box("Equipment", fmt(A.E, 1), "Pa") + (nF ? box("Flagged sections", String(nF), "see the warnings", "bad") : "");
+  const warn = [];
+  if (!S.rows.length) warn.push("There are no sections yet.");
+  S.rows.forEach((r, i) => { const o = A.rows[i], nm = "Section " + (i + 1) + (r.desc ? " (" + r.desc + ")" : ""); if (!o.ok && o.msg.length) warn.push(nm + ": " + o.msg[0]); else { o.msg.forEach(t => warn.push(nm + ": " + t)); if (o.flag.length) warn.push(nm + ": " + o.flag.join("; ") + "."); } });
+  if (!(A.F.rho > 0 && A.F.nu > 0)) warn.push("The air properties are outside −50 to 100 °C. Enter the density and viscosity.");
+  const el = $("sWarn"); el.innerHTML = warn.map(t => "<div>" + esc(t) + "</div>").join(""); el.classList.toggle("show", warn.length > 0);
+  $("vNote").textContent = "Air at " + fmt(A.F.T, 1) + " °C: ρ " + fmt(A.F.rho, 3) + " kg/m³, ν " + fmt(A.F.nu, 3) + " × 10⁻⁶ m²/s. Friction by Altshul–Tsal on the equivalent diameter; fittings by C × ½ρv².";
+  $("vNote").classList.add("show");
+  let t = '<thead><tr><th>No</th><th class="l">Description</th><th class="l">Type</th><th>Flow<br>L/s</th><th class="l">Size<br>mm</th><th>v<br>m/s</th><th>Pa/m</th><th>Length<br>m</th><th>C</th><th>Duct<br>Pa</th><th>Fitting<br>Pa</th><th>Equip.<br>Pa</th><th>Section<br>Pa</th><th>Running<br>Pa</th></tr></thead><tbody>';
+  S.rows.forEach((r, i) => {
+    const o = A.rows[i], bad = re => o.flag.some(x => re.test(x)) ? ' class="bad"' : "";
+    t += "<tr" + (r.kind === "eq" ? ' class="eqr"' : "") + "><td>" + (i + 1) + '</td><td class="l">' + esc(r.desc) + '</td><td class="l">' + KN[r.kind] + (detailText(r, o) ? ", " + detailText(r, o) : "") + "</td><td>" + (r.kind === "eq" ? "" : fmt(pf(r.q), 0)) + '</td><td class="l">' + esc(sizeText(r, o)) + "</td><td" + bad(/velocity/) + ">" + (o.ok && r.kind !== "eq" ? fmt(o.v, 2) : "") + "</td><td" + bad(/friction/) + ">" + (o.ok && r.kind === "d" ? fmt(o.dpm, 3) : "") + "</td><td>" + (r.kind === "d" ? fmt(o.L || 0, 1) : "") + "</td><td>" + (o.ok && r.kind !== "d" && r.kind !== "eq" ? fmt(o.C, 3) : "") + "</td><td>" + (r.kind === "d" && o.ok ? fmt(o.duct, 1) : "") + "</td><td>" + (o.ok && r.kind !== "d" && r.kind !== "eq" ? fmt(o.fit, 1) : "") + "</td><td>" + (r.kind === "eq" && o.ok ? fmt(o.eq, 1) : "") + "</td><td>" + (o.ok ? fmt(o.sect, 1) : "—") + "</td><td>" + fmt(o.cum, 1) + "</td></tr>";
+  });
+  t += "</tbody><tfoot>";
+  const trow = (lab, val, b) => "<tr" + (b ? ' style="font-weight:700"' : "") + '><td colspan="11" class="l">' + lab + '</td><td colspan="3">' + val + "</td></tr>";
+  t += trow("Straight duct", fmt(A.D, 1) + " Pa") + trow("Fittings", fmt(A.Ft, 1) + " Pa") + trow("Equipment", fmt(A.E, 1) + " Pa") + trow("Subtotal", fmt(A.sub, 1) + " Pa", true) + trow("Design margin " + fmt(A.mg, 0) + " %", fmt(A.sub * A.mg / 100, 1) + " Pa") + trow("Design total", fmt(A.tot, 1) + " Pa", true) + "</tfoot>";
+  $("prT").innerHTML = t;
+  $("prMeta").textContent = "Air at " + fmt(A.F.T, 1) + " °C";
+  $("prN").textContent = "Air at " + fmt(A.F.T, 1) + " °C, ρ " + fmt(A.F.rho, 3) + " kg/m³, ν " + fmt(A.F.nu, 3) + " × 10⁻⁶ m²/s. Duct roughness " + sig(A.F.eps, 3) + " mm. " + (S.sy === "s" ? "Supply" : "Return or exhaust") + " air tables. Fitting loss = C × ½ρv²; C from the duct-fitting tables unless marked typed.";
+  working(A); save(); lastA = A;
+}
+function working(A) {
+  const r = S.rows[activeRow], o = A.rows[activeRow], el = $("workS"); if (!r || !o) { el.innerHTML = "<p class=\"si\">Add a section to see its working.</p>"; return; }
+  const L = []; const F = A.F;
+  L.push("<b>Section " + (activeRow + 1) + (r.desc ? ", " + esc(r.desc) : "") + " (" + KN[r.kind].toLowerCase() + ")</b>");
+  if (!o.ok) L.push(o.msg.map(esc).join("<br>"));
+  else if (r.kind === "eq") L.push("Pressure drop as entered: " + fmt(o.eq, 1) + " Pa");
+  else if (r.kind === "d") {
+    L.push("Air: ρ " + fmt(F.rho, 3) + " kg/m³, ν " + fmt(F.nu, 3) + "×10⁻⁶ m²/s");
+    L.push("Equivalent diameter D<sub>e</sub> = " + (o.s.round ? "D = " : "1.265 ((a b)³/(a+b))^0.2 = ") + sig(o.De, 5) + " mm");
+    L.push("v<sub>e</sub> = Q / (π D<sub>e</sub>²/4) = " + fmt(o.q / 1000, 4) + " / " + sig(Math.PI * Math.pow(o.De / 1000, 2) / 4, 4) + " = " + fmt(o.ve, 3) + " m/s");
+    L.push("Re = v<sub>e</sub> D<sub>e</sub> / ν = " + Math.round(o.Re).toLocaleString("en-GB"));
+    L.push("ε/D<sub>e</sub> = " + sig(o.rr, 4) + "; f′ = " + sig(o.f1, 5) + "; f = " + sig(o.f, 5) + (o.f1 < 0.018 ? " (0.85 f′ + 0.0028)" : ""));
+    L.push("Δp per metre = f/D<sub>e</sub> × ½ρv<sub>e</sub>² = " + fmt(o.dpm, 4) + " Pa/m");
+    L.push("Duct loss = " + fmt(o.dpm, 4) + " × " + fmt(o.L, 2) + " m = <b>" + fmt(o.duct, 2) + " Pa</b>");
+    L.push("Actual velocity in the duct = Q / (a b) = " + fmt(o.v, 3) + " m/s");
+  } else {
+    L.push("Reference section: " + (r.kind === "tr" ? "smaller end" : r.kind === "tp" ? "common section" : "the duct size given") + ", area " + sig(o.ref.A, 5) + " mm², flow " + fmt(o.ref.Q * 1000, 1) + " L/s");
+    L.push("v = " + fmt(o.ref.v, 3) + " m/s; ½ρv² = " + fmt(o.ref.pv, 2) + " Pa");
+    L.push("C: " + (o.src === "typed" ? "typed " + fmt(o.C, 3) : fmt(o.C, 4) + (o.note ? " (" + esc(o.note) + ")" : "")));
+    L.push("Fitting loss = C × ½ρv² = " + fmt(o.C, 4) + " × " + fmt(o.ref.pv, 2) + " = <b>" + fmt(o.fit, 2) + " Pa</b>");
+  }
+  L.push("Running total after this section: " + fmt(o.cum, 1) + " Pa");
+  el.innerHTML = L.map(x => '<p class="si">' + x + "</p>").join("");
+}
+
+/* ---- top fields and events ---- */
+function syncTop() {
+  $("ta").value = S.T; const fl = fluid();
+  $("rho").value = S.own && S.rho !== "" ? S.rho : (isFinite(fl.rho) ? sig(fl.rho, 5) : ""); $("nu").value = S.own && S.nu !== "" ? S.nu : (isFinite(fl.nu) ? sig(fl.nu, 4) : "");
+  $("rg").value = S.rg; $("rgv").value = S.rgv; $("rgf").hidden = S.rg !== "own"; $("sy").value = S.sy; $("mg").value = S.mg; $("fl").value = S.fl;
+}
+function rowOf(e) { const c = e.target.closest(".sec"); return c ? +c.dataset.i : -1; }
+function lastSize(rows) {
+  for (let i = rows.length - 1; i >= 0; i--) { const r = rows[i], k = r.kind; if (k === "d" || k === "el" || k === "ot") return { q: r.q, s: { sh: r.sh, w: r.w, h: r.h, d: r.d } }; if (k === "tr") return { q: r.q, s: { sh: r.o_sh, w: r.o_w, h: r.o_h, d: r.o_d } }; if (k === "tp") return { q: String((S.sy === "s" ? pf(r.q) - pf(r.qb) : pf(r.q) + pf(r.qb)) || ""), s: { sh: r.m_sh, w: r.m_w, h: r.m_h, d: r.m_d } }; }
+  return { q: "", s: {} };
+}
+function addRow(k) {
+  const l = lastSize(S.rows), s = l.s; let r;
+  if (k === "tr") r = newRow("tr", { q: l.q, i: s, o: {} }); else if (k === "tp") r = newRow("tp", { q: l.q, m: s }); else if (k === "eq") r = newRow("eq"); else r = newRow(k, Object.assign({ q: l.q }, s));
+  S.rows.push(r); activeRow = S.rows.length - 1; renderCards(); const c = $("secs").lastElementChild; if (c) c.scrollIntoView({ block: "nearest" });
+}
+function onField(e) {
+  const t = e.target, i = rowOf(e); if (i < 0) return; const r = S.rows[i]; activeRow = i;
+  const f = t.dataset.f; if (!f) return;
+  r[f] = t.type === "checkbox" ? t.checked : t.value;
+  if (f === "kind") { const d = r.desc, l = lastSize(S.rows.slice(0, i)); S.rows[i] = r.kind === "eq" ? newRow("eq", { desc: d }) : (r.kind === "tr" ? newRow("tr", { desc: d, q: l.q, i: l.s }) : r.kind === "tp" ? newRow("tp", { desc: d, q: l.q, m: l.s }) : newRow(r.kind, Object.assign({ desc: d, q: l.q }, l.s))); renderCards(); return; }
+  if (/(^|_)sh$/.test(f) || f === "ek") { const c = $("secs").children[i]; c.outerHTML = cardHtml(i); setCoef(); }
+  update();
+}
+function onClick(e) {
+  const b = e.target.closest("button[data-a]"); if (!b) return; const i = rowOf(e); if (i < 0) return; const a = b.dataset.a;
+  const mv = d => { const j = i + d; if (j < 0 || j >= S.rows.length) return; const x = S.rows.splice(i, 1)[0]; S.rows.splice(j, 0, x); activeRow = j; };
+  if (a === "up") mv(-1); else if (a === "dn") mv(1);
+  else if (a === "dup") { S.rows.splice(i + 1, 0, JSON.parse(JSON.stringify(S.rows[i]))); activeRow = i + 1; }
+  else if (a === "rm") { S.rows.splice(i, 1); activeRow = Math.max(0, i - 1); }
+  renderCards();
+}
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+function bindTop() {
+  $("rg").innerHTML = optH(RG, S.rg);
+  $("ta").addEventListener("input", () => { S.T = $("ta").value; S.own = false; S.rho = ""; S.nu = ""; const fl = fluid(); $("rho").value = isFinite(fl.rho) ? sig(fl.rho, 5) : ""; $("nu").value = isFinite(fl.nu) ? sig(fl.nu, 4) : ""; update(); });
+  ["rho", "nu"].forEach(id => $(id).addEventListener("input", () => { S.own = true; S.rho = $("rho").value; S.nu = $("nu").value; update(); }));
+  $("rg").addEventListener("change", () => { S.rg = $("rg").value; $("rgf").hidden = S.rg !== "own"; update(); });
+  $("rgv").addEventListener("input", () => { S.rgv = $("rgv").value; update(); });
+  $("sy").addEventListener("change", () => { S.sy = $("sy").value; update(); });
+  $("mg").addEventListener("input", () => { S.mg = $("mg").value; update(); });
+  $("fl").addEventListener("input", () => { S.fl = $("fl").value; update(); });
+  $("secs").addEventListener("input", onField); $("secs").addEventListener("change", e => { if (e.target.tagName === "SELECT") onField(e); });
+  $("secs").addEventListener("click", onClick);
+  $("secs").addEventListener("focusin", e => { const i = rowOf(e); if (i >= 0 && i !== activeRow) { activeRow = i; if (lastA) working(lastA); } });
+  document.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => addRow(b.dataset.add)));
+  $("ex").addEventListener("click", () => { if (S.rows.length > 1 && !confirm("Replace the sections on the sheet with the example?")) return; const k = S; S = example(); S.T = k.T; S.own = k.own; S.rho = k.rho; S.nu = k.nu; S.rg = k.rg; S.rgv = k.rgv; S.sy = k.sy; S.mg = k.mg; S.fl = k.fl; activeRow = 0; syncTop(); renderCards(); });
+  $("clr").addEventListener("click", () => { if (S.rows.length && !confirm("Remove every section?")) return; S.rows = []; renderCards(); });
+  $("pr").addEventListener("click", () => window.print());
+  $("xl").addEventListener("click", () => { if (!S.rows.length) { alert("Add at least one section first."); return; } download(buildXlsx(), "duct_system_pressure_loss.xlsx"); });
+  $("sv").addEventListener("click", () => download(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), "duct_system_pressure_loss.json"));
+  $("ld").addEventListener("click", () => $("ldf").click());
+  $("ldf").addEventListener("change", () => { const f = $("ldf").files[0]; if (!f) return; f.text().then(t => { try { const o = JSON.parse(t); if (!o || !Array.isArray(o.rows)) throw 0; S = Object.assign(blank(), o); activeRow = 0; syncTop(); renderCards(); } catch (e) { alert("That file is not a project saved from this sheet."); } $("ldf").value = ""; }); });
+  const dl = document.createElement("datalist"); dl.id = "eqlist"; dl.innerHTML = ["Attenuator", "Filter", "Cooling coil", "Heating coil", "Fire damper", "Volume control damper", "Grille", "Diffuser", "Louvre"].map(x => '<option value="' + x + '">').join(""); document.body.appendChild(dl);
+}
+
+/* ---- Excel workbook ---- */
+function buildXlsx() {
+  const A = evalAll(), F = A.F, n = S.rows.length, sty = X.sty, BL = "0000FF";
+  const H = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "center", v: "center", wrap: 1, bd: 1 }), HL = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "left", v: "center", wrap: 1, bd: 1 });
+  const T1 = sty({ b: 1, sz: 14 }), T2 = sty({ b: 1, sz: 11 }), NOTE = sty({ i: 1, c: "555555", wrap: 1, v: "top" }), TXT = sty({ bd: 1 });
+  const inT = sty({ c: BL, bd: 1 }), in0 = sty({ c: BL, bd: 1, fmt: "0" }), in1 = sty({ c: BL, bd: 1, fmt: "0.0" }), in3 = sty({ c: BL, bd: 1, fmt: "0.000" });
+  const c0 = sty({ bd: 1, fmt: "0" }), c1 = sty({ bd: 1, fmt: "0.0" }), c2 = sty({ bd: 1, fmt: "0.00" }), c3 = sty({ bd: 1, fmt: "0.000" }), c4 = sty({ bd: 1, fmt: "0.0000" }), c5 = sty({ bd: 1, fmt: "0.00000" }), cN = sty({ bd: 1, fmt: "#,##0" });
+  const c1b = sty({ bd: 1, fmt: "0.0", b: 1 }), c1bf = sty({ bd: 1, fmt: "0.0", b: 1, fill: "E7EFE4" }), LABB = sty({ b: 1, bd: 1 }), rfv = sty({ c: "2E7D32", bd: 1, fmt: "0.000" });
+  const R0 = 6, RL = R0 + Math.max(n, 1) - 1;
+  const sm = [], put = (r, c, x) => { (sm[r] = sm[r] || [])[c] = x; };
+  put(0, 0, { v: "Duct system pressure loss", s: T1 }); put(1, 0, { v: "Inputs are in blue. Everything else is a formula, except the fitting coefficients C, which are the values read from the duct-fitting tables (or typed).", s: NOTE });
+  put(3, 0, { v: "Air and duct", s: T2 });
+  put(4 - 0, 0, { v: "Air temperature, °C", s: TXT }); put(4, 1, { v: pf(S.T), s: in1 });
+  const ownR = S.own && pf(S.rho) > 0, ownN = S.own && pf(S.nu) > 0;
+  put(5, 0, { v: "Density ρ, kg/m³", s: TXT }); put(5, 1, ownR ? { v: pf(S.rho), s: in3 } : { f: "101325/(287.05*(B5+273.15))", v: F.rho, s: c3 });
+  put(6, 0, { v: "Kinematic viscosity ν, 10⁻⁶ m²/s", s: TXT }); put(6, 1, ownN ? { v: pf(S.nu), s: in3 } : { f: "1.458E-6*(B5+273.15)^1.5/((B5+273.15)+110.4)/B6*1E6", v: F.nu, s: c3 });
+  put(7, 0, { v: "Duct roughness ε, mm", s: TXT }); put(7, 1, { v: F.eps, s: in3 });
+  put(8, 0, { v: "Design margin, %", s: TXT }); put(8, 1, { v: A.mg, s: in1 });
+  put(9, 0, { v: "System", s: TXT }); put(9, 1, { v: S.sy === "s" ? "Supply air" : "Return or exhaust", s: TXT });
+  const rg = c => "Calculation!" + c + "$" + R0 + ":" + c + "$" + RL, RHO = "Summary!$B$6", NU = "Summary!$B$7", EPS = "Summary!$B$8";
+  put(11, 0, { v: "Result", s: T2 }); put(11, 1, { v: "Pa", s: H });
+  put(12, 0, { v: "Straight duct friction", s: TXT }); put(12, 1, { f: "SUM(" + rg("T") + ")", v: A.D, s: c1 });
+  put(13, 0, { v: "Fittings", s: TXT }); put(13, 1, { f: "SUM(" + rg("U") + ")", v: A.Ft, s: c1 });
+  put(14, 0, { v: "Equipment", s: TXT }); put(14, 1, { f: "SUM(" + rg("V") + ")", v: A.E, s: c1 });
+  put(15, 0, { v: "Subtotal", s: LABB }); put(15, 1, { f: "SUM(B13:B15)", v: A.sub, s: c1b });
+  put(16, 0, { v: "Design margin", s: TXT }); put(16, 1, { f: "B16*B9/100", v: A.sub * A.mg / 100, s: c1 });
+  put(17, 0, { v: "Design total", s: LABB }); put(17, 1, { f: "B16+B17", v: A.tot, s: c1bf });
+  put(18, 0, { v: "Duct length listed, m", s: TXT }); put(18, 1, { f: "SUM(" + rg("I") + ")", v: S.rows.reduce((a, r) => a + (r.kind === "d" && pf(r.len) > 0 ? pf(r.len) : 0), 0), s: c1 });
+  const notes = ["Method: Darcy–Weisbach on the equivalent circular diameter (rectangular: De = 1.265((a b)³/(a+b))^0.2) with the Altshul–Tsal friction factor (f′ = 0.11(ε/De + 68/Re)^0.25, with f = 0.85f′ + 0.0028 where f′ is below 0.018). Fitting loss = C × ½ρv² with v on the actual duct area of the reference section.", "Reference section: elbow and other fitting, the duct size given; transition, the smaller end; tap, the common section (the main before the tap in supply air, after it in return air). The sizes in the Calculation sheet for a transition or a tap are those of the reference section.", "Fitting coefficients C are read from the ASHRAE duct-fitting tables by linear interpolation, or typed by the designer. They are values in the Calculation sheet, with the source in the last column. Check them against the design guide.", "Fan and system effect, leakage, insulation and dampers not listed as equipment are not included."];
+  notes.forEach((t, k) => put(20 + k, 0, { v: t, s: NOTE }));
+  const hd = ["No", "Description", "Type", "Flow\nL/s", "Shape", "Width\nmm", "Depth\nmm", "Dia.\nmm", "Length\nm", "Equiv. dia.\nmm", "Velocity in\nequiv. circle\nm/s", "Re", "f′", "f", "Friction\nPa/m", "Ref. area\nm²", "Velocity\nm/s", "½ρv²\nPa", "C", "Duct\nPa", "Fitting\nPa", "Equip.\nPa", "Section\nPa", "Running\nPa", "Source of C and notes"];
+  const rows = []; rows[0] = [{ v: "Calculation", s: T1 }]; rows[1] = [{ v: "Blue = inputs. Fitting C = values from the duct-fitting tables, or typed.", s: NOTE }];
+  rows[4] = hd.map((x, i) => ({ v: x, s: (i === 1 || i === 2 || i === 24) ? HL : H }));
+  S.rows.forEach((r, k) => {
+    const o = A.rows[k], rr = R0 + k, row = [], cell = (c, x) => { row[c] = x; };
+    cell(0, { v: k + 1, s: c0 }); cell(1, { v: r.desc, s: TXT }); cell(2, { v: KN[r.kind] + (detailText(r, o) ? ", " + detailText(r, o) : ""), s: TXT });
+    if (r.kind === "eq") { cell(21, { v: o.eq, s: in1 }); }
+    else if (o.ok || o.ref) {
+      let s = o.s, Qref = o.ref ? o.ref.Q : 0;
+      if (r.kind === "tr") s = DF.area(o.s) <= DF.area(o.s2) ? o.s : o.s2; else if (r.kind === "tp") s = o.s;
+      cell(3, { v: Qref * 1000, s: in1 }); cell(4, { v: s.round ? "Round" : "Rect", s: inT });
+      if (s.round) cell(7, { v: s.d, s: in0 }); else { cell(5, { v: s.w, s: in0 }); cell(6, { v: s.h, s: in0 }); }
+      cell(15, { f: 'IF(E' + rr + '="Round",PI()*H' + rr + '^2/4,F' + rr + '*G' + rr + ')/1000000', v: o.ref.A / 1e6, s: c4 });
+      cell(16, { f: "D" + rr + "/1000/P" + rr, v: o.ref.v, s: c2 }); cell(17, { f: "0.5*" + RHO + "*Q" + rr + "^2", v: o.ref.pv, s: c2 });
+      if (r.kind === "d") {
+        cell(8, { v: o.L || 0, s: in1 });
+        cell(9, { f: 'IF(E' + rr + '="Round",H' + rr + ',1.265*((F' + rr + '*G' + rr + ')^3/(F' + rr + '+G' + rr + '))^0.2)', v: o.De, s: c1 });
+        cell(10, { f: "D" + rr + "/1000/(PI()*(J" + rr + "/1000)^2/4)", v: o.ve, s: c3 });
+        cell(11, { f: "K" + rr + "*(J" + rr + "/1000)/(" + NU + "*0.000001)", v: o.Re, s: cN });
+        cell(12, { f: "0.11*(" + EPS + "/J" + rr + "+68/L" + rr + ")^0.25", v: o.f1, s: c5 });
+        cell(13, { f: "IF(M" + rr + "<0.018,0.85*M" + rr + "+0.0028,M" + rr + ")", v: o.f, s: c5 });
+        cell(14, { f: "N" + rr + "/(J" + rr + "/1000)*0.5*" + RHO + "*K" + rr + "^2", v: o.dpm, s: c4 });
+        cell(19, { f: "I" + rr + "*O" + rr, v: o.duct, s: c2 });
+      } else {
+        cell(18, { v: o.ok ? o.C : 0, s: rfv }); cell(20, { f: "S" + rr + "*R" + rr, v: o.fit, s: c2 });
+        cell(24, { v: (o.src === "typed" ? "Typed C. " : "") + (o.note || "") + (o.tbl ? " (table " + o.tbl + ")" : "") + (r.kind === "tr" ? "; ref. = smaller end " + szTxt(o.s) + " → " + szTxt(o.s2) : "") + (r.kind === "tp" ? "; main " + szTxt(o.s) + ", branch " + szTxt(o.s2) + ", branch flow " + fmt(pf(r.qb), 0) + " L/s, run " + (r.path === "b" ? "into branch" : "along main") : ""), s: TXT });
+      }
+    }
+    cell(22, { f: "SUM(T" + rr + ":V" + rr + ")", v: o.sect, s: c1 }); cell(23, { f: "SUM(W$" + R0 + ":W" + rr + ")", v: o.cum, s: c1b });
+    for (let c = 0; c < 25; c++) if (!row[c]) row[c] = { v: "", s: TXT };
+    rows[rr - 1] = row;
+  });
+  const nt = [[{ v: "Notes", s: T1 }]].concat(notes.map(t => [{ v: t, s: NOTE }]), [[{ v: "Coefficients were checked against our duct template on 51 test fittings: 39 are identical and 12 differ because the template is wrong (vaned mitered elbows and small round-main return taps: millimetres tested against inch limits; round elbows: interpolation one column out; return round–rectangular transitions: angle worked from zeros). This sheet uses the correct values. Confirm the coefficients you rely on against the ASHRAE Duct Fitting Database.", s: NOTE }]]);
+  const sheets = [
+    { name: "Summary", rows: sm, cols: [38, 22, 12], merges: notes.map((t, k) => "A" + (21 + k) + ":C" + (21 + k)), ht: (() => { const h = []; notes.forEach((t, k) => h[20 + k] = 62); return h; })(), first: true },
+    { name: "Calculation", rows, cols: [5, 28, 24, 9, 8, 8, 8, 8, 8, 10, 12, 10, 9, 9, 9, 10, 9, 9, 8, 9, 9, 9, 9, 10, 70], freeze: [2, 5], ht: { 4: 56 } },
+    { name: "Notes", rows: nt, cols: [120], ht: (() => { const h = []; for (let k = 1; k <= notes.length + 1; k++) h[k] = 48; return h; })() }
+  ];
+  const wbx = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>').join("") + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+  const files = [
+    { name: "[Content_Types].xml", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((s, i) => '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("") + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: "_rels/.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", text: wbx },
+    { name: "xl/_rels/workbook.xml.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>').join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' }
+  ];
+  const sx = sheets.map(s => sheetXml(s));
+  files.push({ name: "xl/styles.xml", text: X.xml() });
+  sx.forEach((t, i) => files.push({ name: "xl/worksheets/sheet" + (i + 1) + ".xml", text: t }));
+  return zip(files);
+}
+
+/* ---- drawer data ---- */
+function fillData() {
+  $("rgT").innerHTML = "<thead><tr><th class=\"l\">Material</th></tr></thead><tbody>" + RG.slice(0, 5).map(g => "<tr><td class=\"l\">" + esc(g[1]) + "</td></tr>").join("") + "</tbody>";
+  const T = TB.CR3_01; $("elT").innerHTML = "<thead><tr><th>H/W ↓ · r/W →</th>" + T.x.map(x => "<th>" + x + "</th>").join("") + "</tr></thead><tbody>" + T.y.map((y, i) => "<tr><th>" + y + "</th>" + T.z[i].map(v => "<td>" + v + "</td>").join("") + "</tr>").join("") + "</tbody>";
+  const a = TB.CR3_01af; $("afT").innerHTML = "<thead><tr><th>Angle °</th>" + a.x.map(x => "<th>" + x + "</th>").join("") + "</tr></thead><tbody><tr><th>Factor</th>" + a.z[0].map(v => "<td>" + v + "</td>").join("") + "</tr></tbody>";
+}
+S = load() || example();
+bindTop(); fillData(); syncTop(); renderCards();
+window.__ds = { get S() { return S; }, evalAll, buildXlsx, DF, fric, eqD, air };
+})();
+</script>
+</body>
+</html>

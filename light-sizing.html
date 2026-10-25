@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Lighting sizing for a room by the zonal cavity method (cavity ratios, effective reflectances, coefficient of utilisation, light loss factor, number and layout of luminaires) and the point-by-point method (inverse square and cosine law, plan of illuminance and uniformity), with an Excel export." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XXVIII — Lighting sizing</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet XV */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets XV and XVI additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet XXI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<style>
+.case { border:1px solid var(--rule); background:var(--panel); margin:12px 0; }
+.case h4 { margin:0; padding:8px 12px; border-bottom:1px solid var(--rule); font-size:15px; }
+.case .cb { padding:8px 12px 12px; overflow-x:auto; }
+.case table.cmp { width:100%; }
+.case table.cmp td, .case table.cmp th { white-space:normal; font-size:13px; padding:5px 8px; }
+.case table.cmp td.v { text-align:right; font-variant-numeric:tabular-nums; }
+.case table.cmp tr.k td { font-weight:700; background:var(--tint); }
+.case table.cmp td.bad { color:#9b1c1c; font-weight:700; }
+.big { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:12px 0; }
+.cmpnote { font-size:12.5px; color:var(--muted); line-height:1.45; margin:8px 0 0; }
+.exrow, .addrow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; align-items:center; }
+.exrow button, .addrow button { width:auto; min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.exrow button.pri { background:var(--ink); color:var(--paper); }
+table.cmp#prT td, table.cmp#prT th { font-size:12.5px; padding:5px 6px; }
+table.cmp#prT td.l, table.cmp#prT th.l { text-align:left; }
+table.cmp td.bad, table.cmp td.ok2 { font-weight:700; }
+table.cmp td.bad { color:#9b1c1c; }
+.sig td { height:46px; vertical-align:bottom; font-size:12px; }
+.prhead { display:none; }
+.helpbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; justify-content:space-between; border:1px solid var(--rule,#cdbf9f); border-left:4px solid var(--ink,#1a1714); background:var(--panel,#fffdf7); padding:10px 14px; margin:12px 0; font-size:14px; line-height:1.45; }
+.helpbar > div { flex:1 1 340px; }
+.helpbtn { width:auto; flex:none; display:inline-block; font:inherit; font-size:14px; border:1px solid var(--ink,#1a1714); background:var(--ink,#1a1714); color:#fff; padding:8px 14px; cursor:pointer; border-radius:0; }
+@media print {
+  body { background:#fff; }
+  nav.pages, nav.toc, .lead, .noprint, .mx-pull, .mx-scrim, .mx-drawer, header .sub, .fields, h5.vh, h2:not(#s4), #zRes, #zCases, #pRes, #pPlan, #pNote, .warn, .perm, .addrow, .exrow, footer, #s5, #s5 ~ *:not(.rights), .helpbar, .segu { display:none !important; }
+  .prhead { display:block; }
+  table.cmp#prT td, table.cmp#prT th { font-size:9px; padding:2px 3px; }
+  @page { size: A4 portrait; margin: 12mm; }
+}
+.segu { display:flex; flex-wrap:wrap; }
+.segu button { flex:1 1 140px; width:auto; min-height:42px; padding:6px 12px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:600 14px Georgia, serif; cursor:pointer; }
+.segu button + button { border-left:0; }
+.segu button.on { background:var(--ink); color:var(--paper); }
+.plan { margin:10px 0; max-width:720px; }
+.plan svg { width:100%; height:auto; display:block; border:1px solid var(--rule); background:var(--panel); }
+.plan .lg { font-size:12.5px; color:var(--muted); margin-top:4px; }
+.dgs { display:flex; flex-direction:column; gap:14px; margin:12px 0 6px; }
+.dgs figure { margin:0; border:1px solid var(--rule); background:var(--panel); padding:8px 8px 4px; min-width:0; }
+.dgs figcaption { font-size:12.5px; font-weight:700; letter-spacing:.04em; margin:0 0 2px; }
+.dgs svg { display:block; width:100%; height:auto; max-width:560px; margin:0 auto; }
+.dgs .ln { stroke:#1a1a1a; stroke-width:2; fill:none; }
+.dgs .th { stroke:#1a1a1a; stroke-width:1; fill:none; }
+.dgs .tx { font:12px Georgia, serif; fill:#1a1a1a; }
+.dgs .mu { font:11px Georgia, serif; fill:#6b6355; }
+.dgs .b { font-weight:700; }
+.dgs .dash { stroke:#8a7f6c; stroke-width:1; stroke-dasharray:4 3; fill:none; }
+.dgs .rd { stroke:#9b1c1c; stroke-width:2; fill:none; }
+.dgs .rt { font:700 12px Georgia, serif; fill:#9b1c1c; }
+.dgs .cc { fill:#efe3c4; } .dgs .fc { fill:#bcd3de; } .dgs .sl { fill:#d9d0bd; }
+.dgs figure p { font-size:12.5px; line-height:1.45; margin:4px 2px 6px; color:var(--muted); }
+.segw { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:13px; margin:6px 0 0; }
+.segw i { display:inline-block; width:14px; height:12px; margin-right:5px; vertical-align:-1px; border:1px solid var(--rule); }
+.field textarea { width:100%; min-height:64px; font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; padding:8px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); border-radius:0; box-sizing:border-box; }
+</style>
+<article class="book">
+<header>
+  <div class="kicker">Sheet XXVIII</div>
+  <h1>Lighting sizing</h1>
+  <div class="sub">Zonal cavity method · point-by-point method · light loss factor · layout and power · Excel export</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Lighting</div><div class="nl">
+    <a class="on" href="light-sizing.html"><span>XXVIII</span>Lighting sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead"><b>Lighting sizing.</b> Two methods for a room. The <b>zonal cavity method</b> finds how many luminaires give an average maintained illuminance on the working plane, using the cavity ratios, the effective cavity reflectances, the coefficient of utilisation (CU) from the maker’s table and the light loss factor. The <b>point-by-point method</b> then finds the illuminance at any point from the intensity of each luminaire, by the inverse square and cosine law, and draws the room as a plan so you can see the uniformity. Fill in sections 1 and 2 for the number of luminaires; add section 3 to check the spread of light. The CU table comes from the luminaire maker’s data sheet: this sheet does not hold luminaire data.</p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Room and target</a><a href="#s2">2 Zonal cavity</a><a href="#s3">3 Point by point</a><a href="#s4">4 Summary and export</a><a href="#s5">5 Check</a></nav>
+<div class="helpbar noprint"><div><b>New to this?</b> Start with the example button in section 4. The side panel explains each step, the formulae and what the method cannot do.</div><button type="button" class="helpbtn" data-mxopen="notes">Open the notes</button></div>
+
+<h2 id="s1">1. Room and target</h2>
+<div class="helpbar noprint"><div><b>Not sure what the heights and reflectances mean?</b> Pictures A and B at the top of the notes in the side panel show them on a section and a plan of the room.</div><button type="button" class="helpbtn" data-mxopen="notes">Open the pictures</button></div>
+<div class="fields two">
+  <div class="field wide"><label for="rt">Space type (fills the target illuminance, which you can change)</label><select id="rt"></select></div>
+  <div class="field"><label for="E">Target maintained illuminance on the working plane</label><div class="pair"><input id="E" data-s="E" type="number" inputmode="decimal" step="any" min="0" /><span>lux</span></div><div class="hint">Maintained means the average over the life of the installation, after the lamps and the room have dimmed and dirtied.</div></div>
+  <div class="field"><label for="L">Room length</label><div class="pair"><input id="L" data-s="L" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div></div>
+  <div class="field"><label for="W">Room width</label><div class="pair"><input id="W" data-s="W" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div></div>
+  <div class="field"><label for="H">Floor to ceiling height</label><div class="pair"><input id="H" data-s="H" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div></div>
+  <div class="field"><label for="hw">Height of the working plane above the floor</label><div class="pair"><input id="hw" data-s="hw" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div><div class="hint">0.75 m for a desk. Use 0 for the floor of a corridor or plant room.</div></div>
+  <div class="field wide"><label for="hs">Distance of the luminaires below the ceiling</label><div class="pair"><input id="hs" data-s="hs" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div><div class="hint">0 for recessed or surface-mounted luminaires. For pendants, the length of the drop. This sets the ceiling cavity.</div></div>
+  <div class="field"><label for="rc">Reflectance of the ceiling</label><div class="pair"><input id="rc" data-s="rc" type="number" inputmode="decimal" step="any" min="0" max="100" /><span>%</span></div></div>
+  <div class="field"><label for="rw">Reflectance of the walls</label><div class="pair"><input id="rw" data-s="rw" type="number" inputmode="decimal" step="any" min="0" max="100" /><span>%</span></div></div>
+  <div class="field wide"><label for="rf">Reflectance of the floor</label><div class="pair"><input id="rf" data-s="rf" type="number" inputmode="decimal" step="any" min="0" max="100" /><span>%</span></div><div class="hint">Common values: ceiling 70 %, walls 50 %, floor 20 %. Light finishes give higher values.</div></div>
+</div>
+<div class="warn" id="rWarn" role="status"></div>
+
+<h2 id="s2">2. Zonal cavity method (average illuminance and number of luminaires)</h2>
+<p class="lead" style="margin-top:6px">The room is split into three cavities: the ceiling cavity above the luminaires, the room cavity between the luminaires and the working plane, and the floor cavity below the working plane. Each has a cavity ratio. The ceiling and floor cavities are given an effective reflectance, which is what the CU table needs.</p>
+<h5 class="vh">The luminaire</h5>
+<div class="fields two">
+  <div class="field"><label for="nl">Lamps (or LED modules) in each luminaire</label><div class="pair"><input id="nl" data-s="nl" type="number" inputmode="decimal" step="1" min="1" /><span>no.</span></div></div>
+  <div class="field"><label for="lm">Luminous flux of each lamp or module</label><div class="pair"><input id="lm" data-s="lm" type="number" inputmode="decimal" step="any" min="0" /><span>lm</span></div><div class="hint">For an LED luminaire with one rated output, use 1 lamp and the luminaire’s lumens.</div></div>
+  <div class="field"><label for="bfac">Ballast or driver factor</label><div class="pair"><input id="bfac" data-s="bfac" type="number" inputmode="decimal" step="any" min="0" /><span>×</span></div><div class="hint">1.00 if the flux above is already the output in use.</div></div>
+  <div class="field"><label for="wl">Power of each luminaire, with its control gear</label><div class="pair"><input id="wl" data-s="wl" type="number" inputmode="decimal" step="any" min="0" /><span>W</span></div></div>
+  <div class="field wide"><label for="shr">Maximum spacing-to-height ratio from the maker</label><div class="pair"><input id="shr" data-s="shr" type="number" inputmode="decimal" step="any" min="0" /><span>×</span></div><div class="hint">Spacing between luminaires divided by their height above the working plane. Often 1.0 to 1.5. It keeps the light even.</div></div>
+</div>
+<h5 class="vh">Coefficient of utilisation (CU)</h5>
+<div class="helpbar noprint"><div><b>How is the CU read from the maker’s table?</b> Picture D shows your room cavity ratio on the table you enter.</div><button type="button" class="helpbtn" data-mxopen="notes">Open the pictures</button></div>
+<div class="fields two">
+  <div class="field wide"><label for="cus">Where the CU comes from</label><select id="cus" data-s="cus"><option value="i">Interpolate from the maker’s table (room cavity ratio and CU pairs)</option><option value="t">I type the CU</option></select></div>
+  <div class="field wide" id="cutF"><label for="cut">The maker’s CU for your reflectances, by room cavity ratio</label><textarea id="cut" data-s="cut" spellcheck="false" placeholder="1:0.88, 2:0.82, 3:0.76, 4:0.70, 5:0.65"></textarea><div class="hint" id="cutH"></div></div>
+  <div class="field" id="cuF" hidden><label for="cu">Coefficient of utilisation</label><div class="pair"><input id="cu" data-s="cu" type="number" inputmode="decimal" step="any" min="0" /><span>×</span></div></div>
+  <div class="field wide"><label for="fcc">Floor cavity correction factor</label><div class="pair"><input id="fcc" data-s="fcc" type="number" inputmode="decimal" step="any" min="0" /><span>×</span></div><div class="hint">CU tables assume an effective floor cavity reflectance of 20 %. If yours is different, the maker’s table gives a correction factor. Leave 1.00 if it is 20 % or the correction is not given.</div></div>
+</div>
+<h5 class="vh">Light loss factor</h5>
+<div class="fields two">
+  <div class="field wide"><label for="llm">Light loss factor</label><select id="llm" data-s="llm"><option value="f">Multiply the four factors below</option><option value="m">I type the maintenance factor</option></select></div>
+  <div class="field llf"><label for="lld">Lamp lumen depreciation, at the end of the cleaning period</label><div class="pair"><input id="lld" data-s="lld" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div></div>
+  <div class="field llf"><label for="ldd">Luminaire dirt depreciation</label><div class="pair"><input id="ldd" data-s="ldd" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div></div>
+  <div class="field llf"><label for="rsd">Room surface dirt depreciation</label><div class="pair"><input id="rsd" data-s="rsd" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div></div>
+  <div class="field llf"><label for="lsf">Lamp survival factor (failed lamps)</label><div class="pair"><input id="lsf" data-s="lsf" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div><div class="hint">1.00 for LED and for lamps replaced as soon as they fail.</div></div>
+  <div class="field" id="mfF" hidden><label for="mf">Maintenance factor</label><div class="pair"><input id="mf" data-s="mf" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div></div>
+  <div class="field wide"><label for="nov">Number of luminaires to use (optional)</label><div class="pair"><input id="nov" data-s="nov" type="number" inputmode="decimal" step="1" min="1" /><span>no.</span></div><div class="hint">Leave empty to use the number the calculation gives. Type a number to see what illuminance a chosen layout gives.</div></div>
+</div>
+<div class="warn" id="zWarn" role="status"></div>
+<div class="big" id="zRes"></div>
+<div id="zCases"></div>
+
+<h2 id="s3">3. Point-by-point method (illuminance at each point, and the spread)</h2>
+<p class="lead" style="margin-top:6px">Each luminaire is treated as a point source. At a point on the working plane, the illuminance from one luminaire is <i>E</i> = <i>I</i>(θ) · cos θ ÷ <i>d</i>². The sheet adds the luminaires, multiplies by the light loss factor, and works out the figures at points spread over the room. This is the <b>direct</b> light only: it leaves out light reflected from the ceiling and walls, which adds to what you see in practice.</p>
+<h5 class="vh">Where the luminaires are</h5>
+<div class="fields two">
+  <div class="field wide"><label for="pmode">Luminaire positions</label><select id="pmode" data-s="pmode"><option value="g">The grid layout from section 2</option><option value="t">I type the positions</option></select></div>
+  <div class="field wide" id="posF" hidden><label for="pos">Positions of the luminaires, x and y in metres from one corner of the room</label><textarea id="pos" data-s="pos" spellcheck="false" placeholder="2.5,2; 7.5,2; 2.5,6; 7.5,6"></textarea><div class="hint">Pairs separated by semicolons. x runs along the length, y along the width.</div></div>
+</div>
+<h5 class="vh">How the luminaire throws its light</h5>
+<div class="helpbar noprint"><div><b>What are the angle, height and distance?</b> Picture C shows them for one luminaire and one point.</div><button type="button" class="helpbtn" data-mxopen="notes">Open the pictures</button></div>
+<div class="fields two">
+  <div class="field wide"><label for="dist">Luminous intensity distribution</label><select id="dist" data-s="dist"><option value="n">A smooth distribution I = I₀ cosⁿθ</option><option value="t">I type the intensity table from the maker (angle and candela)</option></select></div>
+  <div class="field" id="nnF"><label for="nn">Exponent n</label><div class="pair"><input id="nn" data-s="nn" type="number" inputmode="decimal" step="any" min="0" /><span>×</span></div><div class="hint">1 is a wide, even throw like a diffuse panel. 2 to 4 is a narrower downlight. 0 is the same in all directions below the horizontal.</div></div>
+  <div class="field" id="lorF"><label for="lor">Light output ratio of the luminaire</label><div class="pair"><input id="lor" data-s="lor" type="number" inputmode="decimal" step="any" min="0" max="1" /><span>×</span></div><div class="hint">1.00 if the lumens in section 2 are the luminaire’s output. For lamp lumens in a fluorescent luminaire, use its light output ratio, for example 0.75.</div></div>
+  <div class="field wide" id="itF" hidden><label for="it">Candela at angles from straight down</label><textarea id="it" data-s="it" spellcheck="false" placeholder="0:300, 15:290, 30:260, 45:200, 60:110, 75:30, 90:0"></textarea><div class="hint">Angle in degrees from the vertical, then a colon, then candela, for the luminaire as installed. The sheet interpolates between them.</div></div>
+</div>
+<h5 class="vh">Points to calculate</h5>
+<div class="fields two">
+  <div class="field"><label for="gs">Spacing of the calculation points</label><div class="pair"><input id="gs" data-s="gs" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div><div class="hint">0.5 m is fine. Smaller gives a finer plan and takes longer.</div></div>
+  <div class="field"><label for="px">One point of your own: x</label><div class="pair"><input id="px" data-s="px" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div></div>
+  <div class="field wide"><label for="py">One point of your own: y</label><div class="pair"><input id="py" data-s="py" type="number" inputmode="decimal" step="any" min="0" /><span>m</span></div></div>
+</div>
+<div class="warn" id="pWarn" role="status"></div>
+<div class="big" id="pRes"></div>
+<div class="plan" id="pPlan"></div>
+<div class="perm" id="pNote" role="status"></div>
+
+<h2 id="s4">4. Summary and export</h2>
+<div class="prhead"><h3 id="prTitle" style="margin:0 0 4px">Lighting sizing</h3><div id="prMeta" style="font-size:11px;margin-bottom:6px"></div></div>
+<div class="table-scroll"><table class="cmp" id="prT"></table></div>
+<table class="cmp prhead sig" style="margin-top:14px"><tbody><tr><td>Prepared by:</td><td>Checked by:</td><td>Approved by:</td></tr></tbody></table>
+<div class="exrow noprint">
+  <button type="button" class="pri" id="xl">Download Excel workbook (.xlsx)</button>
+  <button type="button" id="pr">Print or save as PDF</button>
+  <button type="button" id="ex1">Load an office example</button>
+  <button type="button" id="ex2">Load a pendant luminaire example</button>
+  <button type="button" id="clr">Clear everything</button>
+</div>
+<p class="si noprint">The workbook keeps your inputs in blue and works out the zonal cavity method with formulas, and lists the illuminance at every point. The CU table in the examples is illustrative: use the luminaire maker’s table for a real design.</p>
+
+<h2 id="s5">5. Check of the calculation</h2>
+<p class="lead" style="margin-top:6px">Checks of the sheet’s own working against results that can be found independently.</p>
+<div class="table-scroll"><table class="cmp" id="ck1"></table></div>
+<p class="cmpnote" id="ckN"></p>
+
+<footer>Preliminary lighting design only. The zonal cavity result is an average on the working plane and depends on the CU table you enter. The point-by-point result is direct light from point sources and leaves out reflected light, obstructions and daylight. Confirm the illuminance, uniformity, glare and energy limits against the project’s lighting standard and a full lighting calculation before the design is issued. Formulae, working and notes are in the Notes and formulae bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Data</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The working with the values now on the sheet. The figures update as you type.</p>
+      <h3>Zonal cavity method (section 2)</h3>
+      <div id="workZ"></div>
+      <h3>Point by point (section 3)</h3>
+      <div id="workP"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. Cavities</h3>
+      <div id="fxA" role="math"></div>
+      <ul id="fxAD"></ul>
+      <h3>2. Effective cavity reflectance</h3>
+      <div id="fxR" role="math"></div>
+      <ul id="fxRD"></ul>
+      <h3>3. Number of luminaires</h3>
+      <div id="fxN" role="math"></div>
+      <ul id="fxND"></ul>
+      <h3>4. Point by point</h3>
+      <div id="fxP" role="math"></div>
+      <ul id="fxPD"></ul>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <h3>Target illuminance by space type</h3>
+      <p class="si">Typical maintained illuminance, as used in EN 12464-1 and CIBSE guidance. Use the value that your project standard gives.</p>
+      <div class="table-scroll"><table class="cmp" id="luxT"></table></div>
+      <h3>Typical light loss factors</h3>
+      <div class="table-scroll"><table class="cmp" id="llfT"></table></div>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Pictures of the inputs</h3>
+      <p class="si">Start here if you are not sure what the boxes mean. The pictures use the values now on the sheet, so they change as you type. Where a box is empty they show a symbol.</p>
+      <div class="dgs" role="group" aria-label="What the inputs are">
+        <figure><figcaption>A. The room in section: heights, cavities and reflectances</figcaption><svg id="figA" viewBox="0 0 560 330" role="img" aria-label="Section through the room showing ceiling, room and floor cavities"></svg><p id="capA"></p></figure>
+        <figure><figcaption>B. The room in plan: the luminaire grid and the spacing</figcaption><svg id="figB" viewBox="0 0 560 310" role="img" aria-label="Plan of the room with the grid of luminaires"></svg><p id="capB"></p></figure>
+        <figure><figcaption>C. Point by point: the angle, the height and the distance</figcaption><svg id="figC" viewBox="0 0 560 300" role="img" aria-label="One luminaire, its light distribution and a point on the working plane"></svg><p id="capC"></p></figure>
+        <figure><figcaption>D. Reading the coefficient of utilisation from the maker’s table</figcaption><svg id="figD" viewBox="0 0 560 270" role="img" aria-label="Chart of CU against room cavity ratio with your room marked"></svg><p id="capD"></p></figure>
+      </div>
+      <h3>Which method for what</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Zonal cavity method.</b> It gives the <i>average</i> illuminance on the working plane and the number of luminaires. It includes the light reflected by the ceiling, walls and floor, through the CU. It tells you nothing about how even the light is.</li>
+        <li><b>Point-by-point method.</b> It gives the illuminance at a chosen point from each luminaire’s intensity. It is used for the spread of light, for a task at a particular place, and for narrow beams such as downlights and spotlights, where the average is a poor guide. It counts direct light only.</li>
+        <li><b>Together.</b> Size with the zonal cavity method, then check the layout with the point-by-point method. The point-by-point average is lower than the zonal average, because the reflected light is left out. A direct-only average of about 70 to 90 % of the zonal figure is usual for a light-coloured room.</li>
+      </ul>
+      <h3>Reading the CU table</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>The maker’s table is entered by the <b>room cavity ratio</b> and by the <b>effective ceiling cavity reflectance</b> and the <b>wall reflectance</b>, for a floor cavity reflectance of 20 %. The sheet shows the column to read, and the CU you enter is for that column.</li>
+        <li>Type the CU for each room cavity ratio in the table as pairs, for example <code>1:0.88, 2:0.82, 3:0.76</code>. The sheet interpolates between them for your room.</li>
+        <li>If your room cavity ratio is beyond the table, the sheet uses the nearest end value and warns you. That is a long, narrow room or one with a high ceiling, and the result is a guess.</li>
+        <li>The examples use an illustrative table. A real design needs the table for the luminaire chosen.</li>
+      </ul>
+      <h3>Limits of the methods</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Zonal cavity.</b> It assumes luminaires spread evenly over the ceiling and a room with no obstructions. A row of luminaires, a very uneven layout, or tall racking breaks the assumption.</li>
+        <li><b>Point by point.</b> It treats each luminaire as a point. That is good when the distance to the point is at least five times the luminaire size. Very close, or with long linear luminaires, the error is large.</li>
+        <li><b>Daylight</b> is not included. Windows can reduce the electric light needed, and the room can be too dim away from them.</li>
+        <li><b>Glare, colour rendering, flicker and emergency lighting</b> are not calculated. Check the unified glare rating from the maker’s table, and the emergency lighting separately.</li>
+        <li><b>Energy.</b> The sheet reports the installed power in W/m² and per 100 lux. Compare it with the limit in the energy code used on the project.</li>
+      </ul>
+      <h3>Sources</h3>
+      <p>The zonal cavity method follows the method of the IES Lighting Handbook (cavity ratios, effective cavity reflectances, coefficient of utilisation, light loss factor). The point-by-point method is the inverse square and cosine law. Target illuminances follow EN 12464-1 and CIBSE guidance. Check results against the licensed documents.</p>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const grp = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pf = v => { const x = parseFloat(v); return isFinite(x) ? x : NaN; };
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+const colL = n => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const X = (() => {
+  const fonts = [], fills = ['<fill><patternFill patternType="none"/></fill>', '<fill><patternFill patternType="gray125"/></fill>'], borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>'], nf = [], xfs = [], map = {};
+  const idx = (arr, x) => { let i = arr.indexOf(x); if (i < 0) { arr.push(x); i = arr.length - 1; } return i; };
+  fonts.push('<font><sz val="10"/><name val="Calibri"/></font>');
+  const BUILT = { "General": 0, "0": 1, "0.00": 2, "#,##0": 3, "#,##0.00": 4 };
+  function sty(o) {
+    o = o || {}; const key = JSON.stringify(o); if (map[key] != null) return map[key];
+    const font = idx(fonts, '<font>' + (o.b ? "<b/>" : "") + (o.i ? "<i/>" : "") + '<sz val="' + (o.sz || 10) + '"/>' + (o.c ? '<color rgb="FF' + o.c + '"/>' : "") + '<name val="Calibri"/></font>');
+    const fill = o.fill ? idx(fills, '<fill><patternFill patternType="solid"><fgColor rgb="FF' + o.fill + '"/><bgColor indexed="64"/></patternFill></fill>') : 0;
+    const bd = o.bd ? idx(borders, '<border><left style="thin"><color rgb="FFBFB8A5"/></left><right style="thin"><color rgb="FFBFB8A5"/></right><top style="thin"><color rgb="FFBFB8A5"/></top><bottom style="thin"><color rgb="FFBFB8A5"/></bottom><diagonal/></border>') : 0;
+    let nid = 0; if (o.fmt) { if (BUILT[o.fmt] != null) nid = BUILT[o.fmt]; else nid = 164 + idx(nf, o.fmt); }
+    const al = (o.h || o.wrap || o.v) ? '<alignment' + (o.h ? ' horizontal="' + o.h + '"' : "") + (o.v ? ' vertical="' + o.v + '"' : "") + (o.wrap ? ' wrapText="1"' : "") + "/>" : "";
+    xfs.push('<xf numFmtId="' + nid + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + bd + '" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"' + (al ? ' applyAlignment="1">' + al + "</xf>" : "/>"));
+    map[key] = xfs.length; return xfs.length;   /* index 0 is the default xf */
+  }
+  const xml = () => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + (nf.length ? '<numFmts count="' + nf.length + '">' + nf.map((f, i) => '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + esc(f) + '"/>').join("") + "</numFmts>" : "") + '<fonts count="' + fonts.length + '">' + fonts.join("") + '</fonts><fills count="' + fills.length + '">' + fills.join("") + '</fills><borders count="' + borders.length + '">' + borders.join("") + '</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + (xfs.length + 1) + '"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' + xfs.join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  return { sty, xml };
+})();
+function sheetXml(sh) {
+  let rows = "";
+  sh.rows.forEach((row, ri) => {
+    if (!row) return; let cx = "";
+    row.forEach((c, ci) => {
+      if (c == null) return; const ref = colL(ci) + (ri + 1), s = c.s ? ' s="' + c.s + '"' : "";
+      if (c.f != null) { const v = c.v; if (typeof v === "string") cx += '<c r="' + ref + '"' + s + ' t="str"><f>' + esc(c.f) + "</f><v>" + esc(v) + "</v></c>"; else cx += '<c r="' + ref + '"' + s + "><f>" + esc(c.f) + "</f>" + (typeof v === "number" && isFinite(v) ? "<v>" + v + "</v>" : "") + "</c>"; }
+      else if (typeof c.v === "number") { if (isFinite(c.v)) cx += '<c r="' + ref + '"' + s + "><v>" + c.v + "</v></c>"; }
+      else if (c.v != null && c.v !== "") cx += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + "</t></is></c>";
+      else if (s) cx += '<c r="' + ref + '"' + s + "/>";
+    });
+    rows += '<row r="' + (ri + 1) + '"' + (sh.ht && sh.ht[ri] ? ' ht="' + sh.ht[ri] + '" customHeight="1"' : "") + ">" + cx + "</row>";
+  });
+  const cols = sh.cols ? "<cols>" + sh.cols.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("") + "</cols>" : "";
+  const pane = sh.freeze ? '<pane xSplit="' + sh.freeze[0] + '" ySplit="' + sh.freeze[1] + '" topLeftCell="' + colL(sh.freeze[0]) + (sh.freeze[1] + 1) + '" activePane="bottomRight" state="frozen"/>' : "";
+  const merges = sh.merges && sh.merges.length ? '<mergeCells count="' + sh.merges.length + '">' + sh.merges.map(m => '<mergeCell ref="' + m + '"/>').join("") + "</mergeCells>" : "";
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"' + (sh.first ? ' tabSelected="1"' : "") + ' showGridLines="0">' + pane + "</sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14\"/>" + cols + "<sheetData>" + rows + "</sheetData>" + merges + '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>';
+}
+const CRCT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRCT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cen = []; let off = 0; const d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), sz = data.length;
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    cen.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz;
+  });
+  const cs = cen.reduce((a, x) => a + x.length, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cen, [new Uint8Array(end.buffer)]), { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+const SAVE_KEY = "nv-sheet-xxviii-v1";
+const SPACES = [["0", "Other (type the illuminance)"], ["100", "Corridor, 100 lux"], ["150", "Stairs, 150 lux"], ["200", "Plant room or store, 200 lux"], ["300", "Reception, classroom or retail, 300 lux"], ["500", "Office, meeting room or kitchen, 500 lux"], ["750", "Technical drawing, 750 lux"]];
+const blank = () => ({ rt: "500", E: "500", L: "", W: "", H: "", hw: "0.75", hs: "0", rc: "70", rw: "50", rf: "20", nl: "1", lm: "", bfac: "1", wl: "", shr: "1.2", cus: "i", cut: "", cu: "", fcc: "1", llm: "f", lld: "0.9", ldd: "0.9", rsd: "0.95", lsf: "1", mf: "0.8", nov: "", pmode: "g", pos: "", dist: "n", nn: "1", lor: "1", it: "", gs: "0.5", px: "", py: "" });
+let S = blank();
+function load() { try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.rt != null) return Object.assign(blank(), o); } } catch (e) {} return null; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+
+/* ---------- zonal cavity method ---------- */
+const cr = (h, L, W) => 5 * h * (L + W) / (L * W);
+function effR(rb, rwl, h, L, W) {
+  if (!(h > 0)) return rb;
+  const A0 = L * W, Aw = 2 * h * (L + W), As = A0 + Aw, avg = (rb * A0 + rwl * Aw) / (A0 + Aw);
+  return avg * A0 / (As - avg * As + avg * A0);
+}
+function parsePairs(t) {
+  const o = [];
+  String(t || "").split(/[,;\n]+/).forEach(p => { const m = p.trim().match(/^(-?[0-9.]+)\s*[:=]\s*(-?[0-9.]+)$/); if (m) { const a = parseFloat(m[1]), b = parseFloat(m[2]); if (isFinite(a) && isFinite(b)) o.push([a, b]); } });
+  return o.sort((x, y) => x[0] - y[0]);
+}
+function interp(tab, x) {
+  if (!tab.length) return { v: NaN };
+  if (x <= tab[0][0]) return { v: tab[0][1], clamp: x < tab[0][0] ? "low" : "" };
+  const n = tab.length;
+  if (x >= tab[n - 1][0]) return { v: tab[n - 1][1], clamp: x > tab[n - 1][0] ? "high" : "" };
+  for (let i = 1; i < n; i++) if (x <= tab[i][0]) { const a = tab[i - 1], b = tab[i]; return { v: b[0] === a[0] ? b[1] : a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]), a, b }; }
+  return { v: NaN };
+}
+function room() {
+  const o = { ok: false, msg: [] }, L = pf(S.L), W = pf(S.W), H = pf(S.H), hw = pf(S.hw) >= 0 ? pf(S.hw) : NaN, hs = pf(S.hs) >= 0 ? pf(S.hs) : NaN;
+  const rc = pf(S.rc), rw = pf(S.rw), rf = pf(S.rf), E = pf(S.E);
+  if (!(L > 0) && !(W > 0) && !(H > 0)) { o.empty = true; return o; }
+  if (!(L > 0)) o.msg.push("Enter the room length.");
+  if (!(W > 0)) o.msg.push("Enter the room width.");
+  if (!(H > 0)) o.msg.push("Enter the floor to ceiling height.");
+  if (!(hw >= 0)) o.msg.push("Enter the working plane height (0 or more).");
+  if (!(hs >= 0)) o.msg.push("Enter the distance of the luminaires below the ceiling (0 or more).");
+  [[rc, "ceiling"], [rw, "wall"], [rf, "floor"]].forEach(r => { if (!(r[0] >= 0 && r[0] <= 100)) o.msg.push("Enter the " + r[1] + " reflectance, 0 to 100 %."); });
+  if (!(E > 0)) o.msg.push("Enter the target illuminance.");
+  if (o.msg.length) return o;
+  const hcc = hs, hrc = H - hs - hw, hfc = hw;
+  if (!(hrc > 0)) { o.msg.push("The luminaires are not above the working plane. The ceiling height must be more than the working plane height plus the luminaire drop."); return o; }
+  Object.assign(o, { L, W, H, hw, hs, hcc, hrc, hfc, rc: rc / 100, rw: rw / 100, rf: rf / 100, E, A: L * W });
+  o.CCR = cr(hcc, L, W); o.RCR = cr(hrc, L, W); o.FCR = cr(hfc, L, W);
+  o.rcc = effR(o.rc, o.rw, hcc, L, W); o.rfc = effR(o.rf, o.rw, hfc, L, W);
+  o.ok = true; return o;
+}
+function zonal(R) {
+  const o = { ok: false, msg: [], warn: [] };
+  const nl = pf(S.nl), lm = pf(S.lm), bf = pf(S.bfac), wl = pf(S.wl), shr = pf(S.shr), fcc = pf(S.fcc), nov = pf(S.nov);
+  if (!R.ok) return o;
+  if (!(nl > 0) || !(lm > 0)) { o.empty = !(lm > 0) && !(pf(S.cu) > 0) && !S.cut; o.msg.push("Enter the lamps in each luminaire and the flux of each lamp."); }
+  if (!(bf > 0)) o.msg.push("Enter the ballast or driver factor, above 0.");
+  let CU = NaN, cuSrc = "", clamp = "", pa, pb, tab = [];
+  if (S.cus === "t") { CU = pf(S.cu); cuSrc = "typed"; if (!(CU > 0 && CU <= 1.2)) { CU = NaN; o.msg.push("Enter the coefficient of utilisation, above 0 and about 1 or less."); } }
+  else { tab = parsePairs(S.cut); cuSrc = "interpolated from the maker’s table"; if (tab.length < 1) o.msg.push("Enter the maker’s CU table as pairs, for example 1:0.78, 2:0.71, 3:0.65, or choose to type the CU."); else { const r = interp(tab, R.RCR); CU = r.v; clamp = r.clamp || ""; pa = r.a; pb = r.b; } }
+  let LLF = NaN, llfTxt = "";
+  if (S.llm === "m") { LLF = pf(S.mf); llfTxt = "typed maintenance factor"; if (!(LLF > 0 && LLF <= 1)) { LLF = NaN; o.msg.push("Enter the maintenance factor, above 0 and up to 1."); } }
+  else { const f = [pf(S.lld), pf(S.ldd), pf(S.rsd), pf(S.lsf)]; if (f.every(x => x > 0 && x <= 1)) { LLF = f[0] * f[1] * f[2] * f[3]; llfTxt = f.map(x => sig(x, 3)).join(" × "); } else o.msg.push("Each light loss factor must be above 0 and up to 1."); }
+  const fc = fcc > 0 ? fcc : (S.fcc === "" ? 1 : NaN);
+  if (!(fc > 0)) o.msg.push("The floor cavity correction factor must be above 0.");
+  if (o.msg.length) return o;
+  const CUe = CU * fc, Phi = nl * lm * bf;
+  const Nreq = R.E * R.A / (Phi * CUe * LLF), target = nov > 0 ? Math.round(nov) : Math.ceil(Nreq - 1e-9);
+  let best = null;
+  for (let c = 1; c <= Math.max(1, target); c++) { const r = Math.ceil(target / c), n = r * c, sx = R.L / c, sy = R.W / r, sc = (n - target) + 8 * Math.abs(Math.log(sx / sy)); if (!best || sc < best.sc) best = { c, r, n, sx, sy, sc }; if (c > 400) break; }
+  const N = best.n, Eavg = N * Phi * CUe * LLF / R.A, Eini = Eavg / LLF;
+  Object.assign(o, { ok: true, nl, lm, bf, wl, shr, fc, CU, CUe, cuSrc, clamp, pa, pb, tab, LLF, llfTxt, Phi, Nreq, target, cols: best.c, rows: best.r, N, Sx: best.sx, Sy: best.sy, Eavg, Eini, nov: nov > 0 });
+  o.SHR = Math.max(o.Sx, o.Sy) / R.hrc; o.edge = [o.Sx / 2, o.Sy / 2];
+  o.LPD = wl > 0 ? N * wl / R.A : NaN; o.LPD100 = wl > 0 ? o.LPD / (Eavg / 100) : NaN; o.kW = wl > 0 ? N * wl / 1000 : NaN;
+  if (clamp) o.warn.push("The room cavity ratio " + fmt(R.RCR, 2) + " is " + (clamp === "high" ? "above" : "below") + " the table you entered. The nearest value is used, so the CU is a guess.");
+  if (R.RCR > 10) o.warn.push("A room cavity ratio above 10 is a very high, narrow room. CU tables stop at 10. Consider a different method.");
+  if (shr > 0 && o.SHR > shr + 1e-9) o.warn.push("The spacing is " + fmt(o.SHR, 2) + " times the height above the working plane, more than the maker’s " + sig(shr, 3) + ". The light will be uneven. Add luminaires or lower them.");
+  if (Eavg < R.E * 0.98) o.warn.push("The layout gives " + fmt(Eavg, 0) + " lux, below the target of " + sig(R.E, 4) + " lux.");
+  if (N > Nreq * 1.15 && !o.nov) o.warn.push("A regular grid needs " + N + " luminaires for " + fmt(Nreq, 1) + " required, so the illuminance is " + fmt(100 * (Eavg / R.E - 1), 0) + " % above the target. A different luminaire may fit the room better.");
+  return o;
+}
+
+/* ---------- point by point ---------- */
+function luminaires(R, Z) {
+  if (S.pmode === "t") {
+    const o = [], bad = [];
+    String(S.pos || "").split(/;/).forEach(p => { const t = p.trim(); if (!t) return; const m = t.split(/[ ,]+/).map(parseFloat); if (m.length >= 2 && isFinite(m[0]) && isFinite(m[1])) o.push([m[0], m[1]]); else bad.push(t); });
+    return { list: o, bad };
+  }
+  if (!Z.ok) return { list: [], bad: [] };
+  const o = []; for (let j = 0; j < Z.rows; j++) for (let i = 0; i < Z.cols; i++) o.push([(i + 0.5) * Z.Sx, (j + 0.5) * Z.Sy]);
+  return { list: o, bad: [] };
+}
+function intensityFn(Z) {
+  const nl = pf(S.nl), lm = pf(S.lm), bf = pf(S.bfac), lor = pf(S.lor);
+  if (S.dist === "t") {
+    const tab = parsePairs(S.it); if (!tab.length) return { err: "Enter the maker’s intensity table as angle:candela pairs, or use the smooth distribution." };
+    return { f: th => { const d = th * 180 / Math.PI; return interp(tab, d).v; }, src: "the maker’s table of " + tab.length + " angles" };
+  }
+  const n = pf(S.nn);
+  if (!(nl > 0 && lm > 0 && bf > 0)) return { err: "Enter the luminaire flux in section 2." };
+  if (!(n >= 0)) return { err: "Enter the exponent n, 0 or more." };
+  if (!(lor > 0 && lor <= 1)) return { err: "Enter the light output ratio, above 0 and up to 1." };
+  const Phi = nl * lm * bf * lor, I0 = Phi * (n + 1) / (2 * Math.PI);
+  return { f: th => I0 * Math.pow(Math.max(0, Math.cos(th)), n), src: "I = I₀ cosⁿθ with n = " + sig(n, 3) + " and I₀ = " + fmt(I0, 0) + " cd", I0, Phi, n };
+}
+const eFrom = (If, dx, dy, h) => { const d2 = dx * dx + dy * dy + h * h, d = Math.sqrt(d2), c = h / d; return If(Math.acos(c)) * c / d2; };
+function pbp(R, Z) {
+  const o = { ok: false, msg: [] };
+  if (!R.ok) return o;
+  const lu = luminaires(R, Z);
+  if (S.pmode === "t" && !S.pos.trim()) { o.empty = true; return o; }
+  if (lu.bad.length) o.msg.push("Could not read: " + lu.bad.join("; ") + ".");
+  if (!lu.list.length) { if (!o.msg.length) o.empty = true; return o; }
+  const inf = intensityFn(Z); if (inf.err) { o.msg.push(inf.err); return o; }
+  const LLF = Z.ok ? Z.LLF : (S.llm === "m" ? pf(S.mf) : pf(S.lld) * pf(S.ldd) * pf(S.rsd) * pf(S.lsf));
+  if (!(LLF > 0)) { o.msg.push("Complete the light loss factor in section 2."); return o; }
+  let gs = pf(S.gs); if (!(gs > 0)) gs = 0.5;
+  let nx = Math.ceil(R.L / gs), ny = Math.ceil(R.W / gs); while (nx * ny > 2500) { gs *= 1.25; nx = Math.ceil(R.L / gs); ny = Math.ceil(R.W / gs); }
+  const h = R.hrc, pts = [], at = (x, y) => { let e = 0; lu.list.forEach(p => { e += eFrom(inf.f, x - p[0], y - p[1], h); }); return e * LLF; };
+  const bd = R.L > 1.2 && R.W > 1.2 ? 0.5 : 0;
+  let mn = Infinity, mx = 0, sum = 0, cnt = 0;
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const x = (i + 0.5) * R.L / nx, y = (j + 0.5) * R.W / ny, e = at(x, y), inn = x >= bd && x <= R.L - bd && y >= bd && y <= R.W - bd; pts.push({ i, j, x, y, e, inn }); if (inn) { mn = Math.min(mn, e); mx = Math.max(mx, e); sum += e; cnt++; } }
+  if (!cnt) { pts.forEach(p => { p.inn = true; mn = Math.min(mn, p.e); mx = Math.max(mx, p.e); sum += p.e; cnt++; }); }
+  const avg = sum / cnt, px = pf(S.px), py = pf(S.py);
+  const pt = isFinite(px) && isFinite(py) && px >= 0 && px <= R.L && py >= 0 && py <= R.W ? { x: px, y: py, e: at(px, py) } : null;
+  const outside = lu.list.filter(p => p[0] < 0 || p[0] > R.L || p[1] < 0 || p[1] > R.W).length;
+  Object.assign(o, { ok: true, bd, cnt, lu: lu.list, inf, LLF, h, nx, ny, gs: Math.max(R.L / nx, R.W / ny), pts, mn, mx, avg, U0: mn / avg, U1: mn / mx, pt, outside, hasPt: isFinite(px) && isFinite(py), ptOut: isFinite(px) && isFinite(py) && !pt });
+  return o;
+}
+
+/* ---------- drawing ---------- */
+const rowsT = (head, rows) => '<table class="cmp"><thead><tr>' + head.map((h, i) => "<th" + (i ? "" : ' class="l"') + ">" + h + "</th>").join("") + "</tr></thead><tbody>" + rows.map(r => "<tr" + (r.k ? ' class="k"' : "") + ">" + r.c.map((c, i) => "<td" + (i ? ' class="v' + (r.bad && r.bad[i] ? " bad" : "") + '"' : ' class="l"') + ">" + c + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+function drawRoom(R) {
+  const w = $("rWarn"); w.innerHTML = ""; w.classList.remove("show");
+  if (R.empty) return;
+  if (!R.ok) { w.innerHTML = R.msg.map(m => "<div>" + m + "</div>").join(""); w.classList.add("show"); }
+}
+function drawZonal(R, Z) {
+  const res = $("zRes"), cs = $("zCases"), wn = $("zWarn"); res.innerHTML = ""; cs.innerHTML = ""; wn.innerHTML = ""; wn.classList.remove("show");
+  $("cutH").textContent = R.ok ? "Read the column for ceiling cavity reflectance about " + fmt(R.rcc * 100, 0) + " %, walls " + fmt(R.rw * 100, 0) + " %, floor cavity 20 %. Your room cavity ratio is " + fmt(R.RCR, 2) + "." : "Enter the room above to see which column to read.";
+  if (!R.ok || Z.empty) return;
+  if (!Z.ok) { wn.innerHTML = Z.msg.map(m => "<div>" + m + "</div>").join(""); wn.classList.toggle("show", Z.msg.length > 0); return; }
+  let h = box("Luminaires needed", grp(Z.Nreq, 1), "calculated, rounded up to " + Z.target);
+  h += box("Layout", Z.cols + " × " + Z.rows, Z.N + " luminaires · " + fmt(Z.Sx, 2) + " m × " + fmt(Z.Sy, 2) + " m apart", "key");
+  h += box("Average maintained illuminance", fmt(Z.Eavg, 0), "lux · " + fmt(Z.Eini, 0) + " lux when new");
+  if (Z.wl > 0) h += box("Installed power", fmt(Z.LPD, 1), "W/m² · " + fmt(Z.LPD100, 2) + " W/m² per 100 lux · " + fmt(Z.kW, 2) + " kW");
+  res.innerHTML = h;
+  const rows = [
+    { c: ["Room cavity ratio, ceiling, room, floor", fmt(R.CCR, 2) + ", " + fmt(R.RCR, 2) + ", " + fmt(R.FCR, 2)] },
+    { c: ["Effective reflectance, ceiling cavity", fmt(R.rcc * 100, 1) + " %"] },
+    { c: ["Effective reflectance, floor cavity", fmt(R.rfc * 100, 1) + " %"] },
+    { c: ["Coefficient of utilisation (" + esc(Z.cuSrc) + ")", fmt(Z.CU, 3) + (Z.fc !== 1 ? " × " + fmt(Z.fc, 3) + " = " + fmt(Z.CUe, 3) : "")] },
+    { c: ["Light loss factor (" + esc(Z.llfTxt) + ")", fmt(Z.LLF, 3)] },
+    { c: ["Flux of one luminaire", grp(Z.Phi, 0) + " lm"] },
+    { c: ["Luminaires needed, E × A ÷ (Φ × CU × LLF)", fmt(Z.Nreq, 2)] },
+    { k: 1, c: ["Luminaires used" + (Z.nov ? " (your number)" : ""), Z.N + " (" + Z.cols + " along the length, " + Z.rows + " along the width)"] },
+    { c: ["Spacing, along and across", fmt(Z.Sx, 2) + " m, " + fmt(Z.Sy, 2) + " m"] },
+    { c: ["Spacing to height above the working plane", fmt(Z.SHR, 2) + (Z.shr > 0 ? " (maker’s limit " + sig(Z.shr, 3) + ")" : "")], bad: [0, Z.shr > 0 && Z.SHR > Z.shr + 1e-9] },
+    { c: ["Nearest wall to the first luminaire", fmt(Z.edge[0], 2) + " m, " + fmt(Z.edge[1], 2) + " m"] }
+  ];
+  cs.innerHTML = '<div class="case"><h4>Zonal cavity method</h4><div class="cb">' + rowsT(["Step", "Result"], rows) + "</div></div>";
+  wn.innerHTML = Z.warn.map(m => "<div>" + m + "</div>").join(""); wn.classList.toggle("show", Z.warn.length > 0);
+}
+function colour(t) { const a = Math.max(0, Math.min(1, t)); return "rgb(" + Math.round(250 - a * 74) + "," + Math.round(238 - a * 142) + "," + Math.round(214 - a * 196) + ")"; }
+function drawPbp(R, Z, P) {
+  const res = $("pRes"), pl = $("pPlan"), nt = $("pNote"), wn = $("pWarn"); res.innerHTML = ""; pl.innerHTML = ""; nt.innerHTML = ""; nt.className = "perm"; wn.innerHTML = ""; wn.classList.remove("show");
+  $("posF").hidden = S.pmode !== "t"; $("nnF").hidden = $("lorF").hidden = S.dist !== "n"; $("itF").hidden = S.dist !== "t";
+  if (!R.ok) return;
+  if (P.empty) { nt.innerHTML = "Complete section 2 for the grid layout, or type luminaire positions, to see the plan."; return; }
+  if (!P.ok) { wn.innerHTML = P.msg.map(m => "<div>" + m + "</div>").join(""); wn.classList.add("show"); return; }
+  const warns = [];
+  let h = box("Average, direct light", fmt(P.avg, 0), "lux · task area" + (P.bd > 0 ? " (" + fmt(P.bd, 1) + " m from the walls left out)" : "") + ", " + P.cnt + " points");
+  h += box("Lowest", fmt(P.mn, 0), "lux"); h += box("Highest", fmt(P.mx, 0), "lux");
+  h += box("Uniformity, lowest ÷ average", fmt(P.U0, 2), "0.6 or more is usual for the task area", P.U0 >= 0.6 ? "ok" : "bad");
+  if (P.pt) h += box("Your point (" + sig(P.pt.x, 4) + ", " + sig(P.pt.y, 4) + ")", fmt(P.pt.e, 0), "lux", "key");
+  res.innerHTML = h;
+  const sc = 640 / R.L, Wd = R.L * sc, Hd = R.W * sc, m = 34, cw = Wd / P.nx, ch = Hd / P.ny;
+  let svg = '<svg viewBox="0 0 ' + (Wd + 2 * m) + " " + (Hd + 2 * m) + '" role="img" aria-label="Plan of the room with the illuminance at each point"><g transform="translate(' + m + "," + m + ')">';
+  P.pts.forEach(p => { svg += '<rect x="' + (p.i * cw).toFixed(1) + '" y="' + (p.j * ch).toFixed(1) + '" width="' + (cw + 0.4).toFixed(1) + '" height="' + (ch + 0.4).toFixed(1) + '" fill="' + colour((p.e - P.mn) / Math.max(1e-9, P.mx - P.mn)) + '"><title>' + fmt(p.x, 2) + ", " + fmt(p.y, 2) + " m: " + fmt(p.e, 0) + " lux</title></rect>"; });
+  svg += '<rect x="0" y="0" width="' + Wd + '" height="' + Hd + '" fill="none" stroke="#1a1714" stroke-width="2"/>';
+  if (P.bd > 0) svg += '<rect x="' + (P.bd * sc) + '" y="' + (P.bd * sc) + '" width="' + (Wd - 2 * P.bd * sc) + '" height="' + (Hd - 2 * P.bd * sc) + '" fill="none" stroke="#1a1714" stroke-width="1" stroke-dasharray="5 4"/>';
+  P.lu.forEach(p => { svg += '<circle cx="' + (p[0] * sc).toFixed(1) + '" cy="' + (p[1] * sc).toFixed(1) + '" r="5" fill="#fff" stroke="#1a1714" stroke-width="1.5"/>'; });
+  if (P.pt) svg += '<path d="M' + (P.pt.x * sc - 7) + " " + (P.pt.y * sc) + "h14M" + (P.pt.x * sc) + " " + (P.pt.y * sc - 7) + 'v14" stroke="#9b1c1c" stroke-width="2.5"/><text x="' + (P.pt.x * sc + 9) + '" y="' + (P.pt.y * sc - 8) + '" font-size="13" font-weight="700" fill="#9b1c1c">' + fmt(P.pt.e, 0) + " lux</text>";
+  svg += '<text x="' + (Wd / 2) + '" y="-12" text-anchor="middle" font-size="13">' + fmt(R.L, 2) + ' m</text><text transform="translate(-14,' + (Hd / 2) + ') rotate(-90)" text-anchor="middle" font-size="13">' + fmt(R.W, 2) + " m</text></g></svg>";
+  pl.innerHTML = svg + '<div class="lg segw"><span><i style="background:' + colour(0) + '"></i>lowest, ' + fmt(P.mn, 0) + ' lux</span><span><i style="background:' + colour(1) + '"></i>highest, ' + fmt(P.mx, 0) + ' lux</span><span>○ luminaire</span>' + (P.bd > 0 ? "<span>dashed line: task area</span>" : "") + "</div>";
+  let t = "Intensity: " + esc(P.inf.src) + ". Light loss factor " + fmt(P.LLF, 3) + " applied, so the figures are maintained. ";
+  if (Z.ok) t += "The direct light averages " + fmt(P.avg / Z.Eavg * 100, 0) + " % of the zonal cavity figure of " + fmt(Z.Eavg, 0) + " lux; the rest comes from light reflected by the room. ";
+  t += "Direct light only: reflected light, daylight and obstructions are left out.";
+  nt.innerHTML = t;
+  if (P.U0 < 0.6) warns.push("The lowest point in the task area is " + fmt(P.U0 * 100, 0) + " % of the average, below 60 %. The light is uneven: bring the luminaires closer or lower the spacing.");
+  if (P.outside > 0) warns.push(P.outside + " luminaire" + (P.outside > 1 ? "s are" : " is") + " outside the room.");
+  if (P.ptOut) warns.push("Your point is outside the room.");
+  wn.innerHTML = warns.map(x => "<div>" + x + "</div>").join(""); wn.classList.toggle("show", warns.length > 0);
+}
+
+/* ---------- pictures ---------- */
+function drawPics(R, Z, P) {
+  const v = (x, d, u) => isFinite(x) ? fmt(x, d) + (u || "") : "?";
+  const Hn = R.ok ? R.H : (pf(S.H) > 0 ? pf(S.H) : 3), hwn = pf(S.hw) >= 0 ? pf(S.hw) : 0.75, hsn = pf(S.hs) >= 0 ? pf(S.hs) : 0;
+  const okH = Hn > hwn + hsn, H = okH ? Hn : 3, hw = okH ? hwn : 0.75, hs = okH ? hsn : 0;
+  const arrow = '<defs><marker id="lar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/></marker></defs>';
+  /* A: section */
+  const top = 46, hpx = 214, sy = hpx / H, yf = top + hpx, yl = top + hs * sy, yw = yf - hw * sy, x0 = 100, x1 = 380;
+  let a = arrow + '<rect class="cc" x="' + x0 + '" y="' + top + '" width="' + (x1 - x0) + '" height="' + Math.max(0, yl - top) + '"/><rect class="fc" x="' + x0 + '" y="' + yw + '" width="' + (x1 - x0) + '" height="' + (yf - yw) + '"/>';
+  a += '<rect class="sl" x="' + (x0 - 8) + '" y="' + (top - 12) + '" width="' + (x1 - x0 + 16) + '" height="12"/><rect class="sl" x="' + (x0 - 8) + '" y="' + yf + '" width="' + (x1 - x0 + 16) + '" height="10"/><path class="ln" d="M' + x0 + " " + top + "V" + yf + "M" + x1 + " " + top + "V" + yf + 'M' + (x0 - 8) + " " + top + "H" + (x1 + 8) + "M" + (x0 - 8) + " " + yf + "H" + (x1 + 8) + '"/>';
+  [150, 240, 330].forEach(x => { if (hs > 0) a += '<path class="th" d="M' + x + " " + top + "V" + yl + '"/>'; a += '<rect x="' + (x - 18) + '" y="' + yl + '" width="36" height="7" fill="#fffdf7" stroke="#1a1a1a" stroke-width="1.6"/><path class="dash" d="M' + (x - 18) + " " + (yl + 7) + "L" + (x - 40) + " " + yw + "M" + (x + 18) + " " + (yl + 7) + "L" + (x + 40) + " " + yw + '"/>'; });
+  a += '<path class="dash" d="M' + x0 + " " + yl + "H" + x1 + '"/><path class="rd" d="M' + x0 + " " + yw + "H" + x1 + '"/><text class="rt" x="' + (x0 + 6) + '" y="' + (yw - 5) + '">working plane</text>';
+  a += '<text class="mu" x="' + (x0 + 6) + '" y="' + (yl + (yw - yl) / 2 + 4) + '">room cavity</text>';
+  a += '<text class="tx b" x="' + ((x0 + x1) / 2) + '" y="' + (top - 20) + '" text-anchor="middle">ceiling ρ = ' + v(pf(S.rc), 0, " %") + '</text><text class="tx b" x="' + ((x0 + x1) / 2) + '" y="' + (yf + 28) + '" text-anchor="middle">floor ρ = ' + v(pf(S.rf), 0, " %") + '</text><text class="tx b" transform="translate(' + (x0 + 14) + "," + (top + 4) + ')" font-size="0"></text>';
+  a += '<text class="tx b" x="' + ((x0 + x1) / 2) + '" y="' + ((yl + yw) / 2 + 22) + '" text-anchor="middle">walls ρ = ' + v(pf(S.rw), 0, " %") + '</text><text class="mu" x="' + (x1 - 20) + '" y="' + (yl + 22) + '" text-anchor="end">luminaires</text>';
+  a += '<path class="ln" marker-start="url(#lar)" marker-end="url(#lar)" d="M62 ' + top + "V" + yf + '"/><text class="tx b" transform="translate(50,' + ((top + yf) / 2) + ') rotate(-90)" text-anchor="middle">H = ' + v(pf(S.H), 2, " m") + "</text>";
+  const br = (ya, yb, nm, hh, cr1) => '<path class="ln" marker-start="url(#lar)" marker-end="url(#lar)" d="M412 ' + ya + "V" + Math.max(ya + 0.1, yb) + '"/><text class="tx b" x="424" y="' + ((ya + yb) / 2 - 1) + '">' + nm + " = " + hh + '</text><text class="mu" x="424" y="' + ((ya + yb) / 2 + 13) + '">' + cr1 + "</text>";
+  a += br(top, yl, "h_cc", v(pf(S.hs), 2, " m"), R.ok ? "CCR " + fmt(R.CCR, 2) : "ceiling cavity") + br(yl, yw, "h_rc", R.ok ? fmt(R.hrc, 2) + " m" : "?", R.ok ? "RCR " + fmt(R.RCR, 2) : "room cavity") + br(yw, yf, "h_fc", v(pf(S.hw), 2, " m"), R.ok ? "FCR " + fmt(R.FCR, 2) : "floor cavity");
+  a += '<text class="mu" x="' + ((x0 + x1) / 2) + '" y="' + (yf + 44) + '" text-anchor="middle">luminaires at 1 m spacing are drawn only to show their position</text>';
+  $("figA").innerHTML = a.replace('<text class="mu" x="' + ((x0 + x1) / 2) + '" y="' + (yf + 44) + '" text-anchor="middle">luminaires at 1 m spacing are drawn only to show their position</text>', "");
+  $("capA").innerHTML = "The luminaires sit " + (hs > 0 ? "<b>" + fmt(hs, 2) + " m</b> below the ceiling" : "<b>in the ceiling</b> (ceiling cavity 0)") + ". The room cavity runs from the luminaires down to the working plane. The ceiling and floor cavities are given an <b>effective reflectance</b> that allows for their walls" + (R.ok ? ": ceiling cavity " + fmt(R.rcc * 100, 1) + " %, floor cavity " + fmt(R.rfc * 100, 1) + " %" : "") + ". A cavity ratio is 5 h (L + W) ÷ (L W): the taller the cavity compared with the floor, the larger it is.";
+  /* B: plan */
+  const Ln = R.ok ? R.L : (pf(S.L) > 0 ? pf(S.L) : 10), Wn = R.ok ? R.W : (pf(S.W) > 0 ? pf(S.W) : 8);
+  const cols = Z.ok ? Z.cols : 5, rows = Z.ok ? Z.rows : 4, k = Math.min(380 / Ln, 190 / Wn), wp = Ln * k, hp = Wn * k, ox = 84, oy = 56;
+  let b = arrow + '<rect x="' + ox + '" y="' + oy + '" width="' + wp + '" height="' + hp + '" fill="#fffdf7" stroke="#1a1a1a" stroke-width="2"/>';
+  for (let i = 1; i < cols; i++) b += '<path class="dash" d="M' + (ox + wp * i / cols) + " " + oy + "v" + hp + '"/>';
+  for (let j = 1; j < rows; j++) b += '<path class="dash" d="M' + ox + " " + (oy + hp * j / rows) + "h" + wp + '"/>';
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) b += '<circle cx="' + (ox + wp * (i + 0.5) / cols) + '" cy="' + (oy + hp * (j + 0.5) / rows) + '" r="5" fill="#fffdf7" stroke="#1a1a1a" stroke-width="1.6"/>';
+  const sx = wp / cols, syy = hp / rows;
+  b += '<path class="ln" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + ox + " " + (oy - 22) + "H" + (ox + wp) + '"/><text class="tx b" x="' + (ox + wp / 2) + '" y="' + (oy - 28) + '" text-anchor="middle">L = ' + v(pf(S.L), 2, " m") + "</text>";
+  b += '<path class="ln" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + (ox - 22) + " " + oy + "V" + (oy + hp) + '"/><text class="tx b" transform="translate(' + (ox - 30) + "," + (oy + hp / 2) + ') rotate(-90)" text-anchor="middle">W = ' + v(pf(S.W), 2, " m") + "</text>";
+  b += '<path class="rd" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + (ox + sx * 0.5) + " " + (oy + hp + 18) + "H" + (ox + sx * 1.5) + '"/><text class="rt" x="' + (ox + sx * 1.5 + 8) + '" y="' + (oy + hp + 22) + '">S_x = ' + (Z.ok ? fmt(Z.Sx, 2) + " m" : "L ÷ columns") + "</text>";
+  b += '<path class="rd" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + (ox + wp + 18) + " " + (oy + syy * 0.5) + "V" + (oy + syy * 1.5) + '"/><text class="rt" x="' + (ox + wp + 26) + '" y="' + (oy + syy + 4) + '">S_y = ' + (Z.ok ? fmt(Z.Sy, 2) + " m" : "W ÷ rows") + "</text>";
+  b += '<path class="th" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + ox + " " + (oy + hp + 18) + "H" + (ox + sx * 0.5) + '"/><text class="mu" x="' + (ox + sx * 0.25) + '" y="' + (oy + hp + 34) + '" text-anchor="middle">S_x/2</text>';
+  b += '<circle cx="' + ox + '" cy="' + oy + '" r="3.5" fill="#9b1c1c"/><text class="rt" x="' + (ox + 8) + '" y="' + (oy - 6) + '" font-size="11">(0, 0)</text><text class="mu" x="' + (ox + wp) + '" y="' + (oy + hp + 52) + '" text-anchor="end">x is measured along the length, y along the width</text>';
+  $("figB").innerHTML = b;
+  $("capB").innerHTML = (Z.ok ? "<b>" + Z.cols + " luminaires along the length and " + Z.rows + " along the width</b> (" + Z.N + " in all). " : "The luminaires are placed in a regular grid, one at the centre of each equal part of the room. ") + "The distance from a luminaire to the wall is half the spacing. To type your own positions in section 3, measure x along the length and y along the width from the corner marked (0, 0).";
+  /* C: geometry */
+  const hh = R.ok ? R.hrc : 2.25, n = pf(S.nn) >= 0 ? pf(S.nn) : 1, lx = 190, ly = 48, wpY = 238, ang = 40 * Math.PI / 180, dpx = wpY - ly, px = lx + dpx * Math.tan(ang), lob = 62;
+  let c = arrow + '<path class="rd" d="M40 ' + wpY + "H520" + '"/><text class="rt" x="46" y="' + (wpY + 18) + '">working plane</text>';
+  let lp = ""; for (let t = -90; t <= 90; t += 3) { const r = lob * Math.pow(Math.max(0, Math.cos(t * Math.PI / 180)), n), X = lx + r * Math.sin(t * Math.PI / 180), Y = ly + r * Math.cos(t * Math.PI / 180); lp += (t === -90 ? "M" : "L") + X.toFixed(1) + " " + Y.toFixed(1); }
+  c += '<path d="' + lp + 'Z" fill="#efe3c4" stroke="#8a7f6c" stroke-width="1.2"/><rect x="' + (lx - 22) + '" y="' + (ly - 8) + '" width="44" height="8" fill="#fffdf7" stroke="#1a1a1a" stroke-width="1.6"/>';
+  c += '<path class="dash" d="M' + lx + " " + ly + "V" + wpY + '"/><path class="ln" d="M' + lx + " " + ly + "L" + px + " " + wpY + '"/><path class="th" d="M' + lx + " " + (ly + 36) + "A36 36 0 0 0 " + (lx + 36 * Math.sin(ang)) + " " + (ly + 36 * Math.cos(ang)) + '"/><text class="tx b" x="' + (lx + 12) + '" y="' + (ly + 52) + '">θ</text>';
+  const rI = lob * Math.pow(Math.cos(ang), n);
+  c += '<circle cx="' + (lx + rI * Math.sin(ang)) + '" cy="' + (ly + rI * Math.cos(ang)) + '" r="3.5" fill="#9b1c1c"/><text class="rt" x="' + (lx + rI * Math.sin(ang) + 8) + '" y="' + (ly + rI * Math.cos(ang) - 4) + '">I(θ)</text>';
+  c += '<path class="ln" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + (lx - 40) + " " + ly + "V" + wpY + '"/><text class="tx b" transform="translate(' + (lx - 48) + "," + ((ly + wpY) / 2) + ') rotate(-90)" text-anchor="middle">h = ' + (R.ok ? fmt(hh, 2) + " m" : "luminaire height") + "</text>";
+  c += '<text class="tx b" x="' + ((lx + px) / 2 + 8) + '" y="' + ((ly + wpY) / 2 - 4) + '">d</text><path class="ln" marker-end="url(#lar)" d="M' + px + " " + (wpY - 56) + "V" + (wpY - 4) + '"/><circle cx="' + px + '" cy="' + wpY + '" r="4" fill="#9b1c1c"/><text class="tx b" x="' + (px + 10) + '" y="' + (wpY - 40) + '">E</text><text class="tx" x="' + (px + 10) + '" y="' + (wpY + 18) + '">point P</text>';
+  c += '<path class="th" marker-start="url(#lar)" marker-end="url(#lar)" d="M' + lx + " " + (wpY + 26) + "H" + px + '"/><text class="mu" x="' + ((lx + px) / 2) + '" y="' + (wpY + 42) + '" text-anchor="middle">horizontal distance from the luminaire</text>';
+  c += '<text class="tx b" x="330" y="64">E = I(θ) · cos θ ÷ d²</text><text class="mu" x="330" y="82">cos θ = h ÷ d,  d² = x² + y² + h²</text><text class="mu" x="330" y="100">I(θ) = I₀ cos' + (n === 1 ? "" : "^" + sig(n, 3)) + ' θ  (n = ' + sig(n, 3) + ")</text>";
+  $("figC").innerHTML = c;
+  $("capC").innerHTML = "The shaded shape is how the luminaire throws its light: its length in any direction is the intensity <b>I(θ)</b> in that direction, in candela. A larger exponent n makes it narrower. The light at point P falls with the square of the distance <b>d</b>, and a slanting ray lights the plane less, by <b>cos θ</b>. The sheet adds the light from every luminaire to every point.";
+  /* D: CU chart */
+  const X0 = 64, X1 = 520, Y0 = 20, Y1 = 214, tab = Z.tab || [], cuMax = 1;
+  const px2 = r => X0 + (X1 - X0) * Math.min(r, 10) / 10, py2 = cu => Y1 - (Y1 - Y0) * Math.min(Math.max(cu, 0), cuMax) / cuMax;
+  let d = arrow + '<path class="th" d="M' + X0 + " " + Y0 + "V" + Y1 + "H" + X1 + '"/>';
+  for (let r = 0; r <= 10; r += 2) d += '<text class="mu" x="' + px2(r) + '" y="' + (Y1 + 16) + '" text-anchor="middle">' + r + "</text>";
+  for (let q = 0; q <= 1.001; q += 0.25) d += '<path class="dash" d="M' + X0 + " " + py2(q) + "H" + X1 + '"/><text class="mu" x="' + (X0 - 6) + '" y="' + (py2(q) + 4) + '" text-anchor="end">' + fmt(q, 2) + "</text>";
+  d += '<text class="tx b" x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 36) + '" text-anchor="middle">room cavity ratio RCR</text><text class="tx b" transform="translate(16,' + ((Y0 + Y1) / 2) + ') rotate(-90)" text-anchor="middle">CU</text>';
+  if (tab.length) { d += '<path d="' + tab.map((p, i) => (i ? "L" : "M") + px2(p[0]).toFixed(1) + " " + py2(p[1]).toFixed(1)).join("") + '" fill="none" stroke="#8a7f6c" stroke-width="2"/>'; tab.forEach(p => { d += '<circle cx="' + px2(p[0]) + '" cy="' + py2(p[1]) + '" r="3" fill="#fffdf7" stroke="#1a1a1a" stroke-width="1.4"/>'; }); }
+  if (R.ok && Z.ok) { const X = px2(R.RCR), Y = py2(Z.CU); d += '<path class="rd" stroke-dasharray="5 3" d="M' + X + " " + Y1 + "V" + Y + "H" + X0 + '"/><circle cx="' + X + '" cy="' + Y + '" r="5.5" fill="#9b1c1c"/><text class="rt" x="' + (X + 10) + '" y="' + (Y - 8) + '">RCR ' + fmt(R.RCR, 2) + " → CU " + fmt(Z.CU, 3) + "</text>"; }
+  else if (!tab.length) d += '<text class="mu" x="' + ((X0 + X1) / 2) + '" y="' + ((Y0 + Y1) / 2) + '" text-anchor="middle">Enter the room and the maker’s CU table to see your point</text>';
+  $("figD").innerHTML = d;
+  $("capD").innerHTML = "The maker’s table gives the CU for whole numbers of the room cavity ratio (the circles). Your room falls between two of them, so the sheet reads along the line" + (R.ok ? ": <b>RCR " + fmt(R.RCR, 2) + "</b>" + (Z.ok ? ", <b>CU " + fmt(Z.CU, 3) + "</b>" : "") + ". " : ". ") + "A taller or narrower room has a larger ratio and a lower CU, because more of the light is lost to the walls. Use the maker’s column for ceiling cavity reflectance " + (R.ok ? "about <b>" + fmt(R.rcc * 100, 0) + " %</b>" : "") + ", walls " + v(pf(S.rw), 0, " %") + " and floor cavity 20 %.";
+}
+
+/* ---------- working ---------- */
+function workZ(R, Z) {
+  const s = [], e = "Fill in sections 1 and 2 to see the working.";
+  if (!R.ok) { MX.steps($("workZ"), s, e); return; }
+  s.push({ t: "Cavity heights", m: ["$h$_{cc} = " + sig(R.hs, 4) + " m (luminaire to ceiling)", "$h$_{rc} = " + sig(R.H, 4) + " − " + sig(R.hs, 4) + " − " + sig(R.hw, 4) + " = **" + sig(R.hrc, 4) + " m**", "$h$_{fc} = " + sig(R.hw, 4) + " m (working plane to floor)"] });
+  s.push({ t: "Cavity ratios", m: ["$CR$ = @frac{5 $h$ ($L$ + $W$)}{$L$ $W$}, with $L$ = " + sig(R.L, 4) + " m, $W$ = " + sig(R.W, 4) + " m", "$CCR$ = **" + fmt(R.CCR, 3) + "**, $RCR$ = **" + fmt(R.RCR, 3) + "**, $FCR$ = **" + fmt(R.FCR, 3) + "**"] });
+  const ef = (nm, h, rb, re) => { if (!(h > 0)) return nm + ": no cavity, so the effective reflectance is the surface reflectance, **" + fmt(re * 100, 1) + " %**"; const A0 = R.L * R.W, Aw = 2 * h * (R.L + R.W), avg = (rb * A0 + R.rw * Aw) / (A0 + Aw); return nm + ": $A$_{0} = " + fmt(A0, 2) + ", $A$_{w} = " + fmt(Aw, 2) + " m², mean reflectance " + fmt(avg * 100, 1) + " %, effective = **" + fmt(re * 100, 1) + " %**"; };
+  s.push({ t: "Effective cavity reflectances", m: [ef("Ceiling cavity", R.hcc, R.rc, R.rcc), ef("Floor cavity", R.hfc, R.rf, R.rfc)] });
+  if (Z.ok) {
+    s.push({ t: "Coefficient of utilisation", m: ["From the " + Z.cuSrc + " at $RCR$ = " + fmt(R.RCR, 3) + ": $CU$ = **" + fmt(Z.CU, 3) + "**" + (Z.fc !== 1 ? ", × floor cavity correction " + fmt(Z.fc, 3) + " = **" + fmt(Z.CUe, 3) + "**" : "")] });
+    s.push({ t: "Light loss factor", m: ["$LLF$ = " + Z.llfTxt + " = **" + fmt(Z.LLF, 3) + "**"] });
+    s.push({ t: "Number of luminaires", m: ["$Φ$ = " + sig(Z.nl, 3) + " × " + sig(Z.lm, 5) + " × " + sig(Z.bf, 3) + " = " + grp(Z.Phi, 0) + " lm", "$N$ = @frac{" + sig(R.E, 4) + " × " + fmt(R.A, 2) + "}{" + grp(Z.Phi, 0) + " × " + fmt(Z.CUe, 3) + " × " + fmt(Z.LLF, 3) + "} = **" + fmt(Z.Nreq, 2) + "**, so " + Z.target] });
+    s.push({ t: "Layout and average illuminance", m: [Z.cols + " × " + Z.rows + " = **" + Z.N + "** luminaires, " + fmt(Z.Sx, 2) + " m × " + fmt(Z.Sy, 2) + " m apart", "$E$_{avg} = @frac{" + Z.N + " × " + grp(Z.Phi, 0) + " × " + fmt(Z.CUe, 3) + " × " + fmt(Z.LLF, 3) + "}{" + fmt(R.A, 2) + "} = **" + fmt(Z.Eavg, 1) + " lux**"] });
+  }
+  MX.steps($("workZ"), s, e);
+}
+function workP(R, Z, P) {
+  const s = [], e = "Fill in section 3 to see the working.";
+  if (!P.ok) { MX.steps($("workP"), s, e); return; }
+  s.push({ t: "Luminaire intensity", m: [P.inf.src, "Luminaires: " + P.lu.length + ", height above the working plane $h$ = **" + fmt(P.h, 2) + " m**"] });
+  const p0 = P.pt || P.pts.reduce((a, b) => b.e < a.e ? b : a, P.pts[0]);
+  const lines = []; let tot = 0;
+  P.lu.slice(0, 6).forEach(l => { const dx = p0.x - l[0], dy = p0.y - l[1], d = Math.sqrt(dx * dx + dy * dy + P.h * P.h), c = P.h / d, I = P.inf.f(Math.acos(c)), e1 = I * c / (d * d); lines.push("From (" + fmt(l[0], 2) + ", " + fmt(l[1], 2) + "): $d$ = " + fmt(d, 3) + " m, cos θ = " + fmt(c, 3) + ", $I$ = " + fmt(I, 1) + " cd, $E$ = " + fmt(e1, 2) + " lux"); });
+  P.lu.forEach(l => { const dx = p0.x - l[0], dy = p0.y - l[1], d = Math.sqrt(dx * dx + dy * dy + P.h * P.h); tot += P.inf.f(Math.acos(P.h / d)) * (P.h / d) / (d * d); });
+  s.push({ t: (P.pt ? "Your point" : "The darkest point") + " (" + fmt(p0.x, 2) + ", " + fmt(p0.y, 2) + ")", m: lines.concat(P.lu.length > 6 ? ["… and " + (P.lu.length - 6) + " more luminaires"] : []).concat(["Sum = " + fmt(tot, 2) + " lux, × $LLF$ " + fmt(P.LLF, 3) + " = **" + fmt(tot * P.LLF, 1) + " lux**"]) });
+  s.push({ t: "Over all the points", m: ["Lowest **" + fmt(P.mn, 1) + "**, average **" + fmt(P.avg, 1) + "**, highest **" + fmt(P.mx, 1) + " lux**", "Uniformity = " + fmt(P.mn, 1) + " ÷ " + fmt(P.avg, 1) + " = **" + fmt(P.U0, 3) + "**"] });
+  MX.steps($("workP"), s, e);
+}
+
+/* ---------- print table ---------- */
+function drawPrint(R, Z, P) {
+  const r = [], sec = t => r.push('<tr class="eqr"><td class="l" colspan="2"><b>' + t + "</b></td></tr>"), row = (a, b, bad) => r.push('<tr><td class="l">' + a + '</td><td class="l' + (bad ? " bad" : "") + '">' + b + "</td></tr>");
+  if (R.ok) { sec("Room");
+    row("Size", fmt(R.L, 2) + " m × " + fmt(R.W, 2) + " m, ceiling " + fmt(R.H, 2) + " m, working plane " + fmt(R.hw, 2) + " m, luminaires " + fmt(R.hs, 2) + " m below the ceiling");
+    row("Reflectances", "ceiling " + fmt(R.rc * 100, 0) + " %, walls " + fmt(R.rw * 100, 0) + " %, floor " + fmt(R.rf * 100, 0) + " %");
+    row("Target", fmt(R.E, 0) + " lux maintained");
+    row("Cavity ratios", "ceiling " + fmt(R.CCR, 2) + ", room " + fmt(R.RCR, 2) + ", floor " + fmt(R.FCR, 2)); }
+  if (Z.ok) { sec("Zonal cavity method");
+    row("Luminaire", Z.nl + " × " + sig(Z.lm, 5) + " lm × " + sig(Z.bf, 3) + " = " + grp(Z.Phi, 0) + " lm" + (Z.wl > 0 ? ", " + sig(Z.wl, 4) + " W" : ""));
+    row("CU and light loss factor", "CU " + fmt(Z.CUe, 3) + " (" + esc(Z.cuSrc) + "), LLF " + fmt(Z.LLF, 3));
+    row("Luminaires needed", fmt(Z.Nreq, 2));
+    row("<b>Layout</b>", "<b>" + Z.cols + " × " + Z.rows + " = " + Z.N + " luminaires</b>, " + fmt(Z.Sx, 2) + " m × " + fmt(Z.Sy, 2) + " m apart");
+    row("Average maintained illuminance", fmt(Z.Eavg, 0) + " lux (" + fmt(Z.Eini, 0) + " lux when new)");
+    row("Spacing to height", fmt(Z.SHR, 2) + (Z.shr > 0 ? " against " + sig(Z.shr, 3) : ""), Z.shr > 0 && Z.SHR > Z.shr + 1e-9);
+    if (Z.wl > 0) row("Installed power", fmt(Z.LPD, 1) + " W/m², " + fmt(Z.LPD100, 2) + " W/m² per 100 lux, " + fmt(Z.kW, 2) + " kW"); }
+  if (P.ok) { sec("Point by point, direct light");
+    row("Intensity", esc(P.inf.src));
+    row("Lowest, average, highest, task area", fmt(P.mn, 0) + ", " + fmt(P.avg, 0) + ", " + fmt(P.mx, 0) + " lux");
+    row("Uniformity", fmt(P.U0, 2), P.U0 < 0.6);
+    if (P.pt) row("Point (" + sig(P.pt.x, 4) + ", " + sig(P.pt.y, 4) + ")", fmt(P.pt.e, 0) + " lux"); }
+  $("prT").innerHTML = r.length ? "<tbody>" + r.join("") + "</tbody>" : '<tbody><tr><td class="l">Nothing to show yet. Fill in a section above.</td></tr></tbody>';
+  $("prMeta").textContent = "Zonal cavity and point-by-point methods; see the notes for their limits";
+}
+
+/* ---------- update ---------- */
+function syncInputs() {
+  document.querySelectorAll("[data-s]").forEach(e => { if (document.activeElement !== e) e.value = S[e.dataset.s]; });
+  $("cutF").hidden = S.cus !== "i"; $("cuF").hidden = S.cus !== "t";
+  document.querySelectorAll(".llf").forEach(e => { e.hidden = S.llm === "m"; }); $("mfF").hidden = S.llm !== "m";
+  $("rt").value = SPACES.some(x => x[0] === S.rt) ? S.rt : "0";
+}
+function update() {
+  syncInputs();
+  const R = room(), Z = zonal(R), P = pbp(R, Z);
+  drawRoom(R); drawZonal(R, Z); drawPbp(R, Z, P); drawPics(R, Z, P); drawPrint(R, Z, P); workZ(R, Z); workP(R, Z, P); save();
+  window.__lt = { R, Z, P };
+}
+
+/* ---------- examples ---------- */
+function ex1() { S = Object.assign(blank(), { rt: "500", E: "500", L: "10", W: "8", H: "3", hw: "0.75", hs: "0", rc: "70", rw: "50", rf: "20", nl: "1", lm: "3400", bfac: "1", wl: "32", shr: "1.2", cus: "i", cut: "1:0.88, 2:0.82, 3:0.76, 4:0.70, 5:0.65, 6:0.60, 7:0.56, 8:0.52, 9:0.49, 10:0.46", lld: "0.9", ldd: "0.9", rsd: "0.95", lsf: "1", nn: "1", lor: "1", px: "5", py: "4" }); update(); }
+function ex2() { S = Object.assign(blank(), { rt: "300", E: "300", L: "12", W: "6", H: "4", hw: "0.75", hs: "1", rc: "70", rw: "50", rf: "20", nl: "2", lm: "3350", bfac: "0.88", wl: "70", shr: "1.5", cus: "i", cut: "1:0.80, 2:0.72, 3:0.65, 4:0.59, 5:0.54, 6:0.49, 7:0.45, 8:0.42, 9:0.39, 10:0.36", lld: "0.88", ldd: "0.9", rsd: "0.95", lsf: "0.98", nn: "1", lor: "0.8", px: "6", py: "3" }); update(); }
+
+/* ---------- self-checks ---------- */
+function checks() {
+  const ok = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(b)), rows = [];
+  const add = (n, ex, got, f) => rows.push('<tr><td class="l">' + n + "</td><td>" + f(ex) + "</td><td>" + f(got) + '</td><td class="' + (ok(ex, got) || Math.abs(got - ex) / Math.abs(ex) < 2e-3 ? "ok2" : "bad") + '">' + (ok(ex, got) ? "same" : (100 * (got - ex) / ex >= 0 ? "+" : "") + fmt(100 * (got - ex) / ex, 3) + " %") + "</td></tr>");
+  const f2 = x => fmt(x, 3), f1 = x => fmt(x, 1);
+  const L = 10, W = 8, h = 2.25;
+  add("Room cavity ratio, 10 m × 8 m, 2.25 m: 5h(L+W)/(LW) against 2.5 × wall area ÷ floor area", 2.5 * (2 * h * (L + W)) / (L * W), cr(h, L, W), f2);
+  add("Effective reflectance with no cavity equals the surface reflectance (0.70)", 0.7, effR(0.7, 0.5, 0, L, W), f2);
+  add("Effective floor cavity, 0.75 m, floor 20 %, walls 50 %: by hand 0.2215", 0.2215, effR(0.2, 0.5, 0.75, L, W), f2);
+  add("CU interpolation, 2:0.70 and 4:0.60 at 3", 0.65, interp([[2, 0.7], [4, 0.6]], 3).v, f2);
+  const Ic = () => 1000;
+  add("1000 cd, point directly below at 2.5 m: I ÷ h²", 1000 / 6.25, eFrom(Ic, 0, 0, 2.5), f1);
+  add("1000 cd, point 1.5 m to the side at 2.5 m: I h ÷ d³", 1000 * 2.5 / Math.pow(Math.sqrt(2.5 * 2.5 + 1.5 * 1.5), 3), eFrom(Ic, 1.5, 0, 2.5), f1);
+  [1, 2, 4].forEach(n => { let t = 0; const N = 4000; for (let i = 0; i < N; i++) { const th = (i + 0.5) * (Math.PI / 2) / N; t += (1000 * (n + 1) / (2 * Math.PI)) * Math.pow(Math.cos(th), n) * Math.sin(th) * 2 * Math.PI * (Math.PI / 2) / N; } add("Flux of I = I₀ cosⁿθ with n = " + n + ", integrated over the lower hemisphere, for 1000 lm", 1000, t, f1); });
+  $("ck1").innerHTML = '<thead><tr><th class="l">Check</th><th>Expected</th><th>This sheet</th><th>Difference</th></tr></thead><tbody>' + rows.join("") + "</tbody>";
+  $("ckN").textContent = "The expected values come from the formulae written out by hand. They check the sheet’s arithmetic, not the luminaire data or the CU table you enter.";
+}
+
+/* ---------- formulae and data ---------- */
+MX.formula($("fxA"), ["$CR$ = @frac{5 $h$ ($L$ + $W$)}{$L$ $W$}", "$h$_{rc} = $H$ − $h$_{cc} − $h$_{fc}", "$CCR$, $RCR$, $FCR$ for $h$_{cc}, $h$_{rc}, $h$_{fc}"]);
+MX.defs($("fxAD"), [["$L$, $W$", "room length and width, m"], ["$H$", "floor to ceiling height, m"], ["$h$_{cc}", "luminaire to ceiling, m"], ["$h$_{rc}", "luminaire to working plane, m"], ["$h$_{fc}", "working plane to floor, m"], ["$CR$", "cavity ratio of a cavity of height $h$"]]);
+MX.formula($("fxR"), ["$A$_{0} = $L$ $W$", "$A$_{w} = 2 $h$ ($L$ + $W$)", "$ρ$_{m} = @frac{$ρ$_{b} $A$_{0} + $ρ$_{w} $A$_{w}}{$A$_{0} + $A$_{w}}", "$ρ$_{eff} = @frac{$ρ$_{m} $A$_{0}}{$A$_{s} − $ρ$_{m} $A$_{s} + $ρ$_{m} $A$_{0}}"]);
+MX.defs($("fxRD"), [["$ρ$_{b}", "reflectance of the base (ceiling or floor)"], ["$ρ$_{w}", "reflectance of the walls"], ["$A$_{s}", "surface area of the cavity, $A$_{0} + $A$_{w}"], ["$ρ$_{eff}", "effective cavity reflectance, used to read the CU table"]]);
+MX.formula($("fxN"), ["$Φ$ = $n$ · $φ$ · $BF$", "$LLF$ = $LLD$ · $LDD$ · $RSDD$ · $LSF$", "$N$ = @frac{$E$ · $A$}{$Φ$ · $CU$ · $LLF$}", "$E$_{avg} = @frac{$N$ · $Φ$ · $CU$ · $LLF$}{$A$}"]);
+MX.defs($("fxND"), [["$n$, $φ$, $BF$", "lamps per luminaire, flux of one lamp, ballast or driver factor"], ["$LLD$", "lamp lumen depreciation"], ["$LDD$", "luminaire dirt depreciation"], ["$RSDD$", "room surface dirt depreciation"], ["$LSF$", "lamp survival factor"], ["$E$, $A$", "target illuminance, lux, and floor area, m²"], ["$CU$", "coefficient of utilisation from the maker’s table"]]);
+MX.formula($("fxP"), ["$E$ = @frac{$I$(θ) cos θ}{$d$²}", "cos θ = @frac{$h$}{$d$}", "$d$² = $x$² + $y$² + $h$²", "$I$(θ) = $I$_{0} cos^{n} θ", "$I$_{0} = @frac{$Φ$ ($n$ + 1)}{2π}"]);
+MX.defs($("fxPD"), [["$I$(θ)", "luminous intensity at angle θ from straight down, cd"], ["$h$", "height of the luminaire above the working plane, m"], ["$x$, $y$", "horizontal distance from the point to the luminaire, m"], ["$d$", "distance from the luminaire to the point, m"], ["$Φ$", "luminaire flux, lm. The illuminance from all luminaires is added and multiplied by the light loss factor."]]);
+$("luxT").innerHTML = '<thead><tr><th class="l">Space</th><th>Lux</th></tr></thead><tbody>' + [["Corridors", 100], ["Stairs", 150], ["Plant rooms and stores", 200], ["Canteens", 200], ["Reception, classrooms, retail sales area", 300], ["Offices, data processing, meeting rooms", 500], ["Kitchens", 500], ["Technical drawing", 750]].map(r => '<tr><td class="l">' + r[0] + "</td><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("llfT").innerHTML = '<thead><tr><th class="l">Factor</th><th>Typical range</th></tr></thead><tbody><tr><td class="l">Lamp lumen depreciation: LED, 50 000 h</td><td>0.85 to 0.95</td></tr><tr><td class="l">Lamp lumen depreciation: fluorescent T5, 12 000 h</td><td>0.90 to 0.95</td></tr><tr><td class="l">Luminaire dirt depreciation: clean room, 12-month clean</td><td>0.92 to 0.97</td></tr><tr><td class="l">Luminaire dirt depreciation: normal</td><td>0.85 to 0.92</td></tr><tr><td class="l">Luminaire dirt depreciation: dusty</td><td>0.70 to 0.85</td></tr><tr><td class="l">Room surface dirt depreciation: clean, small room</td><td>0.95 to 0.98</td></tr><tr><td class="l">Lamp survival factor: LED</td><td>1.00</td></tr></tbody>';
+
+/* ---------- Excel workbook ---------- */
+function buildXlsx() {
+  const R = room(), Z = zonal(R), P = pbp(R, Z), sty = X.sty, BL = "0000FF";
+  const H = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "center", v: "center", wrap: 1, bd: 1 }), HL = sty({ b: 1, c: "FFFFFF", fill: "2F3E46", h: "left", v: "center", wrap: 1, bd: 1 });
+  const T1 = sty({ b: 1, sz: 14 }), NOTE = sty({ i: 1, c: "555555", wrap: 1, v: "top" }), TXT = sty({ bd: 1 });
+  const inN = sty({ c: BL, bd: 1, fmt: "0.0##" }), c3 = sty({ bd: 1, fmt: "#,##0.000" }), c1b = sty({ bd: 1, fmt: "#,##0.0", b: 1, fill: "E7EFE4" }), LABB = sty({ b: 1, bd: 1 });
+  const def = [], hdr = t => def.push(["hdr", t, "Value", "Unit"]), add = (k, l, v, u, f) => def.push([k, l, v, u, f || ""]);
+  if (R.ok && Z.ok) {
+    hdr("Room");
+    add("kL", "Room length", R.L, "m", "in"); add("kW", "Room width", R.W, "m", "in"); add("kH", "Floor to ceiling height", R.H, "m", "in"); add("khw", "Working plane height", R.hw, "m", "in"); add("khs", "Luminaires below the ceiling", R.hs, "m", "in");
+    add("krc", "Ceiling reflectance", R.rc * 100, "%", "in"); add("krw", "Wall reflectance", R.rw * 100, "%", "in"); add("krf", "Floor reflectance", R.rf * 100, "%", "in"); add("kE", "Target maintained illuminance", R.E, "lux", "in");
+    hdr("Cavities");
+    add("khcc", "Ceiling cavity height", "=khs", "m"); add("khrc", "Room cavity height = H − ceiling cavity − working plane", "=kH-khs-khw", "m"); add("khfc", "Floor cavity height", "=khw", "m"); add("kA", "Floor area", "=kL*kW", "m²");
+    add("kCCR", "Ceiling cavity ratio = 5 h (L + W) ÷ (L W)", "=5*khcc*(kL+kW)/kA", ""); add("kRCR", "Room cavity ratio", "=5*khrc*(kL+kW)/kA", ""); add("kFCR", "Floor cavity ratio", "=5*khfc*(kL+kW)/kA", "");
+    add("kAwc", "Ceiling cavity wall area = 2 h (L + W)", "=2*khcc*(kL+kW)", "m²"); add("kmc", "Ceiling cavity mean reflectance", "=(krc/100*kA+krw/100*kAwc)/(kA+kAwc)", "");
+    add("kpcc", "Effective ceiling cavity reflectance", "=kmc*kA/((kA+kAwc)*(1-kmc)+kmc*kA)*100", "%", "b");
+    add("kAwf", "Floor cavity wall area", "=2*khfc*(kL+kW)", "m²"); add("kmf", "Floor cavity mean reflectance", "=(krf/100*kA+krw/100*kAwf)/(kA+kAwf)", "");
+    add("kpfc", "Effective floor cavity reflectance", "=kmf*kA/((kA+kAwf)*(1-kmf)+kmf*kA)*100", "%", "b");
+    hdr("Luminaire and light loss");
+    add("knl", "Lamps per luminaire", Z.nl, "", "in"); add("klm", "Flux of each lamp", Z.lm, "lm", "in"); add("kbf", "Ballast or driver factor", Z.bf, "", "in"); add("kwl", "Power of each luminaire", Z.wl > 0 ? Z.wl : 0, "W", "in");
+    add("kCU", "Coefficient of utilisation at this room cavity ratio (" + Z.cuSrc + ")", Z.CU, "", "in"); add("kfc", "Floor cavity correction factor", Z.fc, "", "in");
+    if (S.llm === "m") { add("kld", "Maintenance factor", Z.LLF, "", "in"); add("kldd", "Other factors (1 when a maintenance factor is typed)", 1, "", "in"); add("krsd", "Other factors", 1, "", "in"); add("klsf", "Other factors", 1, "", "in"); }
+    else { add("kld", "Lamp lumen depreciation", pf(S.lld), "", "in"); add("kldd", "Luminaire dirt depreciation", pf(S.ldd), "", "in"); add("krsd", "Room surface dirt depreciation", pf(S.rsd), "", "in"); add("klsf", "Lamp survival factor", pf(S.lsf), "", "in"); }
+    hdr("Number of luminaires");
+    add("kLLF", "Light loss factor", "=kld*kldd*krsd*klsf", ""); add("kPhi", "Flux of one luminaire = lamps × flux × factor", "=knl*klm*kbf", "lm");
+    add("kNreq", "Luminaires needed = E A ÷ (Φ CU CF LLF)", "=kE*kA/(kPhi*kCU*kfc*kLLF)", "", "b"); add("kNlay", "Luminaires in the layout (" + Z.cols + " × " + Z.rows + ")", Z.N, "", "in");
+    add("kEavg", "Average maintained illuminance = N Φ CU CF LLF ÷ A", "=kNlay*kPhi*kCU*kfc*kLLF/kA", "lux", "b"); add("kEini", "Average illuminance when new", "=kEavg/kLLF", "lux");
+    add("kLPD", "Installed power density", "=kNlay*kwl/kA", "W/m²"); add("kLP1", "Power per 100 lux", "=kLPD/(kEavg/100)", "W/m² per 100 lux");
+  }
+  const rowOf = {}; def.forEach((d, i) => { if (d[0] !== "hdr") rowOf[d[0]] = i + 4; });
+  const keys = Object.keys(rowOf).sort((a, b) => b.length - a.length), re = keys.length ? new RegExp("\\b(" + keys.join("|") + ")\\b(?![0-9(])", "g") : null;
+  const sub = f => re ? f.replace(re, (m, n) => "B" + rowOf[n]) : f;
+  const vals = {}; if (R.ok && Z.ok) { const aw = 2 * R.hcc * (R.L + R.W), mc = (R.rc * R.A + R.rw * aw) / (R.A + aw), awf = 2 * R.hfc * (R.L + R.W), mf = (R.rf * R.A + R.rw * awf) / (R.A + awf);
+    Object.assign(vals, { khcc: R.hcc, khrc: R.hrc, khfc: R.hfc, kA: R.A, kCCR: R.CCR, kRCR: R.RCR, kFCR: R.FCR, kAwc: aw, kmc: mc, kpcc: R.rcc * 100, kAwf: awf, kmf: mf, kpfc: R.rfc * 100, kLLF: Z.LLF, kPhi: Z.Phi, kNreq: Z.Nreq, kEavg: Z.Eavg, kEini: Z.Eini, kLPD: Z.LPD, kLP1: Z.LPD100 }); }
+  const rows = []; rows[0] = [{ v: "Lighting sizing: zonal cavity method", s: T1 }]; rows[1] = [{ v: "Inputs in blue; everything else is a formula. The coefficient of utilisation is the value read from the maker’s table at the room cavity ratio, entered as an input.", s: NOTE }];
+  def.forEach((d, i) => { const r = i + 3, row = [];
+    if (d[0] === "hdr") { row[0] = { v: d[1], s: HL }; row[1] = { v: d[2], s: H }; row[2] = { v: d[3], s: H }; rows[r] = row; return; }
+    row[0] = { v: d[1], s: d[4] === "b" ? LABB : TXT };
+    const v = d[2];
+    row[1] = typeof v === "string" && v[0] === "=" ? { f: sub(v.slice(1)), v: vals[d[0]], s: d[4] === "b" ? c1b : c3 } : { v, s: inN };
+    row[2] = { v: d[3], s: TXT }; rows[r] = row; });
+  const sheets = [{ name: "Zonal cavity", rows, cols: [64, 16, 18], first: true, ht: { 1: 30 }, merges: ["A2:C2"] }];
+  if (P.ok) {
+    const pr = [[{ v: "Illuminance at each point, point-by-point method (direct light, maintained, lux)", s: T1 }], [{ v: "Intensity: " + P.inf.src + ". Rows run along the width (y), columns along the length (x). Values are results, not formulas.", s: NOTE }]];
+    const head = [{ v: "y \\ x, m", s: HL }]; for (let i = 0; i < P.nx; i++) head.push({ v: +((i + 0.5) * R.L / P.nx).toFixed(3), s: H });
+    pr.push(head);
+    for (let j = 0; j < P.ny; j++) { const rr = [{ v: +((j + 0.5) * R.W / P.ny).toFixed(3), s: HL }]; for (let i = 0; i < P.nx; i++) rr.push({ v: +P.pts[j * P.nx + i].e.toFixed(1), s: sty({ bd: 1, fmt: "0" }) }); pr.push(rr); }
+    pr.push([{ v: "Lowest", s: LABB }, { v: +P.mn.toFixed(1), s: c1b }], [{ v: "Average", s: LABB }, { v: +P.avg.toFixed(1), s: c1b }], [{ v: "Highest", s: LABB }, { v: +P.mx.toFixed(1), s: c1b }], [{ v: "Lowest ÷ average", s: LABB }, { v: +P.U0.toFixed(3), s: c3 }]);
+    const cols = [16]; for (let i = 0; i < P.nx; i++) cols.push(8);
+    sheets.push({ name: "Points", rows: pr, cols, ht: { 1: 30 }, merges: [] });
+  }
+  const nt = [[{ v: "Notes", s: T1 }], [{ v: "Zonal cavity method: the room is split into ceiling, room and floor cavities. The cavity ratio is 5 h (L + W) ÷ (L W). The effective reflectance of the ceiling and floor cavities is used to read the coefficient of utilisation from the luminaire maker’s table. Luminaires needed = E A ÷ (Φ CU LLF).", s: NOTE }], [{ v: "Point-by-point method: E = I(θ) cos θ ÷ d² for each luminaire, added and multiplied by the light loss factor. Direct light only; light reflected by the room, daylight and obstructions are left out.", s: NOTE }], [{ v: "Preliminary design only. Check the illuminance, uniformity, glare and energy limits against the project’s lighting standard and a full lighting calculation.", s: NOTE }]];
+  sheets.push({ name: "Notes", rows: nt, cols: [120], ht: { 1: 70, 2: 50, 3: 40 } });
+  const wbx = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>').join("") + '</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+  const files = [
+    { name: "[Content_Types].xml", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((s, i) => '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("") + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: "_rels/.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: "xl/workbook.xml", text: wbx },
+    { name: "xl/_rels/workbook.xml.rels", text: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((s, i) => '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>').join("") + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' }
+  ];
+  const sx = sheets.map(s => sheetXml(s));
+  files.push({ name: "xl/styles.xml", text: X.xml() });
+  sx.forEach((t, i) => files.push({ name: "xl/worksheets/sheet" + (i + 1) + ".xml", text: t }));
+  return zip(files);
+}
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+
+/* ---------- events ---------- */
+$("rt").innerHTML = SPACES.map(p => '<option value="' + p[0] + '">' + p[1] + "</option>").join("");
+$("rt").addEventListener("change", () => { if (pf($("rt").value) > 0) S.E = $("rt").value; S.rt = $("rt").value; update(); });
+document.querySelectorAll("[data-s]").forEach(e => e.addEventListener(e.tagName === "SELECT" ? "change" : "input", () => { S[e.dataset.s] = e.value; if (e.id === "E") S.rt = SPACES.some(x => x[0] === e.value) ? e.value : "0"; update(); }));
+$("ex1").addEventListener("click", ex1);
+$("ex2").addEventListener("click", ex2);
+$("clr").addEventListener("click", () => { S = blank(); update(); });
+$("pr").addEventListener("click", () => window.print());
+$("xl").addEventListener("click", () => { const R = room(), Z = zonal(R); if (!R.ok || !Z.ok) { alert("Complete sections 1 and 2 first, or press an example button."); return; } download(buildXlsx(), "lighting_sizing.xlsx"); });
+S = load() || blank();
+checks(); update();
+window.__lv = { room, zonal, pbp, get S() { return S; }, set S(v) { S = v; }, update, ex1, ex2, effR, cr, interp, eFrom };
+})();
+</script>
+</body>
+</html>

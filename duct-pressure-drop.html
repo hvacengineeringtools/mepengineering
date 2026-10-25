@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f1e4" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="color-scheme" content="only light" />
+<meta name="description" content="Pressure drop per metre in a rectangular or circular air duct by Darcy–Weisbach with the Altshul–Tsal friction factor: fill in any three of flow, velocity, width and depth and the fourth is worked out, with a list of duct sizes that meet your limits. A separate section does the same for a circular duct from its diameter." />
+<meta name="author" content="Dennis Luk" />
+<meta name="copyright" content="© 2026 Dennis Luk. All rights reserved." />
+<title>Sheet XV — Duct pressure drop and sizing</title>
+<link rel="stylesheet" href="formula.css" />
+<style>
+:root { --paper:#f7f1e4; --ink:#1a1714; --faint:#d7cbb3; --panel:#fffdf7; --muted:#5a5348; }
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; background:#cfc3a8; color:var(--ink); font:16px/1.5 Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; }
+.book { max-width:820px; margin:24px auto 48px; background:var(--paper); padding:28px 34px 48px; border:1px solid #2a241c; box-shadow:0 1px 0 #efe6d2 inset,8px 10px 0 rgba(42,36,28,.12); }
+header { text-align:center; border-bottom:1px solid var(--ink); padding:4px 0 14px; margin-bottom:16px; }
+.kicker { letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--muted); }
+h1 { font-size:26px; margin:6px 0 2px; font-weight:600; }
+.sub { font-size:13px; color:var(--muted); font-style:italic; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:8px; margin:0 0 22px; }
+nav.pages a { display:block; text-align:center; text-decoration:none; color:var(--ink); border:1px solid var(--ink); padding:7px 4px; font-size:10px; background:var(--panel); }
+nav.pages a.on { background:var(--ink); color:var(--paper); }
+h2 { font-size:13px; margin:26px 0 10px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--faint); padding-bottom:5px; }
+p { margin:0 0 10px; } .lead { color:var(--muted); font-size:15px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+label { display:block; font-size:12px; font-weight:700; margin-bottom:3px; }
+.pair { display:grid; grid-template-columns:1fr 118px; gap:6px; }
+input,select,button { width:100%; border:1px solid #8a7f6c; background:var(--panel); color:var(--ink); font:15px/1.2 "Courier New",monospace; padding:6px 8px; min-height:36px; }
+button { font-family:Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif; font-weight:700; cursor:pointer; background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.city-row { display:grid; grid-template-columns:1fr 88px; gap:8px; }
+.hits { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:180px; overflow:auto; }
+.hits li { margin:0; border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; text-align:left; font:13px/1.35 Georgia,serif; min-height:0; padding:8px 10px; }
+.meta { font-size:13px; color:var(--muted); margin-top:8px; background:var(--panel); border:1px solid var(--faint); padding:8px 10px; }
+.results { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.box { border:1px solid var(--ink); background:var(--panel); padding:8px 10px; }
+.box .k { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--muted); }
+.box .v { font:600 22px/1.15 "Courier New",monospace; margin-top:3px; }
+.box .u { font-size:11px; color:var(--muted); }
+.warn { display:none; border:1px solid var(--ink); padding:7px 9px; margin:10px 0; font-size:13px; }
+.warn.show { display:block; }
+svg.chart { width:100%; height:auto; border:1px solid var(--faint); background:#fffaf0; display:block; margin:8px 0; }
+footer { margin-top:28px; border-top:1px solid var(--faint); padding-top:10px; font-size:11px; color:var(--muted); }
+@media (max-width:720px){ .book{margin:0;padding:20px 16px 36px;box-shadow:none;} .fields,nav.pages,.results{grid-template-columns:1fr 1fr;} }
+.rights { margin-top:14px; padding-top:8px; border-top:1px solid var(--faint); font-size:11.5px; line-height:1.5; color:var(--muted); }
+/* ---- device compatibility (all pages) ---- */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; color-scheme:only light; }
+img, svg { max-width:100%; }
+img { height:auto; }
+input[type=number], input[type=text], input:not([type]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+a, button, select, input { -webkit-tap-highlight-color:rgba(26,23,20,.15); touch-action:manipulation; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }          /* iOS Safari zooms on smaller text */
+  input, select, button { min-height:44px; }                       /* comfortable finger targets */
+}
+@media print {
+  nav.pages, .city-row, .hits, #findBtn, .choice { display:none !important; }
+  html, body { background:#fff !important; }
+  .book { box-shadow:none !important; border:0 !important; margin:0 !important; max-width:none !important; padding:0 !important; }
+  a { color:inherit; text-decoration:none; }
+  .box, table, svg, figure { break-inside:avoid; }
+}
+
+/* compat:v1 - cross-platform and touch support */
+:root { color-scheme:light; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { -webkit-tap-highlight-color:rgba(26,23,20,.15); }
+img { max-width:100%; height:auto; }
+button, input, select, textarea { font-family:inherit; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { -webkit-appearance:none; appearance:none; border-radius:0; }
+select:not([multiple]) { -webkit-appearance:none; -moz-appearance:none; appearance:none; border-radius:0; padding-right:30px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%231a1714' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:11px 7px; }
+summary { cursor:pointer; }
+@media (pointer:coarse) {
+  input, select, textarea { font-size:16px !important; }
+  summary { padding-top:10px; padding-bottom:10px; }
+  p a, li a, td a, dd a, .u a, .hint a, .lead a, .note a, button.link { position:relative; }
+  p a::after, li a::after, td a::after, dd a::after, .u a::after, .hint a::after, .lead a::after, .note a::after, button.link::after { content:""; position:absolute; left:0; right:0; top:-12px; bottom:-12px; }
+}
+</style>
+<style id="navfix">
+nav.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:5px;margin:0 0 20px}
+nav.pages a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 6px;text-align:center;text-decoration:none;color:var(--ink,#1a1714);border:1px solid var(--ink,#1a1714);background:var(--panel,#fffdf7);font:11px/1.25 "Palatino Linotype",Palatino Linotype, Palatino, Book Antiqua, URW Palladio L, P052, TeX Gyre Pagella, Iowan Old Style, Georgia, Noto Serif, DejaVu Serif, serif;letter-spacing:0}
+nav.pages a span{font-size:10px;letter-spacing:.18em;font-weight:700;line-height:1}
+nav.pages a.on{background:var(--ink,#1a1714);color:var(--paper,#f7f1e4)}
+.book{max-width:1080px}
+@media(max-width:900px){nav.pages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){nav.pages{grid-template-columns:1fr 1fr}}
+
+/* ---------- phone layout (added) ---------- */
+@media (max-width:600px) {
+  input, select, textarea, button { font-size:16px !important; min-height:44px; }
+  .fields { grid-template-columns:1fr !important; }
+  .field > .pair, .field .pair { width:100%; }
+  .pair input { min-width:0; }
+  table { max-width:100%; }
+  th, td, label, h1, h2, p, li, .box .k, .lead, .meta { overflow-wrap:normal; word-break:normal; }
+  .sum table, .sum tbody, .sum tr, .sum th, .sum td { display:block; width:100%; }
+  .sum tr { padding:8px 0 6px; border-bottom:1px solid var(--faint,#d7cbb3); }
+  .sum th, .sum td { border-bottom:0; padding:0; }
+  .sum th { font-size:13px; font-weight:700; margin:0 0 2px; }
+  .sum td { font-size:15px; line-height:1.35; }
+}
+</style>
+<style>
+/* system:v1 - one spacing and sizing scale for every sheet (4 / 8 / 12 / 16 / 24 / 32 px) */
+.book { max-width:1020px; margin:24px auto 48px; padding:28px 32px 44px; }
+nav.pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); }
+nav.pages a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:62px; padding:8px 6px; text-align:center; font-size:11px; line-height:1.25; }
+nav.pages a span { font-size:10px; letter-spacing:.16em; font-weight:700; }
+.kicker { font-size:10px; letter-spacing:.18em; }
+h1 { font-size:26px; line-height:1.2; margin:4px 0 4px; }
+.sub { font-size:13px; }
+header, header.top { padding:2px 0 14px; margin-bottom:16px; }
+nav.pages { gap:6px; margin:0 0 24px; }
+h2 { margin:32px 0 12px; padding-bottom:6px; font-size:12.5px; letter-spacing:.16em; border-bottom:1px solid var(--ink); }
+.layout > section > h2:first-child, .jl > section > h2:first-child { margin-top:0; }
+p { margin:0 0 8px; }
+p.lead, .lead { margin:0 0 12px; font-size:15px; line-height:1.55; }
+fieldset { margin:0 0 16px; padding:12px 16px 16px; }
+legend { padding:0 6px; }
+.fields, .sec-in { gap:16px 16px; }
+.fields > div, .sec-in > div { min-width:0; }
+label, .field label { font-size:13px; margin-bottom:6px; line-height:1.3; }
+.hint { margin-top:2px; font-size:12px; line-height:1.4; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:40px; padding:8px 10px; font-size:15px; line-height:1.2; }
+select:not([multiple]) { padding-right:30px; }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:0; }
+.pair > span { min-width:72px; min-height:40px; padding:0 8px; white-space:nowrap; display:flex; align-items:center; justify-content:center; border:1px solid var(--rule, #8a7f6c); border-left:0; background:var(--tint, #efe6d4); font-size:12px; color:var(--muted, #5a5348); }
+.pair > select { width:108px; border-left:0; }
+.pair > button { width:72px; min-height:40px; }
+.box, .answer { padding:12px 14px; }
+.results, .pairs, .boxes, .summary { gap:12px; margin-top:12px; }
+.summary { margin-top:0; }
+dl.facts { margin-top:12px; }
+ul.checks { margin-top:12px; }
+details.guide { margin:16px 0 0; padding:10px 14px; }
+details.adv { margin-top:16px; padding-top:10px; }
+.sheet .row { padding:10px 0; }
+table.ref th, table.ref td, table.cd th, table.cd td { padding:6px 10px; }
+footer { margin-top:32px; padding-top:12px; }
+.items .ir { margin-bottom:10px; }
+.isz { margin:-2px 0 14px; }
+.meshcalc { margin:0 0 14px; padding:10px 12px; }
+.howto { margin:0 0 14px; padding:10px 14px; }
+.seg button, .btnrow button { min-height:36px; padding-top:6px; padding-bottom:6px; }
+td button.rm { min-height:30px; min-width:30px; }
+@media (pointer:coarse) { .seg button, .btnrow button, td button.rm { min-height:44px; } }
+@media (pointer:coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select { min-height:44px; }
+  .pair > span, .pair > button { min-height:44px; }
+}
+@media (max-width:760px) {
+  nav.pages { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  nav.pages a { min-height:46px; flex-direction:row; justify-content:flex-start; gap:8px; padding:8px 10px; text-align:left; font-size:13px; }
+  nav.pages a span { min-width:2.4em; }
+  h1 { font-size:23px; }
+  .book { margin:0; padding:18px 16px 32px; }
+  h2 { margin-top:28px; }
+  .fields, .sec-in { gap:14px; }
+  .pair > select { width:96px; }
+}
+</style>
+<style>
+/* sheet II */
+:root { --rule:#8a7f6c; --tint:#efe6d4; --ok:#e7efe4; --warn:#f3e4d4; }
+.field.wide { grid-column:1 / -1; }
+.book { max-width:1020px; }
+.fields.three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.field label.hold, label.hold { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:400; margin:5px 0 0; cursor:pointer; color:var(--muted); }
+.hold input { width:16px; height:16px; min-height:0 !important; margin:0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+.field .tg { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:2px; min-height:14px; }
+.field.calc input { background:var(--tint); color:var(--ink); border-style:dashed; }
+.field.calc .tg { color:var(--ink); font-weight:700; }
+.btnrow { margin:10px 0 0; display:flex; gap:8px; }
+.btnrow button.ghost { width:auto; background:var(--panel); color:var(--ink); border:1px solid var(--ink); font-weight:600; padding:6px 14px; min-height:36px; }
+.results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.box.ok { background:#e7efe4; } .box.bad { background:#f3e4d4; }
+.box .v sup { font-size:.6em; }
+.hint { font-size:12px; color:var(--muted); line-height:1.4; margin-top:3px; }
+.warn { background:#f3e4d4; }
+.warn div + div { margin-top:4px; }
+h3.sub3 { font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; margin:28px 0 10px; padding-bottom:4px; border-bottom:1px solid var(--faint); }
+.table-scroll, .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0 12px; }
+table.cmp { width:100%; border-collapse:collapse; font-size:14px; background:var(--panel); min-width:480px; }
+table.cmp th, table.cmp td { border:1px solid var(--faint); padding:6px 10px; text-align:right; font-variant-numeric:tabular-nums; }
+table.cmp thead th { background:var(--tint); font-size:12px; text-align:right; }
+table.cmp tbody th { text-align:left; font-weight:600; }
+table.cmp thead th:first-child { text-align:left; }
+table.cmp tr.on td { background:var(--ink); color:var(--paper); }
+p.si { font-size:13px; color:var(--muted); margin:6px 0 0; }
+svg.chart text { font-family:inherit; fill:var(--ink); }
+svg.chart text[fill] { fill:revert-layer; }
+label.chk { display:flex; gap:10px; align-items:flex-start; font-size:14px; font-weight:600; cursor:pointer; margin:0; }
+label.chk input { width:18px; height:18px; min-height:0 !important; margin:2px 0 0; -webkit-appearance:checkbox !important; appearance:auto !important; flex:none; }
+input[readonly] { background:var(--tint); color:var(--muted); }
+button.mx-open { text-decoration:underline; cursor:pointer; background:none; border:0; color:var(--ink); width:auto; min-height:0; padding:0; font:inherit; font-weight:600; }
+.mx-body table.ref { border-collapse:collapse; width:100%; font-size:12.5px; background:var(--panel); min-width:520px; }
+.mx-body table.ref th, .mx-body table.ref td { border:1px solid var(--faint); padding:5px 8px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:top; }
+.mx-body table.ref thead th { background:var(--tint); font-size:11.5px; }
+.mx-body table.ref th.nm, .mx-body table.ref td:first-child { text-align:left; }
+.mx-body table.ref td:nth-child(2) { text-align:left; }
+.mx-body table.ref tr.on td, .mx-body table.ref tr.on th.nm { background:var(--ink); color:var(--paper); }
+.mx-body table.ref .na { color:var(--muted); }
+.mx-body table.ref tr.on .na { color:var(--faint); }
+.mx-body table.ref td.tn2 { text-align:left; font-size:12px; color:var(--muted); font-style:italic; }
+.mx-body .tn { font-size:12.5px; color:var(--muted); }
+#tb7 td:nth-child(2), #tb7 td:nth-child(3), #tb7 td:nth-child(4) { text-align:left; }
+@media (max-width:760px) {
+  .fields.three { grid-template-columns:1fr; }
+  .results { grid-template-columns:1fr; }
+  table.cmp { font-size:13px; }
+}
+@media (min-width:761px) and (max-width:900px) { .fields.three, .results { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media print { .mx-pull, .mx-scrim, .btnrow { display:none !important; } }
+.mx-pull, .mx-close, .mx-tabs button { width:auto; min-height:0; }
+.mx-close { padding:6px 12px; }
+.mx-tabs button { padding:10px 12px 8px; }
+@media (max-width:760px) { .mx-pull { width:100%; padding:15px 15px calc(15px + env(safe-area-inset-bottom,0px)); } }
+.mx-body table.ref thead th:first-child { text-align:left; }
+.fields.four { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+@media (max-width:760px) { .fields.four { grid-template-columns:1fr 1fr; } }
+
+nav.toc { display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0 22px; padding:9px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); font-size:14px; }
+nav.toc a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--faint); }
+nav.toc a:hover { border-bottom-color:var(--ink); }
+.box-note { border:1px solid var(--rule); background:var(--tint); padding:10px 14px; font-size:14px; margin:10px 0 4px; line-height:1.5; }
+table.cmp tbody td.on { background:var(--tint); color:var(--ink); font-weight:700; }
+table.cmp td.mk { outline:2px dotted var(--ink); outline-offset:-3px; }
+table.cmp td.na { color:var(--muted); text-align:center; }
+table.cmp tbody th { text-align:left; font-weight:600; white-space:nowrap; }
+table.cmp tr.on th { background:var(--ink); color:var(--paper); }
+h2[id], h3[id] { scroll-margin-top:14px; }
+.mx-body #rtChill td, .mx-body #rtChill th, .mx-body #rtPL td, .mx-body #rtPL th, .mx-body #rtTower td, .mx-body #rtTower th { text-align:left; }
+.mx-body #rtChill td:nth-child(2) { white-space:nowrap; }
+
+/* sheets II and III additions */
+table.cmp.fit { min-width:660px; }
+table.cmp.fit th, table.cmp.fit td { padding:4px 6px; }
+table.cmp.fit td input { width:100%; min-width:64px; min-height:36px; padding:5px 7px; font-size:14px; text-align:right; }
+table.cmp.fit thead th { text-align:center; }
+table.cmp.fit tbody th { text-align:center; width:56px; }
+table.cmp.guide td, table.cmp.guide th { text-align:left; vertical-align:top; font-size:13px; }
+ol.steps { margin:10px 0 0 20px; padding:0; font-size:14px; line-height:1.5; }
+ol.steps li { margin:4px 0; }
+.lead a, .si a, .mx-body a { color:var(--ink); font-weight:600; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+#lyT td.lm select { width:100%; min-height:36px; font-size:14px; }
+#lyT .src { font-size:11px; color:var(--muted); margin-top:2px; text-align:left; }
+#lyT td, #lyT th { vertical-align:middle; }
+#lyT td input:disabled { background:var(--tint); color:var(--muted); }
+#lyT .mutedx { font-size:12px; color:var(--muted); }
+#lyT td.ctl { white-space:nowrap; text-align:center; }
+#lyT td.ctl button { min-width:32px; min-height:32px; margin:0 1px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); cursor:pointer; font:inherit; }
+.lban { border:2px solid var(--ink); padding:10px 12px; margin:10px 0; background:var(--panel); }
+.lban.ok { background:var(--ink); color:var(--paper); }
+.lban.bad { border-style:dashed; }
+.lbar { display:flex; height:20px; border:1px solid var(--ink); background:var(--panel); overflow:hidden; margin:8px 0 12px; }
+.lbar span { display:block; height:100%; min-width:1px; }
+i.sw { display:inline-block; width:12px; height:12px; margin-right:8px; border:1px solid var(--ink); vertical-align:-1px; }
+.h-film { background:repeating-linear-gradient(90deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-structure { background:repeating-linear-gradient(45deg,var(--panel) 0 2px,var(--ink) 2px 3px); }
+.h-mass { background:radial-gradient(var(--ink) 0.9px,var(--panel) 1px) 0 0/6px 6px; }
+.h-board { background:repeating-linear-gradient(0deg,var(--ink) 0 1px,var(--panel) 1px 4px); }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 5px); }
+.h-air { background:var(--tint); }
+.lcut { display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:stretch; margin:8px 0; }
+.lcut .rail { display:flex; flex-direction:column; min-height:200px; border:1px solid var(--ink); background:var(--panel); }
+.lcut .rail span { display:block; border-bottom:1px solid var(--ink); min-height:6px; }
+.lcut .rail span.end { flex:none; border:0; padding:3px 2px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.lnames { margin:0; padding-left:18px; font-size:14px; align-self:center; }
+#lyT td.lm select { min-width:200px; } table.cmp#lyT { min-width:720px; }
+
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:6px; }
+.hits { list-style:none; margin:4px 0 0; padding:0; border:1px solid var(--faint); background:var(--panel); max-height:240px; overflow:auto; display:none; }
+.hits.show { display:block; }
+.hits li { border-bottom:1px solid var(--faint); }
+.hits button { background:transparent; color:var(--ink); border:0; width:100%; text-align:left; font:14px/1.35 Georgia, serif; padding:10px 12px; min-height:0; cursor:pointer; }
+.hits button:hover { background:#efe6d2; }
+.tabs { display:flex; gap:6px; margin:10px 0 8px; flex-wrap:wrap; }
+.tabs button { background:var(--panel); color:var(--ink); border:1px solid var(--faint); font:13px Georgia, serif; padding:6px 10px; min-height:36px; cursor:pointer; }
+.tabs button.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.meta { font-size:14px; color:var(--muted); margin:6px 0; }
+table.zt { min-width:560px; } table.zt td, table.zt th { text-align:left; font-size:13px; }
+@media (max-width:640px) { .controls { grid-template-columns:1fr; } }
+
+.ltool { display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:8px 0 12px; }
+.ltool label { font-size:13px; color:var(--muted); }
+.ltool select { min-height:38px; font-size:14px; max-width:100%; }
+button.lbtn { min-height:40px; padding:6px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:600 14px Georgia, serif; cursor:pointer; }
+.lwrap { display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:18px; align-items:start; }
+.lstackbox { position:sticky; top:8px; }
+.lstackhd { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; padding:3px 0; }
+.lstack { border:2px solid var(--ink); background:var(--panel); display:flex; flex-direction:column; }
+.blk { position:relative; border-bottom:1px solid var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+.blk:last-child { border-bottom:0; }
+.blk .bl { background:var(--paper); border:1px solid var(--ink); padding:1px 6px; font-size:11.5px; line-height:1.25; text-align:center; max-width:94%; }
+.blk.sel { outline:3px solid var(--ink); outline-offset:-3px; }
+.blk.sel .bl { background:var(--ink); color:var(--paper); }
+.ltot { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+.lcards { display:flex; flex-direction:column; gap:10px; }
+.lcard { border:1px solid var(--faint); background:var(--panel); padding:10px; }
+.lcard.sel { border:2px solid var(--ink); padding:9px; }
+.lch { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.lch .no { flex:none; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font:700 14px Georgia, serif; }
+.lch > select { flex:1 1 200px; min-height:38px; font-size:14px; }
+.lch .posl { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.lch .posl select { min-height:36px; font-size:13px; }
+.lcb { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:10px 0 6px; }
+.lf .lk { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.lin { display:flex; align-items:center; gap:6px; }
+.lin input { width:100%; min-width:0; min-height:38px; padding:5px 7px; font-size:14px; text-align:right; }
+.lin input:disabled { background:var(--tint); color:var(--muted); }
+.lin .u { font-size:11px; color:var(--muted); white-space:nowrap; }
+.fixedv { font-size:12.5px; color:var(--muted); }
+.lr { font:700 20px Georgia, serif; min-height:38px; display:flex; align-items:center; }
+.lca { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lca button { min-height:34px; padding:3px 10px; border:1px solid var(--ink); background:var(--panel); color:var(--ink); font:13px Georgia, serif; cursor:pointer; }
+.lca button:disabled { opacity:.35; cursor:default; }
+.lca button[data-a=rm] { border-style:dashed; }
+@media (max-width:700px) { .lwrap { grid-template-columns:1fr; } .lstackbox { position:static; max-width:340px; margin:0 auto; width:100%; } .lcb { grid-template-columns:1fr 1fr; } }
+button.lbtn, .lca button { width:auto !important; display:inline-block; }
+.ltool select, .lch .posl select { width:auto !important; }
+.ltool select { max-width:100%; }
+.lch > select { width:auto !important; flex:1 1 220px; }
+.lca button { flex:0 1 auto; }
+.h-ins { background:repeating-linear-gradient(45deg,var(--ink) 0 1px,var(--panel) 1px 8px); }
+.lcard .lch { margin-bottom:2px; }
+h4.grp { font-size:13px; margin:24px 0 2px; padding-left:10px; border-left:3px solid var(--ink); }
+p.grpsub { margin:2px 0 0 13px; }
+.step3 { margin-top:34px; padding-top:20px; border-top:2px solid var(--ink); position:relative; }
+.step3::before { content:"Optional"; position:absolute; top:-10px; right:0; background:var(--paper); padding:0 10px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+#tT td:first-child { text-align:left; }
+#tT tr.pickrow { cursor:pointer; }
+#tT tr.pickrow:hover td { background:var(--tint); }
+#tT tr.pickrow.on td { background:var(--tint); color:var(--ink); font-weight:700; }
+#rg tr.on th, #rg tr.on td { background:var(--tint); font-weight:700; }
+.gfig { width:100%; height:auto; background:var(--panel); border:1px solid var(--faint); margin-top:6px; }
+ol.concerns { margin:6px 0 0 0; padding:0; list-style:none; counter-reset:c; }
+ol.concerns li { counter-increment:c; position:relative; padding:7px 0 7px 38px; border-bottom:1px solid var(--faint); font-size:14.5px; line-height:1.45; }
+ol.concerns li::before { content:counter(c); position:absolute; left:0; top:7px; width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/24px Georgia, serif; text-align:center; }
+ol.concerns li .cl { color:var(--muted); font-size:12.5px; white-space:nowrap; }
+.fields .field.wide { grid-column:1 / -1; }
+#sumT td, #sumT th, #clT td, #clT th { text-align:left; vertical-align:top; font-size:13px; }
+#sumT td:nth-child(n+2) { min-width:140px; }
+.ctabs { margin:12px 0 14px; }
+.cpanel[hidden] { display:none; }
+.calc2 { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:28px; align-items:start; margin-top:6px; }
+.calc2 .resp { position:sticky; top:10px; }
+.calc2 .resp .results { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fields.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 14px; }
+.vh { font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin:20px 0 8px; padding-bottom:3px; border-bottom:1px solid var(--faint); font-weight:700; }
+.vh:first-child { margin-top:6px; }
+.vh .sn { display:inline-block; width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--paper); text-align:center; font:700 12px/20px Georgia, serif; margin-right:6px; letter-spacing:0; }
+.field.calc input { background:var(--tint); border-style:dashed; }
+table.basis { width:100%; border-collapse:collapse; font-size:13px; background:var(--panel); margin:8px 0 4px; min-width:0; }
+table.basis th, table.basis td { border:1px solid var(--faint); padding:5px 8px; text-align:left; vertical-align:top; }
+table.basis td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; }
+table.basis tr.gov td { background:var(--tint); }
+table.basis .st { display:block; font-size:11.5px; color:var(--muted); font-weight:400; }
+@media (max-width:860px) { .calc2 { grid-template-columns:1fr; } .calc2 .resp { position:static; } }
+#topRow, #lobRow { margin-top:14px; }
+
+.topnote{margin:8px 0 0;font-weight:700;font-size:14px}.topnote:empty{display:none}.topnote.ok{color:#2e7d32}.topnote.bad{color:#c62828}
+
+/* sheet VI */
+.field[hidden] { display:none !important; }
+.perm { border:1px solid var(--rule); border-left:5px solid var(--ink); background:var(--tint); padding:10px 14px; font-size:13.5px; line-height:1.5; margin:8px 0 6px; }
+.perm.bad { border-left-color:#a1401f; background:#f3e4d4; }
+.perm .pn { margin-top:8px; padding-top:8px; border-top:1px solid #d9b9a0; font-size:14px; }
+tr.pickrow { cursor:pointer; } tr.pickrow:hover td, tr.pickrow:hover th { background:var(--tint); }
+tr.pickrow.on td, tr.pickrow.on th { background:var(--ink); color:var(--paper); }
+.na2 { color:var(--muted); text-decoration:line-through; }
+table#szT td:last-child { text-align:left; } table#szT { min-width:560px; }
+@media (pointer:coarse) { .mx-close { min-height:44px; padding:8px 18px; } .mx-tabs button { min-height:44px; } .mx-pull { min-height:44px; } }
+
+table#spT td, table#spT th, table#spT2 td, table#spT2 th { text-align:left; vertical-align:top; }
+#svcApply { margin-top:8px; }
+</style>
+<style id="navgroups">
+nav.pages.grouped { display:block; margin:0 0 20px; }
+nav.pages.grouped a.home { display:inline-flex; flex-direction:row; gap:8px; min-height:36px; padding:6px 14px; margin:0 0 10px; }
+nav.pages.grouped .ng { border-top:2px solid var(--ink); padding:6px 0 4px; margin-top:8px; }
+nav.pages.grouped .nh { font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; margin:0 0 4px; }
+nav.pages.grouped .nt { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 5px; }
+nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px; }
+@media (max-width:640px) { nav.pages.grouped .nl { grid-template-columns:1fr 1fr; } nav.pages.grouped a.home { width:100%; justify-content:flex-start; } }
+</style>
+</head>
+<body>
+<article class="book">
+<header>
+  <div class="kicker">Sheet XV</div>
+  <h1>Duct pressure drop and sizing</h1>
+  <div class="sub">Rectangular or circular duct · Auto: fill any three of flow, velocity, width and depth · Manual: your own figures · pressure drop in Pa/m</div>
+</header>
+<nav class="pages grouped" aria-label="Sheets by trade">
+  <a class="home" href="index.html"><span>—</span>Contents</a>
+  <div class="ng"><div class="nh">Mechanical</div>
+   <div class="ns"><div class="nt">Water systems</div><div class="nl">
+    <a href="hydrofort-tank.html"><span>I</span>Pneumatic tank</a>
+    <a href="cooling-tower-chiller.html"><span>II</span>Cooling tower</a>
+    <a href="chiller-efficiency.html"><span>III</span>Chiller efficiency</a>
+    <a href="buffer-thermal-store.html"><span>IV</span>Thermal storage and buffer vessels</a>
+    <a href="feed-expansion-tank.html"><span>V</span>Feed and expansion tank</a>
+    <a href="pipe-friction.html"><span>VI</span>Pipe friction loss</a>
+    <a href="system-pressure-loss.html"><span>VII</span>Pipework system pressure loss</a>
+    <a href="surge-tank-sizing.html"><span>VIII</span>Surge tank sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Air and ventilation</div><div class="nl">
+    <a href="natural-ventilation-eink.html"><span>IX</span>One opening</a>
+    <a href="natural-ventilation-two-wall.html"><span>X</span>Two openings</a>
+    <a href="natural-ventilation-cross.html"><span>XI</span>Cross stack ventilation</a>
+    <a href="natural-ventilation-psych.html"><span>XII</span>Psychrometric chart</a>
+    <a href="natural-ventilation-hvac.html"><span>XIII</span>Air-side equipment sizing</a>
+    <a href="air-change-rate.html"><span>XIV</span>Air change rate</a>
+    <a class="on" href="duct-pressure-drop.html"><span>XV</span>Duct pressure drop</a>
+    <a href="duct-system-pressure-loss.html"><span>XVI</span>Duct system pressure loss</a>
+    <a href="intake-separation.html"><span>XVII</span>Intake separation</a>
+    <a href="dilution-distance.html"><span>XVIII</span>Dilution distance</a>
+    <a href="ahu-separation.html"><span>XIX</span>AHU separation</a>
+    <a href="louvre.html"><span>XX</span>Louvre face velocity</a>
+    <a href="refrigerant.html"><span>XXI</span>Refrigerant discharge</a>
+    <a href="jet-fan.html"><span>XXII</span>Jet fans</a>
+    <a href="smoke-extraction.html"><span>XXIII</span>Smoke extraction</a>
+   </div></div>
+   <div class="ns"><div class="nt">Heat gain and envelope</div><div class="nl">
+    <a href="window-solar.html"><span>XXIV</span>Window radiation gain</a>
+    <a href="envelope.html"><span>XXV</span>Envelope by climate zone</a>
+    <a href="layer-stack-u-factor.html"><span>XXVI</span>Assembly U-factor</a>
+   </div></div>
+  </div>
+  <div class="ng"><div class="nh">Electrical</div>
+   <div class="ns"><div class="nt">Power supply</div><div class="nl">
+    <a href="generator-sizing.html"><span>XXVII</span>Generator sizing</a>
+   </div></div>
+   <div class="ns"><div class="nt">Lighting</div><div class="nl">
+    <a href="light-sizing.html"><span>XXVIII</span>Lighting sizing</a>
+   </div></div>
+  </div>
+</nav>
+
+<p class="lead">Gives the pressure drop per metre of a rectangular air duct. In Auto mode, fill in any three of flow, velocity, width and depth and the fourth is worked out for you, so you do not have to try sizes one by one. In Manual mode you enter all four yourself and the sheet only checks them. Section 2 lists the duct sizes that keep to your velocity and friction limits at the flow you have entered.</p>
+<nav class="toc" aria-label="On this page"><a href="#s1">1 Calculator</a><a href="#s2">2 Circular duct</a><a href="#s3">3 Duct sizes at this flow</a></nav>
+
+<h2 id="s1">1. Calculator</h2>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+
+<h5 class="vh">Flow, velocity and duct size</h5>
+<div class="modes" role="radiogroup" aria-label="How the four boxes work">
+  <label class="mo on" id="mo_a"><input type="radio" name="mode" value="a" checked /><b>Auto</b><span>Fill any three, get the fourth</span></label>
+  <label class="mo" id="mo_m"><input type="radio" name="mode" value="m" /><b>Manual</b><span>I enter all four myself</span></label>
+</div>
+<div class="perm" id="modeExp" style="margin:0 0 12px"></div>
+<style>.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}.mo{display:block;border:2px solid var(--rule);background:var(--panel);padding:8px 12px;cursor:pointer;line-height:1.35}.mo input{position:absolute;opacity:0;width:0;height:0}.mo b{display:block}.mo span{font-size:13px;color:var(--muted)}.mo.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}.mo.on span{color:var(--paper)}.mo:focus-within{outline:2px dotted var(--ink);outline-offset:2px}</style>
+<div class="fields two">
+  <div class="field" id="f_q"><label for="in_q">Air flow</label><div class="pair"><input id="in_q" data-k="q" type="number" inputmode="decimal" step="any" min="0" /><select id="qu" aria-label="Flow unit"><option value="L">L/s</option><option value="M">m³/s</option><option value="H">m³/h</option></select></div><div class="tg" id="tg_q"></div></div>
+  <div class="field" id="f_v"><label for="in_v">Velocity</label><div class="pair"><input id="in_v" data-k="v" type="number" inputmode="decimal" step="any" min="0" /><span>m/s</span></div><div class="tg" id="tg_v"></div></div>
+  <div class="field" id="f_w"><label for="in_w">Duct width</label><div class="pair"><input id="in_w" data-k="w" type="number" inputmode="decimal" step="any" min="0" /><span>mm</span></div><div class="tg" id="tg_w"></div></div>
+  <div class="field" id="f_h"><label for="in_h">Duct depth</label><div class="pair"><input id="in_h" data-k="h" type="number" inputmode="decimal" step="any" min="0" /><span>mm</span></div><div class="tg" id="tg_h"></div></div>
+</div>
+<div class="btnrow"><button type="button" class="ghost" id="clr">Clear the four boxes</button></div>
+
+<h5 class="vh">Air and duct</h5>
+<div class="fields two">
+  <div class="field"><label for="ta">Air temperature</label><div class="pair"><input id="ta" type="number" inputmode="decimal" step="any" min="-40" max="100" value="20" /><span>°C</span></div><div class="hint" id="taH"></div></div>
+  <div class="field"><label for="sp">Spare capacity on the flow</label><div class="pair"><input id="sp" type="number" inputmode="decimal" step="any" min="0" value="0" /><span>%</span></div><div class="hint">Added to the flow you enter. Our reference sheet adds 15 %.</div></div>
+  <div class="field wide"><label for="rg">Duct material (roughness)</label><select id="rg"></select></div>
+  <div class="field"><label for="eps">Roughness ε</label><div class="pair"><input id="eps" type="number" inputmode="decimal" step="any" min="0" value="0.15" /><span>mm</span></div></div>
+  <div class="field"><label for="len">Duct length (optional)</label><div class="pair"><input id="len" type="number" inputmode="decimal" step="any" min="0" placeholder="blank" /><span>m</span></div></div>
+  <div class="field wide"><label for="vb">Velocity means</label><select id="vb"><option value="r">Flow ÷ the real duct area (width × depth)</option><option value="e">Flow ÷ the area of the equivalent round duct (as our reference sheet does)</option></select><div class="hint" id="vbH"></div></div>
+</div>
+
+<h5 class="vh">Limits to check against (optional)</h5>
+<div class="fields two">
+  <div class="field wide"><label for="dt">Duct type</label><select id="dt"></select><div class="hint">Picking a type fills in its maximum velocity from our reference data. You can type over it.</div></div>
+  <div class="field"><label for="vm">Maximum velocity</label><div class="pair"><input id="vm" type="number" inputmode="decimal" step="any" min="0" placeholder="blank" /><span>m/s</span></div></div>
+  <div class="field"><label for="fl">Maximum friction</label><div class="pair"><input id="fl" type="number" inputmode="decimal" step="any" min="0" value="0.8" /><span>Pa/m</span></div><div class="hint">0.8 Pa/m is the limit in our reference data.</div></div>
+</div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="perm" id="dNote" role="status"></div>
+<div class="warn" id="dWarn" role="status"></div>
+<div class="results" id="dRes"></div>
+</div></div>
+
+<h2 id="s2">2. Circular duct</h2>
+<p class="lead" style="margin-top:6px">For a round duct. Fill in any two of flow, velocity and diameter and the third is worked out. The pressure loss per metre then comes straight from the diameter, with no equivalent diameter needed. It uses the air temperature, spare capacity, roughness and limits set in section 1. For a rectangular duct use section 1.</p>
+<div class="perm" id="cUse" role="status"></div>
+<div class="calc2"><div class="cin">
+<h4 class="grp">Inputs</h4>
+<div class="fields two">
+  <div class="field" id="f_cq"><label for="in_cq">Air flow</label><div class="pair"><input id="in_cq" data-c="q" type="number" inputmode="decimal" step="any" min="0" /><select id="cqu" aria-label="Flow unit"><option value="L">L/s</option><option value="M">m³/s</option><option value="H">m³/h</option></select></div><div class="tg" id="tg_cq"></div></div>
+  <div class="field" id="f_cv"><label for="in_cv">Velocity</label><div class="pair"><input id="in_cv" data-c="v" type="number" inputmode="decimal" step="any" min="0" /><span>m/s</span></div><div class="tg" id="tg_cv"></div></div>
+  <div class="field" id="f_cd"><label for="in_cd">Duct diameter</label><div class="pair"><input id="in_cd" data-c="d" type="number" inputmode="decimal" step="any" min="0" /><span>mm</span></div><div class="tg" id="tg_cd"></div></div>
+  <div class="field"><label for="clen">Duct length (optional)</label><div class="pair"><input id="clen" type="number" inputmode="decimal" step="any" min="0" placeholder="blank" /><span>m</span></div></div>
+</div>
+<p class="si">Type in a third box and the one you typed longest ago is worked out again. The velocity is a result of the flow and the diameter, so it is never used for the friction on its own.</p>
+<div class="btnrow"><button type="button" class="ghost" id="cclr">Clear the three boxes</button></div>
+</div><div class="resp">
+<h4 class="grp">Result</h4>
+<div class="perm" id="cNote" role="status"></div>
+<div class="warn" id="cWarn" role="status"></div>
+<div class="results" id="cRes"></div>
+</div></div>
+<h3 class="vh" style="margin-top:18px">Round sizes at this flow</h3>
+<p class="si" id="cSzNote"></p>
+<div class="table-scroll"><table class="cmp" id="cSzT"></table></div>
+<style>#cSzT td { text-align:right !important; } #cSzT tbody tr { cursor:pointer; } #cSzT tbody tr:hover td { background:var(--tint); } #cSzT tbody tr.best td { font-weight:700; }</style>
+
+<h2 id="s3">3. Rectangular duct sizes at this flow</h2>
+<p class="lead" style="margin-top:6px">For the flow above (with the spare capacity added), the smallest width at each depth that keeps to the maximum velocity and the maximum friction you set. Click a row to put that size into the calculator.</p>
+<div class="fields two">
+  <div class="field"><label for="ar">Largest width to depth ratio</label><div class="pair"><input id="ar" type="number" inputmode="decimal" step="any" min="1" value="4" /><span>: 1</span></div></div>
+  <div class="field"><label for="st">Sizes in steps of</label><div class="pair"><select id="st"><option value="25">25 mm</option><option value="50" selected>50 mm</option><option value="100">100 mm</option></select></div></div>
+</div>
+<p class="si" id="szNote"></p>
+<div class="table-scroll"><table class="cmp" id="szT"></table></div>
+<style>#szT td { text-align:right !important; } #szT tbody tr { cursor:pointer; } #szT tbody tr:hover td { background:var(--tint); } #szT tbody tr.best td { font-weight:700; }</style>
+
+<footer>Preliminary checking only. Straight, clean duct only: bends, transitions, dampers, grilles, coils and filters are not included. Formulae, the working and the notes are in the side bar.</footer>
+<div class="rights">© 2026 Dennis Luk. All rights reserved. No part of this site may be copied, reproduced or redistributed without written permission. Standards and handbooks cited are the copyright of their publishers.</div>
+</article>
+
+<button class="mx-pull" id="mxPull" type="button" aria-controls="mxDrawer" aria-expanded="false"><span>Notes and formulae</span></button>
+<div class="mx-scrim" id="mxScrim"></div>
+<aside class="mx-drawer" id="mxDrawer" aria-label="Notes and formulae">
+  <div class="mx-bar"><h2>Notes and formulae</h2><button class="mx-close" type="button">Close</button></div>
+  <div class="mx-tabs" role="tablist" aria-label="Sections">
+    <button role="tab" type="button" id="mxt-steps" data-tab="steps" aria-controls="mxtab-steps">Calculation steps</button>
+    <button role="tab" type="button" id="mxt-formula" data-tab="formula" aria-controls="mxtab-formula">Formulae</button>
+    <button role="tab" type="button" id="mxt-data" data-tab="data" aria-controls="mxtab-data">Air and duct data</button>
+    <button role="tab" type="button" id="mxt-notes" data-tab="notes" aria-controls="mxtab-notes">Notes</button>
+  </div>
+  <div class="mx-body">
+    <div role="tabpanel" id="mxtab-steps" aria-labelledby="mxt-steps" hidden>
+      <p>The calculation step by step, with the values now on the sheet. The figures update as you type.</p>
+      <h3>Rectangular duct (section 1)</h3>
+      <div id="workD"></div>
+      <h3>Circular duct (section 2)</h3>
+      <div id="workC"></div>
+    </div>
+    <div role="tabpanel" id="mxtab-formula" aria-labelledby="mxt-formula" hidden>
+      <h3>1. Air properties</h3>
+      <div id="fxD1" role="math"></div>
+      <ul id="fxDD1"></ul>
+      <h3>2. Flow, velocity and duct size (any three give the fourth)</h3>
+      <div id="fxD2" role="math"></div>
+      <ul id="fxDD2"></ul>
+      <h3>3. Equivalent round duct</h3>
+      <div id="fxD3" role="math"></div>
+      <ul id="fxDD3"></ul>
+      <h3>4. Reynolds number</h3>
+      <div id="fxD4" role="math"></div>
+      <h3>5. Friction factor (Altshul–Tsal)</h3>
+      <div id="fxD5" role="math"></div>
+      <h3>6. Pressure drop (Darcy–Weisbach)</h3>
+      <div id="fxD6" role="math"></div>
+      <ul id="fxDD6"></ul>
+      <h3>7. Circular duct (section 2)</h3>
+      <div id="fxD7" role="math"></div>
+      <ul id="fxDD7"></ul>
+      <p class="tn">For a circular duct steps 4 to 6 use the diameter itself: put <i>D</i> (the diameter) in place of <i>D</i><sub>e</sub> and <i>v</i> in place of <i>v</i><sub>e</sub>. There is no equivalent-diameter step.</p>
+      <p class="tn">Conversions: 1 m³/s = 1000 L/s = 3600 m³/h. 1 Pa/m = 1 kPa per 1000 m.</p>
+    </div>
+    <div role="tabpanel" id="mxtab-data" aria-labelledby="mxt-data" hidden>
+      <h3>Roughness of duct materials</h3>
+      <div class="table-scroll"><table class="cmp" id="rgT"></table></div>
+      <h3>Duct types and maximum velocity (our reference data)</h3>
+      <div class="table-scroll"><table class="cmp" id="dtT"></table></div>
+      <p class="tn">The reference data also gives a friction limit of 0.8 Pa/m for all ducts.</p>
+      <h3>Air density and viscosity by temperature</h3>
+      <div class="table-scroll"><table class="cmp" id="aiT"></table></div>
+    </div>
+    <div role="tabpanel" id="mxtab-notes" aria-labelledby="mxt-notes" hidden>
+      <h3>Auto and Manual mode</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li><b>Auto</b> keeps the four boxes consistent. You give three, the sheet gives the fourth. Use it to find a size or a flow.</li>
+        <li><b>Manual</b> changes nothing you type. The pressure drop uses the flow, width and depth you entered. The velocity box is optional and is only compared with the velocity those three give; a warning shows if they differ by more than 2 %. Use it to check a size already chosen on a drawing or schedule.</li>
+        <li>Velocity is not an independent input to the friction: it follows from flow and size. In Manual mode a velocity that disagrees is therefore flagged, never used.</li>
+        <li>Switching from Manual to Auto keeps your figures. If all four boxes are full, the one you typed longest ago becomes the calculated one. Switching from Auto to Manual leaves the shaded box as an ordinary figure you can edit.</li>
+      </ul>
+      <h3>What the sheet does</h3>
+      <p>It finds the pressure lost to friction in a straight length of rectangular duct. The duct is turned into a round duct that loses the same pressure, and the Darcy–Weisbach equation is used with the Altshul–Tsal friction factor. Any three of flow, velocity, width and depth fix the fourth. Section 2 turns this round: it gives the sizes that meet your limits.</p>
+      <h3>Choices left to you</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>The spare capacity, air temperature, roughness, velocity limit and friction limit are yours. Our reference sheet adds 15 % to the flow, uses a roughness of 0.15 mm and takes air at 1.2 kg/m³. This sheet starts with no spare capacity; type 15 to match the reference sheet.</li>
+        <li><b>Why the figures run 2 to 3 % below the reference sheet.</b> The reference sheet works out the Reynolds number as velocity × diameter ÷ 1.8 × 10⁻⁵, but 1.8 × 10⁻⁵ Pa·s is the dynamic viscosity of air. The Reynolds number needs the kinematic viscosity, which is the dynamic viscosity divided by the density (about 1.5 × 10⁻⁵ m²/s at 20 °C). This sheet uses the kinematic value, so its Reynolds number is higher and its pressure drop is lower: 3.0 % lower for 150 × 150 mm at 0.05 m³/s, 1.6 % for 500 × 400 mm at 1 m³/s, and 1.8 % for 1600 × 1000 mm at 8 m³/s. If you need to reproduce the reference sheet exactly, treat its figures as the slightly higher, more cautious ones.</li>
+        <li>Velocity can mean the flow over the real width × depth area, or over the area of the equivalent round duct, which is what our reference sheet does. The friction always uses the equivalent round duct velocity. The two velocities differ by about 5 % for a square duct and more for a flat one.</li>
+      </ul>
+      <h3>Equivalent round duct</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>The sheet uses D = 1.265 ( (a b)³ / (a + b) )^0.2, the form in our reference sheet, which it calls the hydraulic diameter. It is not 4A/P. The ASHRAE Handbook prints the Huebscher form D = 1.30 (a b)^0.625 / (a + b)^0.25, which is a little different; <span id="dDiff"></span></li>
+        <li>The equivalent diameter gives the same friction at the same flow. It does not give the same velocity.</li>
+        <li>Very flat ducts (width to depth above about 4) are costlier and the equivalent diameter is less reliable. The sheet warns above the ratio you set in section 3.</li>
+      </ul>
+      <h3>Circular duct</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Section 2 uses the same method as section 1 (Darcy–Weisbach with the Altshul–Tsal friction factor) but with the real diameter, so no equivalent diameter is involved. The velocity is the flow over the real round area.</li>
+        <li>Air temperature, spare capacity, roughness and the two limits are shared with section 1. Change them there. The flow box in section 2 is its own.</li>
+        <li>The table of round sizes lists standard diameters, smallest first, that meet your velocity and friction limits at the flow. The smallest is shown in bold. Click a row to put that diameter into the calculator.</li>
+        <li>Spiral and flexible round ducts have their own roughness: choose the material in section 1. A flexible duct is only good for this method when it is fully stretched.</li>
+      </ul>
+      <h3>What the friction formula covers</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Altshul–Tsal is an explicit approximation to the Colebrook equation for turbulent flow. The sheet treats it as valid from Reynolds number 4 000 up to 10⁸ and relative roughness up to 0.05. Duct flows are usually well inside this.</li>
+        <li>Roughness values are typical figures, not from a particular clause. Use the maker’s or your specification’s value where there is one.</li>
+      </ul>
+      <h3>What is not included</h3>
+      <p class="si">Bends, tees, transitions, dampers, grilles, louvres, coils, filters, attenuators, leakage and duct ageing. Pressure drop across these items is added separately. Air is taken at sea-level pressure.</p>
+      <h3>Sources</h3>
+      <ul class="tn" style="margin-left:18px">
+        <li>Method, equivalent diameter, spare capacity, roughness, air properties, duct types and the 0.8 Pa/m limit: our duct sizing reference workbook.</li>
+        <li>Altshul–Tsal friction factor: ASHRAE Handbook, Fundamentals, duct design chapter.</li>
+        <li>Air density from the ideal gas law at 101.325 kPa; viscosity from Sutherland’s law (constant 110.4 K).</li>
+      </ul>
+    </div>
+  </div>
+</aside>
+
+<script src="formula.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const fmt = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toFixed(d) : "—";
+const grp = (x, d) => (typeof x === "number" && isFinite(x)) ? x.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+const sig = (x, n) => (typeof x === "number" && isFinite(x)) ? String(parseFloat(x.toPrecision(n))) : "—";
+const box = (k, v, u, cls) => '<div class="box' + (cls ? " " + cls : "") + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="u">' + (u || "") + "</div></div>";
+const dp = x => x < 10 ? fmt(x, 2) : x < 100 ? fmt(x, 1) : fmt(x, 0);
+const val = id => { const x = parseFloat($(id).value); return isFinite(x) ? x : NaN; };
+
+/* roughness of duct materials, mm (typical values) */
+const RG = [["Galvanised steel (reference sheet)", 0.15], ["Galvanised steel, spiral", 0.09], ["Aluminium, stainless, PVC", 0.03], ["Glass-fibre duct liner", 0.9], ["Flexible duct, stretched", 3], ["My own value", null]];
+/* duct types and maximum velocity, m/s (our reference data) */
+const DT = [["Riser", 7.5, ""], ["Branch", 7.5, "BOH / OPE platform"], ["Zone", 5.5, "BOH equipment rooms"], ["Flex", 2.5, ""], ["Branch FOH", 5.5, "Reticulation FOH"], ["Zone FOH", 3.5, "Platform droppers"]];
+
+const U = { L: 0.001, M: 1, H: 1 / 3600 };
+let mode = "a";            /* a = auto, m = manual */
+let recent = [];           /* every key in the order last typed, newest last (used to choose the three when going back to auto) */
+let order = [];            /* keys the person typed, oldest first (never more than three) */
+let prevU = "L";
+
+/* ---------- maths ---------- */
+function air(T) { const K = T + 273.15; return { rho: 101325 / (287.05 * K), mu: 1.458e-6 * Math.pow(K, 1.5) / (K + 110.4) }; }
+const eqD = (a, b) => 1.265 * Math.pow(Math.pow(a * b, 3) / (a + b), 0.2);
+const areaOf = (a, b, basis) => basis === "e" ? Math.PI * Math.pow(eqD(a, b) / 1000, 2) / 4 : a * b / 1e6;
+function fric(Qd, a, b, eps, rho, mu) {
+  const De = eqD(a, b), D = De / 1000, Ae = Math.PI * D * D / 4, ve = Qd / Ae, vr = Qd / (a * b / 1e6);
+  const Re = rho * ve * D / mu, rr = eps / De, f1 = 0.11 * Math.pow(rr + 68 / Re, 0.25), tsal = f1 < 0.018, f = tsal ? 0.85 * f1 + 0.0028 : f1;
+  const dyn = 0.5 * rho * ve * ve, dpm = f / D * dyn;
+  const zone = Re < 2300 ? "lam" : Re < 4000 ? "trans" : Re > 1e8 ? "hi" : rr > 0.05 ? "rough" : "ok";
+  return { De, D, Ae, ve, vr, Re, rr, f1, tsal, f, dyn, dpm, zone, Ar: a * b / 1e6 };
+}
+/* the other side of a duct that has one side a and an equivalent diameter De: solve (a b)^3 / (a + b) = (De / 1.265)^5 for b */
+function otherSide(a, De) {
+  const Kt = Math.pow(De / 1.265, 5); let lo = 1e-3, hi = 1e7;
+  for (let i = 0; i < 200; i++) { const m = Math.sqrt(lo * hi); (Math.pow(a * m, 3) / (a + m) < Kt) ? lo = m : hi = m; }
+  return Math.sqrt(lo * hi);
+}
+/* the missing one of Qd (m3/s, with spare), v, a, b */
+function solve(miss, Qd, v, a, b, basis) {
+  if (miss === "q") return v * areaOf(a, b, basis);
+  if (miss === "v") return Qd / areaOf(a, b, basis);
+  const known = miss === "w" ? b : a;
+  if (basis === "r") return Qd / v / (known / 1000) * 1000;
+  const De = Math.sqrt(4 * Qd / (Math.PI * v)) * 1000;
+  return otherSide(known, De);
+}
+
+/* ---------- reading the boxes ---------- */
+const spare = () => { const s = val("sp"); return s > 0 ? s : 0; };
+const uf = () => U[$("qu").value];
+const rd = k => { const x = val("in_" + k); return x > 0 ? x : NaN; };
+let last = null;   /* what the page worked out, for the steps and the section 2 click */
+
+function setBox(k, x, d) { $("in_" + k).value = isFinite(x) ? String(parseFloat(x.toPrecision(d || 5))) : ""; }
+function tags() {
+  const calc = mode === "a" && order.length === 3 ? ["q", "v", "w", "h"].find(k => order.indexOf(k) < 0) : null;
+  ["q", "v", "w", "h"].forEach(k => {
+    const f = $("f_" + k), t = $("tg_" + k);
+    const isC = k === calc, isT = mode === "m" ? rd(k) > 0 : order.indexOf(k) >= 0;
+    f.classList.toggle("calc", isC);
+    t.textContent = isC ? "calculated" : isT ? "entered" : "";
+  });
+  return calc;
+}
+
+function compute() {
+  const calc = tags();
+  const T = val("ta"), s = spare(), basis = $("vb").value, eps = val("eps"), u = uf();
+  const A = isFinite(T) ? air(T) : null;
+  $("taH").textContent = A ? "Density " + sig(A.rho, 4) + " kg/m³, viscosity " + sig(A.mu * 1e5, 4) + " × 10⁻⁵ Pa·s." : "Enter a temperature.";
+  $("vbH").textContent = basis === "r" ? "Friction is still worked out from the equivalent round duct velocity; the result shows both." : "As in our reference sheet. The real velocity in the duct is shown in the result.";
+  const x = { q: rd("q"), v: rd("v"), w: rd("w"), h: rd("h") };
+  let Qd = x.q > 0 ? x.q * u * (1 + s / 100) : NaN, v = x.v, a = x.w, b = x.h;
+  let msg = "";
+  if (calc) {
+    let r = solve(calc, Qd, v, a, b, basis);
+    if (!(r > 0) || !isFinite(r)) { r = NaN; msg = "These three values do not give a duct. Check them."; }
+    if (calc === "q") { Qd = r * 1; setBox("q", Qd / (1 + s / 100) / u, 5); }
+    else if (calc === "v") { v = r; setBox("v", v, 4); }
+    else if (calc === "w") { a = r; setBox("w", a, 5); }
+    else { b = r; setBox("h", b, 5); }
+    if (isNaN(r)) { $("in_" + calc).value = ""; }
+    if (calc === "q") { /* Qd already holds the design flow with spare */ }
+  }
+  last = { Qd: Qd, ok: false };
+  const ok = A && Qd > 0 && a > 0 && b > 0 && eps >= 0 && (mode === "m" || order.length === 3) && !msg;
+  const need = 3 - order.length;
+  const missM = [["q", "flow"], ["w", "width"], ["h", "depth"]].filter(p => !(rd(p[0]) > 0)).map(p => p[1]);
+  const note = $("dNote"), warn = $("dWarn"), res = $("dRes");
+  let R = null, warns = [];
+  if (ok) {
+    R = fric(Qd, a, b, eps, A.rho, A.mu);
+    const vd = basis === "e" ? R.ve : R.vr, vm = val("vm"), fl = val("fl"), L = val("len"), arMax = val("ar");
+    last = { Qd, a, b, R, A, s, u, basis, eps, vd, ok: true, calc, v: vd, L: L > 0 ? L : 0, vm: vm > 0 ? vm : 0, fl: fl > 0 ? fl : 0 };
+    note.className = "perm";
+    note.innerHTML = "<b>How the friction is worked out:</b> the " + sig(a, 4) + " × " + sig(b, 4) + " mm duct is treated as a round duct of " + fmt(R.De, 0) + " mm, which takes the same flow at " + fmt(R.ve, 2) + " m/s. The real velocity in the duct is " + fmt(R.vr, 2) + " m/s.";
+    if (R.zone !== "ok") {
+      const m = R.zone === "lam" ? "Reynolds number " + grp(R.Re, 0) + " is laminar (below 2 300)." : R.zone === "trans" ? "Reynolds number " + grp(R.Re, 0) + " is transitional (2 300 to 4 000)." : R.zone === "hi" ? "Reynolds number " + sig(R.Re, 3) + " is above 10<sup>8</sup>." : "Relative roughness ε/D = " + sig(R.rr, 3) + " is above 0.05.";
+      note.innerHTML += '<div class="pn">' + m + " This is <b>outside the range of the friction formula</b>. Check the sizes and the roughness.</div>"; note.className = "perm bad";
+    }
+    if (mode === "m" && x.v > 0 && Math.abs(x.v - vd) / vd > 0.02) warns.push("The velocity you entered, " + sig(x.v, 4) + " m/s, <b>does not agree</b> with the flow and size, which give " + fmt(vd, 2) + " m/s. The pressure drop and the limits use " + fmt(vd, 2) + " m/s. To get " + sig(x.v, 4) + " m/s, change the flow, the width or the depth, or switch to Auto.");
+    if (vm > 0 && vd > vm) warns.push("Velocity " + fmt(vd, 2) + " m/s is <b>above your limit</b> of " + sig(vm, 3) + " m/s.");
+    if (fl > 0 && R.dpm > fl) warns.push("Friction " + dp(R.dpm) + " Pa/m is <b>above your limit</b> of " + sig(fl, 3) + " Pa/m.");
+    const asp = Math.max(a, b) / Math.min(a, b);
+    if (arMax >= 1 && asp > arMax) warns.push("Width to depth ratio " + fmt(asp, 1) + " : 1 is above " + sig(arMax, 3) + " : 1. A flat duct costs more and the equivalent round duct is less reliable.");
+    let h = "";
+    h += box("Air flow used", fmt(Qd * 1000, 1), "L/s · " + grp(Qd * 3600, 0) + " m³/h" + (s > 0 ? " (" + sig(s, 3) + " % spare added)" : ""));
+    h += box("Velocity", fmt(vd, 2), "m/s · " + (basis === "e" ? "equivalent round duct" : "real duct area"), vm > 0 ? (vd <= vm ? "ok" : "bad") : "");
+    h += box("Pressure drop", dp(R.dpm), "Pa/m · " + fmt(R.dpm / 1000, 4) + " kPa per m", fl > 0 ? (R.dpm <= fl ? "ok key" : "bad key") : "key");
+    if (L > 0) h += box("Over " + sig(L, 4) + " m of duct", dp(R.dpm * L), "Pa");
+    h += box("Equivalent round duct", fmt(R.De, 0), "mm diameter");
+    h += box("Duct area", fmt(R.Ar, 4), "m² · ratio " + fmt(asp, 1) + " : 1");
+    h += box("Reynolds number", grp(R.Re, 0), R.zone === "ok" ? "turbulent" : "out of range", R.zone === "ok" ? "" : "bad");
+    h += box("Friction factor f", sig(R.f, 4), "f′ = " + sig(R.f1, 4) + (R.tsal ? ", corrected" : ", no correction"));
+    res.innerHTML = h;
+  } else {
+    note.className = "perm";
+    note.innerHTML = msg ? "<b>" + msg + "</b>" : mode === "m" && missM.length ? "<b>Enter the " + missM.join(", the ") + ".</b> Manual mode needs the flow, the width and the depth. The velocity is optional." : need > 0 && mode === "a" ? "<b>Fill in " + need + " more " + (need === 1 ? "box" : "boxes") + ".</b> Any three of flow, velocity, width and depth will do; the fourth is worked out." : "<b>Check the air temperature and roughness.</b>";
+    res.innerHTML = "";
+  }
+  warn.innerHTML = warns.map(m => "<div>" + m + "</div>").join(""); warn.classList.toggle("show", warns.length > 0);
+  sizes(Qd, A, basis, eps);
+  working();
+  if (typeof ccompute === "function") ccompute();
+}
+
+/* ---------- section 2: sizes ---------- */
+function sizes(Qd, A, basis, eps) {
+  const T = $("szT"), note = $("szNote");
+  const vm = val("vm"), fl = val("fl"), arMax = val("ar") >= 1 ? val("ar") : 4, st = parseInt($("st").value);
+  if (!(Qd > 0) || !A || !(eps >= 0)) { T.innerHTML = ""; note.textContent = "Enter the flow, or any three of the four boxes, to see the sizes."; return; }
+  if (!(vm > 0) && !(fl > 0)) { T.innerHTML = ""; note.textContent = "Enter a maximum velocity or a maximum friction above to see the sizes that meet it."; return; }
+  const rows = []; let sq = false;
+  for (let h = Math.max(100, st); h <= 1500 && !sq; h += st) {
+    const wmax = Math.min(h * arMax, 4000);
+    for (let w = Math.ceil(h / st) * st; w <= wmax + 1e-9; w += st) {
+      const R = fric(Qd, w, h, eps, A.rho, A.mu), vd = basis === "e" ? R.ve : R.vr;
+      if ((!(vm > 0) || vd <= vm) && (!(fl > 0) || R.dpm <= fl)) { rows.push({ w, h, R, vd, area: w * h }); sq = w === h; break; }
+    }
+  }
+  if (!rows.length) { T.innerHTML = ""; note.textContent = "No size up to a depth of 1500 mm and a width of 4000 mm meets both limits at this flow within the ratio you set."; return; }
+  const best = rows.reduce((m, r) => r.area < m.area ? r : m, rows[0]);
+  note.innerHTML = "Limits used: " + [vm > 0 ? "velocity up to " + sig(vm, 3) + " m/s" : "", fl > 0 ? "friction up to " + sig(fl, 3) + " Pa/m" : ""].filter(Boolean).join(" and ") + ", ratio up to " + sig(arMax, 3) + " : 1, flow " + fmt(Qd * 1000, 1) + " L/s. The smallest area is in bold.";
+  let h = "<thead><tr><th>Depth mm</th><th>Width mm</th><th>Ratio</th><th>Velocity m/s</th><th>Pa/m</th><th>Round Ø mm</th></tr></thead><tbody>";
+  rows.forEach(r => { h += '<tr tabindex="0" data-w="' + r.w + '" data-h="' + r.h + '"' + (r === best ? ' class="best"' : "") + "><td>" + r.h + "</td><td>" + r.w + "</td><td>" + fmt(r.w / r.h, 1) + "</td><td>" + fmt(r.vd, 2) + "</td><td>" + dp(r.R.dpm) + "</td><td>" + fmt(r.R.De, 0) + "</td></tr>"; });
+  T.innerHTML = h + "</tbody>";
+}
+function pick(tr) {
+  if (!tr || !last || !(last.Qd > 0)) return;
+  const s = spare(), u = uf();
+  setBox("q", last.Qd / (1 + s / 100) / u, 5);
+  $("in_w").value = tr.dataset.w; $("in_h").value = tr.dataset.h;
+  $("in_v").value = ""; order = ["q", "w", "h"]; recent = ["q", "w", "h"];
+  compute();
+  if (mode === "m" && last && last.ok) setBox("v", last.vd, 4);
+  $("f_q").scrollIntoView({ block: "center", behavior: "smooth" });
+}
+$("szT").addEventListener("click", e => pick(e.target.closest("tr[data-w]")));
+$("szT").addEventListener("keydown", e => { if (e.key === "Enter") pick(e.target.closest("tr[data-w]")); });
+
+/* ---------- auto and manual ---------- */
+const EXP = {
+  a: "<b>Auto mode.</b> Fill in <b>any three</b> boxes. The fourth is worked out and shown shaded as “calculated”, for example flow + velocity + width gives the depth. Type in a fourth box and the one you typed <b>longest ago</b> is recalculated, so the four always agree. Use this to <b>find</b> a size or a flow.",
+  m: "<b>Manual mode.</b> Every box is yours and <b>nothing is changed for you</b>. The pressure drop is worked out from the <b>flow, width and depth</b> you enter. Velocity is optional: if you enter one it is only <b>compared</b> with what the flow and size give, and a warning shows if they differ by more than 2 %. Use this to <b>check</b> a size already chosen, for example one on a drawing or schedule."
+};
+function setMode(m) {
+  if (m === mode) return;
+  if (m === "a") {
+    const filled = recent.filter(k => rd(k) > 0);
+    order = filled.slice(-3);
+  }
+  mode = m;
+  $("mo_a").classList.toggle("on", m === "a"); $("mo_m").classList.toggle("on", m === "m");
+  $("modeExp").innerHTML = EXP[m];
+  compute();
+}
+document.querySelectorAll('input[name="mode"]').forEach(e => e.addEventListener("change", () => setMode(e.value)));
+$("modeExp").innerHTML = EXP.a;
+
+/* ---------- typing ---------- */
+function onType(k) {
+  recent = recent.filter(x => x !== k); if (rd(k) > 0) recent.push(k);
+  if (mode === "m") { compute(); return; }
+  order = order.filter(x => x !== k);
+  if (rd(k) > 0) order.push(k);
+  if (order.length > 3) order.shift();
+  /* the key that dropped out of the typed list is now the calculated one */
+  compute();
+}
+document.querySelectorAll("[data-k]").forEach(e => e.addEventListener("input", () => onType(e.dataset.k)));
+$("clr").addEventListener("click", () => { order = []; recent = []; ["q", "v", "w", "h"].forEach(k => $("in_" + k).value = ""); compute(); });
+$("qu").addEventListener("change", () => {
+  const nu = $("qu").value, x = val("in_q");
+  if (x > 0) $("in_q").value = String(parseFloat((x * U[prevU] / U[nu]).toPrecision(6)));
+  prevU = nu; compute();
+});
+["ta", "sp", "len", "vm", "fl", "ar", "st", "vb"].forEach(id => { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
+$("rg").innerHTML = RG.map((r, i) => '<option value="' + i + '">' + r[0] + (r[1] != null ? ", " + r[1] + " mm" : "") + "</option>").join("");
+$("rg").addEventListener("change", () => { const r = RG[parseInt($("rg").value)]; if (r && r[1] != null) $("eps").value = r[1]; compute(); });
+$("eps").addEventListener("input", () => { const i = RG.findIndex(r => r[1] === val("eps")); $("rg").value = String(i >= 0 ? i : RG.length - 1); compute(); });
+$("dt").innerHTML = '<option value="">None chosen</option>' + DT.map((d, i) => '<option value="' + i + '">' + d[0] + " — " + d[1] + " m/s" + (d[2] ? " (" + d[2] + ")" : "") + "</option>").join("");
+$("dt").addEventListener("change", () => { const d = DT[parseInt($("dt").value)]; $("vm").value = d ? d[1] : ""; compute(); });
+
+
+/* ---------- section 2: circular duct ---------- */
+const CSZ = [100, 125, 150, 160, 180, 200, 224, 250, 280, 300, 315, 355, 400, 450, 500, 560, 600, 630, 710, 800, 900, 1000, 1120, 1250, 1400, 1500, 1600, 1800, 2000];
+let cord = [];             /* keys typed in section 2, oldest first, at most two */
+let clast = null, cPrevU = "L";
+const cval = k => { const x = parseFloat($("in_c" + k).value); return x > 0 ? x : NaN; };
+const cArea = d => Math.PI * Math.pow(d / 1000, 2) / 4;
+function fricR(Qd, d, eps, rho, mu) {
+  const D = d / 1000, A = cArea(d), v = Qd / A, Re = rho * v * D / mu, rr = eps / d;
+  const f1 = 0.11 * Math.pow(rr + 68 / Re, 0.25), tsal = f1 < 0.018, f = tsal ? 0.85 * f1 + 0.0028 : f1;
+  const dyn = 0.5 * rho * v * v, dpm = f / D * dyn;
+  const zone = Re < 2300 ? "lam" : Re < 4000 ? "trans" : Re > 1e8 ? "hi" : rr > 0.05 ? "rough" : "ok";
+  return { D, A, v, Re, rr, f1, tsal, f, dyn, dpm, zone };
+}
+function ctags() {
+  const calc = cord.length === 2 ? ["q", "v", "d"].find(k => cord.indexOf(k) < 0) : null;
+  ["q", "v", "d"].forEach(k => {
+    $("f_c" + k).classList.toggle("calc", k === calc);
+    $("tg_c" + k).textContent = k === calc ? "calculated" : cord.indexOf(k) >= 0 ? "entered" : "";
+  });
+  return calc;
+}
+function ccompute() {
+  const calc = ctags();
+  const T = val("ta"), s = spare(), eps = val("eps"), u = U[$("cqu").value];
+  const A = isFinite(T) ? air(T) : null;
+  const vm = val("vm"), fl = val("fl"), L = val("clen");
+  $("cUse").innerHTML = "<b>Shared with section 1:</b> air " + (isFinite(T) ? sig(T, 4) + " °C" : "—") + ", roughness " + (eps >= 0 ? sig(eps, 3) + " mm" : "—") + ", spare capacity " + sig(s, 3) + " %, velocity limit " + (vm > 0 ? sig(vm, 3) + " m/s" : "none") + ", friction limit " + (fl > 0 ? sig(fl, 3) + " Pa/m" : "none") + ". Change them in section 1.";
+  let Qd = cval("q") > 0 ? cval("q") * u * (1 + s / 100) : NaN, v = cval("v"), d = cval("d"), msg = "";
+  if (calc) {
+    let r = calc === "q" ? v * cArea(d) : calc === "v" ? Qd / cArea(d) : Math.sqrt(4 * Qd / (Math.PI * v)) * 1000;
+    if (!(r > 0) || !isFinite(r)) { r = NaN; msg = "These two values do not give a duct. Check them."; $("in_c" + calc).value = ""; }
+    else if (calc === "q") { Qd = r; $("in_cq").value = String(parseFloat((Qd / (1 + s / 100) / u).toPrecision(5))); }
+    else if (calc === "v") { v = r; $("in_cv").value = String(parseFloat(v.toPrecision(4))); }
+    else { d = r; $("in_cd").value = String(parseFloat(d.toPrecision(5))); }
+  }
+  clast = { ok: false, Qd };
+  const note = $("cNote"), warn = $("cWarn"), res = $("cRes"), warns = [];
+  const ok = A && Qd > 0 && d > 0 && eps >= 0 && cord.length === 2 && !msg;
+  if (ok) {
+    const R = fricR(Qd, d, eps, A.rho, A.mu);
+    clast = { ok: true, Qd, d, R, A, s, u, eps, calc, L: L > 0 ? L : 0, vm: vm > 0 ? vm : 0, fl: fl > 0 ? fl : 0 };
+    note.className = "perm";
+    note.innerHTML = "<b>How the friction is worked out:</b> the " + sig(d, 5) + " mm round duct carries " + fmt(Qd * 1000, 1) + " L/s at " + fmt(R.v, 2) + " m/s. The diameter is used as it is, so no equivalent diameter is needed.";
+    if (R.zone !== "ok") {
+      const m = R.zone === "lam" ? "Reynolds number " + grp(R.Re, 0) + " is laminar (below 2 300)." : R.zone === "trans" ? "Reynolds number " + grp(R.Re, 0) + " is transitional (2 300 to 4 000)." : R.zone === "hi" ? "Reynolds number " + sig(R.Re, 3) + " is above 10⁸." : "Relative roughness " + sig(R.rr, 3) + " is above 0.05.";
+      note.innerHTML += '<div class="pn">' + m + " This is <b>outside the range of the friction formula</b>. Check the size and the roughness.</div>"; note.className = "perm bad";
+    }
+    if (vm > 0 && R.v > vm) warns.push("Velocity " + fmt(R.v, 2) + " m/s is <b>above your limit</b> of " + sig(vm, 3) + " m/s.");
+    if (fl > 0 && R.dpm > fl) warns.push("Friction " + dp(R.dpm) + " Pa/m is <b>above your limit</b> of " + sig(fl, 3) + " Pa/m.");
+    let h = "";
+    h += box("Air flow used", fmt(Qd * 1000, 1), "L/s · " + grp(Qd * 3600, 0) + " m³/h" + (s > 0 ? " (" + sig(s, 3) + " % spare added)" : ""));
+    h += box("Velocity", fmt(R.v, 2), "m/s · real round duct area", vm > 0 ? (R.v <= vm ? "ok" : "bad") : "");
+    h += box("Pressure drop", dp(R.dpm), "Pa/m · " + fmt(R.dpm / 1000, 4) + " kPa per m", fl > 0 ? (R.dpm <= fl ? "ok key" : "bad key") : "key");
+    if (L > 0) h += box("Over " + sig(L, 4) + " m of duct", dp(R.dpm * L), "Pa");
+    h += box("Duct diameter", sig(d, 5), "mm");
+    h += box("Duct area", fmt(R.A, 4), "m²");
+    h += box("Reynolds number", grp(R.Re, 0), R.zone === "ok" ? "turbulent" : "out of range", R.zone === "ok" ? "" : "bad");
+    h += box("Friction factor f", sig(R.f, 4), "f′ = " + sig(R.f1, 4) + (R.tsal ? ", corrected" : ", no correction"));
+    res.innerHTML = h;
+  } else {
+    note.className = "perm";
+    note.innerHTML = msg ? "<b>" + msg + "</b>" : cord.length < 2 ? "<b>Fill in " + (2 - cord.length) + " more of the three boxes.</b> The flow and the diameter are the usual two; the velocity can be used with either." : "<b>Check the air temperature and roughness in section 1.</b>";
+    res.innerHTML = "";
+  }
+  warn.innerHTML = warns.map(m => "<div>" + m + "</div>").join(""); warn.classList.toggle("show", warns.length > 0);
+  csizes(Qd, A, eps); cworking();
+}
+function csizes(Qd, A, eps) {
+  const T = $("cSzT"), note = $("cSzNote"), vm = val("vm"), fl = val("fl");
+  if (!(Qd > 0) || !A || !(eps >= 0)) { T.innerHTML = ""; note.textContent = "Enter the flow, or any two of the three boxes, to see the sizes."; return; }
+  if (!(vm > 0) && !(fl > 0)) { T.innerHTML = ""; note.textContent = "Enter a maximum velocity or a maximum friction in section 1 to see the sizes that meet it."; return; }
+  const rows = [];
+  CSZ.forEach(d => { const R = fricR(Qd, d, eps, A.rho, A.mu); if ((!(vm > 0) || R.v <= vm) && (!(fl > 0) || R.dpm <= fl)) rows.push({ d, R }); });
+  if (!rows.length) { T.innerHTML = ""; note.textContent = "No standard size up to 2000 mm meets both limits at this flow."; return; }
+  const shown = rows.slice(0, 8);
+  note.innerHTML = "Limits used: " + [vm > 0 ? "velocity up to " + sig(vm, 3) + " m/s" : "", fl > 0 ? "friction up to " + sig(fl, 3) + " Pa/m" : ""].filter(Boolean).join(" and ") + ", flow " + fmt(Qd * 1000, 1) + " L/s" + (spare() > 0 ? " (with " + sig(spare(), 3) + " % spare)" : "") + ". The smallest standard size that meets them is in bold. Click a row to use it.";
+  let h = "<thead><tr><th>Diameter mm</th><th>Velocity m/s</th><th>Pa/m</th><th>Area m²</th></tr></thead><tbody>";
+  shown.forEach((r, i) => { h += '<tr tabindex="0" data-d="' + r.d + '"' + (i === 0 ? ' class="best"' : "") + "><td>" + r.d + "</td><td>" + fmt(r.R.v, 2) + "</td><td>" + dp(r.R.dpm) + "</td><td>" + fmt(r.R.A, 4) + "</td></tr>"; });
+  T.innerHTML = h + "</tbody>";
+}
+function cpick(tr) {
+  if (!tr || !clast || !(clast.Qd > 0)) return;
+  const s = spare(), u = U[$("cqu").value];
+  $("in_cq").value = String(parseFloat((clast.Qd / (1 + s / 100) / u).toPrecision(5)));
+  $("in_cd").value = tr.dataset.d; $("in_cv").value = ""; cord = ["q", "d"];
+  ccompute(); $("f_cq").scrollIntoView({ block: "center", behavior: "smooth" });
+}
+$("cSzT").addEventListener("click", e => cpick(e.target.closest("tr[data-d]")));
+$("cSzT").addEventListener("keydown", e => { if (e.key === "Enter") cpick(e.target.closest("tr[data-d]")); });
+document.querySelectorAll("[data-c]").forEach(e => e.addEventListener("input", () => {
+  const k = e.dataset.c; cord = cord.filter(x => x !== k); if (cval(k) > 0) cord.push(k); if (cord.length > 2) cord.shift(); ccompute();
+}));
+$("clen").addEventListener("input", ccompute);
+$("cclr").addEventListener("click", () => { cord = []; ["q", "v", "d"].forEach(k => $("in_c" + k).value = ""); ccompute(); });
+$("cqu").addEventListener("change", () => { const nu = $("cqu").value, x = cval("q"); if (x > 0) $("in_cq").value = String(parseFloat((x * U[cPrevU] / U[nu]).toPrecision(6))); cPrevU = nu; ccompute(); });
+function cworking() {
+  const s = [], L = clast, e = "Fill in two of flow, velocity and diameter in section 2 to see the working.";
+  if (!L || !L.ok) { MX.steps($("workC"), s, e); return; }
+  const R = L.R, A = L.A, TK = val("ta") + 273.15, qin = L.Qd / (1 + L.s / 100), nm = { q: "flow", v: "velocity", d: "diameter" };
+  s.push({ t: "Air", m: ["$ρ$ = @frac{101325}{287.05 × " + sig(TK, 5) + "} = **" + sig(A.rho, 5) + " kg/m³**", "$μ$ = **" + sig(A.mu * 1e5, 5) + " × 10^{-5} Pa·s**"] });
+  s.push({ t: "Flow used", m: L.s > 0 ? ["$q$_{d} = " + sig(qin, 5) + " × ( 1 + @frac{" + sig(L.s, 4) + "}{100} ) = **" + sig(L.Qd, 5) + " m³/s**"] : ["No spare capacity added: $q$_{d} = **" + sig(L.Qd, 5) + " m³/s**"] });
+  s.push({ t: "Area and velocity", m: ["$A$ = @frac{π × " + sig(R.D, 5) + "^{2}}{4} = **" + sig(R.A, 5) + " m²**", "$v$ = @frac{" + sig(L.Qd, 5) + "}{" + sig(R.A, 5) + "} = **" + sig(R.v, 4) + " m/s**", "The " + nm[L.calc] + " is the one worked out from the other two."] });
+  s.push({ t: "Reynolds number", m: ["$Re$ = @frac{" + sig(A.rho, 5) + " × " + sig(R.v, 4) + " × " + sig(R.D, 5) + "}{" + sig(A.mu, 5) + "} = **" + grp(R.Re, 0) + "**"], bad: R.zone !== "ok" });
+  s.push({ t: "Friction factor, first step", m: ["$f$′ = 0.11 ( @frac{" + sig(L.eps, 4) + "}{" + sig(L.d, 5) + "} + @frac{68}{" + grp(R.Re, 0) + "} )^{0.25} = **" + sig(R.f1, 5) + "**"] });
+  s.push({ t: "Friction factor, correction", m: R.tsal ? ["$f$′ = " + sig(R.f1, 5) + " is below 0.018, so", "$f$ = 0.85 × " + sig(R.f1, 5) + " + 0.0028 = **" + sig(R.f, 5) + "**"] : ["$f$′ = " + sig(R.f1, 5) + " is not below 0.018, so", "$f$ = $f$′ = **" + sig(R.f, 5) + "**"] });
+  s.push({ t: "Dynamic pressure", m: ["$p$_{d} = @frac{" + sig(A.rho, 5) + " × " + sig(R.v, 4) + "^{2}}{2} = **" + sig(R.dyn, 5) + " Pa**"] });
+  s.push({ t: "Pressure drop per metre", m: ["Δ$p$/$L$ = @frac{" + sig(R.f, 5) + "}{" + sig(R.D, 5) + "} × " + sig(R.dyn, 5) + " = **" + sig(R.dpm, 5) + " Pa/m**"], bad: R.zone !== "ok" });
+  if (L.L > 0) s.push({ t: "Over the length", m: ["Δ$p$ = " + sig(R.dpm, 5) + " × " + sig(L.L, 5) + " = **" + sig(R.dpm * L.L, 5) + " Pa**"] });
+  if (L.vm > 0) s.push({ t: "Velocity limit", m: [sig(R.v, 4) + " m/s " + (R.v <= L.vm ? "≤" : ">") + " " + sig(L.vm, 4) + " m/s", "**" + (R.v <= L.vm ? "within the limit" : "above the limit") + "**"], bad: R.v > L.vm });
+  if (L.fl > 0) s.push({ t: "Friction limit", m: [sig(R.dpm, 4) + " Pa/m " + (R.dpm <= L.fl ? "≤" : ">") + " " + sig(L.fl, 4) + " Pa/m", "**" + (R.dpm <= L.fl ? "within the limit" : "above the limit") + "**"], bad: R.dpm > L.fl });
+  MX.steps($("workC"), s, e);
+}
+MX.formula($("fxD7"), ["$A$ = @frac{π $D$^{2}}{4}", "$v$ = @frac{$q$_{d}}{$A$}", "$D$ = @sqrt{@frac{4 $q$_{d}}{π $v$}}"]);
+MX.defs($("fxDD7"), [["$D$", "inside diameter of the round duct, m (mm on the page)"], ["$A$", "area of the round duct, m²"], ["$v$", "velocity, m/s: flow over the real area"]]);
+/* ---------- the working ---------- */
+function working() {
+  const s = [], L = last;
+  if (!L || !L.ok) { MX.steps($("workD"), s, "Fill in three of flow, velocity, width and depth to see the working."); return; }
+  const R = L.R, A = L.A, TK = val("ta") + 273.15;
+  s.push({ t: "Air", m: ["$T$_{K} = " + sig(val("ta"), 4) + " + 273.15 = " + sig(TK, 5) + " K", "$ρ$ = @frac{101325}{287.05 × " + sig(TK, 5) + "} = **" + sig(A.rho, 5) + " kg/m³**", "$μ$ = 1.458 × 10^{-6} @frac{" + sig(TK, 5) + "^{1.5}}{" + sig(TK, 5) + " + 110.4} = **" + sig(A.mu * 1e5, 5) + " × 10^{-5} Pa·s**"] });
+  const qin = L.Qd / (1 + L.s / 100);
+  s.push({ t: "Flow used", m: L.s > 0 ? ["$q$_{d} = " + sig(qin, 5) + " × ( 1 + @frac{" + sig(L.s, 4) + "}{100} ) = **" + sig(L.Qd, 5) + " m³/s** = " + sig(L.Qd * 1000, 5) + " L/s"] : ["No spare capacity added: $q$_{d} = **" + sig(L.Qd, 5) + " m³/s** = " + sig(L.Qd * 1000, 5) + " L/s"] });
+  const nm = { q: "flow", v: "velocity", w: "width", h: "depth" };
+  if (mode === "m") { const xv = rd("v"); s.push({ t: "Manual mode", m: ["Flow, width and depth are used as you typed them.", xv > 0 ? "Velocity entered " + sig(xv, 4) + " m/s; flow and size give **" + sig(L.vd, 4) + " m/s**" + (Math.abs(xv - L.vd) / L.vd > 0.02 ? " (differs by more than 2 %)" : " (agrees)") : "No velocity entered; flow and size give **" + sig(L.vd, 4) + " m/s**"], bad: xv > 0 && Math.abs(xv - L.vd) / L.vd > 0.02 }); }
+  else s.push({ t: "The fourth box", m: ["The " + nm[L.calc] + " is the one worked out, from the other three.", L.calc === "v" ? "$v$ = @frac{$q$_{d}}{$A$} = **" + sig(L.vd, 4) + " m/s**" : L.calc === "q" ? "$q$_{d} = $v$ × $A$ = **" + sig(L.Qd, 5) + " m³/s**" : "side = @frac{$q$_{d}}{$v$ × other side} = **" + sig(L.calc === "w" ? L.a : L.b, 5) + " mm**"], n: L.basis === "e" ? "Area $A$ is the area of the equivalent round duct." : "Area $A$ is width × depth." });
+  s.push({ t: "Equivalent round duct", m: ["$D$_{e} = 1.265 ( @frac{(" + sig(L.a, 5) + " × " + sig(L.b, 5) + ")^{3}}{" + sig(L.a, 5) + " + " + sig(L.b, 5) + "} )^{0.2} = **" + sig(R.De, 5) + " mm**", "$A$_{e} = @frac{π × " + sig(R.D, 5) + "^{2}}{4} = " + sig(R.Ae, 5) + " m²", "$v$_{e} = @frac{" + sig(L.Qd, 5) + "}{" + sig(R.Ae, 5) + "} = **" + sig(R.ve, 4) + " m/s**"], n: "Real area " + sig(R.Ar, 5) + " m², so the real velocity is " + sig(R.vr, 4) + " m/s." });
+  s.push({ t: "Reynolds number", m: ["$Re$ = @frac{" + sig(A.rho, 5) + " × " + sig(R.ve, 4) + " × " + sig(R.D, 5) + "}{" + sig(A.mu, 5) + "} = **" + grp(R.Re, 0) + "**"], bad: R.zone !== "ok" });
+  s.push({ t: "Friction factor, first step", m: ["$f$′ = 0.11 ( @frac{" + sig(L.eps, 4) + "}{" + sig(R.De, 5) + "} + @frac{68}{" + grp(R.Re, 0) + "} )^{0.25} = **" + sig(R.f1, 5) + "**"] });
+  s.push({ t: "Friction factor, correction", m: R.tsal ? ["$f$′ = " + sig(R.f1, 5) + " is below 0.018, so", "$f$ = 0.85 × " + sig(R.f1, 5) + " + 0.0028 = **" + sig(R.f, 5) + "**"] : ["$f$′ = " + sig(R.f1, 5) + " is not below 0.018, so", "$f$ = $f$′ = **" + sig(R.f, 5) + "**"] });
+  s.push({ t: "Dynamic pressure", m: ["$p$_{d} = @frac{" + sig(A.rho, 5) + " × " + sig(R.ve, 4) + "^{2}}{2} = **" + sig(R.dyn, 5) + " Pa**"] });
+  s.push({ t: "Pressure drop per metre", m: ["Δ$p$/$L$ = @frac{" + sig(R.f, 5) + "}{" + sig(R.D, 5) + "} × " + sig(R.dyn, 5) + " = **" + sig(R.dpm, 5) + " Pa/m**"], bad: R.zone !== "ok" });
+  if (L.L > 0) s.push({ t: "Over the length", m: ["Δ$p$ = " + sig(R.dpm, 5) + " × " + sig(L.L, 5) + " = **" + sig(R.dpm * L.L, 5) + " Pa**"] });
+  if (L.vm > 0) s.push({ t: "Velocity limit", m: [sig(L.vd, 4) + " m/s " + (L.vd <= L.vm ? "≤" : ">") + " " + sig(L.vm, 4) + " m/s", "**" + (L.vd <= L.vm ? "within the limit" : "above the limit") + "**"], bad: L.vd > L.vm });
+  if (L.fl > 0) s.push({ t: "Friction limit", m: [sig(R.dpm, 4) + " Pa/m " + (R.dpm <= L.fl ? "≤" : ">") + " " + sig(L.fl, 4) + " Pa/m", "**" + (R.dpm <= L.fl ? "within the limit" : "above the limit") + "**"], bad: R.dpm > L.fl });
+  MX.steps($("workD"), s, "Fill in three of flow, velocity, width and depth to see the working.");
+}
+
+/* ---------- formulae and data ---------- */
+MX.formula($("fxD1"), ["$T$_{K} = $T$ + 273.15", "$ρ$ = @frac{101325}{287.05 × $T$_{K}}", "$μ$ = 1.458 × 10^{-6} @frac{$T$_{K}^{1.5}}{$T$_{K} + 110.4}"]);
+MX.defs($("fxDD1"), [["$T$", "air temperature, °C"], ["$ρ$", "density, kg/m³ (ideal gas at 101.325 kPa)"], ["$μ$", "dynamic viscosity, Pa·s (Sutherland’s law)"]]);
+MX.formula($("fxD2"), ["$q$_{d} = $q$ × ( 1 + @frac{$SF$}{100} )", "$v$ = @frac{$q$_{d}}{$A$}", "$b$ = @frac{$q$_{d}}{$v$ × $a$}", "$a$ = @frac{$q$_{d}}{$v$ × $b$}"]);
+MX.defs($("fxDD2"), [["$q$", "air flow entered, m³/s"], ["$SF$", "spare capacity, %"], ["$q$_{d}", "flow used, m³/s"], ["$A$", "duct area, m²: $a$ × $b$, or the area of the equivalent round duct if you chose that"], ["$a$, $b$", "width and depth, m"]]);
+MX.formula($("fxD3"), ["$D$_{e} = 1.265 ( @frac{($a$ $b$)^{3}}{$a$ + $b$} )^{0.2}", "$A$_{e} = @frac{π $D$_{e}^{2}}{4}", "$v$_{e} = @frac{$q$_{d}}{$A$_{e}}"]);
+MX.defs($("fxDD3"), [["$D$_{e}", "equivalent round duct diameter, mm (m in the rest of the working)"], ["$v$_{e}", "velocity in the equivalent round duct, m/s: the velocity the friction uses"]]);
+MX.formula($("fxD4"), ["$Re$ = @frac{$ρ$ $v$_{e} $D$_{e}}{$μ$}"]);
+MX.formula($("fxD5"), ["$f$′ = 0.11 ( @frac{$ε$}{$D$_{e}} + @frac{68}{$Re$} )^{0.25}", "$f$ = 0.85 $f$′ + 0.0028  (when $f$′ < 0.018)", "$f$ = $f$′  (when $f$′ ≥ 0.018)"]);
+MX.formula($("fxD6"), ["$p$_{d} = @frac{1}{2} $ρ$ $v$_{e}^{2}", "Δ$p$/$L$ = @frac{$f$}{$D$_{e}} × $p$_{d}", "Δ$p$ = ( Δ$p$/$L$ ) × $L$"]);
+MX.defs($("fxDD6"), [["$ε$", "roughness, mm"], ["$p$_{d}", "dynamic pressure, Pa"], ["Δ$p$/$L$", "pressure drop per metre, Pa/m"]]);
+$("rgT").innerHTML = "<thead><tr><th>Material</th><th>ε mm</th></tr></thead><tbody>" + RG.filter(r => r[1] != null).map(r => "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>").join("") + "</tbody>";
+$("dtT").innerHTML = "<thead><tr><th>Type</th><th>Max velocity m/s</th><th>Remarks</th></tr></thead><tbody>" + DT.map(d => "<tr><th>" + d[0] + "</th><td>" + d[1] + "</td><td style=\"text-align:left\">" + d[2] + "</td></tr>").join("") + "</tbody>";
+let ah = "<thead><tr><th>°C</th><th>ρ kg/m³</th><th>μ 10⁻⁵ Pa·s</th></tr></thead><tbody>";
+for (let t = 0; t <= 40; t += 5) { const q = air(t); ah += "<tr><th>" + t + "</th><td>" + fmt(q.rho, 3) + "</td><td>" + fmt(q.mu * 1e5, 3) + "</td></tr>"; }
+$("aiT").innerHTML = ah + "</tbody>";
+(function () { const d = (a, b) => { const x = eqD(a, b), y = 1.30 * Math.pow(a * b, 0.625) / Math.pow(a + b, 0.25); return 100 * (y - x) / x; };
+  $("dDiff").textContent = "at 600 × 400 mm it gives a diameter " + fmt(d(600, 400), 1) + " % different, and at 1000 × 250 mm " + fmt(d(1000, 250), 1) + " % different."; })();
+
+/* start with a worked example: 1000 L/s at 5 m/s in a 500 mm wide duct */
+$("in_q").value = "1000"; $("in_v").value = "5"; $("in_w").value = "500"; order = ["q", "v", "w"]; recent = ["q", "v", "w"];
+$("in_cq").value = "1000"; $("in_cd").value = "500"; cord = ["q", "d"];
+$("rg").value = "0";
+compute();
+window.__duct = { fricR, fric, air, eqD, solve, areaOf };
+})();
+</script>
+</body>
+</html>
