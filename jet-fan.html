@@ -212,7 +212,7 @@ input[readonly] { background:var(--tint); color:var(--muted); }
 .answer.big { border-width:2px; padding:14px 16px; }
 .rc { display:flex; align-items:center; gap:10px; flex-wrap:nowrap; margin:6px 0 8px; }
 .rc > div { display:flex; align-items:center; gap:8px; }
-.rc .n { font-size:40px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+.rc .n { font-size:40px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; white-space:nowrap; }
 .rc .t { font-size:12.5px; line-height:1.2; color:var(--muted); }
 .rc .x { font-size:22px; color:var(--muted); }
 .rc > div:last-child .n { padding:2px 8px; background:var(--ink); color:var(--paper); }
@@ -528,6 +528,7 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
     <div><label for="rho">Air density</label><div class="pair"><input id="rho" type="number" inputmode="decimal" min="0.5" step="0.01" value="1.20" /><span>kg/m³</span></div></div>
     <div><label for="tpa">Thrust per floor area<span class="hint">Maker rule of thumb: 5 N per 100 m².</span></label><div class="pair"><input id="tpa" type="number" inputmode="decimal" min="0" step="0.5" value="5" /><span>N/100m²</span></div></div>
     <div><label for="sb">Standby fans</label><select id="sb"><option value="0" selected>None</option><option value="1">One (N + 1)</option><option value="row">One per fan line</option></select></div>
+    <div class="span2"><label for="perrow">Fans in each row<span class="hint">When the pressure check needs more fans than coverage, add only the fans needed to reach the design flow, or keep a regular grid.</span></label><select id="perrow"><option value="fewest" selected>Fewest fans · rows may differ by one fan</option><option value="grid">Same number in every row · regular grid</option></select></div>
   </div>
 </details>
 </section>
@@ -647,7 +648,7 @@ nav.pages.grouped .nl { display:grid; grid-template-columns:repeat(auto-fill,min
         <li><b>Airflow carried.</b> A free jet carries 0.32 × x / D times its own flow at distance x (Ricou and Spalding). In a room it cannot carry more than its share of the cross-section moving at the terminal velocity. The fan lines together must carry at least Q.</li>
         <li><b>Jet fans alone.</b> With no extract fan, the fans must push Q through the obstructions and the openings and against wind and stack pressure. The sheet also solves for the airflow the installed fans actually drive. Opening losses are converted to the hall speed: K (A / A<sub>opening</sub>)², so small openings dominate.</li>
       </ol>
-      <p><b>The layout</b> takes the rows from Method 1 and adds fan lines until every test is met. The check that needs most fans is marked “sets the count”.</p>
+      <p><b>The layout</b> takes the rows from Method 1. Every row gets the fans needed for coverage and for the airflow carried, because each row must sweep the full width and hand the air on to the next. The pressure check is different: the rows are in series, so the push of every fan adds up, and the check needs a total, not a number per row. The sheet adds fans one at a time until the installed fans drive the design flow, and spreads the extra fans along the length, so rows differ by at most one fan. Choose “Same number in every row” for a regular grid; it rounds up to a whole number of fans per row. The check that needs most fans is marked “sets the count”.</p>
       <h3>How reliable each assumption is</h3>
       <p>Checked on 8 October 2026 against the sources listed below. The two that most affect the count are the throw and the lateral spacing.</p>
       <div class="scroll"><table class="ref acc">
@@ -797,22 +798,45 @@ function compute(p) {
   let colsFlow = 1;
   if (!flowFail) { while (carried(colsFlow) < Q - 1e-9 && colsFlow < 500) colsFlow++; }
   const Nflow = rows * colsFlow;
-  // Layout
-  let cols = colsSp, gov = "cover";
-  if (!flowFail && colsFlow > cols) { cols = colsFlow; gov = "flow"; }
-  if (Number.isFinite(Nmom) && Nmom > rows * cols) { cols = Math.ceil(Nmom / rows); gov = "momentum"; }
-  const N = rows * cols, Nsb = p.sb === "1" ? 1 : p.sb === "row" ? cols : 0;
+  // Layout, row by row.
+  // Coverage and airflow carried are needed in every row: each row must sweep the full width and hand the
+  // carried air on to the next. The pressure check is a total: the rows are in series, so the push of every
+  // fan adds up. Fans are added one at a time until the installed fans drive the design flow; the extra fans
+  // are spread along the length, so rows differ by at most one fan.
+  const colsBase = Math.max(colsSp, flowFail ? 1 : colsFlow);
+  let gov = !flowFail && colsFlow > colsSp ? "flow" : "cover";
+  const Nbase = rows * colsBase;
+  const Nreq = Number.isFinite(Nmom) ? Math.max(Nbase, Nmom) : Nbase;
+  if (Nreq > Nbase) gov = "momentum";
+  const grid = p.perRow === "grid";
+  let perRow;
+  if (grid) perRow = Array(rows).fill(Math.ceil(Nreq / rows - 1e-9));
+  else {
+    const c0 = Math.floor(Nreq / rows), extra = Nreq - c0 * rows;
+    perRow = Array.from({ length:rows }, (_, i) => c0 + (Math.ceil((i + 1) * extra / rows) > Math.ceil(i * extra / rows) ? 1 : 0));
+  }
+  const N = perRow.reduce((a, b) => a + b, 0);
+  const cols = Math.max(...perRow), colsMin = Math.min(...perRow), even = cols === colsMin;
+  const Nsb = p.sb === "1" ? 1 : p.sb === "row" ? cols : 0;
   const N2 = Math.max(Number.isFinite(Nmom) ? Nmom : 0, Nflow);
   const tpaGiven = N * p.T / floorA * 100;
-  // airflow the installed fans drive, jet fans alone
-  let Qdrive = null;
-  if (jetOnly) {
-    const push = vv => N * p.eta * p.T * Math.max(1 - vv / vj, 0) / A - (K * 0.5 * rho * vv * vv + pext);
-    if (push(0) <= 0) Qdrive = 0;
-    else { let lo = 0, hi = vj; for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2; if (push(m) > 0) lo = m; else hi = m; } Qdrive = lo * A; }
-  }
+  // Push available from n fans at the design flow, and the airflow n fans drive (jet fans alone)
+  const pushAt = n => n * Fper;
+  const drive = n => {
+    const push = vv => n * p.eta * p.T * Math.max(1 - vv / vj, 0) / A - (K * 0.5 * rho * vv * vv + pext);
+    if (n <= 0 || push(0) <= 0) return 0;
+    let lo = 0, hi = vj; for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2; if (push(m) > 0) lo = m; else hi = m; }
+    return lo * A;
+  };
+  const Qdrive = jetOnly ? drive(N) : null;
+  const Nmin = Nreq, QdriveMin = jetOnly ? drive(Nmin) : null, QdriveLess = jetOnly && Nmin > 1 ? drive(Nmin - 1) : null;
+  // Fans if one row fewer were enough (for the "sits on a step" check)
+  const NrowLess = rows > 1 ? Math.max((rows - 1) * colsBase, Number.isFinite(Nmom) ? Nmom : 0) : null;
+  const layout = even ? `${rows} × ${cols}` : `${rows} × ${colsMin}–${cols}`;
   return Object.assign(r, { ok:true, A, V, Q, v, ach, rho, Aj, vj, tEst, thr, ov, sL, rowsRaw, rows, colsSp, N1, floorA, Ntpa,
-    Kobs, K, KinH, KoutH, Ain, Aout, pext, qd, dpObs, dpIn, dpOut, dpOpenExt, jetOnly, dp, Freq, Fper, Nmom, Qfree, Qcap, flowFail, colsFlow, Nflow, N2, Qdrive, Cf, Qcarried:carried(cols), cols, gov, N, Nsb, sx:L / rows, sy:W / cols, tpaGiven, tpaOK:tpaGiven >= p.tpa - 1e-9 });
+    Kobs, K, KinH, KoutH, Ain, Aout, pext, qd, dpObs, dpIn, dpOut, dpOpenExt, jetOnly, dp, Freq, Fper, Nmom, Qfree, Qcap, flowFail, colsFlow, Nflow, N2, Qdrive, Cf,
+    Qcarried:carried(colsMin), colsBase, Nbase, Nreq, grid, perRow, cols, colsMin, even, layout, gov, N, Nsb, Nmin, QdriveMin, QdriveLess, NrowLess,
+    pushN:pushAt(N), sx:L / rows, sy:W / colsMin, tpaGiven, tpaOK:tpaGiven >= p.tpa - 1e-9 });
 }
 
 function readInputs() {
@@ -822,7 +846,7 @@ function readInputs() {
   else Q = (num("ach") || 0) * V / 3600;
   return { L:num("L"), W:num("W"), H:num("H"), Q, T:num("T"), Qj:num("Qj"), D:num("D"), throwM:num("throw"),
     rho:num("rho") || 1.2, ut:num("ut") || 1, kv:num("kv") || 6, ov:numOr("ov", 20), sw:num("sw") || 12, eta:num("K") || 0.8, cfree:num("cfree") || C_FREE,
-    Kobs:numOr("Kobs", 0), tpa:numOr("tpa", 5), sb:$("sb").value,
+    Kobs:numOr("Kobs", 0), tpa:numOr("tpa", 5), sb:$("sb").value, perRow:$("perrow").value,
     drive:$("drive").value, Ain:num("Ain"), Kin:numOr("Kin", K_IN), Aout:num("Aout"), Kout:numOr("Kout", K_OUT), pext:numOr("pext", 0) };
 }
 
@@ -839,11 +863,12 @@ function calc() {
   const govTxt = { cover:"Set by check 1, throw and coverage", flow:"Set by check 2, airflow carried", momentum:r.jetOnly ? "Set by check 2, pressure balance" : "Set by check 2, pressure loss" }[r.gov];
 
   const checks = [];
-  if (r.gov === "momentum") checks.push(["warn", `Pressure ${r.jetOnly ? "balance" : "loss"} sets the count: ${r.Nmom} fans are needed to push ${f(r.Q, 1)} m³/s ${r.jetOnly ? "through the space, its openings and against the outside pressure" : "through the obstructions"}, more than throw and spacing need. Fan lines were added.`]);
+  if (r.gov === "momentum") checks.push(["warn", `Pressure ${r.jetOnly ? "balance" : "loss"} sets the count: ${r.Nmom} fans are needed to push ${f(r.Q, 1)} m³/s ${r.jetOnly ? "through the space, its openings and against the outside pressure" : "through the obstructions"}, more than the ${r.Nbase} that throw and spacing need. ${r.grid ? `Every row was given ${r.cols} fans, ${r.N - r.Nmom} more than the pressure check needs.` : `${r.Nmom - r.Nbase} fan${r.Nmom - r.Nbase > 1 ? "s were" : " was"} added, spread along the length.`}`]);
+  if (r.gov === "momentum" && r.grid && r.N > r.Nmom) checks.push(["", `With “Fewest fans” the same flow needs ${r.Nmom} fans, rows of ${Math.floor(r.Nmom / r.rows)}${r.Nmom % r.rows ? ` or ${Math.floor(r.Nmom / r.rows) + 1}` : ""}.`]);
   if (r.gov === "flow") checks.push(["warn", `Airflow carried sets the count: ${r.colsFlow} fan lines are needed for the jets to carry ${f(r.Q, 2)} m³/s at the end of their throw.`]);
   if (r.rows > 1) {
     const need = p.L / ((r.rows - 1) * (1 - r.ov)), pct = need / r.thr - 1;
-    if (pct < 0.15) checks.push(["warn", `The count sits on a step: a throw of ${f(need, 1)} m, ${f(pct * 100, 0)} % longer, needs one row fewer (${(r.rows - 1) * r.cols} fans). Get the maker’s throw to a terminal velocity of ${p.ut} m/s.`]);
+    if (pct < 0.15 && r.NrowLess < r.N) checks.push(["warn", `The count sits on a step: a throw of ${f(need, 1)} m, ${f(pct * 100, 0)} % longer, needs one row fewer (${r.NrowLess} fans). Get the maker’s throw to a terminal velocity of ${p.ut} m/s.`]);
   }
   if (!r.tpaOK) checks.push(["warn", `Installed thrust is ${f(r.tpaGiven, 1)} N per 100 m² of floor, below the ${p.tpa} N rule of thumb (${r.Ntpa} fans). Consider a larger fan or more fans.`]);
   if (r.sy > 15) checks.push(["warn", `Lateral spacing ${f(r.sy, 1)} m is wider than 15 m. Expect slow strips between lines; consider more columns.`]);
@@ -856,10 +881,24 @@ function calc() {
   if (r.v / r.vj > 0.2) checks.push(["warn", `Bulk velocity is ${f(100 * r.v / r.vj, 0)}% of the jet velocity; jets lose effect at high bulk velocity.`]);
 
   const cmpRow = (lab, what, n, on, chk) => `<tr${on ? ' class="on"' : ""}><td>${lab}</td><td>${what}</td><td class="n">${n}</td><td>${on ? "sets the count" : chk}</td></tr>`;
+  const colsTxt = r.even ? r.cols : `${r.colsMin}–${r.cols}`;
+  // Fans in each row, from the inlet to the extract
+  const rowTable = `<h3 style="margin:16px 0 4px">Fans in each row</h3>` +
+    `<p class="hint" style="margin:0 0 6px">Every row has at least ${r.colsBase} fan${r.colsBase > 1 ? "s" : ""} for coverage${!r.flowFail && r.colsFlow > r.colsSp ? " and airflow carried" : ""}. ${r.gov === "momentum" ? (r.grid ? `The pressure check needs ${r.Nmom} in total; every row is made the same.` : `The pressure check needs ${r.Nmom} in total, so ${r.Nmom - r.Nbase} more are spread along the length.`) : "The pressure check needs no more."}</p>` +
+    `<div class="scroll"><table class="sens"><thead><tr><th>Row, from the inlet</th><th>Distance from the inlet</th><th>Fans</th><th>Spacing across</th></tr></thead><tbody>` +
+    r.perRow.map((n, i) => `<tr${n > r.colsBase ? ' class="on"' : ""}><td>Row ${i + 1}</td><td class="n">${f(i * r.sx + Math.min(r.sx * 0.08, 2), 1)} m</td><td class="n">${n}${n > r.colsBase ? ` (+${n - r.colsBase})` : ""}</td><td class="n">${f(p.W / n, 1)} m</td></tr>`).join("") +
+    `<tr class="base"><td>Total</td><td></td><td class="n">${r.N}</td><td></td></tr></tbody></table></div>` +
+    `<dl class="facts">` +
+      `<dt>${r.jetOnly ? "Push needed for the design flow" : "Push needed past the obstructions"}</dt><dd>${f(r.Freq, 1)} N</dd>` +
+      `<dt>Push from the ${r.N} fans at the design flow</dt><dd>${f(r.pushN, 1)} N · ${r.Freq > 0 ? f(100 * r.pushN / r.Freq, 0) + " %" : "—"}</dd>` +
+      (r.jetOnly ? `<dt><b>Airflow the ${r.N} fans drive</b></dt><dd><b>${f(r.Qdrive, 2)} m³/s ${r.Qdrive >= r.Q - 1e-6 ? "≥" : "<"} ${f(r.Q, 2)}</b></dd>` : "") +
+      (r.jetOnly && r.gov === "momentum" && r.QdriveLess != null ? `<dt>With one fan fewer, ${r.Nmin - 1} fans</dt><dd>${f(r.QdriveLess, 2)} m³/s &lt; ${f(r.Q, 2)}</dd>` : "") +
+    `</dl>`;
   out.innerHTML =
     `<div class="answer good big"><div class="k">Jet fans needed · ${esc(name)}</div>` +
-    `<div class="rc"><div><span class="n">${r.rows}</span><span class="t">rows<br>along the length</span></div><span class="x">×</span><div><span class="n">${r.cols}</span><span class="t">columns<br>across the width</span></div><span class="x">=</span><div><span class="n">${r.N}</span><span class="t">jet fans<br>duty</span></div></div>` +
-    `<div class="u">Rows at ${f(r.sx, 1)} m centres along the airflow; columns at ${f(r.sy, 1)} m centres across it.${r.Nsb ? ` Add ${r.Nsb} standby: <b>${r.N + r.Nsb} fans installed</b>.` : ""}</div><span class="gov">${govTxt}</span></div>` +
+    `<div class="rc"><div><span class="n">${r.rows}</span><span class="t">rows<br>along the length</span></div><span class="x">×</span><div><span class="n">${colsTxt}</span><span class="t">fans per row<br>across the width</span></div><span class="x">=</span><div><span class="n">${r.N}</span><span class="t">jet fans<br>duty</span></div></div>` +
+    `<div class="u">Rows at ${f(r.sx, 1)} m centres along the airflow; fans at ${r.even ? f(r.sy, 1) : `${f(p.W / r.cols, 1)}–${f(r.sy, 1)}`} m centres across it.${r.even ? "" : ` Rows: ${r.perRow.join(" + ")}.`}${r.Nsb ? ` Add ${r.Nsb} standby: <b>${r.N + r.Nsb} fans installed</b>.` : ""}</div><span class="gov">${govTxt}</span></div>` +
+    rowTable +
     `<h3 style="margin:16px 0 4px">Checks on the number of fans</h3><p class="hint" style="margin:0 0 6px">The layout must pass every check. The one needing most fans sets the count.</p>` +
     `<div class="scroll"><table class="sens cmp2"><thead><tr><th>Check</th><th>What it asks</th><th>Fans needed</th><th>Result</th></tr></thead><tbody>` +
       cmpRow("1 · Throw and coverage", `Enough fans to sweep the whole floor? ${r.rows} rows × ${r.colsSp} lines at ≤ ${p.sw} m`, r.N1, r.gov === "cover", `OK with ${r.N}`) +
@@ -871,7 +910,6 @@ function calc() {
     `</tbody></table></div>` +
     `<dl class="facts">` +
       `<dt>${r.jetOnly ? "Airflow needed" : "Extract airflow"}</dt><dd>${f(r.Q, 2)} m³/s · ${f(r.ach, 1)} /h</dd>` +
-      (r.jetOnly ? `<dt><b>Airflow the ${r.N} fans drive</b></dt><dd><b>${f(r.Qdrive, 1)} m³/s ${r.Qdrive >= r.Q - 1e-6 ? "≥" : "<"} ${f(r.Q, 1)}</b></dd>` : "") +
       `<dt>Bulk air speed</dt><dd>${f(r.v, 3)} m/s</dd>` +
       `<dt>Throw per fan${p.throwM > 0 ? ", maker’s" : `, to terminal velocity ${p.ut} m/s`}</dt><dd>${f(r.thr, 1)} m</dd>` +
       `<dt>${r.jetOnly ? "Pressure to overcome" : "Obstruction loss"}, K ${f(r.K, 2)}${r.pext > 0 ? ` + ${f(r.pext, 1)} Pa` : ""}</dt><dd>${f(r.dp, 3)} Pa · ${f(r.Freq, 1)} N to push</dd>` +
@@ -907,9 +945,9 @@ function sensitivity(p, base) {
   const rows = cases.map(([lab, o], i) => {
     const r = i === 0 ? base : compute(Object.assign({}, p, o));
     if (!r.ok) return "";
-    return `<tr${i === 0 ? ' class="base"' : ""}><td>${lab}</td><td class="n">${f(r.thr, 1)} m</td><td class="n">${r.N1}</td><td class="n">${r.N2}</td><td class="n">${r.rows} × ${r.cols}</td><td class="n">${r.N}</td></tr>`;
+    return `<tr${i === 0 ? ' class="base"' : ""}><td>${lab}</td><td class="n">${f(r.thr, 1)} m</td><td class="n">${r.N1}</td><td class="n">${r.N2}</td><td class="n">${r.layout}</td><td class="n">${r.N}</td></tr>`;
   }).join("");
-  $("sens").innerHTML = `<thead><tr><th>Case</th><th>Throw</th><th>Method 1</th><th>Method 2</th><th>Rows × columns</th><th>Fans</th></tr></thead><tbody>${rows}</tbody>`;
+  $("sens").innerHTML = `<thead><tr><th>Case</th><th>Throw</th><th>Method 1</th><th>Method 2</th><th>Rows × fans per row</th><th>Fans</th></tr></thead><tbody>${rows}</tbody>`;
 }
 
 function worked(p, r) {
@@ -942,7 +980,13 @@ function worked(p, r) {
     (r.flowFail ? `<div class="eq"><b>Not possible:</b> Q = ${f(r.Q, 2)} m³/s is more than A × u<sub>t</sub>.</div>`
       : `<div class="eq">Fan lines n so that n × min(Q<sub>free</sub>, (W / n) H u<sub>t</sub>) ≥ Q: n = ${r.colsFlow}; fans = ${r.rows} × ${r.colsFlow} = <b>${r.Nflow}</b></div>`) +
     `<h3>Layout</h3>` +
-    `<div class="eq">Columns = max(${r.colsSp}, ${r.colsFlow}${r.gov === "momentum" ? `, ⌈${r.Nmom} / ${r.rows}⌉` : ""}) = ${r.cols}; N = ${r.rows} × ${r.cols} = <b>${r.N}</b>${r.Nsb ? ` + ${r.Nsb} standby` : ""}</div>` +
+    `<div class="eq">Fans in every row = max(coverage ${r.colsSp}, airflow carried ${r.flowFail ? "—" : r.colsFlow}) = ${r.colsBase}; ${r.rows} rows × ${r.colsBase} = ${r.Nbase} fans</div>` +
+    `<div class="eq">Total so the flow reaches the design flow = max(${r.Nbase}, pressure ${Number.isFinite(r.Nmom) ? r.Nmom : "—"}) = <b>${r.Nreq}</b></div>` +
+    (r.grid
+      ? `<div class="eq">Same in every row: ⌈${r.Nreq} / ${r.rows}⌉ = ${r.cols} per row; N = ${r.rows} × ${r.cols} = <b>${r.N}</b>${r.Nsb ? ` + ${r.Nsb} standby` : ""}</div>`
+      : `<div class="eq">Spread over ${r.rows} rows: ${r.Nreq} = ${r.rows} × ${Math.floor(r.Nreq / r.rows)}${r.Nreq % r.rows ? ` + ${r.Nreq % r.rows}` : ""} → rows of ${r.perRow.join(" + ")} = <b>${r.N}</b>${r.Nsb ? ` + ${r.Nsb} standby` : ""}</div>`) +
+    `<div class="eq">Check: push from ${r.N} fans = ${r.N} × ${f(r.Fper, 2)} = ${f(r.pushN, 2)} N ${r.pushN >= r.Freq - 1e-6 ? "≥" : "<"} ${f(r.Freq, 2)} N needed</div>` +
+    (r.jetOnly ? `<div class="eq">Airflow driven: ${r.N} fans → ${f(r.Qdrive, 2)} m³/s${r.gov === "momentum" && r.QdriveLess != null ? `; ${r.Nmin - 1} fans → ${f(r.QdriveLess, 2)} m³/s, below ${f(r.Q, 2)}` : ""}</div>` : "") +
     `<h3>Symbols</h3><p>T thrust, N. Q<sub>j</sub> fan airflow. D fan diameter. v<sub>j</sub> jet speed. v bulk speed. ρ air density. u<sub>t</sub> terminal velocity, the jet speed at the end of the throw. K<sub>v</sub> jet decay constant. η thrust efficiency. K<sub>total</sub> loss coefficient of the obstructions. C the jet entrainment constant, 0.32 for a free jet (Ricou and Spalding). A<sub>in</sub>, A<sub>out</sub> free areas of the openings.</p>` +
     `<p><b>This is a preliminary design. CFD simulation shall be done to verify the end result.</b></p>`;
 }
@@ -965,9 +1009,10 @@ function drawPlan(p, r, lenmm) {
   const fl = Math.max((lenmm > 0 ? lenmm / 1000 : 2.2) * s, 9), fw = Math.max(0.94 * s, 6), reach = Math.min(r.thr, L) * s;
   for (let i = 0; i < r.rows; i++) {
     const fx = x0 + i * r.sx * s + Math.min(r.sx * s * 0.08, 14);
-    for (let c = 0; c < r.cols; c++) {
-      const cy = y0 + (c + 0.5) * r.sy * s;
-      const ex = Math.min(fx + fl + reach, x0 + w), half = Math.min(r.sy * s * 0.48, 0.11 * reach + fw / 2);
+    const nr = r.perRow[i], syr = W / nr;
+    for (let c = 0; c < nr; c++) {
+      const cy = y0 + (c + 0.5) * syr * s;
+      const ex = Math.min(fx + fl + reach, x0 + w), half = Math.min(syr * s * 0.48, 0.11 * reach + fw / 2);
       g += `<path d="M${fx + fl},${cy - fw / 2} L${ex},${cy - half} L${ex},${cy + half} L${fx + fl},${cy + fw / 2} Z" fill="url(#jet)"/>`;
       g += `<rect x="${fx}" y="${cy - fw / 2}" width="${fl}" height="${fw}" fill="${ink}"/>`;
     }
@@ -979,7 +1024,7 @@ function drawPlan(p, r, lenmm) {
   g += `<text x="${x0 + w / 2}" y="${yd + 16}" text-anchor="middle" font-size="12.5">L = ${L} m · ${r.rows} row${r.rows > 1 ? "s" : ""} at ${f(r.sx, 1)} m</text>`;
   const xd = x0 + w + 46;
   g += `<line x1="${xd}" y1="${y0}" x2="${xd}" y2="${y0 + h}" stroke="${ink}" marker-start="url(#ah)" marker-end="url(#ah)"/>`;
-  g += `<text x="${xd + 14}" y="${y0 + h / 2}" text-anchor="middle" font-size="12.5" transform="rotate(90 ${xd + 14} ${y0 + h / 2})">W = ${W} m · ${r.cols} column${r.cols > 1 ? "s" : ""} at ${f(r.sy, 1)} m</text>`;
+  g += `<text x="${xd + 14}" y="${y0 + h / 2}" text-anchor="middle" font-size="12.5" transform="rotate(90 ${xd + 14} ${y0 + h / 2})">W = ${W} m · ${r.even ? `${r.cols} fan${r.cols > 1 ? "s" : ""} per row at ${f(r.sy, 1)} m` : `${r.colsMin}–${r.cols} fans per row`}</text>`;
   svg.innerHTML = g;
   $("planlegend").textContent = "Fans to scale; shading shows each jet to its throw" + (r.Kobs > 0 ? "; hatching shows the obstruction level" : "");
 }
@@ -1012,7 +1057,7 @@ $("loadCP").addEventListener("click", () => {
     ["Rows along 100 m", "4", r.rows + " (100 / " + f(r.thr, 2) + " = " + f(r.rowsRaw, 2) + ")"],
     ["Airflow carried by the jets", "2 × 12.639 = 25.278 m³/s (C = 0.05)", f(r.Qcarried, 2) + " m³/s, capped at A × u<sub>t</sub> = 144 × 0.3"],
     ["Airflow 8 fans drive, jet fans alone", "—", f(r.Qdrive, 1) + " m³/s ≥ 23.06"],
-    ["Total fans", "8 by hand · 6 by a maker’s program", r.N + " (" + r.rows + " × " + r.cols + ")"]
+    ["Total fans", "8 by hand · 6 by a maker’s program", r.N + " (" + r.layout + ")"]
   ];
   $("wbt").innerHTML = `<thead><tr><th>Item</th><th>Hand calculation</th><th>This sheet</th></tr></thead><tbody>` +
     rows.map(x => `<tr><td>${x[0]}</td><td class="n">${x[1]}</td><td class="n">${x[2]}</td></tr>`).join("") + `</tbody>`;
@@ -1020,7 +1065,7 @@ $("loadCP").addEventListener("click", () => {
 
 ["L","W","H","ach","flow","T","Qj","D","throw","Tlo","kw","lp","len","kg","name","ut","kv","ov","sw","K","rho","cfree","tpa","Kobs","Ain","Kin","Aout","Kout","pext"].forEach(id => $(id).addEventListener("input", calc));
 $("drive").addEventListener("change", calc);
-["flowu","sb"].forEach(id => $(id).addEventListener("change", calc));
+["flowu","sb","perrow"].forEach(id => $(id).addEventListener("change", calc));
 setObs("A");
 fillPreset();
 calc();
